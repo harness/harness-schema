@@ -1,0 +1,85 @@
+title: ContainerInfraYamlSpec
+type: object
+required:
+- connectorRef
+- namespace
+- resources
+properties:
+  annotations:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  automountServiceAccountToken:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  connectorRef:
+    type: string
+  containerSecurityContext:
+    oneOf:
+    - $ref: security-context.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  initTimeout:
+    type: string
+  labels:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  namespace:
+    type: string
+    minLength: 1
+    maxLength: 2147483647
+  nodeSelector:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  os:
+    oneOf:
+    - type: string
+      enum:
+      - Linux
+      - MacOS
+      - Windows
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  priorityClassName:
+    type: string
+  resources:
+    $ref: container-resource.yaml
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  serviceAccountName:
+    type: string
+  tolerations:
+    oneOf:
+    - type: array
+      items:
+        $ref: toleration.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  volumes:
+    oneOf:
+    - type: array
+      items:
+        $ref: container-volume.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#

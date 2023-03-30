@@ -1,0 +1,64 @@
+type: object
+title: pipeline
+properties:
+  allowStageExecutions:
+    type: boolean
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+  description:
+    type: string
+  flowControl:
+    "$ref": "./flow_control.yaml"
+  identifier:
+    type: string
+    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+  name:
+    type: string
+    pattern: "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+#  notificationRules:
+#    type: array
+#    items:
+#      "$ref": "#/definitions/NotificationRules"
+  orgIdentifier:
+    type: string
+    const: default
+  projectIdentifier:
+    type: string
+    const: inder_test
+  properties:
+    type: object
+    properties:
+      ci:
+        type: object
+        properties:
+          codebase:
+            $ref: "./codebase.yaml"
+  stages:
+    type: array
+    items:
+      "$ref": "./stages/stages.yaml"
+    maxItems: 2147483647
+    minItems: 1
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+#  template:
+#    "$ref": "#/definitions/TemplateLinkConfig"
+  timeout:
+    type: string
+    pattern: "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+  variables:
+    type: array
+    items:
+      oneOf:
+        - "$ref": "./number_variable.yaml"
+        - "$ref": "./string_variable.yaml"
+        - "$ref": "./secret_variable.yaml"
+"$schema": http://json-schema.org/draft-07/schema#

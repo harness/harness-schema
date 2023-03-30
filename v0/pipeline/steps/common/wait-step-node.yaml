@@ -1,0 +1,48 @@
+title: WaitStepNode
+type: object
+required:
+- identifier
+- name
+- spec
+- type
+properties:
+  description:
+    type: string
+  enforce:
+    $ref: policy-config.yaml
+  failureStrategies:
+    oneOf:
+    - type: array
+      items:
+        $ref: failure-strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
+  strategy:
+    $ref: strategy-config.yaml
+  type:
+    type: string
+    enum:
+    - Wait
+  when:
+    oneOf:
+    - $ref: step-when-condition.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Wait
+  then:
+    properties:
+      spec:
+        $ref: wait-step-info.yaml

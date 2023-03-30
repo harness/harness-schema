@@ -1,0 +1,28 @@
+title: StrategyConfig
+type: object
+properties:
+  matrix:
+    oneOf:
+    - $ref: parameter-field-matrix-config-interface.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  parallelism:
+    oneOf:
+    - type: integer
+      format: int32
+      minimum: 0
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  repeat:
+    $ref: harness-for-config.yaml
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- oneOf:
+  - required:
+    - repeat
+  - required:
+    - parallelism
+  - required:
+    - matrix

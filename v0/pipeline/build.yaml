@@ -1,0 +1,53 @@
+title: build
+type: object
+required:
+  - spec
+  - type
+properties:
+  type:
+    type: string
+    enum:
+      - branch
+      - tag
+      - PR
+"$schema": http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: PR
+    then:
+      properties:
+        spec:
+          type: object
+          required:
+            - number
+          properties:
+            number:
+              type: string
+  - if:
+      properties:
+        type:
+          const: branch
+    then:
+      properties:
+        spec:
+          type: object
+          required:
+            - branch
+          properties:
+            branch:
+              type: string
+  - if:
+      properties:
+        type:
+          const: tag
+    then:
+      properties:
+        spec:
+          type: object
+          required:
+            - tag
+          properties:
+            tag:
+              type: string

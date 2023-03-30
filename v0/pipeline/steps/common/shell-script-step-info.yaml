@@ -1,0 +1,90 @@
+title: ShellScriptStepInfo
+allOf:
+- $ref: step-spec-type.yaml
+- type: object
+  required:
+  - onDelegate
+  - shell
+  - source
+  properties:
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    environmentVariables:
+      type: array
+      items:
+        oneOf:
+        - $ref: number-n-g-variable.yaml
+        - $ref: secret-n-g-variable.yaml
+        - $ref: string-n-g-variable.yaml
+    executionTarget:
+      $ref: execution-target.yaml
+    metadata:
+      type: string
+    onDelegate:
+      oneOf:
+      - type: boolean
+      - type: string
+    outputVariables:
+      type: array
+      items:
+        oneOf:
+        - $ref: number-n-g-variable.yaml
+        - $ref: secret-n-g-variable.yaml
+        - $ref: string-n-g-variable.yaml
+    shell:
+      type: string
+      enum:
+      - Bash
+      - PowerShell
+    source:
+      $ref: shell-script-source-wrapper.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- onDelegate
+- shell
+- source
+properties:
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  environmentVariables:
+    type: array
+    items:
+      oneOf:
+      - $ref: number-n-g-variable.yaml
+      - $ref: secret-n-g-variable.yaml
+      - $ref: string-n-g-variable.yaml
+  executionTarget:
+    $ref: execution-target.yaml
+  metadata:
+    type: string
+  onDelegate:
+    oneOf:
+    - type: boolean
+    - type: string
+  outputVariables:
+    type: array
+    items:
+      oneOf:
+      - $ref: number-n-g-variable.yaml
+      - $ref: secret-n-g-variable.yaml
+      - $ref: string-n-g-variable.yaml
+  shell:
+    type: string
+    enum:
+    - Bash
+    - PowerShell
+  source:
+    $ref: shell-script-source-wrapper.yaml

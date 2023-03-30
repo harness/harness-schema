@@ -1,0 +1,49 @@
+type: object
+title: customStageNode
+required:
+  - identifier
+  - name
+  - type
+properties:
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+  description:
+    type: string
+#  failureStrategies:
+#    type: array
+#    items:
+#      "$ref": "#/definitions/FailureStrategyConfig"
+  identifier:
+    type: string
+    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+  name:
+    type: string
+    pattern: "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+#  strategy:
+#    "$ref": "#/definitions/StrategyConfig"
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+  type:
+    type: string
+    enum:
+      - Custom
+  spec:
+      $ref: "./stage_spec.yaml"
+  variables:
+    type: array
+    items:
+      oneOf:
+        - "$ref": "../../number_variable.yaml"
+        - "$ref": "../../string_variable.yaml"
+        - "$ref": "../../secret_variable.yaml"
+  when:
+    "$ref": "#/definitions/StageWhenCondition"
+"$schema": http://json-schema.org/draft-07/schema#
