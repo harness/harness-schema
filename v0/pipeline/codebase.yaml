@@ -1,0 +1,53 @@
+type: object
+title: codebase
+required:
+  - build
+  - connectorRef
+properties:
+  build:
+    oneOf:
+      - "$ref": "./build.yaml"
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+  connectorRef:
+    type: string
+  depth:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+  prCloneStrategy:
+    oneOf:
+      - type: string
+        enum:
+          - MergeCommit
+          - SourceBranch
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+  repoName:
+    type: string
+  resources:
+    type: object
+    required:
+      - limits
+    properties:
+      limits:
+        type: object
+        properties:
+          cpu:
+            oneOf:
+              - type: string
+              - type: number
+          memory:
+            type: string
+  sslVerify:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
+"$schema": http://json-schema.org/draft-07/schema#

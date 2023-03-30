@@ -1,0 +1,38 @@
+type: object
+title: template
+required:
+  - identifier
+  - name
+  - type
+  - versionLabel
+properties:
+  identifier:
+    type: string
+    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+  name:
+    type: string
+    pattern: "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+  type:
+    type: string
+    enum:
+      - Pipeline
+  variables:
+    type: array
+    items:
+      oneOf:
+        - "$ref": "../../pipeline/number_variable.yaml"
+        - "$ref": "../../pipeline/secret_variable.yaml"
+        - "$ref": "../../pipeline/string_variable.yaml"
+  versionLabel:
+    type: string
+    pattern: "^[0-9a-zA-Z][^\\s]{0,63}$"
+  spec:
+    $ref: ./pipeline_spec.yaml
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+  description:
+    type: string
+  icon:
+    type: string
