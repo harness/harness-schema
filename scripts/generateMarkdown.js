@@ -1,4 +1,6 @@
 const fs = require('fs');
+const yaml = require('js-yaml');
+
 
 function readJsonSchema(file) {
   try {
@@ -12,57 +14,75 @@ function readJsonSchema(file) {
 
 function generateMarkdown(schema, options = {}) {
     const { propertyTemplate = '', schemaTemplate = '' } = options;
+
+    const titleExampleBlock = schema.examples
+        ? schema.examples
+            .map((example) => `\`\`\`yaml\n${yaml.dump(example)}\`\`\``)
+            .join('\n\n')
+        : '';
+
+    
+    const titleExampleSection = schema.examples
+        ? `### Yaml\n\n${titleExampleBlock}`
+        : '';
   
     let properties = '';
   
     for (const property in schema.properties) {
-      const { type, format, description, examples } = schema.properties[property];
+      const { type, format, desc, examples } = schema.properties[property];
       const required = schema.required.includes(property) ? 'Yes' : 'No';
       const formatLine = format ? `- Format: ${format}` : '';
   
       const exampleBlocks = examples
         ? examples
-            .map((example) => `\`\`\`json\n${JSON.stringify(example, null, 2)}\n\`\`\``)
+            .map((example) => `\`\`\`yaml\n${yaml.dump(example)}\`\`\``)
             .join('\n\n')
-        : 'No examples provided.';
+        : '';
   
+      const exampleSection = examples
+        ? `### Examples\n\n${exampleBlocks}`
+        : '';
+
+      const descNotNull = desc ? desc : '';
+
       properties += propertyTemplate
         .replace(/\{property\}/g, property)
         .replace(/\{type\}/g, type)
         .replace(/\{formatLine\}/g, formatLine)
         .replace(/\{required\}/g, required)
-        .replace(/\{description\}/g, description)
-        .replace(/\{examples\}/g, exampleBlocks);
+        .replace(/\{desc\}/g, descNotNull)
+        .replace(/\{exampleSection\}/g, exampleSection);
     }
   
     return schemaTemplate
       .replace(/\{title\}/g, schema.title)
+      .replace(/\{stepYaml\}/g, titleExampleSection)
       .replace(/\{properties\}/g, properties)
       .replace(/\{schema\}/g, JSON.stringify(schema, null, 2));
   }
   
   
 
-const schema = readJsonSchema('testschema.json');
+const schema = readJsonSchema('wait.json');
 const propertyTemplate = `
 ## \`{property}\`
 
-{description}
+{desc}
 
 - Type: {type}
 {formatLine}
 - Required: {required}
 
-### Examples
-
-{examples}
+{exampleSection}
 `;
 
 
 const schemaTemplate = `
 # {title}
 
-A representation of a user object.
+{stepYaml}
+
+Harness Wait Step Yaml schema.
 {properties}
 ## JSON Schema
 
@@ -73,5 +93,5 @@ A representation of a user object.
 
 
 const markdown = generateMarkdown(schema, { propertyTemplate, schemaTemplate });
-fs.writeFileSync('userSchema.md', markdown, 'utf8');
-console.log('Markdown file generated: userSchema.md');
+fs.writeFileSync('waitSchema.md', markdown, 'utf8');
+console.log('Markdown file generated: waitSchema.md');
