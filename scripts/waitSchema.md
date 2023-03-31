@@ -1,0 +1,121 @@
+
+# waitStep
+
+### Yaml
+
+```yaml
+|-
+  - step:
+      type: Wait
+      name: Wait
+      identifier: wait_1
+      spec:
+        duration: 10s
+```
+
+Harness Wait Step Yaml schema.
+
+## `description`
+
+The description of your step objective. You can add details about where someone can utilise this step.
+
+- Type: string
+
+- Required: No
+
+
+
+## `identifier`
+
+The unique identifier of your step inside a stage / step group. Harness utilise the identifier for all expressions. If you omit `identifier`, harness auto generates with a unique combination.
+
+- Type: string
+
+- Required: Yes
+
+
+
+## `name`
+
+The name of your step.
+
+- Type: string
+
+- Required: Yes
+
+
+
+## `type`
+
+For more information, see [`available steps in harness`](https://developer.harness.io/docs/category/general-cd).
+
+- Type: string
+
+- Required: Yes
+
+
+
+## `spec`
+
+
+
+- Type: object
+
+- Required: Yes
+
+
+
+## JSON Schema
+
+```json
+{
+  "type": "object",
+  "title": "waitStep",
+  "examples": [
+    "- step:\n    type: Wait\n    name: Wait\n    identifier: wait_1\n    spec:\n      duration: 10s"
+  ],
+  "required": [
+    "identifier",
+    "name",
+    "spec",
+    "type"
+  ],
+  "properties": {
+    "description": {
+      "type": "string",
+      "desc": "The description of your step objective. You can add details about where someone can utilise this step."
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$",
+      "desc": "The unique identifier of your step inside a stage / step group. Harness utilise the identifier for all expressions. If you omit `identifier`, harness auto generates with a unique combination."
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$",
+      "desc": "The name of your step."
+    },
+    "type": {
+      "type": "string",
+      "desc": "For more information, see [`available steps in harness`](https://developer.harness.io/docs/category/general-cd).",
+      "enum": [
+        "Wait"
+      ]
+    },
+    "spec": {
+      "type": "object",
+      "properties": {
+        "desc": "The maximum duration to let a step wait before it gets move to next step. Default`:` 10m.",
+        "duration": {
+          "type": "string",
+          "pattern": "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+        },
+        "metadata": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+```
