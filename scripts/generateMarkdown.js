@@ -1,7 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const yaml = require('js-yaml');
 const { propertyTemplate, schemaTemplate } = require('./templates');
 
+if (process.argv.length < 4) {
+  console.error('Usage: node generateMarkdown.js <input_json_schema> <output_md_file>');
+  process.exit(1);
+}
+
+const inputSchemaPath = path.resolve(process.argv[2]);
+const outputMarkdownPath = path.resolve(process.argv[3]);
 
 function readJsonSchema(file) {
   try {
@@ -62,12 +70,9 @@ function generateMarkdown(schema, options = {}) {
       .replace(/\{schema\}/g, JSON.stringify(schema, null, 2));
   }
   
-  
 
-const schema = readJsonSchema('wait.json');
-
-
+const schema = readJsonSchema(inputSchemaPath);
 
 const markdown = generateMarkdown(schema, { propertyTemplate, schemaTemplate });
-fs.writeFileSync('waitSchema.md', markdown, 'utf8');
-console.log('Markdown file generated: waitSchema.md');
+fs.writeFileSync(outputMarkdownPath, markdown, 'utf8');
+console.log('Markdown file generated', outputMarkdownPath);
