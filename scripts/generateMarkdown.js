@@ -1,5 +1,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
+const { propertyTemplate, schemaTemplate } = require('./templates');
 
 
 function readJsonSchema(file) {
@@ -64,32 +65,7 @@ function generateMarkdown(schema, options = {}) {
   
 
 const schema = readJsonSchema('wait.json');
-const propertyTemplate = `
-## \`{property}\`
 
-{desc}
-
-- Type: {type}
-{formatLine}
-- Required: {required}
-
-{exampleSection}
-`;
-
-
-const schemaTemplate = `
-# {title}
-
-{stepYaml}
-
-Harness Wait Step Yaml schema.
-{properties}
-## JSON Schema
-
-\`\`\`json
-{schema}
-\`\`\`
-`;
 
 
 const markdown = generateMarkdown(schema, { propertyTemplate, schemaTemplate });
