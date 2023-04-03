@@ -126,7 +126,7 @@ def updateDescription(updatedYamlData, fileName):
 	if "description" not in properties:
 		properties["description"]={}
 	description = properties["description"]
-	description["desc"]='This is the description for step '+fileName
+	description["desc"]='This is the description for '+fileName
 	print(properties)
 
 def updateYaml(path,yamlContent):
