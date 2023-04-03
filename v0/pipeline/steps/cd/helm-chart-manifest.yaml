@@ -1,0 +1,46 @@
+title: HelmChartManifest
+allOf:
+- $ref: manifest-attributes.yaml
+- type: object
+  properties:
+    chartName:
+      type: string
+    chartVersion:
+      type: string
+    commandFlags:
+      type: array
+      items:
+        $ref: helm-manifest-command-flag.yaml
+    enableDeclarativeRollback:
+      oneOf:
+      - $ref: parameter-field-boolean.yaml
+      - type: string
+      - type: boolean
+    helmVersion:
+      type: string
+      enum:
+      - V2
+      - V3
+      - V380
+    metadata:
+      type: string
+    skipResourceVersioning:
+      oneOf:
+      - type: boolean
+      - type: string
+    store:
+      $ref: store-config-wrapper.yaml
+    subChartName:
+      type: string
+    valuesPaths:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for HelmChartManifest

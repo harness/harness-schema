@@ -1,0 +1,250 @@
+title: ManifestConfig
+type: object
+required:
+- identifier
+- spec
+- type
+properties:
+  identifier:
+    type: string
+  type:
+    type: string
+    enum:
+    - HelmChart
+    - HelmRepoOverride
+    - K8sManifest
+    - Kustomize
+    - KustomizePatches
+    - OpenshiftParam
+    - OpenshiftTemplate
+    - Values
+    - ServerlessAwsLambda
+    - ReleaseRepo
+    - DeploymentRepo
+    - EcsTaskDefinition
+    - EcsServiceDefinition
+    - EcsScalableTargetDefinition
+    - EcsScalingPolicyDefinition
+    - TasManifest
+    - TasVars
+    - TasAutoScaler
+    - AsgLaunchTemplate
+    - AsgConfiguration
+    - AsgScalingPolicy
+    - AsgScheduledUpdateGroupAction
+    - GoogleCloudFunctionDefinition
+    - AwsLambdaFunctionDefinition
+    - AwsLambdaFunctionAliasDefinition
+    - AwsSamDirectory
+  description:
+    desc: This is the description for ManifestConfig
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: AsgConfiguration
+  then:
+    properties:
+      spec:
+        $ref: asg-configuration-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AsgLaunchTemplate
+  then:
+    properties:
+      spec:
+        $ref: asg-launch-template-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AsgScalingPolicy
+  then:
+    properties:
+      spec:
+        $ref: asg-scaling-policy-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AsgScheduledUpdateGroupAction
+  then:
+    properties:
+      spec:
+        $ref: asg-scheduled-update-group-action-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AwsLambdaFunctionAliasDefinition
+  then:
+    properties:
+      spec:
+        $ref: aws-lambda-function-alias-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AwsLambdaFunctionDefinition
+  then:
+    properties:
+      spec:
+        $ref: aws-lambda-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: AwsSamDirectory
+  then:
+    properties:
+      spec:
+        $ref: aws-sam-directory-manifest.yaml
+- if:
+    properties:
+      type:
+        const: DeploymentRepo
+  then:
+    properties:
+      spec:
+        $ref: git-ops-deployment-repo-manifest.yaml
+- if:
+    properties:
+      type:
+        const: EcsScalableTargetDefinition
+  then:
+    properties:
+      spec:
+        $ref: ecs-scalable-target-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: EcsScalingPolicyDefinition
+  then:
+    properties:
+      spec:
+        $ref: ecs-scaling-policy-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: EcsServiceDefinition
+  then:
+    properties:
+      spec:
+        $ref: ecs-service-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: EcsTaskDefinition
+  then:
+    properties:
+      spec:
+        $ref: ecs-task-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: GoogleCloudFunctionDefinition
+  then:
+    properties:
+      spec:
+        $ref: google-cloud-function-definition-manifest.yaml
+- if:
+    properties:
+      type:
+        const: HelmChart
+  then:
+    properties:
+      spec:
+        $ref: helm-chart-manifest.yaml
+- if:
+    properties:
+      type:
+        const: HelmRepoOverride
+  then:
+    properties:
+      spec:
+        $ref: helm-repo-override-manifest.yaml
+- if:
+    properties:
+      type:
+        const: K8sManifest
+  then:
+    properties:
+      spec:
+        $ref: k8s-manifest.yaml
+- if:
+    properties:
+      type:
+        const: Kustomize
+  then:
+    properties:
+      spec:
+        $ref: kustomize-manifest.yaml
+- if:
+    properties:
+      type:
+        const: KustomizePatches
+  then:
+    properties:
+      spec:
+        $ref: kustomize-patches-manifest.yaml
+- if:
+    properties:
+      type:
+        const: OpenshiftParam
+  then:
+    properties:
+      spec:
+        $ref: openshift-param-manifest.yaml
+- if:
+    properties:
+      type:
+        const: OpenshiftTemplate
+  then:
+    properties:
+      spec:
+        $ref: openshift-manifest.yaml
+- if:
+    properties:
+      type:
+        const: ReleaseRepo
+  then:
+    properties:
+      spec:
+        $ref: release-repo-manifest.yaml
+- if:
+    properties:
+      type:
+        const: ServerlessAwsLambda
+  then:
+    properties:
+      spec:
+        $ref: serverless-aws-lambda-manifest.yaml
+- if:
+    properties:
+      type:
+        const: TasAutoScaler
+  then:
+    properties:
+      spec:
+        $ref: auto-scaler-manifest.yaml
+- if:
+    properties:
+      type:
+        const: TasManifest
+  then:
+    properties:
+      spec:
+        $ref: tas-manifest.yaml
+- if:
+    properties:
+      type:
+        const: TasVars
+  then:
+    properties:
+      spec:
+        $ref: vars-manifest.yaml
+- if:
+    properties:
+      type:
+        const: Values
+  then:
+    properties:
+      spec:
+        $ref: values-manifest.yaml

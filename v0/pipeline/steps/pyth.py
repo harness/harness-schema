@@ -119,6 +119,16 @@ def read_yaml(path):
 	# print("File done ")
 	return yamlData
 
+def updateDescription(updatedYamlData, fileName):
+	if("properties" not in updatedYamlData):
+		updatedYamlData["properties"]={}
+	properties = updatedYamlData["properties"]
+	if "description" not in properties:
+		properties["description"]={}
+	description = properties["description"]
+	description["desc"]='This is the description for '+fileName
+	print(properties)
+
 def updateYaml(path,yamlContent):
 	with open(path, 'w') as file2:
 		#print(yamlContent)
@@ -163,6 +173,7 @@ def my_function(module,prefix):
 					file.close()
 					title={"title":fileName.removesuffix('.yaml')}
 					updatedYamlData={**title,**updatedYamlData}
+					updateDescription(updatedYamlData,fileName.removesuffix('.yaml'))
 					updateYaml(directoryPath+fileNameWithUnderscore,updatedYamlData)
 
 
