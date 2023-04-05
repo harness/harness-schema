@@ -1,0 +1,973 @@
+{
+  "type" : "object",
+  "title" : "templateRoot",
+  "properties" : {
+    "template" : {
+      "oneOf" : [ {
+        "$ref" : "#/definitions/template/step/template"
+      }, {
+        "$ref" : "#/definitions/template/secretmanager/template"
+      }, {
+        "$ref" : "#/definitions/template/stage/template"
+      }, {
+        "$ref" : "#/definitions/template/pipeline/template"
+      } ]
+    }
+  },
+  "definitions" : {
+    "template" : {
+      "step" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Step" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/template/step/waitStepNode"
+              } ]
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
+        },
+        "waitStepNode" : {
+          "type" : "object",
+          "title" : "waitStepNode",
+          "required" : [ "spec", "type" ],
+          "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Wait" ]
+            },
+            "spec" : {
+              "type" : "object",
+              "properties" : {
+                "duration" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+                },
+                "metadata" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      },
+      "secretmanager" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "SecretManager" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : {
+              "type" : "object"
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "stage" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Stage" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/template/stage/custom/customStageNode"
+              } ]
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
+        },
+        "custom" : {
+          "customStageNode" : {
+            "type" : "object",
+            "title" : "customStageNode",
+            "required" : [ "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string"
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Custom" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/template/stage/custom/customStageInfo"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "customStageInfo" : {
+            "type" : "object",
+            "title" : "customStageInfo",
+            "required" : [ "execution" ],
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/template/stage/custom/executionConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "executionConfig" : {
+            "type" : "object",
+            "title" : "executionConfig",
+            "required" : [ "steps" ],
+            "properties" : {
+              "rollbackSteps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/template/stage/custom/executionElement"
+                }
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/template/stage/custom/executionElement"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "executionElement" : {
+            "type" : "object",
+            "title" : "executionElement",
+            "properties" : {
+              "step" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/waitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/httpStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/templateNode"
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      },
+      "pipeline" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Pipeline" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : {
+              "$ref" : "#/definitions/template/pipeline/pipeline"
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
+        },
+        "pipeline" : {
+          "type" : "object",
+          "title" : "pipeline",
+          "properties" : {
+            "allowStageExecutions" : {
+              "type" : "boolean"
+            },
+            "delegateSelectors" : {
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }, {
+                "type" : "string",
+                "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                "minLength" : 1
+              } ]
+            },
+            "flowControl" : {
+              "$ref" : "#/definitions/pipeline/flowControl"
+            },
+            "properties" : {
+              "type" : "object",
+              "properties" : {
+                "ci" : {
+                  "type" : "object",
+                  "properties" : {
+                    "codebase" : {
+                      "$ref" : "#/definitions/pipeline/codebase"
+                    }
+                  }
+                }
+              }
+            },
+            "stages" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/pipeline/stages/stages"
+              },
+              "maxItems" : 2147483647,
+              "minItems" : 1
+            },
+            "timeout" : {
+              "type" : "string",
+              "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                } ]
+              }
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      }
+    },
+    "pipeline" : {
+      "numberVariable" : {
+        "title" : "numberVariable",
+        "type" : "object",
+        "required" : [ "value" ],
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+          },
+          "default" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "Number" ]
+          },
+          "value" : {
+            "oneOf" : [ {
+              "type" : "number",
+              "format" : "double"
+            }, {
+              "type" : "string",
+              "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+            } ]
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "metadata" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "secretVariable" : {
+        "title" : "secretVariable",
+        "type" : "object",
+        "required" : [ "value" ],
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+          },
+          "default" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "Secret" ]
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "metadata" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "stringVariable" : {
+        "title" : "stringVariable",
+        "type" : "object",
+        "required" : [ "value" ],
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+          },
+          "default" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "String" ]
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "metadata" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "steps" : {
+        "waitStepNode" : {
+          "type" : "object",
+          "title" : "waitStepNode",
+          "required" : [ "identifier", "name", "spec", "type" ],
+          "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Wait" ]
+            },
+            "spec" : {
+              "type" : "object",
+              "properties" : {
+                "duration" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+                },
+                "metadata" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "httpStepNode" : {
+          "type" : "object",
+          "title" : "httpStepNode",
+          "required" : [ "identifier", "name", "spec", "type" ],
+          "properties" : {
+            "description" : {
+              "type" : "string"
+            },
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "timeout" : {
+              "type" : "string",
+              "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Http" ]
+            },
+            "spec" : {
+              "$ref" : "#/definitions/pipeline/steps/httpStepInfo"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "httpStepInfo" : {
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "title" : "httpStepInfo",
+          "type" : "object",
+          "required" : [ "method", "url" ],
+          "properties" : {
+            "assertion" : {
+              "type" : "string"
+            },
+            "delegateSelectors" : {
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }, {
+                "type" : "string",
+                "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                "minLength" : 1
+              } ]
+            },
+            "headers" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/pipeline/steps/httpHeader"
+              }
+            },
+            "method" : {
+              "type" : "string"
+            },
+            "requestBody" : {
+              "type" : "string"
+            },
+            "url" : {
+              "type" : "string"
+            }
+          }
+        },
+        "httpHeader" : {
+          "type" : "object",
+          "title" : "httpHeader",
+          "properties" : {
+            "key" : {
+              "type" : "string"
+            },
+            "value" : {
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      },
+      "templateNode" : {
+        "type" : "object",
+        "title" : "templateNode",
+        "required" : [ "identifier", "name", "template" ],
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "identifier" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+          },
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+          },
+          "template" : {
+            "$ref" : "#/definitions/pipeline/templateSpec"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "templateSpec" : {
+        "type" : "object",
+        "title" : "templateSpec",
+        "required" : [ "templateRef" ],
+        "properties" : {
+          "templateInputs" : {
+            "type" : "object"
+          },
+          "templateRef" : {
+            "type" : "string"
+          },
+          "templateVariables" : {
+            "type" : "object"
+          },
+          "versionLabel" : {
+            "type" : "string",
+            "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "flowControl" : {
+        "type" : "object",
+        "title" : "flowControl",
+        "properties" : {
+          "barriers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/barrierConfig"
+            }
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "barrierConfig" : {
+        "type" : "object",
+        "title" : "barrierConfig",
+        "required" : [ "identifier", "name" ],
+        "properties" : {
+          "identifier" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "codebase" : {
+        "type" : "object",
+        "title" : "codebase",
+        "required" : [ "build", "connectorRef" ],
+        "properties" : {
+          "build" : {
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/build"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "connectorRef" : {
+            "type" : "string"
+          },
+          "depth" : {
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "prCloneStrategy" : {
+            "oneOf" : [ {
+              "type" : "string",
+              "enum" : [ "MergeCommit", "SourceBranch" ]
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "repoName" : {
+            "type" : "string"
+          },
+          "resources" : {
+            "type" : "object",
+            "required" : [ "limits" ],
+            "properties" : {
+              "limits" : {
+                "type" : "object",
+                "properties" : {
+                  "cpu" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "number"
+                    } ]
+                  },
+                  "memory" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          },
+          "sslVerify" : {
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "build" : {
+        "title" : "build",
+        "type" : "object",
+        "required" : [ "spec", "type" ],
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "branch", "tag", "PR" ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "PR"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "number" ],
+                "properties" : {
+                  "number" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "branch"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "branch" ],
+                "properties" : {
+                  "branch" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "tag"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "tag" ],
+                "properties" : {
+                  "tag" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        } ]
+      },
+      "stages" : {
+        "stages" : {
+          "type" : "object",
+          "title" : "stages",
+          "properties" : {
+            "stage" : {
+              "description" : "This is stage node. it can be of various types like CI, CD, etc.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/custom/customStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/templateNode"
+              } ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "custom" : {
+          "customStageNode" : {
+            "type" : "object",
+            "title" : "customStageNode",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string"
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Custom" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/stages/custom/customStageInfo"
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/numberVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stringVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/secretVariable"
+                  } ]
+                }
+              },
+              "when" : { }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "customStageInfo" : {
+            "type" : "object",
+            "title" : "customStageInfo",
+            "required" : [ "execution" ],
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/custom/executionConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "executionConfig" : {
+            "type" : "object",
+            "title" : "executionConfig",
+            "required" : [ "steps" ],
+            "properties" : {
+              "rollbackSteps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/custom/executionElement"
+                }
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/custom/executionElement"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "executionElement" : {
+            "type" : "object",
+            "title" : "executionElement",
+            "properties" : {
+              "step" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/waitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/httpStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/templateNode"
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      }
+    }
+  }
+}
