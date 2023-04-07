@@ -9,12 +9,13 @@ def createFileOutsideTestModule(path,module):
 	if(len(pathArray)>=2 and os.path.exists(path)):
 		with open(path) as file1:
 			oldYaml = yaml.safe_load(file1)
-			newDirectory = "../"+path
+			newDirectory = "../"+pathArray[0]+'/'+'common/'+pathArray[len(pathArray)-1]
+			print(os.getcwd())
 			with open(newDirectory,'w') as newFile:
 				yaml.dump(oldYaml, newFile, sort_keys=False)
 				return newDirectory
 
-	if(len(pathArray)==1 and module == 'common'):
+	if(len(pathArray)==1 and module == 'pie'):
 		print(module+ " "+ path)
 		if(os.path.exists('../../common/'+path)):
 			print("yes")
@@ -29,7 +30,7 @@ def print_keys(data,module):
 		for key in data:
 			if (key == "$ref"):
 				newPath = createFileOutsideTestModule(data[key],module)
-				if(module == 'common'):
+				if(module == 'pie'):
 					print(data[key] + ' '+newPath)
 				data[key]=newPath
 			print_keys(data[key],module)
@@ -68,7 +69,7 @@ def my_funciton(path):
 	os.chdir(currentDir)
 
 #common is added in the add deliberately
-moduleList = ['ci', 'cd', 'cvng', 'security', 'approval', 'cf', 'custom','common']
+moduleList = ['ci', 'cd', 'cvng', 'security', 'approval', 'cf', 'custom','pie']
 
 for element in moduleList:
 	my_funciton(element)
