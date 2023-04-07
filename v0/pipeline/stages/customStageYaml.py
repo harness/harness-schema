@@ -40,22 +40,22 @@ def saveRefFile(module, newyaml, fileName):
 		else:
 			duplicateFileName[newFileNameWithScore+module]=[]
 			duplicateFileName[newFileNameWithScore+module].append(newyaml)
-		return '../common/' + newFileNameWithScore
+		return '../../common/' + newFileNameWithScore
 
 	elif os.path.exists('../steps/pie/' + newFileNameWithScore):
-		return '../steps/pie/' + newFileNameWithScore
+		return '../../steps/pie/' + newFileNameWithScore
 
 	elif os.path.exists('../steps/ci/' + newFileNameWithScore):
-		return '../steps/ci/' + newFileNameWithScore
+		return '../../steps/ci/' + newFileNameWithScore
 	elif os.path.exists('../steps/cvng/' + newFileNameWithScore):
-		return '../steps/cvng/' + newFileNameWithScore
+		return '../../steps/cvng/' + newFileNameWithScore
 
 	elif os.path.exists('../steps/security/' + newFileNameWithScore):
-		return '../steps/security/' + newFileNameWithScore
+		return '../../steps/security/' + newFileNameWithScore
 
 
 	elif os.path.exists('../steps/cd/' + newFileNameWithScore):
-		return '../steps/cd/' + newFileNameWithScore
+		return '../../steps/cd/' + newFileNameWithScore
 
 	else:
 		fileNameWithoutYaml = fileName.removesuffix('.yaml')
