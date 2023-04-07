@@ -25,14 +25,14 @@ def fileDirPath(module,expected,newFileNameWithScore):
 	if module==expected:
 		return newFileNameWithScore
 	if (not module or  module == 'pipeline'):
-		if expected == 'common':
+		if expected == 'pie':
 			return newFileNameWithScore
 	return '../' + expected + '/'+newFileNameWithScore
 
 
 def saveRefFile(module, newyaml, fileName):
 	newFileNameWithScore = convertFileName(fileName)
-	if os.path.exists('common/' + newFileNameWithScore):
+	if os.path.exists('pie/' + newFileNameWithScore):
 		# print("file already there "+ newFileNameWithScore)
 		if(newFileNameWithScore+module in duplicateFileName):
 			#duplicateFileName[fileName+module].append(newyaml)
@@ -40,7 +40,7 @@ def saveRefFile(module, newyaml, fileName):
 		else:
 			duplicateFileName[newFileNameWithScore+module]=[]
 			duplicateFileName[newFileNameWithScore+module].append(newyaml)
-		return fileDirPath(module,'common', newFileNameWithScore)
+		return fileDirPath(module,'pie', newFileNameWithScore)
 	else:
 		fileNameWithoutYaml = fileName.removesuffix('.yaml')
 		my_function(module,fileNameWithoutYaml)
@@ -64,7 +64,7 @@ def getYamlFromPathList(pathList):
 def saveYaml(pathList):
 	newyaml = getYamlFromPathList(pathList)
 	if len(pathList)<=3:
-		module = 'common'
+		module = 'pie'
 	else:
 		module=pathList[2]
 	fileName = pathList[len(pathList)-1] + '.yaml'
@@ -142,12 +142,12 @@ def my_function(module,prefix):
 	if module+prefix in moduleSuffix:
 		return
 	moduleSuffix[module+prefix]=1
-	if(not module or  module == 'pipeline' or module == 'common'):
+	if(not module or  module == 'pipeline' or module == 'pie'):
 		level = data
-		directoryPath = 'common' + '/'
-		if not os.path.exists('common'):
-			print('created the common module')
-			os.makedirs('common')
+		directoryPath = 'pie' + '/'
+		if not os.path.exists('pie'):
+			print('created the pie module')
+			os.makedirs('pie')
 	else:
 		level = data[module]
 		directoryPath = module + '/'
@@ -160,11 +160,11 @@ def my_function(module,prefix):
 			fileName = i + '.yaml'
 			fileNameWithUnderscore =convertFileName(fileName)
 			#print(yaml_data)
-			if os.path.exists('common/' + fileNameWithUnderscore):
+			if os.path.exists('pie/' + fileNameWithUnderscore):
 				#create a test file to compare
 				#print("file already in common - "+fileNameWithUnderscore)
-				updatedYamlData = read_yaml('common/' + fileNameWithUnderscore)
-				updateYaml('common/'+fileNameWithUnderscore,updatedYamlData)
+				updatedYamlData = read_yaml('pie/' + fileNameWithUnderscore)
+				updateYaml('pie/'+fileNameWithUnderscore,updatedYamlData)
 			#print()
 			else:
 				with open(directoryPath + fileNameWithUnderscore, 'w') as file:
@@ -185,9 +185,4 @@ moduleList = ['', 'pipeline','ci', 'cd', 'cvng', 'security', 'approval', 'cf', '
 for module in moduleList:
 	print()
 	my_function(module,'StepNode')
-print("duplicate files are")
-for keys in duplicateFileName:
-	# print("yaml for "+ keys)
-	for element in duplicateFileName[keys]:
-		print()
 f.close()
