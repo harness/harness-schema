@@ -11,12 +11,31 @@ if (process.argv.length < 4) {
 const inputSchemaPath = path.resolve(process.argv[2]);
 const outputMarkdownPath = path.resolve(process.argv[3]);
 
+//function readJsonSchema(file) {
+//  try {
+//    const content = fs.readFileSync(file, 'utf8');
+//    return JSON.parse(content);
+//  } catch (error) {
+//    console.error(`Error reading JSON schema file: ${error.message}`);
+//    process.exit(1);
+//  }
+//}
+
 function readJsonSchema(file) {
   try {
     const content = fs.readFileSync(file, 'utf8');
-    return JSON.parse(content);
+    const schema = JSON.parse(content);
+    console.log('Schema:', schema);
+    return schema;
   } catch (error) {
     console.error(`Error reading JSON schema file: ${error.message}`);
+    const match = error.message.match(/at position (\d+)/);
+    if (match) {
+      const pos = parseInt(match[1]);
+      const start = Math.max(pos - 20, 0);
+      const context = content.substr(start, 40);
+      console.error(`Error context: ...${context}...`);
+    }
     process.exit(1);
   }
 }
@@ -39,7 +58,8 @@ function generateMarkdown(schema, options = {}) {
   
     for (const property in schema.properties) {
       const { type, format, desc, examples } = schema.properties[property];
-      const required = schema.required.includes(property) ? 'Yes' : 'No';
+      const required = schema.required && schema.required.includes(property) ? 'Yes' : 'No';
+
       const formatLine = format ? `- Format: ${format}` : '';
   
       const exampleBlocks = examples
