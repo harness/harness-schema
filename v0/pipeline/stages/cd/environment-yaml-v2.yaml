@@ -1,0 +1,61 @@
+title: EnvironmentYamlV2
+type: object
+required:
+- environmentRef
+properties:
+  deployToAll:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  environmentInputs:
+    oneOf:
+    - $ref: ../../common/json-node.yaml
+    - type: string
+      pattern: (^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$|^$)
+  environmentRef:
+    type: string
+  filters:
+    oneOf:
+    - type: array
+      items:
+        $ref: filter-yaml.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  gitOpsClusters:
+    oneOf:
+    - type: array
+      items:
+        $ref: cluster-yaml.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  infrastructureDefinition:
+    oneOf:
+    - $ref: infra-structure-definition-yaml.yaml
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  infrastructureDefinitions:
+    oneOf:
+    - type: array
+      items:
+        $ref: infra-structure-definition-yaml.yaml
+    - type: string
+      pattern: (^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$|^$)
+  provisioner:
+    $ref: execution-element-config.yaml
+  serviceOverrideInputs:
+    oneOf:
+    - $ref: ../../common/json-node.yaml
+    - type: string
+      pattern: (^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$|^$)
+  servicesOverrides:
+    type: array
+    items:
+      $ref: service-override-inputs-yaml.yaml
+  description:
+    desc: This is the description for EnvironmentYamlV2
+$schema: http://json-schema.org/draft-07/schema#
