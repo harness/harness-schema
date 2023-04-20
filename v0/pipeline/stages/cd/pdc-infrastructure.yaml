@@ -1,0 +1,110 @@
+title: PdcInfrastructure
+allOf:
+- $ref: infrastructure.yaml
+- {}
+$schema: http://json-schema.org/draft-07/schema#
+oneOf:
+- type: object
+  required:
+  - credentialsRef
+  - hostFilter
+  - connectorRef
+  properties:
+    connectorRef:
+      type: string
+    credentialsRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    dynamicallyProvisioned:
+      oneOf:
+      - type: boolean
+      - type: string
+    hostAttributes:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    hostFilter:
+      $ref: host-filter.yaml
+  additionalProperties: false
+- type: object
+  required:
+  - credentialsRef
+  - hostFilter
+  - hosts
+  properties:
+    credentialsRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    dynamicallyProvisioned:
+      oneOf:
+      - type: boolean
+      - type: string
+    hostAttributes:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    hostFilter:
+      $ref: host-filter.yaml
+    hosts:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+  additionalProperties: false
+- type: object
+  required:
+  - credentialsRef
+  - hostFilter
+  - hostObjectArray
+  properties:
+    credentialsRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    dynamicallyProvisioned:
+      oneOf:
+      - type: boolean
+      - type: string
+    hostAttributes:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    hostFilter:
+      $ref: host-filter.yaml
+    hostObjectArray:
+      oneOf:
+      - $ref: ../../common/json-node.yaml
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  additionalProperties: false
+properties:
+  description:
+    desc: This is the description for PdcInfrastructure

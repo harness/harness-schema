@@ -1,0 +1,62 @@
+title: DeploymentStageConfig
+type: object
+required:
+- execution
+properties:
+  customDeploymentRef:
+    $ref: step-template-ref.yaml
+  deploymentType:
+    type: string
+    enum:
+    - Kubernetes
+    - NativeHelm
+    - Ssh
+    - WinRm
+    - ServerlessAwsLambda
+    - AzureWebApp
+    - CustomDeployment
+    - ECS
+    - Elastigroup
+    - TAS
+    - Asg
+    - GoogleCloudFunctions
+    - AwsLambda
+    - AWS_SAM
+  environment:
+    $ref: environment-yaml-v2.yaml
+  environmentGroup:
+    $ref: environment-group-yaml.yaml
+  environments:
+    $ref: environments-yaml.yaml
+  execution:
+    $ref: execution-element-config.yaml
+  gitOpsEnabled:
+    type: boolean
+  infrastructure:
+    $ref: pipeline-infrastructure.yaml
+  service:
+    $ref: service-yaml-v2.yaml
+  serviceConfig:
+    $ref: service-config.yaml
+  services:
+    $ref: services-yaml.yaml
+  description:
+    desc: This is the description for DeploymentStageConfig
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- oneOf:
+  - required:
+    - serviceConfig
+  - required:
+    - service
+  - required:
+    - services
+- oneOf:
+  - required:
+    - environment
+  - required:
+    - environmentGroup
+  - required:
+    - environments
+  - required:
+    - infrastructure

@@ -1,0 +1,139 @@
+title: ServiceDefinition
+type: object
+required:
+- spec
+- type
+properties:
+  type:
+    type: string
+    enum:
+    - Kubernetes
+    - NativeHelm
+    - Ssh
+    - WinRm
+    - ServerlessAwsLambda
+    - AzureWebApp
+    - CustomDeployment
+    - ECS
+    - Elastigroup
+    - TAS
+    - Asg
+    - GoogleCloudFunctions
+    - AwsLambda
+    - AWS_SAM
+  description:
+    desc: This is the description for ServiceDefinition
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: AWS_SAM
+  then:
+    properties:
+      spec:
+        $ref: aws-sam-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: Asg
+  then:
+    properties:
+      spec:
+        $ref: asg-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: AwsLambda
+  then:
+    properties:
+      spec:
+        $ref: aws-lambda-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: AzureWebApp
+  then:
+    properties:
+      spec:
+        $ref: azure-web-app-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: CustomDeployment
+  then:
+    properties:
+      spec:
+        $ref: custom-deployment-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: ECS
+  then:
+    properties:
+      spec:
+        $ref: ecs-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: Elastigroup
+  then:
+    properties:
+      spec:
+        $ref: elastigroup-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: GoogleCloudFunctions
+  then:
+    properties:
+      spec:
+        $ref: google-cloud-functions-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: Kubernetes
+  then:
+    properties:
+      spec:
+        $ref: kubernetes-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: NativeHelm
+  then:
+    properties:
+      spec:
+        $ref: native-helm-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: ServerlessAwsLambda
+  then:
+    properties:
+      spec:
+        $ref: serverless-aws-lambda-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: Ssh
+  then:
+    properties:
+      spec:
+        $ref: ssh-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: TAS
+  then:
+    properties:
+      spec:
+        $ref: tanzu-application-service-spec.yaml
+- if:
+    properties:
+      type:
+        const: WinRm
+  then:
+    properties:
+      spec:
+        $ref: win-rm-service-spec.yaml

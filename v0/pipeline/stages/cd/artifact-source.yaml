@@ -1,0 +1,175 @@
+title: ArtifactSource
+type: object
+required:
+- identifier
+properties:
+  identifier:
+    type: string
+  metadata:
+    type: string
+  name:
+    type: string
+    pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
+  template:
+    $ref: ../../steps/pie/template-link-config.yaml
+  type:
+    type: string
+    readOnly: true
+    enum:
+    - DockerRegistry
+    - Gcr
+    - Ecr
+    - Nexus3Registry
+    - Nexus2Registry
+    - ArtifactoryRegistry
+    - CustomArtifact
+    - Acr
+    - Jenkins
+    - AmazonS3
+    - GoogleArtifactRegistry
+    - GithubPackageRegistry
+    - AzureArtifacts
+    - AmazonMachineImage
+    - Bamboo
+    - GoogleCloudStorage
+    - GoogleCloudSource
+  description:
+    desc: This is the description for ArtifactSource
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Acr
+  then:
+    properties:
+      spec:
+        $ref: acr-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: AmazonMachineImage
+  then:
+    properties:
+      spec:
+        $ref: ami-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: AmazonS3
+  then:
+    properties:
+      spec:
+        $ref: amazon-s3-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: ArtifactoryRegistry
+  then:
+    properties:
+      spec:
+        $ref: artifactory-registry-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: AzureArtifacts
+  then:
+    properties:
+      spec:
+        $ref: azure-artifacts-config.yaml
+- if:
+    properties:
+      type:
+        const: Bamboo
+  then:
+    properties:
+      spec:
+        $ref: bamboo-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: CustomArtifact
+  then:
+    properties:
+      spec:
+        $ref: custom-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: DockerRegistry
+  then:
+    properties:
+      spec:
+        $ref: docker-hub-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: Ecr
+  then:
+    properties:
+      spec:
+        $ref: ecr-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: Gcr
+  then:
+    properties:
+      spec:
+        $ref: gcr-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: GithubPackageRegistry
+  then:
+    properties:
+      spec:
+        $ref: github-packages-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: GoogleArtifactRegistry
+  then:
+    properties:
+      spec:
+        $ref: google-artifact-registry-config.yaml
+- if:
+    properties:
+      type:
+        const: GoogleCloudSource
+  then:
+    properties:
+      spec:
+        $ref: google-cloud-source-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: GoogleCloudStorage
+  then:
+    properties:
+      spec:
+        $ref: google-cloud-storage-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: Jenkins
+  then:
+    properties:
+      spec:
+        $ref: jenkins-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: Nexus2Registry
+  then:
+    properties:
+      spec:
+        $ref: nexus2-registry-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: Nexus3Registry
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-artifact-config.yaml

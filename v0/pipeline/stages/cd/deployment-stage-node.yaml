@@ -1,0 +1,70 @@
+title: DeploymentStageNode
+type: object
+required:
+- failureStrategies
+- identifier
+- name
+- type
+properties:
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  description:
+    type: string
+    desc: This is the description for DeploymentStageNode
+  failureStrategies:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/failure-strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
+  skipInstances:
+    oneOf:
+    - type: boolean
+    - type: string
+  strategy:
+    $ref: ../../common/strategy-config.yaml
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+  type:
+    type: string
+    enum:
+    - Deployment
+  variables:
+    type: array
+    items:
+      oneOf:
+      - $ref: ../../common/number-ng-variable.yaml
+      - $ref: ../../common/secret-ng-variable.yaml
+      - $ref: ../../common/string-ng-variable.yaml
+  when:
+    oneOf:
+    - $ref: ../../steps/pie/stage-when-condition.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Deployment
+  then:
+    properties:
+      spec:
+        $ref: deployment-stage-config.yaml

@@ -1,0 +1,39 @@
+title: HostFilter
+type: object
+required:
+- type
+properties:
+  type:
+    type: string
+    enum:
+    - All
+    - HostNames
+    - HostAttributes
+  description:
+    desc: This is the description for HostFilter
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: All
+  then:
+    properties:
+      spec:
+        $ref: all-hosts-filter.yaml
+- if:
+    properties:
+      type:
+        const: HostAttributes
+  then:
+    properties:
+      spec:
+        $ref: host-attributes-filter.yaml
+- if:
+    properties:
+      type:
+        const: HostNames
+  then:
+    properties:
+      spec:
+        $ref: host-names-filter.yaml

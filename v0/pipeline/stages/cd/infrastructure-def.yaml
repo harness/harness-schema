@@ -1,0 +1,159 @@
+title: InfrastructureDef
+type: object
+required:
+- spec
+- type
+properties:
+  provisioner:
+    $ref: execution-element-config.yaml
+  type:
+    type: string
+    enum:
+    - KubernetesDirect
+    - KubernetesGcp
+    - KubernetesAzure
+    - Pdc
+    - SshWinRmAzure
+    - ServerlessAwsLambda
+    - AzureWebApp
+    - SshWinRmAws
+    - CustomDeployment
+    - ECS
+    - Elastigroup
+    - TAS
+    - Asg
+    - GoogleCloudFunctions
+    - AWS_SAM
+    - AwsLambda
+  description:
+    desc: This is the description for InfrastructureDef
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: AWS_SAM
+  then:
+    properties:
+      spec:
+        $ref: aws-sam-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: Asg
+  then:
+    properties:
+      spec:
+        $ref: asg-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: AwsLambda
+  then:
+    properties:
+      spec:
+        $ref: aws-lambda-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: AzureWebApp
+  then:
+    properties:
+      spec:
+        $ref: azure-web-app-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: CustomDeployment
+  then:
+    properties:
+      spec:
+        $ref: custom-deployment-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: ECS
+  then:
+    properties:
+      spec:
+        $ref: ecs-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: Elastigroup
+  then:
+    properties:
+      spec:
+        $ref: elastigroup-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: GoogleCloudFunctions
+  then:
+    properties:
+      spec:
+        $ref: google-functions-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: KubernetesAzure
+  then:
+    properties:
+      spec:
+        $ref: k8s-azure-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: KubernetesDirect
+  then:
+    properties:
+      spec:
+        $ref: k8-s-direct-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: KubernetesGcp
+  then:
+    properties:
+      spec:
+        $ref: k8s-gcp-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: Pdc
+  then:
+    properties:
+      spec:
+        $ref: pdc-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: ServerlessAwsLambda
+  then:
+    properties:
+      spec:
+        $ref: serverless-aws-lambda-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: SshWinRmAws
+  then:
+    properties:
+      spec:
+        $ref: ssh-win-rm-aws-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: SshWinRmAzure
+  then:
+    properties:
+      spec:
+        $ref: ssh-win-rm-azure-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: TAS
+  then:
+    properties:
+      spec:
+        $ref: tanzu-application-service-infrastructure.yaml

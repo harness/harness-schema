@@ -1,0 +1,36 @@
+title: EnvironmentGroupYaml
+type: object
+required:
+- envGroupRef
+properties:
+  __uuid:
+    type: string
+  deployToAll:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  envGroupRef:
+    type: string
+  environments:
+    oneOf:
+    - type: array
+      items:
+        $ref: environment-yaml-v2.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  filters:
+    oneOf:
+    - type: array
+      items:
+        $ref: filter-yaml.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  metadata:
+    $ref: environment-group-metadata.yaml
+  description:
+    desc: This is the description for EnvironmentGroupYaml
+$schema: http://json-schema.org/draft-07/schema#
