@@ -1,0 +1,324 @@
+title: SecurityNode
+type: object
+required:
+- identifier
+- name
+- spec
+- type
+properties:
+  description:
+    type: string
+    desc: This is the description for SecurityNode
+  enforce:
+    $ref: ../../common/policy-config.yaml
+  failureStrategies:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/failure-strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
+  strategy:
+    $ref: ../../common/strategy-config.yaml
+  timeout:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  type:
+    type: string
+    enum:
+    - Security
+  when:
+    oneOf:
+    - $ref: ../../common/step-when-condition.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: AWSECR
+  then:
+    properties:
+      spec:
+        $ref: aws-ecr-step-info.yaml
+- if:
+    properties:
+      type:
+        const: AquaTrivy
+  then:
+    properties:
+      spec:
+        $ref: aqua-trivy-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Bandit
+  then:
+    properties:
+      spec:
+        $ref: bandit-step-info.yaml
+- if:
+    properties:
+      type:
+        const: BlackDuck
+  then:
+    properties:
+      spec:
+        $ref: black-duck-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Brakeman
+  then:
+    properties:
+      spec:
+        $ref: brakeman-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Burp
+  then:
+    properties:
+      spec:
+        $ref: burp-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Checkmarx
+  then:
+    properties:
+      spec:
+        $ref: checkmarx-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Clair
+  then:
+    properties:
+      spec:
+        $ref: clair-step-info.yaml
+- if:
+    properties:
+      type:
+        const: DataTheorem
+  then:
+    properties:
+      spec:
+        $ref: data-theorem-step-info.yaml
+- if:
+    properties:
+      type:
+        const: DockerContentTrust
+  then:
+    properties:
+      spec:
+        $ref: docker-content-trust-step-info.yaml
+- if:
+    properties:
+      type:
+        const: External
+  then:
+    properties:
+      spec:
+        $ref: external-step-info.yaml
+- if:
+    properties:
+      type:
+        const: FortifyOnDemand
+  then:
+    properties:
+      spec:
+        $ref: fortify-on-demand-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Grype
+  then:
+    properties:
+      spec:
+        $ref: grype-step-info.yaml
+- if:
+    properties:
+      type:
+        const: JfrogXray
+  then:
+    properties:
+      spec:
+        $ref: jfrog-xray-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Mend
+  then:
+    properties:
+      spec:
+        $ref: mend-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Metasploit
+  then:
+    properties:
+      spec:
+        $ref: metasploit-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Nessus
+  then:
+    properties:
+      spec:
+        $ref: nessus-step-info.yaml
+- if:
+    properties:
+      type:
+        const: NexusIQ
+  then:
+    properties:
+      spec:
+        $ref: nexus-iqstep-info.yaml
+- if:
+    properties:
+      type:
+        const: Nikto
+  then:
+    properties:
+      spec:
+        $ref: nikto-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Nmap
+  then:
+    properties:
+      spec:
+        $ref: nmap-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Openvas
+  then:
+    properties:
+      spec:
+        $ref: openvas-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Owasp
+  then:
+    properties:
+      spec:
+        $ref: owasp-step-info.yaml
+- if:
+    properties:
+      type:
+        const: PrismaCloud
+  then:
+    properties:
+      spec:
+        $ref: prisma-cloud-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Prowler
+  then:
+    properties:
+      spec:
+        $ref: prowler-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Qualys
+  then:
+    properties:
+      spec:
+        $ref: qualys-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Reapsaw
+  then:
+    properties:
+      spec:
+        $ref: reapsaw-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Security
+  then:
+    properties:
+      spec:
+        $ref: security-step-info.yaml
+- if:
+    properties:
+      type:
+        const: ShiftLeft
+  then:
+    properties:
+      spec:
+        $ref: shift-left-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Sniper
+  then:
+    properties:
+      spec:
+        $ref: sniper-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Snyk
+  then:
+    properties:
+      spec:
+        $ref: snyk-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Sonarqube
+  then:
+    properties:
+      spec:
+        $ref: sonarqube-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Sysdig
+  then:
+    properties:
+      spec:
+        $ref: sysdig-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Tenable
+  then:
+    properties:
+      spec:
+        $ref: tenable-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Veracode
+  then:
+    properties:
+      spec:
+        $ref: veracode-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Zap
+  then:
+    properties:
+      spec:
+        $ref: zap-step-info.yaml
