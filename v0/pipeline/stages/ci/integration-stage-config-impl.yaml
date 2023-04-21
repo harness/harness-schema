@@ -1,0 +1,49 @@
+title: IntegrationStageConfigImpl
+type: object
+properties:
+  caching:
+    oneOf:
+    - $ref: caching.yaml
+  cloneCodebase:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  execution:
+    $ref: execution-element-config.yaml
+  infrastructure:
+    oneOf:
+    - $ref: docker-infra-yaml.yaml
+    - $ref: hosted-vm-infra-yaml.yaml
+    - $ref: k8s-direct-infra-yaml.yaml
+    - $ref: k8s-hosted-infra-yaml.yaml
+    - $ref: use-from-stage-infra-yaml.yaml
+    - $ref: vm-infra-yaml.yaml
+  platform:
+    oneOf:
+    - $ref: platform.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  runtime:
+    oneOf:
+    - $ref: cloud-runtime.yaml
+    - $ref: docker-runtime.yaml
+  serviceDependencies:
+    oneOf:
+    - type: array
+      items:
+        $ref: dependency-element.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  sharedPaths:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+  description:
+    desc: This is the description for IntegrationStageConfigImpl
+$schema: http://json-schema.org/draft-07/schema#
