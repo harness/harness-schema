@@ -35021,7 +35021,7 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptWrapper"
                 },
                 "stringMap" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }
               }
             } ],
@@ -35056,7 +35056,7 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptWrapper"
               },
               "stringMap" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldMapStringString"
+                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
               },
               "description" : {
                 "desc" : "This is the description for CreatePRStepInfo"
@@ -35122,49 +35122,6 @@
               },
               "description" : {
                 "desc" : "This is the description for CreatePRStepUpdateConfigScriptBaseSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ParameterFieldMapStringString" : {
-            "title" : "ParameterFieldMapStringString",
-            "type" : "object",
-            "properties" : {
-              "defaultValue" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "executionInput" : {
-                "type" : "boolean"
-              },
-              "expression" : {
-                "type" : "boolean"
-              },
-              "expressionValue" : {
-                "type" : "string"
-              },
-              "inputSetValidator" : {
-                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
-              },
-              "jsonResponseField" : {
-                "type" : "boolean"
-              },
-              "responseField" : {
-                "type" : "string"
-              },
-              "typeString" : {
-                "type" : "boolean"
-              },
-              "value" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "description" : {
-                "desc" : "This is the description for ParameterFieldMapStringString"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -37232,7 +37189,7 @@
                   "type" : "string"
                 },
                 "stringMap" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 },
                 "variables" : {
                   "type" : "array",
@@ -37267,7 +37224,7 @@
                 "type" : "string"
               },
               "stringMap" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldMapStringString"
+                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
               },
               "variables" : {
                 "type" : "array",
@@ -39589,6 +39546,117 @@
             }
           }
         },
+        "common" : {
+          "ParameterFieldMapStringString" : {
+            "title" : "ParameterFieldMapStringString",
+            "type" : "object",
+            "properties" : {
+              "defaultValue" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "executionInput" : {
+                "type" : "boolean"
+              },
+              "expression" : {
+                "type" : "boolean"
+              },
+              "expressionValue" : {
+                "type" : "string"
+              },
+              "inputSetValidator" : {
+                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
+              },
+              "jsonResponseField" : {
+                "type" : "boolean"
+              },
+              "responseField" : {
+                "type" : "string"
+              },
+              "typeString" : {
+                "type" : "boolean"
+              },
+              "value" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for ParameterFieldMapStringString"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "UnitTestReport" : {
+            "title" : "UnitTestReport",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "JUnit" ]
+              },
+              "description" : {
+                "desc" : "This is the description for UnitTestReport"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "JUnit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/JUnitTestReport"
+                  }
+                }
+              }
+            } ]
+          },
+          "JUnitTestReport" : {
+            "title" : "JUnitTestReport",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/UnitTestReportSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "paths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for JUnitTestReport"
+              }
+            }
+          },
+          "UnitTestReportSpec" : {
+            "title" : "UnitTestReportSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UnitTestReportSpec"
+              }
+            }
+          }
+        },
         "cvng" : {
           "CVVerifyStepNode" : {
             "title" : "CVVerifyStepNode",
@@ -40099,7 +40167,7 @@
               "properties" : {
                 "env" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                   }, {
                     "type" : "string"
                   } ]
@@ -40109,7 +40177,7 @@
                 },
                 "with" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                   }, {
                     "type" : "string"
                   } ]
@@ -40122,7 +40190,7 @@
             "properties" : {
               "env" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }, {
                   "type" : "string"
                 } ]
@@ -40132,7 +40200,7 @@
               },
               "with" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }, {
                   "type" : "string"
                 } ]
@@ -40152,49 +40220,6 @@
                 "desc" : "This is the description for CIStepInfo"
               }
             }
-          },
-          "ParameterFieldMapStringString" : {
-            "title" : "ParameterFieldMapStringString",
-            "type" : "object",
-            "properties" : {
-              "defaultValue" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "executionInput" : {
-                "type" : "boolean"
-              },
-              "expression" : {
-                "type" : "boolean"
-              },
-              "expressionValue" : {
-                "type" : "string"
-              },
-              "inputSetValidator" : {
-                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
-              },
-              "jsonResponseField" : {
-                "type" : "boolean"
-              },
-              "responseField" : {
-                "type" : "string"
-              },
-              "typeString" : {
-                "type" : "boolean"
-              },
-              "value" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "description" : {
-                "desc" : "This is the description for ParameterFieldMapStringString"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "BitriseStepNode" : {
             "title" : "BitriseStepNode",
@@ -40277,7 +40302,7 @@
               "properties" : {
                 "env" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                   }, {
                     "type" : "string"
                   } ]
@@ -40287,7 +40312,7 @@
                 },
                 "with" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                   }, {
                     "type" : "string"
                   } ]
@@ -40300,7 +40325,7 @@
             "properties" : {
               "env" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }, {
                   "type" : "string"
                 } ]
@@ -40310,7 +40335,7 @@
               },
               "with" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldMapStringString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }, {
                   "type" : "string"
                 } ]
@@ -40506,7 +40531,7 @@
                 },
                 "reports" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -40670,7 +40695,7 @@
               },
               "reports" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -40723,72 +40748,6 @@
               },
               "description" : {
                 "desc" : "This is the description for RunTestsStepInfo"
-              }
-            }
-          },
-          "UnitTestReport" : {
-            "title" : "UnitTestReport",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "JUnit" ]
-              },
-              "description" : {
-                "desc" : "This is the description for UnitTestReport"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "JUnit"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/JUnitTestReport"
-                  }
-                }
-              }
-            } ]
-          },
-          "JUnitTestReport" : {
-            "title" : "JUnitTestReport",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReportSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "paths" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for JUnitTestReport"
-              }
-            }
-          },
-          "UnitTestReportSpec" : {
-            "title" : "UnitTestReportSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for UnitTestReportSpec"
               }
             }
           },
@@ -41252,7 +41211,7 @@
                 },
                 "reports" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41338,7 +41297,7 @@
               },
               "reports" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41509,7 +41468,7 @@
                 },
                 "reports" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41602,7 +41561,7 @@
               },
               "reports" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41750,7 +41709,7 @@
                 },
                 "reports" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41820,7 +41779,7 @@
               },
               "reports" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/ci/UnitTestReport"
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
