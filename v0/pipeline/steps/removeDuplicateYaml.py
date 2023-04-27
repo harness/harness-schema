@@ -3,7 +3,8 @@ import shutil
 import hashlib
 
 """
-This script will move the common file in a directory to a common module. Refernces will have to be changed manually
+1. This script will move the common file in a directory to a common module. References will have to be changed manually
+2. 
 
 """
 def find_duplicates(rootdir):
