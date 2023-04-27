@@ -4,7 +4,7 @@ import hashlib
 
 """
 1. This script will move the common file in a directory to a common module. References will have to be changed manually
-2. 
+2. Yamls like - background-step-node.yaml, background-step-info.yaml, run-step-info.yaml, run-step-node.yaml were moved manually
 
 """
 def find_duplicates(rootdir):
