@@ -1,0 +1,132 @@
+title: PrismaCloudStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - config
+  - mode
+  - target
+  properties:
+    advanced:
+      $ref: stoyaml-advanced-settings.yaml
+    auth:
+      $ref: stoyaml-auth.yaml
+    baseImageConnectorRefs:
+      $ref: ../../steps/ci/parameter-field-list-string.yaml
+    config:
+      type: string
+      enum:
+      - default
+    image:
+      $ref: stoyaml-image.yaml
+    imagePullPolicy:
+      oneOf:
+      - type: string
+        enum:
+        - Always
+        - Never
+        - IfNotPresent
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    ingestion:
+      $ref: stoyaml-ingestion.yaml
+    mode:
+      type: string
+      enum:
+      - ingestion
+      - orchestration
+      - extraction
+    outputVariables:
+      oneOf:
+      - type: array
+        items:
+          $ref: ../../common/output-ng-variable.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    privileged:
+      oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+    settings:
+      oneOf:
+      - $ref: ../../common/parameter-field-map-string-json-node.yaml
+      - type: string
+    target:
+      $ref: stoyaml-target.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- config
+- mode
+- target
+properties:
+  advanced:
+    $ref: stoyaml-advanced-settings.yaml
+  auth:
+    $ref: stoyaml-auth.yaml
+  baseImageConnectorRefs:
+    $ref: ../../steps/ci/parameter-field-list-string.yaml
+  config:
+    type: string
+    enum:
+    - default
+  image:
+    $ref: stoyaml-image.yaml
+  imagePullPolicy:
+    oneOf:
+    - type: string
+      enum:
+      - Always
+      - Never
+      - IfNotPresent
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  ingestion:
+    $ref: stoyaml-ingestion.yaml
+  mode:
+    type: string
+    enum:
+    - ingestion
+    - orchestration
+    - extraction
+  outputVariables:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/output-ng-variable.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  privileged:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  settings:
+    oneOf:
+    - $ref: ../../common/parameter-field-map-string-json-node.yaml
+    - type: string
+  target:
+    $ref: stoyaml-target.yaml
+  description:
+    desc: This is the description for PrismaCloudStepInfo
