@@ -290,6 +290,8 @@
                 "$ref" : "#/definitions/pipeline/stages/pie/PipelineStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
               } ]
             }
           },
@@ -28743,6 +28745,279 @@
                 "desc" : "This is the description for DependencySpecType"
               }
             }
+          }
+        },
+        "cf" : {
+          "FeatureFlagStageNode" : {
+            "title" : "FeatureFlagStageNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FeatureFlagStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FeatureFlag" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FeatureFlag"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageConfig"
+                  }
+                }
+              }
+            } ]
+          },
+          "FeatureFlagStageConfig" : {
+            "title" : "FeatureFlagStageConfig",
+            "type" : "object",
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/cf/ExecutionElementConfig"
+              },
+              "description" : {
+                "desc" : "This is the description for FeatureFlagStageConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ExecutionElementConfig" : {
+            "title" : "ExecutionElementConfig",
+            "type" : "object",
+            "required" : [ "steps" ],
+            "properties" : {
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/cf/ExecutionWrapperConfig"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              },
+              "description" : {
+                "desc" : "This is the description for ExecutionElementConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ExecutionWrapperConfig" : {
+            "title" : "ExecutionWrapperConfig",
+            "type" : "object",
+            "properties" : {
+              "parallel" : {
+                "$ref" : "#/definitions/pipeline/stages/cf/ParallelStepElementConfig"
+              },
+              "step" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/EmailStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/FlagConfigurationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/QueueStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/HttpStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepNode"
+                } ]
+              },
+              "stepGroup" : {
+                "$ref" : "#/definitions/pipeline/stages/cf/StepGroupElementConfig"
+              },
+              "description" : {
+                "desc" : "This is the description for ExecutionWrapperConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ParallelStepElementConfig" : {
+            "title" : "ParallelStepElementConfig",
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/stages/cf/ExecutionWrapperConfig"
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ParallelStepElementConfig"
+              }
+            }
+          },
+          "StepGroupElementConfig" : {
+            "title" : "StepGroupElementConfig",
+            "type" : "object",
+            "required" : [ "identifier", "name" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/cf/ExecutionWrapperConfig"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              },
+              "strategy" : {
+                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+              },
+              "template" : {
+                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for StepGroupElementConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "oneOf" : [ {
+                "required" : [ "template" ]
+              }, {
+                "required" : [ "steps" ]
+              } ]
+            } ]
           }
         }
       },
