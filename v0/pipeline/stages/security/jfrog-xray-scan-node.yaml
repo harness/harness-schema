@@ -1,0 +1,52 @@
+title: JfrogXrayScanNode
+type: object
+required:
+- identifier
+- name
+- spec
+- type
+properties:
+  description:
+    type: string
+    desc: This is the description for JfrogXrayScanNode
+  enforce:
+    $ref: ../../common/policy-config.yaml
+  failureStrategies:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/failure-strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
+  strategy:
+    $ref: ../../common/strategy-config.yaml
+  timeout:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  type:
+    type: string
+    enum:
+    - JfrogXray
+  when:
+    oneOf:
+    - $ref: ../../common/step-when-condition.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: JfrogXray
+  then:
+    properties:
+      spec:
+        $ref: jfrog-xray-step-info.yaml
