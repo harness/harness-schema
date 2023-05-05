@@ -1,0 +1,30 @@
+title: ElastigroupInstances
+type: object
+required:
+- type
+properties:
+  type:
+    type: string
+    enum:
+    - Fixed
+    - CurrentRunning
+  description:
+    desc: This is the description for ElastigroupInstances
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: CurrentRunning
+  then:
+    properties:
+      spec:
+        $ref: elastigroup-current-running-instances.yaml
+- if:
+    properties:
+      type:
+        const: Fixed
+  then:
+    properties:
+      spec:
+        $ref: elastigroup-fixed-instances.yaml

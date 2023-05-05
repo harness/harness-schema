@@ -1,0 +1,45 @@
+title: GithubStore
+allOf:
+- $ref: store-config.yaml
+- type: object
+  required:
+  - connectorRef
+  - gitFetchType
+  properties:
+    branch:
+      type: string
+    commitId:
+      type: string
+    connectorRef:
+      type: string
+    folderPath:
+      type: string
+    gitFetchType:
+      type: string
+      enum:
+      - Branch
+      - Commit
+    paths:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    repoName:
+      type: string
+- oneOf:
+  - required:
+    - commitId
+  - required:
+    - branch
+- oneOf:
+  - required:
+    - folderPath
+  - required:
+    - paths
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for GithubStore

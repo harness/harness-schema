@@ -1,0 +1,44 @@
+title: AzureCreateARMResourceStepScope
+type: object
+required:
+- spec
+- type
+properties:
+  type:
+    type: string
+  description:
+    desc: This is the description for AzureCreateARMResourceStepScope
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: ManagementGroup
+  then:
+    properties:
+      spec:
+        $ref: azure-management-spec.yaml
+- if:
+    properties:
+      type:
+        const: ResourceGroup
+  then:
+    properties:
+      spec:
+        $ref: azure-resource-group-spec.yaml
+- if:
+    properties:
+      type:
+        const: Subscription
+  then:
+    properties:
+      spec:
+        $ref: azure-subscription-spec.yaml
+- if:
+    properties:
+      type:
+        const: Tenant
+  then:
+    properties:
+      spec:
+        $ref: azure-tenant-spec.yaml
