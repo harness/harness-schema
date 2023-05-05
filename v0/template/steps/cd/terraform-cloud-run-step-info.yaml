@@ -1,0 +1,102 @@
+title: TerraformCloudRunStepInfo
+allOf:
+- if:
+    properties:
+      runType:
+        const: Apply
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-apply-spec.yaml
+  $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - runType
+  - spec
+  properties:
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    runMessage:
+      type: string
+    runType:
+      type: string
+      enum:
+      - RefreshState
+      - PlanOnly
+      - PlanAndApply
+      - PlanAndDestroy
+      - Plan
+      - Apply
+  if:
+    properties:
+      runType:
+        const: Plan
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-plan-spec.yaml
+- if:
+    properties:
+      runType:
+        const: PlanAndApply
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-plan-and-apply-spec.yaml
+- if:
+    properties:
+      runType:
+        const: PlanAndDestroy
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-plan-and-destroy-spec.yaml
+- if:
+    properties:
+      runType:
+        const: PlanOnly
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-plan-only-spec.yaml
+- if:
+    properties:
+      runType:
+        const: RefreshState
+  then:
+    properties:
+      spec:
+        $ref: terraform-cloud-refresh-spec.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- runType
+- spec
+properties:
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  runMessage:
+    type: string
+  runType:
+    type: string
+    enum:
+    - RefreshState
+    - PlanOnly
+    - PlanAndApply
+    - PlanAndDestroy
+    - Plan
+    - Apply
+  description:
+    desc: This is the description for TerraformCloudRunStepInfo

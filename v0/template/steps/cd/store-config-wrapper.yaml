@@ -1,0 +1,150 @@
+title: StoreConfigWrapper
+type: object
+required:
+- spec
+- type
+properties:
+  metadata:
+    type: string
+  type:
+    type: string
+    enum:
+    - CustomRemote
+    - Git
+    - Github
+    - Bitbucket
+    - GitLab
+    - Http
+    - S3
+    - Gcs
+    - Inline
+    - Artifactory
+    - S3Url
+    - InheritFromManifest
+    - Harness
+    - OciHelmChart
+    - AzureRepo
+  description:
+    desc: This is the description for StoreConfigWrapper
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Artifactory
+  then:
+    properties:
+      spec:
+        $ref: artifactory-store-config.yaml
+- if:
+    properties:
+      type:
+        const: AzureRepo
+  then:
+    properties:
+      spec:
+        $ref: azure-repo-store.yaml
+- if:
+    properties:
+      type:
+        const: Bitbucket
+  then:
+    properties:
+      spec:
+        $ref: bitbucket-store.yaml
+- if:
+    properties:
+      type:
+        const: CustomRemote
+  then:
+    properties:
+      spec:
+        $ref: custom-remote-store-config.yaml
+- if:
+    properties:
+      type:
+        const: Gcs
+  then:
+    properties:
+      spec:
+        $ref: gcs-store-config.yaml
+- if:
+    properties:
+      type:
+        const: Git
+  then:
+    properties:
+      spec:
+        $ref: git-store.yaml
+- if:
+    properties:
+      type:
+        const: GitLab
+  then:
+    properties:
+      spec:
+        $ref: git-lab-store.yaml
+- if:
+    properties:
+      type:
+        const: Github
+  then:
+    properties:
+      spec:
+        $ref: github-store.yaml
+- if:
+    properties:
+      type:
+        const: Harness
+  then:
+    properties:
+      spec:
+        $ref: harness-store.yaml
+- if:
+    properties:
+      type:
+        const: Http
+  then:
+    properties:
+      spec:
+        $ref: http-store-config.yaml
+- if:
+    properties:
+      type:
+        const: InheritFromManifest
+  then:
+    properties:
+      spec:
+        $ref: inherit-from-manifest-store-config.yaml
+- if:
+    properties:
+      type:
+        const: Inline
+  then:
+    properties:
+      spec:
+        $ref: inline-store-config.yaml
+- if:
+    properties:
+      type:
+        const: OciHelmChart
+  then:
+    properties:
+      spec:
+        $ref: oci-helm-chart-config.yaml
+- if:
+    properties:
+      type:
+        const: S3
+  then:
+    properties:
+      spec:
+        $ref: s3-store-config.yaml
+- if:
+    properties:
+      type:
+        const: S3Url
+  then:
+    properties:
+      spec:
+        $ref: s3-url-store-config.yaml
