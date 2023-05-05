@@ -1,0 +1,54 @@
+title: PolicyStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+  if:
+    properties:
+      type:
+        const: Custom
+  then:
+    properties:
+      policySpec:
+        $ref: custom-policy-step-spec.yaml
+- type: object
+  required:
+  - policySets
+  properties:
+    metadata:
+      type: string
+    policySets:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    type:
+      type: string
+- if:
+    properties:
+      type:
+        const: Custom
+  then:
+    properties:
+      policySpec:
+        $ref: custom-policy-step-spec.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- policySets
+properties:
+  metadata:
+    type: string
+  policySets:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  type:
+    type: string
+  description:
+    desc: This is the description for PolicyStepInfo

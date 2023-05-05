@@ -1,0 +1,54 @@
+title: CVNGStepInfo
+type: object
+required:
+- spec
+- type
+properties:
+  monitoredService:
+    $ref: monitored-service-node.yaml
+  type:
+    type: string
+  description:
+    desc: This is the description for CVNGStepInfo
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Auto
+  then:
+    properties:
+      spec:
+        $ref: auto-verification-job-spec.yaml
+- if:
+    properties:
+      type:
+        const: Bluegreen
+  then:
+    properties:
+      spec:
+        $ref: blue-green-verification-job-spec.yaml
+- if:
+    properties:
+      type:
+        const: Canary
+  then:
+    properties:
+      spec:
+        $ref: canary-verification-job-spec.yaml
+- if:
+    properties:
+      type:
+        const: LoadTest
+  then:
+    properties:
+      spec:
+        $ref: test-verification-job-spec.yaml
+- if:
+    properties:
+      type:
+        const: Rolling
+  then:
+    properties:
+      spec:
+        $ref: improvised-canary-verification-job-spec.yaml
