@@ -53,13 +53,11 @@ public class SchemaBundleUtils implements SchemaBundler {
   @Override
   public void bundle() {
     try {
-      System.out.println("prashant1");
       String rootSchemaYaml = readFile(yamlEntityType.getEntityRootSchemaPathFromResource());
       JsonNode rootSchemaNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER, rootSchemaYaml);
       ObjectNode definitionNode = YAML_OBJECT_MAPPER.createObjectNode();
       iterateJsonNode(definitionNode, rootSchemaNode, getRootSchemaDirectoryPath());
 
-      System.out.println("prashant2");
       ObjectNode rootSchemaObjectNode = (ObjectNode) rootSchemaNode;
       rootSchemaObjectNode.set(DEFINITIONS, definitionNode);
       String bundledSchema = JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(rootSchemaNode);
