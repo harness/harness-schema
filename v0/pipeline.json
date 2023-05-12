@@ -77,7 +77,7 @@
             }
           },
           "template" : {
-            "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+            "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
           },
           "timeout" : {
             "type" : "string",
@@ -290,7 +290,7 @@
               }, {
                 "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
               }, {
-                "$ref" : "#/definitions/pipeline/stages/pie/PipelineStageNode"
+                "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
               }, {
@@ -371,7 +371,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>$",
@@ -509,43 +509,43 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HttpStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/EmailStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/QueueStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/FlagConfigurationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -619,7 +619,7 @@
                 "$ref" : "#/definitions/pipeline/common/StrategyConfig"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "when" : {
                 "oneOf" : [ {
@@ -642,6 +642,168 @@
                 "required" : [ "steps" ]
               } ]
             } ]
+          },
+          "PipelineStageNode" : {
+            "title" : "PipelineStageNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for PipelineStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Pipeline" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Pipeline"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageConfig"
+                  }
+                }
+              }
+            } ]
+          },
+          "PipelineStageConfig" : {
+            "title" : "PipelineStageConfig",
+            "type" : "object",
+            "required" : [ "org", "pipeline", "project" ],
+            "properties" : {
+              "inputSetReferences" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "inputs" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "org" : {
+                "type" : "string"
+              },
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageOutputs"
+                }
+              },
+              "pipeline" : {
+                "type" : "string"
+              },
+              "pipelineInputs" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "project" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PipelineStageConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "PipelineStageOutputs" : {
+            "title" : "PipelineStageOutputs",
+            "type" : "object",
+            "required" : [ "name", "value" ],
+            "properties" : {
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PipelineStageOutputs"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "approval" : {
@@ -713,7 +875,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>$",
@@ -783,43 +945,43 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/EmailStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/FlagConfigurationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/QueueStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HttpStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -893,7 +1055,7 @@
                 "$ref" : "#/definitions/pipeline/common/StrategyConfig"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "when" : {
                 "oneOf" : [ {
@@ -994,7 +1156,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>$",
@@ -1482,41 +1644,41 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HttpStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/EmailStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/QueueStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -1844,7 +2006,7 @@
                 "$ref" : "#/definitions/pipeline/common/StrategyConfig"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "when" : {
                 "oneOf" : [ {
@@ -3945,7 +4107,7 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "type" : {
                 "type" : "string",
@@ -5432,7 +5594,7 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "type" : {
                 "type" : "string",
@@ -6417,7 +6579,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>$",
@@ -6699,11 +6861,11 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/ci/ShiftLeftScanNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -18007,7 +18169,7 @@
                 "$ref" : "#/definitions/pipeline/common/StrategyConfig"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "when" : {
                 "oneOf" : [ {
@@ -18242,7 +18404,7 @@
               },
               "containerSecurityContext" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/SecurityContext"
+                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -18322,7 +18484,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/Toleration"
+                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
                   }
                 }, {
                   "type" : "string",
@@ -18641,170 +18803,6 @@
             }
           }
         },
-        "pie" : {
-          "PipelineStageNode" : {
-            "title" : "PipelineStageNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "type" ],
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for PipelineStageNode"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-              },
-              "tags" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Pipeline" ]
-              },
-              "variables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Pipeline"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/pie/PipelineStageConfig"
-                  }
-                }
-              }
-            } ]
-          },
-          "PipelineStageConfig" : {
-            "title" : "PipelineStageConfig",
-            "type" : "object",
-            "required" : [ "org", "pipeline", "project" ],
-            "properties" : {
-              "inputSetReferences" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              },
-              "inputs" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/JsonNode"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "org" : {
-                "type" : "string"
-              },
-              "outputs" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/pie/PipelineStageOutputs"
-                }
-              },
-              "pipeline" : {
-                "type" : "string"
-              },
-              "pipelineInputs" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/JsonNode"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "project" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for PipelineStageConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "PipelineStageOutputs" : {
-            "title" : "PipelineStageOutputs",
-            "type" : "object",
-            "required" : [ "name", "value" ],
-            "properties" : {
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "value" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for PipelineStageOutputs"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          }
-        },
         "security" : {
           "SecurityStageNode" : {
             "title" : "SecurityStageNode",
@@ -18874,7 +18872,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -19079,9 +19077,9 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/security/DataTheoremScanNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 } ]
               },
               "description" : {
@@ -28353,7 +28351,7 @@
               },
               "containerSecurityContext" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/SecurityContext"
+                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -28433,7 +28431,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/Toleration"
+                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
                   }
                 }, {
                   "type" : "string",
@@ -28821,7 +28819,7 @@
               },
               "when" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/StageWhenCondition"
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>$",
@@ -28890,43 +28888,43 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/EmailStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/FlagConfigurationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/WaitStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/QueueStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HttpStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -29000,7 +28998,7 @@
                 "$ref" : "#/definitions/pipeline/common/StrategyConfig"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               },
               "when" : {
                 "oneOf" : [ {
@@ -29044,7 +29042,7 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -29732,7 +29730,7 @@
         }
       },
       "steps" : {
-        "pie" : {
+        "custom" : {
           "StageWhenCondition" : {
             "title" : "StageWhenCondition",
             "type" : "object",
@@ -29817,7 +29815,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/HttpStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepInfo"
                   }
                 }
               }
@@ -29849,7 +29847,7 @@
                 "headers" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/HttpHeaderConfig"
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpHeaderConfig"
                   }
                 },
                 "method" : {
@@ -29897,7 +29895,7 @@
               "headers" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/HttpHeaderConfig"
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpHeaderConfig"
                 }
               },
               "method" : {
@@ -30007,7 +30005,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/EmailStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepInfo"
                   }
                 }
               }
@@ -30145,7 +30143,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/QueueStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepInfo"
                   }
                 }
               }
@@ -30249,7 +30247,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ShellScriptStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepInfo"
                   }
                 }
               }
@@ -30288,7 +30286,7 @@
                   }
                 },
                 "executionTarget" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ExecutionTarget"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ExecutionTarget"
                 },
                 "metadata" : {
                   "type" : "string"
@@ -30350,7 +30348,7 @@
                 }
               },
               "executionTarget" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/ExecutionTarget"
+                "$ref" : "#/definitions/pipeline/steps/custom/ExecutionTarget"
               },
               "metadata" : {
                 "type" : "string"
@@ -30470,7 +30468,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/CustomApprovalStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepInfo"
                   }
                 }
               }
@@ -30485,7 +30483,7 @@
               "required" : [ "approvalCriteria", "retryInterval", "scriptTimeout", "shell", "source" ],
               "properties" : {
                 "approvalCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
                 "delegateSelectors" : {
                   "oneOf" : [ {
@@ -30524,7 +30522,7 @@
                   }
                 },
                 "rejectionCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
                 "retryInterval" : {
                   "type" : "string",
@@ -30548,7 +30546,7 @@
             "required" : [ "approvalCriteria", "retryInterval", "scriptTimeout", "shell", "source" ],
             "properties" : {
               "approvalCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -30587,7 +30585,7 @@
                 }
               },
               "rejectionCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "retryInterval" : {
                 "type" : "string",
@@ -30634,7 +30632,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JexlCriteriaSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JexlCriteriaSpec"
                   }
                 }
               }
@@ -30649,7 +30647,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/KeyValuesCriteriaSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/KeyValuesCriteriaSpec"
                   }
                 }
               }
@@ -30658,7 +30656,7 @@
           "JexlCriteriaSpec" : {
             "title" : "JexlCriteriaSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpec"
+              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
             }, {
               "type" : "object",
               "required" : [ "expression" ],
@@ -30689,7 +30687,7 @@
           "KeyValuesCriteriaSpec" : {
             "title" : "KeyValuesCriteriaSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpec"
+              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
             }, {
               "type" : "object",
               "required" : [ "conditions" ],
@@ -30697,7 +30695,7 @@
                 "conditions" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/Condition"
+                    "$ref" : "#/definitions/pipeline/steps/custom/Condition"
                   }
                 },
                 "matchAnyCondition" : {
@@ -30803,7 +30801,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JiraCreateStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepInfo"
                   }
                 }
               }
@@ -30835,7 +30833,7 @@
                 "fields" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JiraField"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                   }
                 },
                 "issueType" : {
@@ -30868,7 +30866,7 @@
               "fields" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraField"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                 }
               },
               "issueType" : {
@@ -30965,7 +30963,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JiraUpdateStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepInfo"
                   }
                 }
               }
@@ -30997,14 +30995,14 @@
                 "fields" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JiraField"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                   }
                 },
                 "issueKey" : {
                   "type" : "string"
                 },
                 "transitionTo" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/TransitionTo"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TransitionTo"
                 }
               }
             } ],
@@ -31030,14 +31028,14 @@
               "fields" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/JiraField"
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                 }
               },
               "issueKey" : {
                 "type" : "string"
               },
               "transitionTo" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TransitionTo"
+                "$ref" : "#/definitions/pipeline/steps/custom/TransitionTo"
               },
               "description" : {
                 "desc" : "This is the description for JiraUpdateStepInfo"
@@ -31079,7 +31077,7 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "template" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/TemplateLinkConfig"
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -31173,7 +31171,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowApprovalStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepInfo"
                   }
                 }
               }
@@ -31188,10 +31186,10 @@
               "required" : [ "approvalCriteria", "connectorRef", "ticketNumber", "ticketType" ],
               "properties" : {
                 "approvalCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
                 "changeWindow" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowChangeWindowSpec"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowChangeWindowSpec"
                 },
                 "connectorRef" : {
                   "type" : "string"
@@ -31209,7 +31207,7 @@
                   } ]
                 },
                 "rejectionCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
                 "ticketNumber" : {
                   "type" : "string"
@@ -31224,10 +31222,10 @@
             "required" : [ "approvalCriteria", "connectorRef", "ticketNumber", "ticketType" ],
             "properties" : {
               "approvalCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "changeWindow" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowChangeWindowSpec"
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowChangeWindowSpec"
               },
               "connectorRef" : {
                 "type" : "string"
@@ -31245,7 +31243,7 @@
                 } ]
               },
               "rejectionCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "ticketNumber" : {
                 "type" : "string"
@@ -31340,7 +31338,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JiraApprovalStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepInfo"
                   }
                 }
               }
@@ -31355,7 +31353,7 @@
               "required" : [ "approvalCriteria", "connectorRef", "issueKey" ],
               "properties" : {
                 "approvalCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
                 "connectorRef" : {
                   "type" : "string"
@@ -31382,7 +31380,7 @@
                   "type" : "string"
                 },
                 "rejectionCriteria" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 }
               }
             } ],
@@ -31391,7 +31389,7 @@
             "required" : [ "approvalCriteria", "connectorRef", "issueKey" ],
             "properties" : {
               "approvalCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "connectorRef" : {
                 "type" : "string"
@@ -31418,7 +31416,7 @@
                 "type" : "string"
               },
               "rejectionCriteria" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/CriteriaSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
               },
               "description" : {
                 "desc" : "This is the description for JiraApprovalStepInfo"
@@ -31490,7 +31488,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/HarnessApprovalStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepInfo"
                   }
                 }
               }
@@ -31511,11 +31509,11 @@
                 "approverInputs" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ApproverInputInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ApproverInputInfo"
                   }
                 },
                 "approvers" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/Approvers"
+                  "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
                 },
                 "includePipelineExecutionHistory" : {
                   "oneOf" : [ {
@@ -31537,11 +31535,11 @@
               "approverInputs" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ApproverInputInfo"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ApproverInputInfo"
                 }
               },
               "approvers" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/Approvers"
+                "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
               },
               "includePipelineExecutionHistory" : {
                 "oneOf" : [ {
@@ -31677,7 +31675,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/BarrierStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepInfo"
                   }
                 }
               }
@@ -31773,7 +31771,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowCreateStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepInfo"
                   }
                 }
               }
@@ -31805,7 +31803,7 @@
                 "fields" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowField"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                   }
                 },
                 "templateName" : {
@@ -31841,7 +31839,7 @@
               "fields" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowField"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                 }
               },
               "templateName" : {
@@ -31940,7 +31938,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowUpdateStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepInfo"
                   }
                 }
               }
@@ -31972,7 +31970,7 @@
                 "fields" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowField"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                   }
                 },
                 "templateName" : {
@@ -32011,7 +32009,7 @@
               "fields" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowField"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                 }
               },
               "templateName" : {
@@ -32096,7 +32094,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowImportSetStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepInfo"
                   }
                 }
               }
@@ -32126,7 +32124,7 @@
                   } ]
                 },
                 "importData" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ImportDataSpecWrapper"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpecWrapper"
                 },
                 "stagingTableName" : {
                   "type" : "string"
@@ -32153,7 +32151,7 @@
                 } ]
               },
               "importData" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/ImportDataSpecWrapper"
+                "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpecWrapper"
               },
               "stagingTableName" : {
                 "type" : "string"
@@ -32188,7 +32186,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/JsonImportDataSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/JsonImportDataSpec"
                   }
                 }
               }
@@ -32203,7 +32201,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/KeyValuesImportDataSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/KeyValuesImportDataSpec"
                   }
                 }
               }
@@ -32212,7 +32210,7 @@
           "JsonImportDataSpec" : {
             "title" : "JsonImportDataSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/ImportDataSpec"
+              "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpec"
             }, {
               "type" : "object",
               "required" : [ "jsonBody" ],
@@ -32243,7 +32241,7 @@
           "KeyValuesImportDataSpec" : {
             "title" : "KeyValuesImportDataSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/ImportDataSpec"
+              "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpec"
             }, {
               "type" : "object",
               "required" : [ "fields" ],
@@ -32251,7 +32249,7 @@
                 "fields" : {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ServiceNowField"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                   }
                 }
               }
@@ -32328,7 +32326,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/FlagConfigurationStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepInfo"
                   }
                 }
               }
@@ -32352,7 +32350,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/pie/PatchInstruction"
+                      "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
                     }
                   }, {
                     "type" : "string",
@@ -32376,7 +32374,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/PatchInstruction"
+                    "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
                   }
                 }, {
                   "type" : "string",
@@ -32469,7 +32467,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/PolicyStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepInfo"
                   }
                 }
               }
@@ -32488,7 +32486,7 @@
               "then" : {
                 "properties" : {
                   "policySpec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/CustomPolicyStepSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomPolicyStepSpec"
                   }
                 }
               },
@@ -32527,7 +32525,7 @@
               "then" : {
                 "properties" : {
                   "policySpec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/CustomPolicyStepSpec"
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomPolicyStepSpec"
                   }
                 }
               }
@@ -32562,7 +32560,7 @@
           "CustomPolicyStepSpec" : {
             "title" : "CustomPolicyStepSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/PolicySpec"
+              "$ref" : "#/definitions/pipeline/steps/custom/PolicySpec"
             }, {
               "type" : "object",
               "required" : [ "payload" ],
@@ -32654,7 +32652,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/WaitStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepInfo"
                   }
                 }
               }
@@ -32758,7 +32756,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepInfo"
                   }
                 }
               }
@@ -32813,7 +32811,7 @@
                 },
                 "infrastructure" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ContainerK8sInfra"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
                   } ]
                 },
                 "metadata" : {
@@ -32904,7 +32902,7 @@
               },
               "infrastructure" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerK8sInfra"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
                 } ]
               },
               "metadata" : {
@@ -32956,13 +32954,13 @@
           "ContainerK8sInfra" : {
             "title" : "ContainerK8sInfra",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/pie/ContainerStepInfra"
+              "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepInfra"
             }, {
               "type" : "object",
               "required" : [ "spec", "type" ],
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/steps/pie/ContainerInfraYamlSpec"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerInfraYamlSpec"
                 },
                 "type" : {
                   "type" : "string",
@@ -33021,7 +33019,7 @@
               },
               "containerSecurityContext" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/pie/SecurityContext"
+                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -33089,7 +33087,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/Toleration"
+                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
                   }
                 }, {
                   "type" : "string",
@@ -33101,7 +33099,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/pie/ContainerVolume"
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerVolume"
                   }
                 }, {
                   "type" : "string",
@@ -33129,7 +33127,7 @@
                 } ]
               },
               "capabilities" : {
-                "$ref" : "#/definitions/pipeline/steps/pie/Capabilities"
+                "$ref" : "#/definitions/pipeline/steps/custom/Capabilities"
               },
               "privileged" : {
                 "oneOf" : [ {
