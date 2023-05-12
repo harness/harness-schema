@@ -7,6 +7,7 @@
 
 package io.harness;
 
+import com.sun.jdi.request.InvalidRequestStateException;
 import io.harness.bundler.SchemaBundler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,8 +17,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
-import io.harness.EmptyPredicate;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,15 +61,11 @@ public class SchemaBundleUtils implements SchemaBundler {
       rootSchemaObjectNode.set(DEFINITIONS, definitionNode);
       String bundledSchema = JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(rootSchemaNode);
       String workingDir = System.getenv("BUILD_WORKSPACE_DIRECTORY");
-      System.out.println(workingDir +"/" +yamlEntityType.getSchemaVersion().getDirectoryPath() + yamlEntityType.getEntityName()
-              + ".json");
       Files.write(Paths.get(workingDir +"/" + yamlEntityType.getSchemaVersion().getDirectoryPath() + yamlEntityType.getEntityName()
                       + ".json"),
           bundledSchema.getBytes(StandardCharsets.UTF_8));
-      System.out.println(workingDir + yamlEntityType.getSchemaVersion().getDirectoryPath() + yamlEntityType.getEntityName()
-              + ".json");
     } catch (Exception ex) {
-//      throw new Exception("Exception in doing I/O operations");
+      throw new InvalidRequestStateException(String.format("Exception in doing I/O operations %s", ex));
     }
   }
 
@@ -109,7 +104,7 @@ public class SchemaBundleUtils implements SchemaBundler {
         String childYamlSchema = readFile(newPath.toString());
         JsonNode childSchemaNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER, childYamlSchema);
         if (!childSchemaNode.has(TITLE)) {
-//          throw new Exception("Title is missing from file: " + refValue);
+          throw new InvalidRequestStateException("Title is missing from file: " + refValue);
         }
 
         if (refValue.contains("template_config")) {
@@ -201,7 +196,7 @@ public class SchemaBundleUtils implements SchemaBundler {
       if (configRefValue.contains(".yaml")) {
         int lastSlashIndex = configRefValue.lastIndexOf("/");
         if (lastSlashIndex == -1) {
-//          throw new Exception(String.format("ConfigRef %s does not have / in it.", configRefValue));
+          throw new InvalidRequestStateException(String.format("ConfigRef %s does not have / in it.", configRefValue));
         }
         String configFileName = configRefValue.substring(0, lastSlashIndex);
         String fieldInConfigFile = configRefValue.substring(lastSlashIndex + 1);
@@ -210,7 +205,7 @@ public class SchemaBundleUtils implements SchemaBundler {
         String configFile = readFile(configFilePath.toString());
         JsonNode configFileNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER, configFile);
         if (!configFileNode.has(fieldInConfigFile)) {
-//          throw new Exception("Invalid config file reference: " + configRefValue);
+          throw new InvalidRequestStateException("Invalid config file reference: " + configRefValue);
         }
         JsonNode configNode = configFileNode.get(fieldInConfigFile);
         if (configNode.isArray()) {
@@ -269,14 +264,13 @@ public class SchemaBundleUtils implements SchemaBundler {
 
   private JsonNode convertYamlToJsonNode(ObjectMapper objectMapper, String yaml) {
     if (EmptyPredicate.isEmpty(yaml)) {
-//      throw new Exception("Yaml being converted to jsonNode is empty");
+      throw new InvalidRequestStateException("Yaml being converted to jsonNode is empty");
     }
     try {
       return objectMapper.readValue(yaml, JsonNode.class);
     } catch (JsonProcessingException e) {
-//      throw new RuntimeException(e);
+      throw new InvalidRequestStateException(e.getMessage());
     }
-    return null;
   }
 
   /**
@@ -290,8 +284,7 @@ public class SchemaBundleUtils implements SchemaBundler {
     try {
       return Resources.toString(Objects.requireNonNull(classLoader.getResource(filename)), StandardCharsets.UTF_8);
     } catch (Exception e) {
-//      throw new Exception("Could not read resource file: " + filename);
+      throw new InvalidRequestStateException("Could not read resource file: " + filename);
     }
-    return null;
   }
 }
