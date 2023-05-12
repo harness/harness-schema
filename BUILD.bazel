@@ -1,0 +1,209 @@
+# Copyright 2022 Harness Inc. All rights reserved.
+# Use of this source code is governed by the PolyForm Free Trial 1.0.0 license
+# that can be found in the licenses directory at the root of this repository, also available at
+# https://polyformproject.org/wp-content/uploads/2020/05/PolyForm-Free-Trial-1.0.0.txt.
+
+exports_files([
+    "tools/bazel/signer.sh",
+])
+
+filegroup(
+    name = "container_common_files",
+    srcs = glob([
+        "AppServerAgent-1.8-21.11.2.33305.zip",
+        "protocol.info",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "delegate_proxy_files",
+    srcs = glob([
+        "destination/storage/**/*",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+########################################################################################################
+############################################  Go Starts Here  ##########################################
+########################################################################################################
+
+# Refer for a list of all gazelle directives: http://www.lib4dev.in/info/bazelbuild/bazel-gazelle/112655189
+# gazelle:exclude  src/vendor
+# gazelle:exclude  vendor
+# gazelle:exclude  build
+# gazelle:exclude  */target
+# gazelle:exclude {990-commons-test,970-grpc,970-api-services-beans,959-timeout-engine,953-git-sync-commons,959-timeout-engine,950-timeout-engine,950-delegate-tasks-beans,950-wait-engine,867-polling-contracts,22-ng-delegate-service-beans,24-manager-delegate-service-beans,24-ng-manager-service-beans,954-pms-contracts,400-rest,160-stress-tester}
+
+# gazelle:exclude .git/
+# gazelle:exclude pkg/
+## gazelle:proto_strip_import_prefix /proto/harness.io/
+
+load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/harness/harness-core
+gazelle(name = "gazelle")
+
+load("@io_bazel_rules_go//go:def.bzl", "go_path", "nogo")
+
+buildifier(
+    name = "buildifier",
+)
+
+nogo(
+    name = "nogo_vet",
+    vet = True,
+    visibility = ["//visibility:public"],
+)
+
+# Reference: https://github.com/google/gvisor/blob/release-20210830.0/BUILD#L101
+
+# gopath defines a directory that is structured in a way that is compatible
+# with standard Go tools. Things like godoc, editors and refactor tools should
+# work as expected.
+#
+# The files in this tree are symlinks to the true sources.
+go_path(
+    name = "gopath",
+    mode = "link",
+    deps = [
+        # Main binaries.
+        #
+        # For reasons related to reproducibility of the generated
+        # files, in order to ensure that :gopath produces only a
+        # a single "pure" version of all files, we can only depend
+        # on go_library targets here, and not go_binary.
+
+        # Note: If any library is not referenced by below ones, then add them in this list.
+        "//product/ci/engine:engine_lib",
+        "//product/ci/addon:addon_lib",
+        "//product/ci/split_tests:split_tests_lib",
+        "//product/ci/scm:scm_lib",
+        "//product/log-service:log-service_lib",
+    ],
+)
+
+########################################################################################################
+########################################  JAVA Starts Here    ##########################################
+########################################################################################################
+
+load(
+    "@bazel_tools//tools/jdk:default_java_toolchain.bzl",
+    "BASE_JDK9_JVM_OPTS",
+    "DEFAULT_TOOLCHAIN_CONFIGURATION",
+    "default_java_toolchain",
+)
+
+default_java_toolchain(
+    name = "harness_no_fdLimit_jdk11_toolchain",
+    configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,  # One of predefined configurations
+    jvm_opts = BASE_JDK9_JVM_OPTS + ["-XX:-MaxFDLimit"],  # Additional JDK options
+    source_version = "11",
+    target_version = "11",
+)
+
+default_java_toolchain(
+    name = "harness_no_fdLimit_jdk17_toolchain",
+    configuration = dict(),
+    java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
+    jvm_opts = BASE_JDK9_JVM_OPTS + ["-XX:-MaxFDLimit"],  # Additional JDK options
+    source_version = "17",
+    target_version = "17",
+)
+
+java_plugin(
+    name = "lombok_plugin",
+    processor_class = "lombok.launch.AnnotationProcessorHider$AnnotationProcessor",
+    visibility = ["//visibility:public"],
+    deps = ["@maven//:org_projectlombok_lombok"],
+)
+
+java_library(
+    name = "lombok",
+    exported_plugins = [":lombok_plugin"],
+    visibility = ["//visibility:public"],
+    exports = [
+        ":lombok_maven_only",
+        "@maven//:com_google_code_findbugs_annotations",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+java_library(
+    name = "lombok_maven_only",
+    neverlink = 1,
+    exports = ["@maven//:org_projectlombok_lombok"],
+)
+
+filegroup(
+    name = "git",
+    srcs = glob(
+        [".git/**/*"],
+        exclude = [".git/**/*[*"],  # gitk creates temp files with []
+    ),
+    tags = ["manual"],
+)
+
+filegroup(
+    name = "coverage_report",
+    srcs = ["bazel-out/_coverage/_coverage_report.dat"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "test_reports",
+    srcs = glob(["bazel-testlogs/**/test.xml"]),
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "resource",
+    srcs = [
+        "cert.pem",
+        "key.pem",
+        "keystore.jks",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+load("@rules_python//python:defs.bzl", "py_runtime", "py_runtime_pair")
+
+py_runtime(
+    name = "python3_runtime",
+    files = ["@python_interpreter//:files"],
+    interpreter = "@python_interpreter//:python_bin",
+    python_version = "PY3",
+    visibility = ["//visibility:public"],
+)
+
+py_runtime_pair(
+    name = "py_runtime_pair",
+    py2_runtime = None,
+    py3_runtime = ":python3_runtime",
+)
+
+toolchain(
+    name = "py_toolchain",
+    toolchain = ":py_runtime_pair",
+    toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+)
+
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+pkg_tar(
+    name = "alpn_boot_8.1.13.v20181017_tar",
+    files = {
+        "@alpn_boot_8.1.13.v20181017//file": "alpn-boot-8.1.13.v20181017.jar",
+    },
+    mode = "0644",
+    package_dir = "/opt/harness-delegate",
+    tags = [
+        "manual",
+        "no-cache",
+        "no-ide",
+    ],
+    visibility = ["//visibility:public"],
+)
