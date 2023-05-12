@@ -1,7 +1,7 @@
 
-# waitStep
+# Wait Step
 
-### Yaml
+### YAML
 
 ```yaml
 |-
@@ -13,7 +13,7 @@
         duration: 10s
 ```
 
-Harness Wait Step Yaml schema.
+Harness Wait Step YAML schema.
 
 ## `description`
 
