@@ -3908,6 +3908,195 @@
               }
             }
           },
+          "Attestation" : {
+            "title" : "Attestation",
+            "type" : "object",
+            "properties" : {
+              "privateKey" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Attestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignAttestation" : {
+            "title" : "CosignAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "password" : {
+                  "type" : "string"
+                },
+                "privateKey" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignAttestation"
+              }
+            }
+          },
+          "AttestationSpec" : {
+            "title" : "AttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AttestationSpec"
+              }
+            }
+          },
+          "SbomSource" : {
+            "title" : "SbomSource",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "image" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "image"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ImageSbomSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "ImageSbomSource" : {
+            "title" : "ImageSbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ImageSbomSource"
+              }
+            }
+          },
+          "SbomSourceSpec" : {
+            "title" : "SbomSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomSourceSpec"
+              }
+            }
+          },
+          "SbomOrchestrationTool" : {
+            "title" : "SbomOrchestrationTool",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Syft" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationTool"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Syft"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
+                  }
+                }
+              }
+            } ]
+          },
+          "SyftSbomOrchestration" : {
+            "title" : "SyftSbomOrchestration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "spdx-json" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SyftSbomOrchestration"
+              }
+            }
+          },
+          "SbomOrchestrationSpec" : {
+            "title" : "SbomOrchestrationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationSpec"
+              }
+            }
+          },
           "StageWhenCondition" : {
             "title" : "StageWhenCondition",
             "type" : "object",
@@ -5686,12 +5875,18 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -5706,7 +5901,7 @@
                   "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               }
@@ -6004,12 +6199,18 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -6024,7 +6225,7 @@
                   "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               }
@@ -6289,7 +6490,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               },
@@ -6302,7 +6503,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -6317,7 +6524,7 @@
                   "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               }
@@ -6360,7 +6567,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               },
@@ -6373,7 +6580,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -6388,7 +6601,7 @@
                   "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               }
@@ -6434,7 +6647,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -6557,7 +6776,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -6619,7 +6844,7 @@
                 "buildTool" : {
                   "oneOf" : [ {
                     "type" : "string",
-                    "enum" : [ "Maven", "Bazel", "Gradle", "Dotnet", "Nunitconsole", "SBT" ]
+                    "enum" : [ "Maven", "Bazel", "Gradle", "Dotnet", "Nunitconsole", "SBT", "Pytest", "Unittest" ]
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -6661,14 +6886,14 @@
                     "enum" : [ "Always", "Never", "IfNotPresent" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
                 "language" : {
                   "oneOf" : [ {
                     "type" : "string",
-                    "enum" : [ "Java", "Kotlin", "Scala", "Csharp" ]
+                    "enum" : [ "Java", "Kotlin", "Scala", "Csharp", "Python" ]
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -6708,6 +6933,16 @@
                     "minLength" : 1
                   } ]
                 },
+                "pythonVersion" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "3", "2" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
                 "reports" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
@@ -6741,7 +6976,7 @@
                     "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -6749,6 +6984,9 @@
                   "type" : "string"
                 },
                 "testGlobs" : {
+                  "type" : "string"
+                },
+                "testRoot" : {
                   "type" : "string"
                 },
                 "testSplitStrategy" : {
@@ -6783,7 +7021,7 @@
               "buildTool" : {
                 "oneOf" : [ {
                   "type" : "string",
-                  "enum" : [ "Maven", "Bazel", "Gradle", "Dotnet", "Nunitconsole", "SBT" ]
+                  "enum" : [ "Maven", "Bazel", "Gradle", "Dotnet", "Nunitconsole", "SBT", "Pytest", "Unittest" ]
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -6825,14 +7063,14 @@
                   "enum" : [ "Always", "Never", "IfNotPresent" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
               "language" : {
                 "oneOf" : [ {
                   "type" : "string",
-                  "enum" : [ "Java", "Kotlin", "Scala", "Csharp" ]
+                  "enum" : [ "Java", "Kotlin", "Scala", "Csharp", "Python" ]
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -6872,6 +7110,16 @@
                   "minLength" : 1
                 } ]
               },
+              "pythonVersion" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "3", "2" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
               "reports" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
@@ -6905,7 +7153,7 @@
                   "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -6913,6 +7161,9 @@
                 "type" : "string"
               },
               "testGlobs" : {
+                "type" : "string"
+              },
+              "testRoot" : {
                 "type" : "string"
               },
               "testSplitStrategy" : {
@@ -6951,7 +7202,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -7018,7 +7275,7 @@
                     "enum" : [ "Always", "Never", "IfNotPresent" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -7088,7 +7345,7 @@
                   "enum" : [ "Always", "Never", "IfNotPresent" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -7157,7 +7414,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -7204,13 +7467,13 @@
               "required" : [ "attestation", "source", "tool" ],
               "properties" : {
                 "attestation" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/Attestation"
+                  "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
                 },
                 "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SbomSource"
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
                 },
                 "tool" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SbomOrchestrationTool"
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
                 }
               }
             } ],
@@ -7219,154 +7482,16 @@
             "required" : [ "attestation", "source", "tool" ],
             "properties" : {
               "attestation" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/Attestation"
+                "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
               },
               "source" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/SbomSource"
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
               },
               "tool" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/SbomOrchestrationTool"
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
               },
               "description" : {
                 "desc" : "This is the description for SscaOrchestrationStepInfo"
-              }
-            }
-          },
-          "Attestation" : {
-            "title" : "Attestation",
-            "type" : "object",
-            "required" : [ "privateKey" ],
-            "properties" : {
-              "privateKey" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for Attestation"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "SbomSource" : {
-            "title" : "SbomSource",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "image" ]
-              },
-              "description" : {
-                "desc" : "This is the description for SbomSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "image"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ImageSbomSource"
-                  }
-                }
-              }
-            } ]
-          },
-          "ImageSbomSource" : {
-            "title" : "ImageSbomSource",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/SbomSourceSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for ImageSbomSource"
-              }
-            }
-          },
-          "SbomSourceSpec" : {
-            "title" : "SbomSourceSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SbomSourceSpec"
-              }
-            }
-          },
-          "SbomOrchestrationTool" : {
-            "title" : "SbomOrchestrationTool",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Syft" ]
-              },
-              "description" : {
-                "desc" : "This is the description for SbomOrchestrationTool"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Syft"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SyftSbomOrchestration"
-                  }
-                }
-              }
-            } ]
-          },
-          "SyftSbomOrchestration" : {
-            "title" : "SyftSbomOrchestration",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/SbomOrchestrationSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "format" : {
-                  "type" : "string",
-                  "enum" : [ "spdx-json" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SyftSbomOrchestration"
-              }
-            }
-          },
-          "SbomOrchestrationSpec" : {
-            "title" : "SbomOrchestrationSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SbomOrchestrationSpec"
               }
             }
           },
@@ -7391,7 +7516,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -7751,7 +7882,13 @@
                 } ]
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -7875,7 +8012,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -7946,7 +8089,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -8017,7 +8166,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -8088,7 +8243,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
@@ -8159,7 +8320,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
