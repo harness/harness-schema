@@ -26,7 +26,11 @@ properties:
     type: string
     pattern: ^[a-zA-Z_][-0-9a-zA-Z_\s]{0,127}$
   strategy:
-    $ref: ../../common/strategy-config.yaml
+    oneOf:
+    - $ref: ../../common/strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
   timeout:
     type: string
     pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
@@ -50,6 +54,14 @@ allOf:
     properties:
       spec:
         $ref: aws-ecr-step-info.yaml
+- if:
+    properties:
+      type:
+        const: AWSSecurityHub
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/aws-security-hub-step-info.yaml
 - if:
     properties:
       type:
@@ -109,6 +121,22 @@ allOf:
 - if:
     properties:
       type:
+        const: CodeQL
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/codeql-step-info.yaml
+- if:
+    properties:
+      type:
+        const: CustomIngest
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/custom-ingest-step-info.yaml
+- if:
+    properties:
+      type:
         const: DataTheorem
   then:
     properties:
@@ -125,19 +153,27 @@ allOf:
 - if:
     properties:
       type:
-        const: External
-  then:
-    properties:
-      spec:
-        $ref: external-step-info.yaml
-- if:
-    properties:
-      type:
         const: FortifyOnDemand
   then:
     properties:
       spec:
         $ref: fortify-on-demand-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Fossa
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/fossa-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Gitleaks
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/gitleaks-step-info.yaml
 - if:
     properties:
       type:
@@ -258,6 +294,14 @@ allOf:
     properties:
       spec:
         $ref: security-step-info.yaml
+- if:
+    properties:
+      type:
+        const: Semgrep
+  then:
+    properties:
+      spec:
+        $ref: ../../steps/common/semgrep-step-info.yaml
 - if:
     properties:
       type:
