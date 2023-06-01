@@ -838,7 +838,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -867,7 +867,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "tags" : {
                 "type" : "object",
@@ -963,43 +969,45 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -1037,7 +1045,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -1070,7 +1078,13 @@
                 "minItems" : 1
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "template" : {
                 "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
@@ -34981,6 +34995,319 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CdSscaOrchestrationStepNode" : {
+            "title" : "CdSscaOrchestrationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for CdSscaOrchestrationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CdSscaOrchestration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CdSscaOrchestration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "CdSscaOrchestrationStepInfo" : {
+            "title" : "CdSscaOrchestrationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "attestation", "infrastructure", "source", "tool" ],
+              "properties" : {
+                "attestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
+                },
+                "infrastructure" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
+                  } ]
+                },
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "attestation", "infrastructure", "source", "tool" ],
+            "properties" : {
+              "attestation" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
+              },
+              "infrastructure" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
+                } ]
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
+              },
+              "description" : {
+                "desc" : "This is the description for CdSscaOrchestrationStepInfo"
+              }
+            }
+          },
+          "Attestation" : {
+            "title" : "Attestation",
+            "type" : "object",
+            "properties" : {
+              "privateKey" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Attestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignAttestation" : {
+            "title" : "CosignAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "password" : {
+                  "type" : "string"
+                },
+                "privateKey" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignAttestation"
+              }
+            }
+          },
+          "AttestationSpec" : {
+            "title" : "AttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AttestationSpec"
+              }
+            }
+          },
+          "SbomSource" : {
+            "title" : "SbomSource",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "image" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "image"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ImageSbomSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "ImageSbomSource" : {
+            "title" : "ImageSbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ImageSbomSource"
+              }
+            }
+          },
+          "SbomSourceSpec" : {
+            "title" : "SbomSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomSourceSpec"
+              }
+            }
+          },
+          "SbomOrchestrationTool" : {
+            "title" : "SbomOrchestrationTool",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Syft" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationTool"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Syft"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
+                  }
+                }
+              }
+            } ]
+          },
+          "SyftSbomOrchestration" : {
+            "title" : "SyftSbomOrchestration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "spdx-json" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SyftSbomOrchestration"
+              }
+            }
+          },
+          "SbomOrchestrationSpec" : {
+            "title" : "SbomOrchestrationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationSpec"
+              }
+            }
           }
         },
         "common" : {
