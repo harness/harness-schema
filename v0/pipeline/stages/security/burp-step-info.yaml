@@ -9,12 +9,37 @@ allOf:
   properties:
     advanced:
       $ref: stoyaml-advanced-settings.yaml
+    auth:
+      $ref: stoyaml-auth.yaml
     baseImageConnectorRefs:
       $ref: ../../steps/ci/parameter-field-list-string.yaml
     config:
       type: string
       enum:
       - default
+      - never-stop-crawl-due-to-application-errors
+      - never-stop-audit-due-to-application-errors
+      - minimize-false-positives
+      - minimize-false-negatives
+      - crawl-strategy-most-complete
+      - crawl-strategy-more-complete
+      - crawl-strategy-fastest
+      - crawl-strategy-faster
+      - crawl-limit-60-minutes
+      - crawl-limit-30-minutes
+      - crawl-limit-10-minutes
+      - crawl-and-audit-lightweight
+      - crawl-and-audit-fast
+      - crawl-and-audit-deep
+      - crawl-and-audit-balanced
+      - audit-coverage-thorough
+      - audit-coverage-maximum
+      - audit-checks-passive
+      - audit-checks-medium-active
+      - audit-checks-light-active
+      - audit-checks-critical-issues-only
+      - audit-checks-all-except-time-based-detection-methods
+      - audit-checks-all-except-java-script-analysis
     imagePullPolicy:
       oneOf:
       - type: string
@@ -23,7 +48,7 @@ allOf:
         - Never
         - IfNotPresent
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        pattern: (<\+.+>.*)
         minLength: 1
     ingestion:
       $ref: stoyaml-ingestion.yaml
@@ -62,6 +87,8 @@ allOf:
       - type: string
     target:
       $ref: stoyaml-target.yaml
+    tool:
+      $ref: stoyaml-burp-tool-data.yaml
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
@@ -71,12 +98,37 @@ required:
 properties:
   advanced:
     $ref: stoyaml-advanced-settings.yaml
+  auth:
+    $ref: stoyaml-auth.yaml
   baseImageConnectorRefs:
     $ref: ../../steps/ci/parameter-field-list-string.yaml
   config:
     type: string
     enum:
     - default
+    - never-stop-crawl-due-to-application-errors
+    - never-stop-audit-due-to-application-errors
+    - minimize-false-positives
+    - minimize-false-negatives
+    - crawl-strategy-most-complete
+    - crawl-strategy-more-complete
+    - crawl-strategy-fastest
+    - crawl-strategy-faster
+    - crawl-limit-60-minutes
+    - crawl-limit-30-minutes
+    - crawl-limit-10-minutes
+    - crawl-and-audit-lightweight
+    - crawl-and-audit-fast
+    - crawl-and-audit-deep
+    - crawl-and-audit-balanced
+    - audit-coverage-thorough
+    - audit-coverage-maximum
+    - audit-checks-passive
+    - audit-checks-medium-active
+    - audit-checks-light-active
+    - audit-checks-critical-issues-only
+    - audit-checks-all-except-time-based-detection-methods
+    - audit-checks-all-except-java-script-analysis
   imagePullPolicy:
     oneOf:
     - type: string
@@ -85,7 +137,7 @@ properties:
       - Never
       - IfNotPresent
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: (<\+.+>.*)
       minLength: 1
   ingestion:
     $ref: stoyaml-ingestion.yaml
@@ -124,5 +176,7 @@ properties:
     - type: string
   target:
     $ref: stoyaml-target.yaml
+  tool:
+    $ref: stoyaml-burp-tool-data.yaml
   description:
     desc: This is the description for BurpStepInfo
