@@ -1,16 +1,21 @@
-title: ClairScanNode
+title: IACMStageNode
 type: object
 required:
 - identifier
 - name
-- spec
 - type
 properties:
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
   description:
     type: string
-    desc: This is the description for ClairScanNode
-  enforce:
-    $ref: ../../common/policy-config.yaml
+    desc: This is the description for IACMStageNode
   failureStrategies:
     oneOf:
     - type: array
@@ -31,16 +36,24 @@ properties:
     - type: string
       pattern: ^<\+input>$
       minLength: 1
-  timeout:
-    type: string
-    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  tags:
+    type: object
+    additionalProperties:
+      type: string
   type:
     type: string
     enum:
-    - Clair
+    - IACM
+  variables:
+    type: array
+    items:
+      oneOf:
+      - $ref: ../../common/number-ng-variable.yaml
+      - $ref: ../../common/secret-ng-variable.yaml
+      - $ref: ../../common/string-ng-variable.yaml
   when:
     oneOf:
-    - $ref: ../../common/step-when-condition.yaml
+    - $ref: ../../steps/custom/stage-when-condition.yaml
     - type: string
       pattern: ^<\+input>$
       minLength: 1
@@ -49,8 +62,8 @@ allOf:
 - if:
     properties:
       type:
-        const: Clair
+        const: IACM
   then:
     properties:
       spec:
-        $ref: ../../steps/common/clair-step-info.yaml
+        $ref: iacmstage-config-impl.yaml

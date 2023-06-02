@@ -102,13 +102,13 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/PluginStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/ActionStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode_template"
               }, {
@@ -6102,7 +6102,7 @@
                     "enum" : [ "Always", "Never", "IfNotPresent" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -6151,7 +6151,7 @@
                     "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 }
@@ -6195,7 +6195,7 @@
                   "enum" : [ "Always", "Never", "IfNotPresent" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -6244,7 +6244,7 @@
                   "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -6417,7 +6417,7 @@
                     "enum" : [ "Always", "Never", "IfNotPresent" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -6468,7 +6468,7 @@
                     "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 }
@@ -6503,7 +6503,7 @@
                   "enum" : [ "Always", "Never", "IfNotPresent" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -6554,7 +6554,7 @@
                   "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -6605,6 +6605,336 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "PluginStepNode_template" : {
+            "title" : "PluginStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Plugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Plugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "PluginStepInfo" : {
+            "title" : "PluginStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "entrypoint" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "reports" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "uses" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "entrypoint" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "reports" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "uses" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PluginStepInfo"
+              }
+            }
+          },
+          "ActionStepNode_template" : {
+            "title" : "ActionStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Action" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Action"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ActionStepInfo" : {
+            "title" : "ActionStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "uses" ],
+              "properties" : {
+                "env" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "uses" : {
+                  "type" : "string"
+                },
+                "with" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "uses" ],
+            "properties" : {
+              "env" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "uses" : {
+                "type" : "string"
+              },
+              "with" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for ActionStepInfo"
+              }
+            }
           },
           "BackgroundStepNode" : {
             "title" : "BackgroundStepNode",
@@ -6682,6 +7012,21 @@
                 }
               }
             } ]
+          },
+          "Infrastructure" : {
+            "title" : "Infrastructure",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Infrastructure"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "CustomIngestScanNode" : {
             "title" : "CustomIngestScanNode",
@@ -7667,6 +8012,163 @@
               }
             }
           },
+          "ClairStepInfo" : {
+            "title" : "ClairStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "config", "mode", "target" ],
+              "properties" : {
+                "advanced" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "config" : {
+                  "type" : "string",
+                  "enum" : [ "default" ]
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+                },
+                "mode" : {
+                  "type" : "string",
+                  "enum" : [ "ingestion", "orchestration", "extraction" ]
+                },
+                "outputVariables" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "target" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "config", "mode", "target" ],
+            "properties" : {
+              "advanced" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "config" : {
+                "type" : "string",
+                "enum" : [ "default" ]
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+              },
+              "mode" : {
+                "type" : "string",
+                "enum" : [ "ingestion", "orchestration", "extraction" ]
+              },
+              "outputVariables" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "target" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+              },
+              "description" : {
+                "desc" : "This is the description for ClairStepInfo"
+              }
+            }
+          },
           "FossaStepInfo" : {
             "title" : "FossaStepInfo",
             "allOf" : [ {
@@ -8252,6 +8754,83 @@
               }
             } ]
           },
+          "ActionStepNode" : {
+            "title" : "ActionStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ActionStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Action" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Action"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "SemgrepScanNode" : {
             "title" : "SemgrepScanNode",
             "type" : "object",
@@ -8324,6 +8903,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SemgrepStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "PluginStepNode" : {
+            "title" : "PluginStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for PluginStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Plugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Plugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
                   }
                 }
               }
@@ -8482,6 +9138,600 @@
                 }
               }
             } ]
+          },
+          "DockerInfraYaml" : {
+            "title" : "DockerInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerInfraSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DockerInfraYaml"
+              }
+            }
+          },
+          "DockerInfraSpec" : {
+            "title" : "DockerInfraSpec",
+            "type" : "object",
+            "required" : [ "platform" ],
+            "properties" : {
+              "platform" : {
+                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldPlatform"
+              },
+              "description" : {
+                "desc" : "This is the description for DockerInfraSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ParameterFieldPlatform" : {
+            "title" : "ParameterFieldPlatform",
+            "type" : "object",
+            "properties" : {
+              "defaultValue" : {
+                "$ref" : "#/definitions/pipeline/steps/common/Platform"
+              },
+              "executionInput" : {
+                "type" : "boolean"
+              },
+              "expression" : {
+                "type" : "boolean"
+              },
+              "expressionValue" : {
+                "type" : "string"
+              },
+              "inputSetValidator" : {
+                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
+              },
+              "jsonResponseField" : {
+                "type" : "boolean"
+              },
+              "responseField" : {
+                "type" : "string"
+              },
+              "typeString" : {
+                "type" : "boolean"
+              },
+              "value" : {
+                "$ref" : "#/definitions/pipeline/steps/common/Platform"
+              },
+              "description" : {
+                "desc" : "This is the description for ParameterFieldPlatform"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "Platform" : {
+            "title" : "Platform",
+            "type" : "object",
+            "properties" : {
+              "arch" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Amd64", "Arm64" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "os" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Linux", "MacOS", "Windows" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for Platform"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "HostedVmInfraYaml" : {
+            "title" : "HostedVmInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HostedVmInfraYaml"
+              }
+            }
+          },
+          "HostedVmInfraSpec" : {
+            "title" : "HostedVmInfraSpec",
+            "type" : "object",
+            "required" : [ "platform" ],
+            "properties" : {
+              "platform" : {
+                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldPlatform"
+              },
+              "description" : {
+                "desc" : "This is the description for HostedVmInfraSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sDirectInfraYaml" : {
+            "title" : "K8sDirectInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYamlSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for K8sDirectInfraYaml"
+              }
+            }
+          },
+          "K8sDirectInfraYamlSpec" : {
+            "title" : "K8sDirectInfraYamlSpec",
+            "type" : "object",
+            "required" : [ "connectorRef", "namespace" ],
+            "properties" : {
+              "annotations" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "automountServiceAccountToken" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "containerSecurityContext" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "harnessImageConnectorRef" : {
+                "type" : "string"
+              },
+              "hostNames" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "initTimeout" : {
+                "type" : "string"
+              },
+              "labels" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "namespace" : {
+                "type" : "string",
+                "minLength" : 1,
+                "maxLength" : 2147483647
+              },
+              "nodeSelector" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "os" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Linux", "MacOS", "Windows" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "priorityClassName" : {
+                "type" : "string"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "serviceAccountName" : {
+                "type" : "string"
+              },
+              "tolerations" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "volumes" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CIVolume"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for K8sDirectInfraYamlSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CIVolume" : {
+            "title" : "CIVolume",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
+              },
+              "description" : {
+                "desc" : "This is the description for CIVolume"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sHostedInfraYaml" : {
+            "title" : "K8sHostedInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sHostedInfraYamlSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for K8sHostedInfraYaml"
+              }
+            }
+          },
+          "K8sHostedInfraYamlSpec" : {
+            "title" : "K8sHostedInfraYamlSpec",
+            "type" : "object",
+            "required" : [ "identifier" ],
+            "properties" : {
+              "identifier" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for K8sHostedInfraYamlSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "UseFromStageInfraYaml" : {
+            "title" : "UseFromStageInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "useFromStage" ],
+              "properties" : {
+                "useFromStage" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UseFromStageInfraYaml"
+              }
+            }
+          },
+          "VmInfraYaml" : {
+            "title" : "VmInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/VmPoolYaml"
+                  } ]
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for VmInfraYaml"
+              }
+            }
+          },
+          "VmPoolYaml" : {
+            "title" : "VmPoolYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/VmInfraSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/VmPoolYamlSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Pool" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for VmPoolYaml"
+              }
+            }
+          },
+          "VmInfraSpec" : {
+            "title" : "VmInfraSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Pool" ]
+              },
+              "description" : {
+                "desc" : "This is the description for VmInfraSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "VmPoolYamlSpec" : {
+            "title" : "VmPoolYamlSpec",
+            "type" : "object",
+            "properties" : {
+              "harnessImageConnectorRef" : {
+                "type" : "string"
+              },
+              "identifier" : {
+                "type" : "string"
+              },
+              "initTimeout" : {
+                "type" : "string"
+              },
+              "os" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Linux", "MacOS", "Windows" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "poolName" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for VmPoolYamlSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CloudRuntime" : {
+            "title" : "CloudRuntime",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Runtime"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/CloudRuntimeSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Cloud" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CloudRuntime"
+              }
+            }
+          },
+          "Runtime" : {
+            "title" : "Runtime",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Docker", "Cloud" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Runtime"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CloudRuntimeSpec" : {
+            "title" : "CloudRuntimeSpec",
+            "type" : "object",
+            "properties" : {
+              "size" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for CloudRuntimeSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DockerRuntime" : {
+            "title" : "DockerRuntime",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Runtime"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerRuntimeSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Docker" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DockerRuntime"
+              }
+            }
+          },
+          "DockerRuntimeSpec" : {
+            "title" : "DockerRuntimeSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DockerRuntimeSpec"
+              }
+            }
+          },
+          "DependencyElement" : {
+            "title" : "DependencyElement",
+            "type" : "object",
+            "required" : [ "identifier", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for DependencyElement"
+              },
+              "identifier" : {
+                "type" : "string"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/steps/common/DependencySpecType"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Service" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DependencySpecType" : {
+            "title" : "DependencySpecType",
+            "type" : "object",
+            "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DependencySpecType"
+              }
+            }
           }
         },
         "ci" : {
@@ -9040,218 +10290,6 @@
               }
             }
           },
-          "PluginStepNode_template" : {
-            "title" : "PluginStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Plugin" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Plugin"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/PluginStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "PluginStepInfo" : {
-            "title" : "PluginStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "entrypoint" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "reports" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "settings" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "uses" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "entrypoint" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "reports" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "uses" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for PluginStepInfo"
-              }
-            }
-          },
           "SscaOrchestrationStepNode_template" : {
             "title" : "SscaOrchestrationStepNode_template",
             "type" : "object",
@@ -9720,124 +10758,6 @@
               }
             }
           },
-          "ActionStepNode_template" : {
-            "title" : "ActionStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Action" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Action"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ActionStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ActionStepInfo" : {
-            "title" : "ActionStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "uses" ],
-              "properties" : {
-                "env" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "uses" : {
-                  "type" : "string"
-                },
-                "with" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "uses" ],
-            "properties" : {
-              "env" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "uses" : {
-                "type" : "string"
-              },
-              "with" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for ActionStepInfo"
-              }
-            }
-          },
           "GitCloneStepNode" : {
             "title" : "GitCloneStepNode",
             "type" : "object",
@@ -10069,83 +10989,6 @@
               }
             } ]
           },
-          "ActionStepNode" : {
-            "title" : "ActionStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for ActionStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Action" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Action"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ActionStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
           "SscaOrchestrationStepNode" : {
             "title" : "SscaOrchestrationStepNode",
             "type" : "object",
@@ -10218,83 +11061,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "PluginStepNode" : {
-            "title" : "PluginStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for PluginStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Plugin" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Plugin"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/PluginStepInfo"
                   }
                 }
               }
@@ -33786,6 +34552,222 @@
               }
             }
           }
+        },
+        "iacm" : {
+          "IACMTerraformPlanStepNode" : {
+            "title" : "IACMTerraformPlanStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IACMTerraformPlanStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMTerraformPlan" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMTerraformPlan"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMTerraformPlanInfo" : {
+            "title" : "IACMTerraformPlanInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "env" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "tfVars" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "env" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "tfVars" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for IACMTerraformPlanInfo"
+              }
+            }
+          },
+          "IACMTemplateStepNode" : {
+            "title" : "IACMTemplateStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IACMTemplateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMTemplate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMTemplate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMTemplateInfo" : {
+            "title" : "IACMTemplateInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for IACMTemplateInfo"
+              }
+            }
+          }
         }
       },
       "common" : {
@@ -33838,7 +34820,7 @@
               "type" : "array",
               "items" : {
                 "type" : "string",
-                "enum" : [ "Unknown", "AllErrors", "Authentication", "Connectivity", "Timeout", "Authorization", "Verification", "DelegateProvisioning", "PolicyEvaluationFailure", "InputTimeoutError", "ApprovalRejection", "DelegateRestart" ]
+                "enum" : [ "Unknown", "AllErrors", "Authentication", "Connectivity", "Timeout", "Authorization", "Verification", "DelegateProvisioning", "PolicyEvaluationFailure", "InputTimeoutError", "ApprovalRejection", "DelegateRestart", "UserMarkedFailure" ]
               }
             },
             "description" : {
@@ -34816,106 +35798,6 @@
               } ]
             } ]
           },
-          "CustomStageNode" : {
-            "title" : "CustomStageNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "type" ],
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for CustomStageNode"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "tags" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Custom" ]
-              },
-              "variables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Custom"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/custom/CustomStageConfig"
-                  }
-                }
-              }
-            } ]
-          },
           "PipelineStageNode" : {
             "title" : "PipelineStageNode",
             "type" : "object",
@@ -35077,6 +35959,106 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CustomStageNode" : {
+            "title" : "CustomStageNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for CustomStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Custom" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Custom"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/custom/CustomStageConfig"
+                  }
+                }
+              }
+            } ]
           }
         },
         "approval" : {
@@ -36944,7 +37926,7 @@
           "AwsSamInfrastructure" : {
             "title" : "AwsSamInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "region" ],
@@ -36972,21 +37954,10 @@
               }
             }
           },
-          "Infrastructure" : {
-            "title" : "Infrastructure",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for Infrastructure"
-              }
-            }
-          },
           "AsgInfrastructure" : {
             "title" : "AsgInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "region" ],
@@ -37016,7 +37987,7 @@
           "AwsLambdaInfrastructure" : {
             "title" : "AwsLambdaInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "region" ],
@@ -37047,7 +38018,7 @@
           "AzureWebAppInfrastructure" : {
             "title" : "AzureWebAppInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "resourceGroup", "subscriptionId" ],
@@ -37079,7 +38050,7 @@
           "CustomDeploymentInfrastructure" : {
             "title" : "CustomDeploymentInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "customDeploymentRef" ],
@@ -37120,7 +38091,7 @@
           "EcsInfrastructure" : {
             "title" : "EcsInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "cluster", "connectorRef", "region" ],
@@ -37155,7 +38126,7 @@
           "ElastigroupInfrastructure" : {
             "title" : "ElastigroupInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "configuration", "connectorRef" ],
@@ -37201,7 +38172,7 @@
           "GoogleFunctionsInfrastructure" : {
             "title" : "GoogleFunctionsInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "project", "region" ],
@@ -37236,7 +38207,7 @@
           "K8sAwsInfrastructure" : {
             "title" : "K8sAwsInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "cluster", "connectorRef", "namespace", "releaseName" ],
@@ -37282,7 +38253,7 @@
           "K8sAzureInfrastructure" : {
             "title" : "K8sAzureInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "cluster", "connectorRef", "namespace", "releaseName", "resourceGroup", "subscriptionId" ],
@@ -37336,7 +38307,7 @@
           "K8SDirectInfrastructure" : {
             "title" : "K8SDirectInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "namespace", "releaseName" ],
@@ -37375,7 +38346,7 @@
           "K8sGcpInfrastructure" : {
             "title" : "K8sGcpInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "cluster", "connectorRef", "namespace", "releaseName" ],
@@ -37421,7 +38392,7 @@
           "K8sRancherInfrastructure" : {
             "title" : "K8sRancherInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "cluster", "connectorRef", "namespace", "releaseName" ],
@@ -37467,7 +38438,7 @@
           "PdcInfrastructure" : {
             "title" : "PdcInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, { } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "oneOf" : [ {
@@ -37753,7 +38724,7 @@
           "ServerlessAwsLambdaInfrastructure" : {
             "title" : "ServerlessAwsLambdaInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "region", "stage" ],
@@ -37788,7 +38759,7 @@
           "SshWinRmAwsInfrastructure" : {
             "title" : "SshWinRmAwsInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "awsInstanceFilter", "connectorRef", "credentialsRef", "hostConnectionType", "region" ],
@@ -37854,7 +38825,7 @@
           "SshWinRmAzureInfrastructure" : {
             "title" : "SshWinRmAzureInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "credentialsRef", "hostConnectionType", "resourceGroup", "subscriptionId" ],
@@ -37905,7 +38876,7 @@
           "TanzuApplicationServiceInfrastructure" : {
             "title" : "TanzuApplicationServiceInfrastructure",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/Infrastructure"
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "organization", "space" ],
@@ -41642,22 +42613,22 @@
               },
               "infrastructure" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/ci/DockerInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/HostedVmInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/K8sDirectInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/K8sHostedInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sHostedInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/UseFromStageInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/UseFromStageInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/VmInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/VmInfraYaml"
                 } ]
               },
               "platform" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/ci/Platform"
+                  "$ref" : "#/definitions/pipeline/steps/common/Platform"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -41666,16 +42637,16 @@
               },
               "runtime" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/ci/CloudRuntime"
+                  "$ref" : "#/definitions/pipeline/steps/common/CloudRuntime"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/DockerRuntime"
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerRuntime"
                 } ]
               },
               "serviceDependencies" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/DependencyElement"
+                    "$ref" : "#/definitions/pipeline/steps/common/DependencyElement"
                   }
                 }, {
                   "type" : "string",
@@ -41855,7 +42826,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/ci/OwaspScanNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ActionStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepNode"
                 }, {
@@ -41865,7 +42836,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/ci/ProwlerScanNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/PluginStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/ci/VeracodeScanNode"
                 }, {
@@ -44647,168 +45618,11 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/ClairStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/common/ClairStepInfo"
                   }
                 }
               }
             } ]
-          },
-          "ClairStepInfo" : {
-            "title" : "ClairStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "config", "mode", "target" ],
-              "properties" : {
-                "advanced" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "config" : {
-                  "type" : "string",
-                  "enum" : [ "default" ]
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "ingestion" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-                },
-                "mode" : {
-                  "type" : "string",
-                  "enum" : [ "ingestion", "orchestration", "extraction" ]
-                },
-                "outputVariables" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "settings" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "config", "mode", "target" ],
-            "properties" : {
-              "advanced" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "config" : {
-                "type" : "string",
-                "enum" : [ "default" ]
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "ingestion" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-              },
-              "mode" : {
-                "type" : "string",
-                "enum" : [ "ingestion", "orchestration", "extraction" ]
-              },
-              "outputVariables" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-              },
-              "description" : {
-                "desc" : "This is the description for ClairStepInfo"
-              }
-            }
           },
           "SaveCacheS3Node" : {
             "title" : "SaveCacheS3Node",
@@ -47333,7 +48147,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/ClairStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/common/ClairStepInfo"
                   }
                 }
               }
@@ -53235,615 +54049,6 @@
               } ]
             } ]
           },
-          "DockerInfraYaml" : {
-            "title" : "DockerInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/DockerInfraSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerInfraYaml"
-              }
-            }
-          },
-          "Infrastructure" : {
-            "title" : "Infrastructure",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Infrastructure"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DockerInfraSpec" : {
-            "title" : "DockerInfraSpec",
-            "type" : "object",
-            "required" : [ "platform" ],
-            "properties" : {
-              "platform" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/ParameterFieldPlatform"
-              },
-              "description" : {
-                "desc" : "This is the description for DockerInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ParameterFieldPlatform" : {
-            "title" : "ParameterFieldPlatform",
-            "type" : "object",
-            "properties" : {
-              "defaultValue" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/Platform"
-              },
-              "executionInput" : {
-                "type" : "boolean"
-              },
-              "expression" : {
-                "type" : "boolean"
-              },
-              "expressionValue" : {
-                "type" : "string"
-              },
-              "inputSetValidator" : {
-                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
-              },
-              "jsonResponseField" : {
-                "type" : "boolean"
-              },
-              "responseField" : {
-                "type" : "string"
-              },
-              "typeString" : {
-                "type" : "boolean"
-              },
-              "value" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/Platform"
-              },
-              "description" : {
-                "desc" : "This is the description for ParameterFieldPlatform"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "Platform" : {
-            "title" : "Platform",
-            "type" : "object",
-            "properties" : {
-              "arch" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Amd64", "Arm64" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for Platform"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "HostedVmInfraYaml" : {
-            "title" : "HostedVmInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/HostedVmInfraSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for HostedVmInfraYaml"
-              }
-            }
-          },
-          "HostedVmInfraSpec" : {
-            "title" : "HostedVmInfraSpec",
-            "type" : "object",
-            "required" : [ "platform" ],
-            "properties" : {
-              "platform" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/ParameterFieldPlatform"
-              },
-              "description" : {
-                "desc" : "This is the description for HostedVmInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "K8sDirectInfraYaml" : {
-            "title" : "K8sDirectInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/K8sDirectInfraYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for K8sDirectInfraYaml"
-              }
-            }
-          },
-          "K8sDirectInfraYamlSpec" : {
-            "title" : "K8sDirectInfraYamlSpec",
-            "type" : "object",
-            "required" : [ "connectorRef", "namespace" ],
-            "properties" : {
-              "annotations" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "automountServiceAccountToken" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "containerSecurityContext" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "harnessImageConnectorRef" : {
-                "type" : "string"
-              },
-              "hostNames" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "initTimeout" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "namespace" : {
-                "type" : "string",
-                "minLength" : 1,
-                "maxLength" : 2147483647
-              },
-              "nodeSelector" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "priorityClassName" : {
-                "type" : "string"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "serviceAccountName" : {
-                "type" : "string"
-              },
-              "tolerations" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "volumes" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/CIVolume"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for K8sDirectInfraYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CIVolume" : {
-            "title" : "CIVolume",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
-              },
-              "description" : {
-                "desc" : "This is the description for CIVolume"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "K8sHostedInfraYaml" : {
-            "title" : "K8sHostedInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/K8sHostedInfraYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for K8sHostedInfraYaml"
-              }
-            }
-          },
-          "K8sHostedInfraYamlSpec" : {
-            "title" : "K8sHostedInfraYamlSpec",
-            "type" : "object",
-            "required" : [ "identifier" ],
-            "properties" : {
-              "identifier" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for K8sHostedInfraYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "UseFromStageInfraYaml" : {
-            "title" : "UseFromStageInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "useFromStage" ],
-              "properties" : {
-                "useFromStage" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for UseFromStageInfraYaml"
-              }
-            }
-          },
-          "VmInfraYaml" : {
-            "title" : "VmInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/stages/ci/VmPoolYaml"
-                  } ]
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for VmInfraYaml"
-              }
-            }
-          },
-          "VmPoolYaml" : {
-            "title" : "VmPoolYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/VmInfraSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/VmPoolYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Pool" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for VmPoolYaml"
-              }
-            }
-          },
-          "VmInfraSpec" : {
-            "title" : "VmInfraSpec",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Pool" ]
-              },
-              "description" : {
-                "desc" : "This is the description for VmInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "VmPoolYamlSpec" : {
-            "title" : "VmPoolYamlSpec",
-            "type" : "object",
-            "properties" : {
-              "harnessImageConnectorRef" : {
-                "type" : "string"
-              },
-              "identifier" : {
-                "type" : "string"
-              },
-              "initTimeout" : {
-                "type" : "string"
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "poolName" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for VmPoolYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CloudRuntime" : {
-            "title" : "CloudRuntime",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Runtime"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/CloudRuntimeSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Cloud" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CloudRuntime"
-              }
-            }
-          },
-          "Runtime" : {
-            "title" : "Runtime",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Docker", "Cloud" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Runtime"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CloudRuntimeSpec" : {
-            "title" : "CloudRuntimeSpec",
-            "type" : "object",
-            "properties" : {
-              "size" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for CloudRuntimeSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DockerRuntime" : {
-            "title" : "DockerRuntime",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/ci/Runtime"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/DockerRuntimeSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Docker" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerRuntime"
-              }
-            }
-          },
-          "DockerRuntimeSpec" : {
-            "title" : "DockerRuntimeSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerRuntimeSpec"
-              }
-            }
-          },
-          "DependencyElement" : {
-            "title" : "DependencyElement",
-            "type" : "object",
-            "required" : [ "identifier", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for DependencyElement"
-              },
-              "identifier" : {
-                "type" : "string"
-              },
-              "name" : {
-                "type" : "string"
-              },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/DependencySpecType"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Service" ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DependencySpecType" : {
-            "title" : "DependencySpecType",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DependencySpecType"
-              }
-            }
-          },
           "IntegrationStageNode" : {
             "title" : "IntegrationStageNode",
             "type" : "object",
@@ -54505,22 +54710,22 @@
               },
               "infrastructure" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/security/DockerInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/HostedVmInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/K8sDirectInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/K8sHostedInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sHostedInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/UseFromStageInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/UseFromStageInfraYaml"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/VmInfraYaml"
+                  "$ref" : "#/definitions/pipeline/steps/common/VmInfraYaml"
                 } ]
               },
               "platform" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/security/Platform"
+                  "$ref" : "#/definitions/pipeline/steps/common/Platform"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -54529,16 +54734,16 @@
               },
               "runtime" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/security/CloudRuntime"
+                  "$ref" : "#/definitions/pipeline/steps/common/CloudRuntime"
                 }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/DockerRuntime"
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerRuntime"
                 } ]
               },
               "serviceDependencies" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/security/DependencyElement"
+                    "$ref" : "#/definitions/pipeline/steps/common/DependencyElement"
                   }
                 }, {
                   "type" : "string",
@@ -61536,7 +61741,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/security/ClairStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/common/ClairStepInfo"
                   }
                 }
               }
@@ -62360,163 +62565,6 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ClairStepInfo" : {
-            "title" : "ClairStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "config", "mode", "target" ],
-              "properties" : {
-                "advanced" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "config" : {
-                  "type" : "string",
-                  "enum" : [ "default" ]
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "ingestion" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-                },
-                "mode" : {
-                  "type" : "string",
-                  "enum" : [ "ingestion", "orchestration", "extraction" ]
-                },
-                "outputVariables" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "settings" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "config", "mode", "target" ],
-            "properties" : {
-              "advanced" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "config" : {
-                "type" : "string",
-                "enum" : [ "default" ]
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "ingestion" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-              },
-              "mode" : {
-                "type" : "string",
-                "enum" : [ "ingestion", "orchestration", "extraction" ]
-              },
-              "outputVariables" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-              },
-              "description" : {
-                "desc" : "This is the description for ClairStepInfo"
-              }
-            }
           },
           "DockerContentTrustStepInfo" : {
             "title" : "DockerContentTrustStepInfo",
@@ -64313,7 +64361,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/security/ClairStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/common/ClairStepInfo"
                   }
                 }
               }
@@ -65089,615 +65137,6 @@
               }
             } ]
           },
-          "DockerInfraYaml" : {
-            "title" : "DockerInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/DockerInfraSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerInfraYaml"
-              }
-            }
-          },
-          "Infrastructure" : {
-            "title" : "Infrastructure",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Infrastructure"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DockerInfraSpec" : {
-            "title" : "DockerInfraSpec",
-            "type" : "object",
-            "required" : [ "platform" ],
-            "properties" : {
-              "platform" : {
-                "$ref" : "#/definitions/pipeline/stages/security/ParameterFieldPlatform"
-              },
-              "description" : {
-                "desc" : "This is the description for DockerInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ParameterFieldPlatform" : {
-            "title" : "ParameterFieldPlatform",
-            "type" : "object",
-            "properties" : {
-              "defaultValue" : {
-                "$ref" : "#/definitions/pipeline/stages/security/Platform"
-              },
-              "executionInput" : {
-                "type" : "boolean"
-              },
-              "expression" : {
-                "type" : "boolean"
-              },
-              "expressionValue" : {
-                "type" : "string"
-              },
-              "inputSetValidator" : {
-                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
-              },
-              "jsonResponseField" : {
-                "type" : "boolean"
-              },
-              "responseField" : {
-                "type" : "string"
-              },
-              "typeString" : {
-                "type" : "boolean"
-              },
-              "value" : {
-                "$ref" : "#/definitions/pipeline/stages/security/Platform"
-              },
-              "description" : {
-                "desc" : "This is the description for ParameterFieldPlatform"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "Platform" : {
-            "title" : "Platform",
-            "type" : "object",
-            "properties" : {
-              "arch" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Amd64", "Arm64" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for Platform"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "HostedVmInfraYaml" : {
-            "title" : "HostedVmInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/HostedVmInfraSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for HostedVmInfraYaml"
-              }
-            }
-          },
-          "HostedVmInfraSpec" : {
-            "title" : "HostedVmInfraSpec",
-            "type" : "object",
-            "required" : [ "platform" ],
-            "properties" : {
-              "platform" : {
-                "$ref" : "#/definitions/pipeline/stages/security/ParameterFieldPlatform"
-              },
-              "description" : {
-                "desc" : "This is the description for HostedVmInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "K8sDirectInfraYaml" : {
-            "title" : "K8sDirectInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/K8sDirectInfraYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for K8sDirectInfraYaml"
-              }
-            }
-          },
-          "K8sDirectInfraYamlSpec" : {
-            "title" : "K8sDirectInfraYamlSpec",
-            "type" : "object",
-            "required" : [ "connectorRef", "namespace" ],
-            "properties" : {
-              "annotations" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "automountServiceAccountToken" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "containerSecurityContext" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "harnessImageConnectorRef" : {
-                "type" : "string"
-              },
-              "hostNames" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "initTimeout" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "namespace" : {
-                "type" : "string",
-                "minLength" : 1,
-                "maxLength" : 2147483647
-              },
-              "nodeSelector" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "priorityClassName" : {
-                "type" : "string"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "serviceAccountName" : {
-                "type" : "string"
-              },
-              "tolerations" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/Toleration"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "volumes" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/security/CIVolume"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for K8sDirectInfraYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CIVolume" : {
-            "title" : "CIVolume",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
-              },
-              "description" : {
-                "desc" : "This is the description for CIVolume"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "K8sHostedInfraYaml" : {
-            "title" : "K8sHostedInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/K8sHostedInfraYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for K8sHostedInfraYaml"
-              }
-            }
-          },
-          "K8sHostedInfraYamlSpec" : {
-            "title" : "K8sHostedInfraYamlSpec",
-            "type" : "object",
-            "required" : [ "identifier" ],
-            "properties" : {
-              "identifier" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for K8sHostedInfraYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "UseFromStageInfraYaml" : {
-            "title" : "UseFromStageInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "useFromStage" ],
-              "properties" : {
-                "useFromStage" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for UseFromStageInfraYaml"
-              }
-            }
-          },
-          "VmInfraYaml" : {
-            "title" : "VmInfraYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/stages/security/VmPoolYaml"
-                  } ]
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "KubernetesHosted" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for VmInfraYaml"
-              }
-            }
-          },
-          "VmPoolYaml" : {
-            "title" : "VmPoolYaml",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/VmInfraSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/VmPoolYamlSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Pool" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for VmPoolYaml"
-              }
-            }
-          },
-          "VmInfraSpec" : {
-            "title" : "VmInfraSpec",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Pool" ]
-              },
-              "description" : {
-                "desc" : "This is the description for VmInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "VmPoolYamlSpec" : {
-            "title" : "VmPoolYamlSpec",
-            "type" : "object",
-            "properties" : {
-              "harnessImageConnectorRef" : {
-                "type" : "string"
-              },
-              "identifier" : {
-                "type" : "string"
-              },
-              "initTimeout" : {
-                "type" : "string"
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "poolName" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for VmPoolYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CloudRuntime" : {
-            "title" : "CloudRuntime",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Runtime"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/CloudRuntimeSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Cloud" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CloudRuntime"
-              }
-            }
-          },
-          "Runtime" : {
-            "title" : "Runtime",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Docker", "Cloud" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Runtime"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CloudRuntimeSpec" : {
-            "title" : "CloudRuntimeSpec",
-            "type" : "object",
-            "properties" : {
-              "size" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for CloudRuntimeSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DockerRuntime" : {
-            "title" : "DockerRuntime",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/security/Runtime"
-            }, {
-              "type" : "object",
-              "required" : [ "spec", "type" ],
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/security/DockerRuntimeSpec"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "Docker" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerRuntime"
-              }
-            }
-          },
-          "DockerRuntimeSpec" : {
-            "title" : "DockerRuntimeSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerRuntimeSpec"
-              }
-            }
-          },
-          "DependencyElement" : {
-            "title" : "DependencyElement",
-            "type" : "object",
-            "required" : [ "identifier", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for DependencyElement"
-              },
-              "identifier" : {
-                "type" : "string"
-              },
-              "name" : {
-                "type" : "string"
-              },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/stages/security/DependencySpecType"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Service" ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DependencySpecType" : {
-            "title" : "DependencySpecType",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DependencySpecType"
-              }
-            }
-          },
           "SecurityStageNode" : {
             "title" : "SecurityStageNode",
             "type" : "object",
@@ -65839,20 +65278,25 @@
           "type" : "object",
           "title" : "stages",
           "properties" : {
+            "parallel" : {
+              "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+            },
             "stage" : {
               "description" : "This is stage node. it can be of various types like CI, CD, etc.",
               "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+                "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
               }, {
+                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+              }, {
                 "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
               }, {
-                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
               }, {
@@ -65861,6 +65305,260 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ParallelStageElementConfig" : {
+          "type" : "array",
+          "title" : "ParallelStageElementConfig",
+          "items" : {
+            "$ref" : "#/definitions/pipeline/stages/stages"
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for ParallelStageElementConfig"
+            }
+          }
+        },
+        "iacm" : {
+          "IACMStageNode" : {
+            "title" : "IACMStageNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IACMStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACM" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACM"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageConfigImpl"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMStageConfigImpl" : {
+            "title" : "IACMStageConfigImpl",
+            "type" : "object",
+            "required" : [ "stackID" ],
+            "properties" : {
+              "cloneCodebase" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/iacm/ExecutionElementConfig"
+              },
+              "infrastructure" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/K8sHostedInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/UseFromStageInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/VmInfraYaml"
+                } ]
+              },
+              "platform" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/Platform"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "runtime" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/CloudRuntime"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/DockerRuntime"
+                } ]
+              },
+              "serviceDependencies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/DependencyElement"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "sharedPaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "stackID" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for IACMStageConfigImpl"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ExecutionElementConfig" : {
+            "title" : "ExecutionElementConfig",
+            "type" : "object",
+            "required" : [ "steps" ],
+            "properties" : {
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/iacm/ExecutionWrapperConfig"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              },
+              "description" : {
+                "desc" : "This is the description for ExecutionElementConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ExecutionWrapperConfig" : {
+            "title" : "ExecutionWrapperConfig",
+            "type" : "object",
+            "properties" : {
+              "parallel" : {
+                "$ref" : "#/definitions/pipeline/stages/iacm/ParallelStepElementConfig"
+              },
+              "step" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for ExecutionWrapperConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ParallelStepElementConfig" : {
+            "title" : "ParallelStepElementConfig",
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/stages/iacm/ExecutionWrapperConfig"
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ParallelStepElementConfig"
+              }
+            }
+          }
         }
       },
       "flowControl" : {

@@ -1,7 +1,6 @@
 import json
 import yaml
 import os
-import difflib
 from yaml.loader import SafeLoader
 f = open('../steps/prod.json')
 moduleSuffix = {}
@@ -49,6 +48,100 @@ def convertFileName(s):
 		return "secret-ng-variable.yaml"
 	elif modified_s == "string-ngvariable.yaml":
 		return "string-ng-variable.yaml"
+	elif modified_s == "cistep-info.yaml":
+		return "ci-step-info.yaml"
+	elif modified_s == "prbuild-spec.yaml":
+		return "pr-build-spec.yaml"
+
+	elif modified_s == "azure-armrollback-step-node.yaml":
+		return "azure-a-r-m-rollback-step-node.yaml"
+	elif modified_s == "azure-armrollback-step-info.yaml":
+		return "azure-a-r-m-rollback-step-info.yaml"
+
+	elif modified_s == "azure-create-armresource-parameter-file.yaml":
+		return "azure-create-a-r-m-resource-parameter-file.yaml"
+	elif modified_s == "azure-create-armresource-step-configuration.yaml":
+		return "azure-create-a-r-m-resource-step-configuration.yaml"
+	elif modified_s == "azure-create-armresource-step-info.yaml":
+		return "azure-create-a-r-m-resource-step-info.yaml"
+	elif modified_s == "azure-create-armresource-step-node.yaml":
+		return "azure-create-a-r-m-resource-step-node.yaml"
+	elif modified_s == "azure-create-armresource-step-scope.yaml":
+		return "azure-create-a-r-m-resource-step-scope.yaml"
+	elif modified_s == "azure-create-bpstep-configuration.yaml":
+		return "azure-create-b-p-step-configuration.yaml"
+	elif modified_s == "azure-create-bpstep-info.yaml":
+		return "azure-create-b-p-step-info.yaml"
+	elif modified_s == "azure-create-bpstep-node.yaml":
+		return "azure-create-b-p-step-node.yaml"
+
+	elif modified_s == "create-prstep-info.yaml":
+		return "create-p-r-step-info.yaml"
+	elif modified_s == "create-prstep-node.yaml":
+		return "create-p-r-step-node.yaml"
+	elif modified_s == "create-prstep-update-config-script-base-source.yaml":
+		return "create-p-r-step-update-config-script-base-source.yaml"
+	elif modified_s == "create-prstep-update-config-script-inline-source.yaml":
+		return "create-p-r-step-update-config-script-inline-source.yaml"
+	elif modified_s == "create-prstep-update-config-script-wrapper.yaml":
+		return "create-p-r-step-update-config-script-wrapper.yaml"
+
+	elif modified_s == "elastigroup-bgstage-setup-step-info.yaml":
+		return "elastigroup-b-g-stage-setup-step-info.yaml"
+	elif modified_s == "elastigroup-bgstage-setup-step-node.yaml":
+		return "elastigroup-b-g-stage-setup-step-node.yaml"
+
+	elif modified_s == "k8s-bgswap-services-step-info.yaml":
+		return "k8s-b-g-swap-services-step-info.yaml"
+	elif modified_s == "k8s-bgswap-services-step-node.yaml":
+		return "k8s-b-g-swap-services-step-node.yaml"
+
+	elif modified_s == "merge-prstep-info.yaml":
+		return "merge-pr-step-info.yaml"
+	elif modified_s == "merge-prstep-node.yaml":
+		return "merge-pr-step-node.yaml"
+
+	elif modified_s == "tas-bgapp-setup-step-info.yaml":
+		return "tas-b-g-app-setup-step-info.yaml"
+	elif modified_s == "tas-bgapp-setup-step-node.yaml":
+		return "tas-b-g-app-setup-step-node.yaml"
+
+	elif modified_s == "cvngstep-info.yaml":
+		return "cvng-step-info.yaml"
+	elif modified_s == "cvverify-step-node.yaml":
+		return "cv-verify-step-node.yaml"
+
+	elif modified_s == "amiartifact-config.yaml":
+		return "ami-artifact-config.yaml"
+	elif modified_s == "amifilter.yaml":
+		return "ami-filter.yaml"
+	elif modified_s == "amitag.yaml":
+		return "ami-tag.yaml"
+
+	elif modified_s == "custom-deployment-connector-ngvariable.yaml":
+		return "custom-deployment-connector-ng-variable.yaml"
+	elif modified_s == "custom-deployment-ngvariable.yaml":
+		return "custom-deployment-ng-variable.yaml"
+	elif modified_s == "custom-deployment-number-ngvariable.yaml":
+		return "custom-deployment-number-ng-variable.yaml"
+
+
+	elif modified_s == "custom-deployment-secret-ngvariable.yaml":
+		return "custom-deployment-secret-ng-variable.yaml"
+	elif modified_s == "custom-deployment-string-ngvariable.yaml":
+		return "custom-deployment-string-ng-variable.yaml"
+	elif modified_s == "custom-deployment-number-ngvariable.yaml":
+		return "custom-deployment-number-ng-variable.yaml"
+
+
+	elif modified_s == "k8-sdirect-infrastructure.yaml":
+		return "k8-s-direct-infrastructure.yaml"
+	elif modified_s == "ngvariable-override-set-wrapper.yaml":
+		return "ng-variable-override-set-wrapper.yaml"
+	elif modified_s == "ngvariable-override-sets.yaml":
+		return "ng-variable-override-sets.yaml"
+
+
 	return modified_s
 
 
@@ -76,8 +169,8 @@ def saveRefFile(module, newyaml, fileName):
 	elif os.path.exists('../steps/common/' + newFileNameWithScore):
 		return '../../steps/common/' + newFileNameWithScore
 
-	elif os.path.exists('../steps/pie/' + newFileNameWithScore):
-		return '../../steps/pie/' + newFileNameWithScore
+	elif os.path.exists('../steps/custom/' + newFileNameWithScore):
+		return '../../steps/custom/' + newFileNameWithScore
 
 	elif os.path.exists('../steps/ci/' + newFileNameWithScore):
 		return '../../steps/ci/' + newFileNameWithScore
@@ -87,6 +180,8 @@ def saveRefFile(module, newyaml, fileName):
 	elif os.path.exists('../steps/security/' + newFileNameWithScore):
 		return '../../steps/security/' + newFileNameWithScore
 
+	elif os.path.exists('../steps/iacm/' + newFileNameWithScore):
+		return '../../steps/iacm/' + newFileNameWithScore
 
 	elif os.path.exists('../steps/cd/' + newFileNameWithScore):
 		return '../../steps/cd/' + newFileNameWithScore
@@ -192,9 +287,9 @@ def my_function(module,prefix):
 	moduleSuffix[module+prefix]=1
 	if(not module or  module == 'pipeline' or module == 'common' or module=='pie'):
 		level = data["pipeline"]
-		directoryPath = 'pie' + '/'
-		if not os.path.exists('pie'):
-			os.makedirs('pie')
+		directoryPath = 'custom' + '/'
+		if not os.path.exists('custom'):
+			os.makedirs('custom')
 	else:
 		level = data[module]
 		directoryPath = module + '/'
@@ -214,9 +309,9 @@ def my_function(module,prefix):
 			elif os.path.exists('../steps/common/' + fileNameWithUnderscore):
 				return '../../steps/common/' + fileNameWithUnderscore
 
-			elif os.path.exists('../steps/pie/' + fileNameWithUnderscore):
-				updatedYamlData = read_yaml('../steps/pie/' + fileNameWithUnderscore)
-				updateYaml('../steps/pie/'+fileNameWithUnderscore,updatedYamlData)
+			elif os.path.exists('../steps/custom/' + fileNameWithUnderscore):
+				updatedYamlData = read_yaml('../steps/custom/' + fileNameWithUnderscore)
+				updateYaml('../steps/custom/'+fileNameWithUnderscore,updatedYamlData)
 
 			elif os.path.exists('../steps/ci/' + fileNameWithUnderscore):
 				updatedYamlData = read_yaml('../steps/ci/' + fileNameWithUnderscore)
@@ -225,6 +320,10 @@ def my_function(module,prefix):
 			elif os.path.exists('../steps/cd/' + fileNameWithUnderscore):
 				updatedYamlData = read_yaml('../steps/cd/' + fileNameWithUnderscore)
 				updateYaml('../steps/cd/'+fileNameWithUnderscore,updatedYamlData)
+
+			elif os.path.exists('../steps/iacm/' + fileNameWithUnderscore):
+				updatedYamlData = read_yaml('../steps/iacm/' + fileNameWithUnderscore)
+				updateYaml('../steps/iacm/'+fileNameWithUnderscore,updatedYamlData)
 
 			elif os.path.exists('../steps/cvng/' + fileNameWithUnderscore):
 				updatedYamlData = read_yaml('../steps/cvng/' + fileNameWithUnderscore)
@@ -246,10 +345,10 @@ def my_function(module,prefix):
 
 
 
-moduleList = ['cf']
+moduleList = ['iacm']
 # moduleList = ['']
 
 for module in moduleList:
 	print()
-	my_function(module,'FeatureFlagStageNode')
+	my_function(module,'IACMStageNode')
 f.close()
