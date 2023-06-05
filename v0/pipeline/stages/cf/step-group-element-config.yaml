@@ -10,7 +10,7 @@ properties:
       items:
         type: string
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: (<\+.+>.*)
       minLength: 1
   failureStrategies:
     oneOf:
@@ -33,7 +33,11 @@ properties:
     maxItems: 2147483647
     minItems: 1
   strategy:
-    $ref: ../../common/strategy-config.yaml
+    oneOf:
+    - $ref: ../../common/strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
   template:
     $ref: ../../steps/custom/template-link-config.yaml
   when:

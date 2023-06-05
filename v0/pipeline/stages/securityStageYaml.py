@@ -38,6 +38,81 @@ def convertFileName(s):
 		else:
 			modified_s += c
 			prev_is_cap = False
+
+	if modified_s == "ngvariable.yaml":
+		return "ng-variable.yaml"
+	elif modified_s == "number-ngvariable.yaml":
+		return "number-ng-variable.yaml"
+	elif modified_s == "output-ngvariable.yaml":
+		return "output-ng-variable.yaml"
+	elif modified_s == "secret-ngvariable.yaml":
+		return "secret-ng-variable.yaml"
+	elif modified_s == "string-ngvariable.yaml":
+		return "string-ng-variable.yaml"
+	elif modified_s == "cistep-info.yaml":
+		return "ci-step-info.yaml"
+	elif modified_s == "prbuild-spec.yaml":
+		return "pr-build-spec.yaml"
+
+	elif modified_s == "azure-armrollback-step-node.yaml":
+		return "azure-a-r-m-rollback-step-node.yaml"
+	elif modified_s == "azure-armrollback-step-info.yaml":
+		return "azure-a-r-m-rollback-step-info.yaml"
+
+	elif modified_s == "azure-create-armresource-parameter-file.yaml":
+		return "azure-create-a-r-m-resource-parameter-file.yaml"
+	elif modified_s == "azure-create-armresource-step-configuration.yaml":
+		return "azure-create-a-r-m-resource-step-configuration.yaml"
+	elif modified_s == "azure-create-armresource-step-info.yaml":
+		return "azure-create-a-r-m-resource-step-info.yaml"
+	elif modified_s == "azure-create-armresource-step-node.yaml":
+		return "azure-create-a-r-m-resource-step-node.yaml"
+	elif modified_s == "azure-create-armresource-step-scope.yaml":
+		return "azure-create-a-r-m-resource-step-scope.yaml"
+	elif modified_s == "azure-create-bpstep-configuration.yaml":
+		return "azure-create-b-p-step-configuration.yaml"
+	elif modified_s == "azure-create-bpstep-info.yaml":
+		return "azure-create-b-p-step-info.yaml"
+	elif modified_s == "azure-create-bpstep-node.yaml":
+		return "azure-create-b-p-step-node.yaml"
+
+	elif modified_s == "create-prstep-info.yaml":
+		return "create-p-r-step-info.yaml"
+	elif modified_s == "create-prstep-node.yaml":
+		return "create-p-r-step-node.yaml"
+	elif modified_s == "create-prstep-update-config-script-base-source.yaml":
+		return "create-p-r-step-update-config-script-base-source.yaml"
+	elif modified_s == "create-prstep-update-config-script-inline-source.yaml":
+		return "create-p-r-step-update-config-script-inline-source.yaml"
+	elif modified_s == "create-prstep-update-config-script-wrapper.yaml":
+		return "create-p-r-step-update-config-script-wrapper.yaml"
+
+	elif modified_s == "elastigroup-bgstage-setup-step-info.yaml":
+		return "elastigroup-b-g-stage-setup-step-info.yaml"
+	elif modified_s == "elastigroup-bgstage-setup-step-node.yaml":
+		return "elastigroup-b-g-stage-setup-step-node.yaml"
+
+	elif modified_s == "k8s-bgswap-services-step-info.yaml":
+		return "k8s-b-g-swap-services-step-info.yaml"
+	elif modified_s == "k8s-bgswap-services-step-node.yaml":
+		return "k8s-b-g-swap-services-step-node.yaml"
+
+	elif modified_s == "merge-prstep-info.yaml":
+		return "merge-pr-step-info.yaml"
+	elif modified_s == "merge-prstep-node.yaml":
+		return "merge-pr-step-node.yaml"
+
+	elif modified_s == "tas-bgapp-setup-step-info.yaml":
+		return "tas-b-g-app-setup-step-info.yaml"
+	elif modified_s == "tas-bgapp-setup-step-node.yaml":
+		return "tas-b-g-app-setup-step-node.yaml"
+
+	elif modified_s == "cvngstep-info.yaml":
+		return "cvng-step-info.yaml"
+	elif modified_s == "cvverify-step-node.yaml":
+		return "cv-verify-step-node.yaml"
+
+
 	return modified_s
 
 

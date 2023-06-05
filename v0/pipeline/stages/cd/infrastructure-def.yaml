@@ -25,6 +25,8 @@ properties:
     - GoogleCloudFunctions
     - AWS_SAM
     - AwsLambda
+    - KubernetesAws
+    - KubernetesRancher
   description:
     desc: This is the description for InfrastructureDef
 $schema: http://json-schema.org/draft-07/schema#
@@ -96,6 +98,14 @@ allOf:
 - if:
     properties:
       type:
+        const: KubernetesAws
+  then:
+    properties:
+      spec:
+        $ref: k8s-aws-infrastructure.yaml
+- if:
+    properties:
+      type:
         const: KubernetesAzure
   then:
     properties:
@@ -117,6 +127,14 @@ allOf:
     properties:
       spec:
         $ref: k8s-gcp-infrastructure.yaml
+- if:
+    properties:
+      type:
+        const: KubernetesRancher
+  then:
+    properties:
+      spec:
+        $ref: k8s-rancher-infrastructure.yaml
 - if:
     properties:
       type:
