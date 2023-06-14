@@ -1,0 +1,32 @@
+# Copyright 2022 Harness Inc. All rights reserved.
+# Use of this source code is governed by the PolyForm Free Trial 1.0.0 license
+# that can be found in the licenses directory at the root of this repository, also available at
+# https://polyformproject.org/wp-content/uploads/2020/05/PolyForm-Free-Trial-1.0.0.txt.
+
+# Add properties that are shared between developers and ci build system
+
+# Setup java toolchain for compilation
+
+try-import bazelrc.cache
+
+startup --macos_qos_class=utility
+
+# Add properties that are specific to local bazel  build
+
+build --disk_cache=~/.bazel-dirs/cache
+
+build --symlink_prefix=/
+build --experimental_convenience_symlinks=ignore
+
+
+build --java_language_version=11
+
+# Setup java toolchain for execution
+build --java_runtime_version=local_jdk
+
+build --workspace_status_command=bundler/tools/bazel/workspace_status_command.sh
+
+build --experimental_strict_java_deps=off
+build --java_header_compilation=false
+build --javacopt='-XepDisableAllChecks'
+build --javacopt='-Xlint:none'
