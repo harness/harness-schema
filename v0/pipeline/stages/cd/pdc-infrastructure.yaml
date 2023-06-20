@@ -1,9 +1,38 @@
 title: PdcInfrastructure
 allOf:
-- $ref: infrastructure.yaml
+- $ref: ../../steps/common/infrastructure.yaml
 - {}
 $schema: http://json-schema.org/draft-07/schema#
 oneOf:
+- type: object
+  required:
+  - credentialsRef
+  - hostFilter
+  - hostArrayPath
+  properties:
+    credentialsRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    hostArrayPath:
+      type: string
+    hostAttributes:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    hostFilter:
+      $ref: host-filter.yaml
+    provisioner:
+      type: string
+  additionalProperties: false
 - type: object
   required:
   - credentialsRef
@@ -22,10 +51,6 @@ oneOf:
       - type: string
         pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
         minLength: 1
-    dynamicallyProvisioned:
-      oneOf:
-      - type: boolean
-      - type: string
     hostAttributes:
       oneOf:
       - type: object
@@ -34,6 +59,8 @@ oneOf:
       - type: string
     hostFilter:
       $ref: host-filter.yaml
+    provisioner:
+      type: string
   additionalProperties: false
 - type: object
   required:
@@ -51,10 +78,6 @@ oneOf:
       - type: string
         pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
         minLength: 1
-    dynamicallyProvisioned:
-      oneOf:
-      - type: boolean
-      - type: string
     hostAttributes:
       oneOf:
       - type: object
@@ -69,41 +92,8 @@ oneOf:
         items:
           type: string
       - type: string
-  additionalProperties: false
-- type: object
-  required:
-  - credentialsRef
-  - hostFilter
-  - hostObjectArray
-  properties:
-    credentialsRef:
+    provisioner:
       type: string
-    delegateSelectors:
-      oneOf:
-      - type: array
-        items:
-          type: string
-      - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-        minLength: 1
-    dynamicallyProvisioned:
-      oneOf:
-      - type: boolean
-      - type: string
-    hostAttributes:
-      oneOf:
-      - type: object
-        additionalProperties:
-          type: string
-      - type: string
-    hostFilter:
-      $ref: host-filter.yaml
-    hostObjectArray:
-      oneOf:
-      - $ref: ../../common/json-node.yaml
-      - type: string
-        pattern: (<\+.+>.*)
-        minLength: 1
   additionalProperties: false
 properties:
   description:

@@ -1,0 +1,145 @@
+title: ServiceHook
+type: object
+required:
+- identifier
+- store
+- storeType
+properties:
+  actions:
+    type: array
+    items:
+      type: string
+      enum:
+      - FetchFiles
+      - TemplateManifest
+      - SteadyStateCheck
+  identifier:
+    type: string
+  storeType:
+    type: string
+    enum:
+    - Inline
+  description:
+    desc: This is the description for ServiceHook
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      storeType:
+        const: Artifactory
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/artifactory-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: AzureRepo
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/azure-repo-store.yaml
+- if:
+    properties:
+      storeType:
+        const: Bitbucket
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/bitbucket-store.yaml
+- if:
+    properties:
+      storeType:
+        const: CustomRemote
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/custom-remote-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: Gcs
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/gcs-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: Git
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/git-store.yaml
+- if:
+    properties:
+      storeType:
+        const: GitLab
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/git-lab-store.yaml
+- if:
+    properties:
+      storeType:
+        const: Github
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/github-store.yaml
+- if:
+    properties:
+      storeType:
+        const: Harness
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/harness-store.yaml
+- if:
+    properties:
+      storeType:
+        const: Http
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/http-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: InheritFromManifest
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/inherit-from-manifest-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: Inline
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/inline-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: OciHelmChart
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/oci-helm-chart-config.yaml
+- if:
+    properties:
+      storeType:
+        const: S3
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/s3-store-config.yaml
+- if:
+    properties:
+      storeType:
+        const: S3Url
+  then:
+    properties:
+      store:
+        $ref: ../../steps/cd/s3-url-store-config.yaml
