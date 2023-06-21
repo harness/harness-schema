@@ -35386,14 +35386,14 @@
           }
         },
         "iacm" : {
-          "IACMTerraformPlanStepNode" : {
-            "title" : "IACMTerraformPlanStepNode",
+          "IACMTerraformPluginStepNode" : {
+            "title" : "IACMTerraformPluginStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for IACMTerraformPlanStepNode"
+                "desc" : "This is the description for IACMTerraformPluginStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -35433,7 +35433,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "IACMTerraformPlan" ]
+                "enum" : [ "IACMTerraformPlugin" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -35450,26 +35450,30 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "IACMTerraformPlan"
+                    "const" : "IACMTerraformPlugin"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanInfo"
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginInfo"
                   }
                 }
               }
             } ]
           },
-          "IACMTerraformPlanInfo" : {
-            "title" : "IACMTerraformPlanInfo",
+          "IACMTerraformPluginInfo" : {
+            "title" : "IACMTerraformPluginInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "command" ],
               "properties" : {
+                "command" : {
+                  "type" : "string"
+                },
                 "env" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
@@ -35477,18 +35481,18 @@
                     "type" : "string"
                   } ]
                 },
-                "tfVars" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
+                "image" : {
+                  "type" : "string"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "command" ],
             "properties" : {
+              "command" : {
+                "type" : "string"
+              },
               "env" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
@@ -35496,107 +35500,11 @@
                   "type" : "string"
                 } ]
               },
-              "tfVars" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
+              "image" : {
+                "type" : "string"
               },
               "description" : {
-                "desc" : "This is the description for IACMTerraformPlanInfo"
-              }
-            }
-          },
-          "IACMTemplateStepNode" : {
-            "title" : "IACMTemplateStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for IACMTemplateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "IACMTemplate" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "IACMTemplate"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "IACMTemplateInfo" : {
-            "title" : "IACMTemplateInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object"
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for IACMTemplateInfo"
+                "desc" : "This is the description for IACMTerraformPluginInfo"
               }
             }
           }
@@ -55395,6 +55303,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
@@ -55502,6 +55412,25 @@
               "name" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "sharedPaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "stepGroupInfra" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
+                } ]
               },
               "steps" : {
                 "type" : "array",
@@ -64913,7 +64842,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -65003,7 +64932,7 @@
           "IACMStageConfigImpl" : {
             "title" : "IACMStageConfigImpl",
             "type" : "object",
-            "required" : [ "stackID" ],
+            "required" : [ "workspace" ],
             "properties" : {
               "cloneCodebase" : {
                 "oneOf" : [ {
@@ -65070,7 +64999,7 @@
                   "type" : "string"
                 } ]
               },
-              "stackID" : {
+              "workspace" : {
                 "type" : "string"
               },
               "description" : {
@@ -65109,15 +65038,13 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode"
                 } ]
               },
               "description" : {

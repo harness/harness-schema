@@ -332,7 +332,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -422,7 +422,7 @@
           "IACMStageConfigImpl" : {
             "title" : "IACMStageConfigImpl",
             "type" : "object",
-            "required" : [ "stackID" ],
+            "required" : [ "workspace" ],
             "properties" : {
               "cloneCodebase" : {
                 "oneOf" : [ {
@@ -489,7 +489,7 @@
                   "type" : "string"
                 } ]
               },
-              "stackID" : {
+              "workspace" : {
                 "type" : "string"
               },
               "description" : {
@@ -528,15 +528,13 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode"
                 } ]
               },
               "description" : {
@@ -28336,6 +28334,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
@@ -28443,6 +28443,25 @@
               "name" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "sharedPaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "stepGroupInfra" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
+                } ]
               },
               "steps" : {
                 "type" : "array",
@@ -28982,6 +29001,32 @@
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "StepSpecType" : {
+          "title" : "StepSpecType",
+          "type" : "object",
+          "discriminator" : "type",
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for StepSpecType"
+            }
+          }
+        },
+        "OutputNGVariable" : {
+          "title" : "OutputNGVariable",
+          "type" : "object",
+          "properties" : {
+            "description" : {
+              "type" : "string",
+              "desc" : "This is the description for OutputNGVariable"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "ContainerResource" : {
           "title" : "ContainerResource",
           "type" : "object",
@@ -29068,32 +29113,6 @@
               "desc" : "This is the description for JsonNode"
             }
           }
-        },
-        "StepSpecType" : {
-          "title" : "StepSpecType",
-          "type" : "object",
-          "discriminator" : "type",
-          "$schema" : "http://json-schema.org/draft-07/schema#",
-          "properties" : {
-            "description" : {
-              "desc" : "This is the description for StepSpecType"
-            }
-          }
-        },
-        "OutputNGVariable" : {
-          "title" : "OutputNGVariable",
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string",
-              "desc" : "This is the description for OutputNGVariable"
-            },
-            "name" : {
-              "type" : "string",
-              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "ShellScriptSourceWrapper" : {
           "title" : "ShellScriptSourceWrapper",
@@ -33461,339 +33480,6 @@
           }
         },
         "common" : {
-          "PluginStepNode" : {
-            "title" : "PluginStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for PluginStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Plugin" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Plugin"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "PluginStepInfo" : {
-            "title" : "PluginStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "entrypoint" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "reports" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "settings" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "uses" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "entrypoint" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "reports" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "uses" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for PluginStepInfo"
-              }
-            }
-          },
-          "UnitTestReport" : {
-            "title" : "UnitTestReport",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "JUnit" ]
-              },
-              "description" : {
-                "desc" : "This is the description for UnitTestReport"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "JUnit"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/JUnitTestReport"
-                  }
-                }
-              }
-            } ]
-          },
-          "JUnitTestReport" : {
-            "title" : "JUnitTestReport",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/UnitTestReportSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "paths" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for JUnitTestReport"
-              }
-            }
-          },
-          "UnitTestReportSpec" : {
-            "title" : "UnitTestReportSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for UnitTestReportSpec"
-              }
-            }
-          },
-          "ParameterFieldMapStringString" : {
-            "title" : "ParameterFieldMapStringString",
-            "type" : "object",
-            "properties" : {
-              "defaultValue" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "executionInput" : {
-                "type" : "boolean"
-              },
-              "expression" : {
-                "type" : "boolean"
-              },
-              "expressionValue" : {
-                "type" : "string"
-              },
-              "inputSetValidator" : {
-                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
-              },
-              "jsonResponseField" : {
-                "type" : "boolean"
-              },
-              "responseField" : {
-                "type" : "string"
-              },
-              "typeString" : {
-                "type" : "boolean"
-              },
-              "value" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "description" : {
-                "desc" : "This is the description for ParameterFieldMapStringString"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "RunStepNode" : {
             "title" : "RunStepNode",
             "type" : "object",
@@ -34050,6 +33736,296 @@
               }
             }
           },
+          "UnitTestReport" : {
+            "title" : "UnitTestReport",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "JUnit" ]
+              },
+              "description" : {
+                "desc" : "This is the description for UnitTestReport"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "JUnit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/JUnitTestReport"
+                  }
+                }
+              }
+            } ]
+          },
+          "JUnitTestReport" : {
+            "title" : "JUnitTestReport",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/UnitTestReportSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "paths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for JUnitTestReport"
+              }
+            }
+          },
+          "UnitTestReportSpec" : {
+            "title" : "UnitTestReportSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UnitTestReportSpec"
+              }
+            }
+          },
+          "PluginStepNode" : {
+            "title" : "PluginStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for PluginStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Plugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Plugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "PluginStepInfo" : {
+            "title" : "PluginStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "entrypoint" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "reports" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "uses" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "entrypoint" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "reports" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "uses" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PluginStepInfo"
+              }
+            }
+          },
           "ActionStepNode" : {
             "title" : "ActionStepNode",
             "type" : "object",
@@ -34179,6 +34155,49 @@
                 "desc" : "This is the description for ActionStepInfo"
               }
             }
+          },
+          "ParameterFieldMapStringString" : {
+            "title" : "ParameterFieldMapStringString",
+            "type" : "object",
+            "properties" : {
+              "defaultValue" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "executionInput" : {
+                "type" : "boolean"
+              },
+              "expression" : {
+                "type" : "boolean"
+              },
+              "expressionValue" : {
+                "type" : "string"
+              },
+              "inputSetValidator" : {
+                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
+              },
+              "jsonResponseField" : {
+                "type" : "boolean"
+              },
+              "responseField" : {
+                "type" : "string"
+              },
+              "typeString" : {
+                "type" : "boolean"
+              },
+              "value" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for ParameterFieldMapStringString"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "DockerInfraYaml" : {
             "title" : "DockerInfraYaml",
@@ -38140,14 +38159,14 @@
           }
         },
         "iacm" : {
-          "IACMTerraformPlanStepNode" : {
-            "title" : "IACMTerraformPlanStepNode",
+          "IACMTerraformPluginStepNode" : {
+            "title" : "IACMTerraformPluginStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for IACMTerraformPlanStepNode"
+                "desc" : "This is the description for IACMTerraformPluginStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -38187,7 +38206,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "IACMTerraformPlan" ]
+                "enum" : [ "IACMTerraformPlugin" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -38204,26 +38223,30 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "IACMTerraformPlan"
+                    "const" : "IACMTerraformPlugin"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPlanInfo"
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginInfo"
                   }
                 }
               }
             } ]
           },
-          "IACMTerraformPlanInfo" : {
-            "title" : "IACMTerraformPlanInfo",
+          "IACMTerraformPluginInfo" : {
+            "title" : "IACMTerraformPluginInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "command" ],
               "properties" : {
+                "command" : {
+                  "type" : "string"
+                },
                 "env" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
@@ -38231,18 +38254,18 @@
                     "type" : "string"
                   } ]
                 },
-                "tfVars" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
+                "image" : {
+                  "type" : "string"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "command" ],
             "properties" : {
+              "command" : {
+                "type" : "string"
+              },
               "env" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
@@ -38250,107 +38273,11 @@
                   "type" : "string"
                 } ]
               },
-              "tfVars" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
+              "image" : {
+                "type" : "string"
               },
               "description" : {
-                "desc" : "This is the description for IACMTerraformPlanInfo"
-              }
-            }
-          },
-          "IACMTemplateStepNode" : {
-            "title" : "IACMTemplateStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for IACMTemplateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "IACMTemplate" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "IACMTemplate"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTemplateInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "IACMTemplateInfo" : {
-            "title" : "IACMTemplateInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object"
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for IACMTemplateInfo"
+                "desc" : "This is the description for IACMTerraformPluginInfo"
               }
             }
           }
