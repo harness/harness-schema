@@ -345,10 +345,10 @@ def my_function(module,prefix):
 
 
 
-moduleList = ['ci']
+moduleList = ['security']
 # moduleList = ['']
 
 for module in moduleList:
 	print()
-	my_function(module,'IntegrationStageNode')
+	my_function(module,'SecurityStageNode')
 f.close()
