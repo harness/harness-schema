@@ -29869,7 +29869,7 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "enum" : [ "Ignore", "Retry", "MarkAsSuccess", "Abort", "StageRollback", "StepGroupRollback", "PipelineRollback", "ManualIntervention", "ProceedWithDefaultValues", "MarkAsFailure" ]
+              "enum" : [ "Ignore", "Retry", "MarkAsSuccess", "Abort", "StageRollback", "StepGroupRollback", "PipelineRollback", "ManualIntervention", "ProceedWithDefaultValues", "MarkAsFailure", "RetryStepGroup" ]
             },
             "description" : {
               "desc" : "This is the description for FailureStrategyActionConfig"
@@ -29886,7 +29886,7 @@
                 "$ref" : "#/definitions/pipeline/common/ParameterFieldMatrixConfigInterface"
               }, {
                 "type" : "string",
-                "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                "pattern" : "^<\\\\+input>((\\\\.)((executionInput\\\\(\\\\))|(allowedValues|default|regex)\\\\(.+?\\\\)))*$",
                 "minLength" : 1
               } ]
             },
@@ -31611,7 +31611,13 @@
                 "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
               },
               "strategy" : {
-                "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
