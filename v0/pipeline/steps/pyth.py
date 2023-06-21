@@ -217,6 +217,7 @@ def read_yaml(path):
 	#print(path)
 	with open(path) as yamlField:
 		yamlData = yaml.load(yamlField, Loader=SafeLoader)
+		print(yamlData)
 		for element in yamlData:
 			if isinstance(element, str):
 				if(element == "$ref" and yamlData[element].startswith("#/")):
@@ -272,13 +273,29 @@ def my_function(module,prefix):
 			fileNameWithUnderscore =convertFileName(fileName)
 			#print(yaml_data)
 			if os.path.exists('../common/' + fileNameWithUnderscore):
+				with open('../common/' + fileNameWithUnderscore, 'w') as file:
+					yaml.dump(level[i], file, sort_keys=False)
 				updatedYamlData = read_yaml('../../common/' + fileNameWithUnderscore)
+				title={"title":fileName.removesuffix('.yaml')}
+				updatedYamlData={**title,**updatedYamlData}
+				updateDescription(updatedYamlData,fileName.removesuffix('.yaml'))
 				updateYaml('common/'+fileNameWithUnderscore,updatedYamlData)
 			elif os.path.exists('../common/' + fileNameWithUnderscore):
+				with open('../common/' + fileNameWithUnderscore, 'w') as file:
+					yaml.dump(level[i], file, sort_keys=False)
 				updatedYamlData = read_yaml('../common/' + fileNameWithUnderscore)
+				title={"title":fileName.removesuffix('.yaml')}
+				updatedYamlData={**title,**updatedYamlData}
+				updateDescription(updatedYamlData,fileName.removesuffix('.yaml'))
 				updateYaml('../common/'+fileNameWithUnderscore,updatedYamlData)
 			elif os.path.exists('custom/' + fileNameWithUnderscore):
+				print("tere")
+				with open('custom/' + fileNameWithUnderscore, 'w') as file:
+					yaml.dump(level[i], file, sort_keys=False)
 				updatedYamlData = read_yaml('custom/' + fileNameWithUnderscore)
+				title={"title":fileName.removesuffix('.yaml')}
+				updatedYamlData={**title,**updatedYamlData}
+				updateDescription(updatedYamlData,fileName.removesuffix('.yaml'))
 				updateYaml('custom/'+fileNameWithUnderscore,updatedYamlData)
 			#print()
 			else:
@@ -294,7 +311,7 @@ def my_function(module,prefix):
 
 
 
-moduleList = ['iacm']
+moduleList = ['','custom','cd','ci','iacm','security','cvng']
 
 for module in moduleList:
 	print()
