@@ -34,6 +34,8 @@ public class SchemaBundleUtils implements SchemaBundler {
   public final String NAME = "name";
   public final String ORG_IDENTIFIER = "orgIdentifier";
   public final String PROJECT_IDENTIFIER = "projectIdentifier";
+
+  public final String TEMPLATE = "template";
   public final String TYPE = "type";
   private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
   private static final ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper();
@@ -149,8 +151,8 @@ public class SchemaBundleUtils implements SchemaBundler {
 
     if (refValue.contains("step-group-element-config.yaml")) {
       return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER, TYPE));
-    } else if (refValue.contains("stage-node.yaml") || refValue.contains("step-node.yaml")) {
-      return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER));
+    } else if (refValue.contains("stage-node.yaml") || refValue.contains("step-node.yaml") ||refValue.contains("artifact-source.yaml")) {
+      return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER, TEMPLATE));
     }
 
     return new HashSet<>();
