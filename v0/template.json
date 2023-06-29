@@ -17,6 +17,8 @@
         "$ref" : "#/definitions/template/monitoredservice/template"
       }, {
         "$ref" : "#/definitions/template/artifactsourcetemplate/template"
+      }, {
+        "$ref" : "#/definitions/template/customdeployment/template"
       } ]
     }
   },
@@ -665,6 +667,60 @@
             "spec" : {
               "oneOf" : [ {
                 "$ref" : "#/definitions/pipeline/stages/cd/ArtifactSource_template"
+              } ]
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "customdeployment" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "CustomDeployment" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig_template"
               } ]
             },
             "tags" : {
@@ -43830,6 +43886,26 @@
                 }
               }
             } ]
+          },
+          "CustomDeploymentConfig_template" : {
+            "title" : "CustomDeploymentConfig_template",
+            "type" : "object",
+            "required" : [ "execution", "infrastructure" ],
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentExecutionConfig"
+              },
+              "infrastructure" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentInfraConfig"
+              },
+              "metadata" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for CustomDeploymentConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "ci" : {
