@@ -12,6 +12,8 @@
       }, {
         "$ref" : "#/definitions/template/pipeline/template"
       }, {
+        "$ref" : "#/definitions/template/stepgroup/template"
+      }, {
         "$ref" : "#/definitions/template/monitoredservice/template"
       }, {
         "$ref" : "#/definitions/template/artifactsourcetemplate/template"
@@ -526,6 +528,56 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      },
+      "stepgroup" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "StepGroup" ]
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/numberVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/secretVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/stringVariable"
+                } ]
+              }
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+            },
+            "spec" : "object",
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "icon" : {
+              "type" : "string"
+            }
+          }
         }
       },
       "monitoredservice" : {
@@ -1765,8 +1817,36 @@
           "TemplateStepNode_template" : {
             "title" : "TemplateStepNode_template",
             "type" : "object",
-            "required" : [ ],
-            "properties" : { },
+            "required" : [ "template" ],
+            "properties" : {
+              "template" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TemplateLinkConfig" : {
+            "title" : "TemplateLinkConfig",
+            "type" : "object",
+            "required" : [ "templateRef" ],
+            "properties" : {
+              "templateInputs" : {
+                "$ref" : "#/definitions/pipeline/common/JsonNode"
+              },
+              "templateRef" : {
+                "type" : "string"
+              },
+              "templateVariables" : {
+                "$ref" : "#/definitions/pipeline/common/JsonNode"
+              },
+              "versionLabel" : {
+                "type" : "string",
+                "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
+              },
+              "description" : {
+                "desc" : "This is the description for TemplateLinkConfig"
+              }
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "PolicyStepNode_template" : {
@@ -4891,30 +4971,6 @@
               },
               "template" : {
                 "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "TemplateLinkConfig" : {
-            "title" : "TemplateLinkConfig",
-            "type" : "object",
-            "required" : [ "templateRef" ],
-            "properties" : {
-              "templateInputs" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "templateRef" : {
-                "type" : "string"
-              },
-              "templateVariables" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "versionLabel" : {
-                "type" : "string",
-                "pattern" : "^[0-9a-zA-Z][^\\s]{0,63}$"
-              },
-              "description" : {
-                "desc" : "This is the description for TemplateLinkConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -36135,6 +36191,16 @@
             }
           }
         },
+        "JsonNode" : {
+          "title" : "JsonNode",
+          "type" : "object",
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for JsonNode"
+            }
+          }
+        },
         "ContainerResource" : {
           "title" : "ContainerResource",
           "type" : "object",
@@ -36226,16 +36292,6 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "JsonNode" : {
-          "title" : "JsonNode",
-          "type" : "object",
-          "$schema" : "http://json-schema.org/draft-07/schema#",
-          "properties" : {
-            "description" : {
-              "desc" : "This is the description for JsonNode"
-            }
-          }
         },
         "StepElementConfig" : {
           "title" : "StepElementConfig",
@@ -65186,8 +65242,12 @@
           "TemplateStageNode_template" : {
             "title" : "TemplateStageNode_template",
             "type" : "object",
-            "required" : [ ],
-            "properties" : { },
+            "required" : [ "template" ],
+            "properties" : {
+              "template" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              }
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TemplateStageNode" : {

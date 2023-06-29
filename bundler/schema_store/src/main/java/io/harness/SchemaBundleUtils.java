@@ -151,7 +151,9 @@ public class SchemaBundleUtils implements SchemaBundler {
 
     if (refValue.contains("step-group-element-config.yaml")) {
       return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER, TYPE));
-    } else if (refValue.contains("stage-node.yaml") || refValue.contains("step-node.yaml") ||refValue.contains("artifact-source.yaml")) {
+    } else if (refValue.contains("stage-node.yaml") || refValue.contains("step-node.yaml")) {
+      return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER));
+    } else if(refValue.contains("artifact-source.yaml")) {
       return new HashSet<>(Arrays.asList(NAME, IDENTIFIER, DESCRIPTION, ORG_IDENTIFIER, PROJECT_IDENTIFIER, TEMPLATE));
     }
 
