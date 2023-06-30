@@ -1,3 +1,11 @@
+## Overview
+Onboarding to Static Schema - [On-boarding](https://harness.atlassian.net/wiki/spaces/PIPE/pages/21390131775/Static+Schema+Onboarding)
+
+Developer Guide - [Developer Guide](https://harness.atlassian.net/wiki/spaces/PIPE/pages/21420410346/Developer+Guide+for+Static+Schema)
+
+Static Schema Support For Different Environment - [Environment Support](https://harness.atlassian.net/wiki/spaces/PIPE/pages/21419919199/Making+Static+Schema+Live+in+Different+Environment)
+
+
 # **Local Development with Static Schema**
 
 1. Clone Repository:
