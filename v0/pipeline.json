@@ -1160,6 +1160,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
@@ -56846,6 +56848,21 @@
               "if" : {
                 "properties" : {
                   "type" : {
+                    "const" : "Configured"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/ConfiguredMonitoredServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
                     "const" : "Default"
                   }
                 }
@@ -56874,18 +56891,23 @@
               }
             } ]
           },
-          "DefaultMonitoredServiceSpec" : {
-            "title" : "DefaultMonitoredServiceSpec",
+          "ConfiguredMonitoredServiceSpec" : {
+            "title" : "ConfiguredMonitoredServiceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/cvng/MonitoredServiceSpec"
             }, {
               "type" : "object",
-              "properties" : { }
+              "required" : [ "monitoredServiceRef" ],
+              "properties" : {
+                "monitoredServiceRef" : {
+                  "type" : "string"
+                }
+              }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
               "description" : {
-                "desc" : "This is the description for DefaultMonitoredServiceSpec"
+                "desc" : "This is the description for ConfiguredMonitoredServiceSpec"
               }
             }
           },
@@ -56902,6 +56924,21 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DefaultMonitoredServiceSpec" : {
+            "title" : "DefaultMonitoredServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cvng/MonitoredServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DefaultMonitoredServiceSpec"
+              }
+            }
           },
           "TemplateMonitoredServiceSpec" : {
             "title" : "TemplateMonitoredServiceSpec",
@@ -57074,6 +57111,131 @@
                 "desc" : "This is the description for SimpleVerificationJobSpec"
               }
             }
+          },
+          "CVAnalyzeDeploymentStepNode" : {
+            "title" : "CVAnalyzeDeploymentStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for CVAnalyzeDeploymentStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AnalyzeDeploymentImpact" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AnalyzeDeploymentImpact"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVNGDeploymentStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "CVNGDeploymentStepInfo" : {
+            "title" : "CVNGDeploymentStepInfo",
+            "type" : "object",
+            "required" : [ "duration" ],
+            "properties" : {
+              "duration" : {
+                "type" : "string",
+                "description" : "Format example: 12H, 1D, please put either Hours or days"
+              },
+              "monitoredService" : {
+                "$ref" : "#/definitions/pipeline/steps/cvng/DefaultAndConfiguredMonitoredServiceNode"
+              },
+              "description" : {
+                "desc" : "This is the description for CVNGDeploymentStepInfo"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DefaultAndConfiguredMonitoredServiceNode" : {
+            "title" : "DefaultAndConfiguredMonitoredServiceNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/steps/cvng/DefaultAndConfiguredMonitoredServiceSpec"
+              },
+              "type" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for DefaultAndConfiguredMonitoredServiceNode"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DefaultAndConfiguredMonitoredServiceSpec" : {
+            "title" : "DefaultAndConfiguredMonitoredServiceSpec",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for DefaultAndConfiguredMonitoredServiceSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         }
       }
