@@ -311,9 +311,9 @@ def my_function(module,prefix):
 
 
 
-moduleList = ['cd']
+moduleList = ['','custom','cd','ci','iacm','security','cvng']
 
 for module in moduleList:
 	print()
-	my_function(module,'ServerlessAwsLambdaRollbackV2StepNode')
+	my_function(module,'StepNode')
 f.close()
