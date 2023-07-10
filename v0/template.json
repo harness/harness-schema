@@ -393,6 +393,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode_template"
               } ]
             },
             "tags" : {
@@ -52039,13 +52041,6 @@
                 "command" : {
                   "type" : "string"
                 },
-                "env" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
                 "image" : {
                   "type" : "string"
                 }
@@ -52058,18 +52053,99 @@
               "command" : {
                 "type" : "string"
               },
-              "env" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
-              },
               "image" : {
                 "type" : "string"
               },
               "description" : {
                 "desc" : "This is the description for IACMTerraformPluginInfo"
+              }
+            }
+          },
+          "IACMApprovalStepNode_template" : {
+            "title" : "IACMApprovalStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMApproval" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMApproval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMApprovalInfo" : {
+            "title" : "IACMApprovalInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "image" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for IACMApprovalInfo"
               }
             }
           },
@@ -52145,6 +52221,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMApprovalStepNode" : {
+            "title" : "IACMApprovalStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IACMApprovalStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMApproval" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMApproval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalInfo"
                   }
                 }
               }
@@ -62074,6 +62227,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode"
                 } ]
               },
               "description" : {
