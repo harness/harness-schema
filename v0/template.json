@@ -3123,7 +3123,7 @@
           "ContainerInfraYamlSpec" : {
             "title" : "ContainerInfraYamlSpec",
             "type" : "object",
-            "required" : [ "connectorRef", "namespace", "resources" ],
+            "required" : [ "connectorRef", "namespace" ],
             "properties" : {
               "annotations" : {
                 "oneOf" : [ {
@@ -4514,7 +4514,7 @@
               "properties" : {
                 "format" : {
                   "type" : "string",
-                  "enum" : [ "spdx-json" ]
+                  "enum" : [ "spdx-json", "cyclonedx-json" ]
                 }
               }
             } ],
@@ -18137,6 +18137,237 @@
               }
             } ]
           },
+          "RunStepNode" : {
+            "title" : "RunStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for RunStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Run" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Run"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/RunStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "PluginStepNode" : {
+            "title" : "PluginStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for PluginStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Plugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Plugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ActionStepNode" : {
+            "title" : "ActionStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ActionStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Action" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Action"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "Infrastructure" : {
             "title" : "Infrastructure",
             "type" : "object",
@@ -21124,160 +21355,6 @@
               }
             } ]
           },
-          "ActionStepNode" : {
-            "title" : "ActionStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for ActionStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Action" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Action"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "PluginStepNode" : {
-            "title" : "PluginStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for PluginStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Plugin" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Plugin"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
           "CheckmarxScanNode" : {
             "title" : "CheckmarxScanNode",
             "type" : "object",
@@ -21658,83 +21735,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/GitleaksStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "RunStepNode" : {
-            "title" : "RunStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for RunStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Run" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Run"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/RunStepInfo"
                   }
                 }
               }
@@ -23280,6 +23280,9 @@
                 },
                 "tool" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
               }
             } ],
@@ -23298,6 +23301,9 @@
               },
               "description" : {
                 "desc" : "This is the description for SscaOrchestrationStepInfo"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
               }
             }
           },
@@ -25994,6 +26000,9 @@
                 },
                 "verifyAttestation" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
               }
             } ],
@@ -26012,6 +26021,9 @@
               },
               "description" : {
                 "desc" : "This is the description for SscaEnforcementStepInfo"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
               }
             }
           },
@@ -52972,42 +52984,6 @@
           "$schema" : "http://json-schema.org/draft-07/schema#",
           "allOf" : [ ]
         },
-        "DelegateInfra" : {
-          "title" : "DelegateInfra",
-          "allOf" : [ {
-            "$ref" : "#/definitions/pipeline/common/StepGroupInfra"
-          }, {
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
-              }
-            }
-          } ],
-          "$schema" : "http://json-schema.org/draft-07/schema#",
-          "properties" : {
-            "description" : {
-              "desc" : "This is the description for DelegateInfra"
-            }
-          }
-        },
-        "StepGroupInfra" : {
-          "title" : "StepGroupInfra",
-          "type" : "object",
-          "discriminator" : "type",
-          "properties" : {
-            "type" : {
-              "type" : "string",
-              "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
-            },
-            "description" : {
-              "desc" : "This is the description for StepGroupInfra"
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
         "K8sDirectInfra" : {
           "title" : "K8sDirectInfra",
           "allOf" : [ {
@@ -53031,6 +53007,21 @@
               "desc" : "This is the description for K8sDirectInfra"
             }
           }
+        },
+        "StepGroupInfra" : {
+          "title" : "StepGroupInfra",
+          "type" : "object",
+          "discriminator" : "type",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
+            },
+            "description" : {
+              "desc" : "This is the description for StepGroupInfra"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
       "stages" : {
@@ -53281,6 +53272,12 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
@@ -53363,8 +53360,6 @@
               },
               "stepGroupInfra" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
-                }, {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
               },
@@ -53940,8 +53935,6 @@
               },
               "stepGroupInfra" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
-                }, {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
               },
@@ -53974,6 +53967,9 @@
                   "minLength" : 1
                 } ]
               },
+              "description" : {
+                "desc" : "This is the description for StepGroupElementConfig"
+              },
               "variables" : {
                 "type" : "array",
                 "items" : {
@@ -53985,9 +53981,6 @@
                     "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                   } ]
                 }
-              },
-              "description" : {
-                "desc" : "This is the description for StepGroupElementConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -54733,6 +54726,12 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
@@ -55069,8 +55068,6 @@
               },
               "stepGroupInfra" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
-                }, {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
               },
@@ -60946,8 +60943,6 @@
               },
               "stepGroupInfra" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
-                }, {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
               },
@@ -61358,6 +61353,12 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
@@ -61440,8 +61441,6 @@
               },
               "stepGroupInfra" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/DelegateInfra"
-                }, {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
               },
