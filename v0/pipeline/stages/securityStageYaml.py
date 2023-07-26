@@ -76,17 +76,6 @@ def convertFileName(s):
 	elif modified_s == "azure-create-bpstep-node.yaml":
 		return "azure-create-b-p-step-node.yaml"
 
-	elif modified_s == "create-prstep-info.yaml":
-		return "create-p-r-step-info.yaml"
-	elif modified_s == "create-prstep-node.yaml":
-		return "create-p-r-step-node.yaml"
-	elif modified_s == "create-prstep-update-config-script-base-source.yaml":
-		return "create-p-r-step-update-config-script-base-source.yaml"
-	elif modified_s == "create-prstep-update-config-script-inline-source.yaml":
-		return "create-p-r-step-update-config-script-inline-source.yaml"
-	elif modified_s == "create-prstep-update-config-script-wrapper.yaml":
-		return "create-p-r-step-update-config-script-wrapper.yaml"
-
 	elif modified_s == "elastigroup-bgstage-setup-step-info.yaml":
 		return "elastigroup-b-g-stage-setup-step-info.yaml"
 	elif modified_s == "elastigroup-bgstage-setup-step-node.yaml":
