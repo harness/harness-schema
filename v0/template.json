@@ -78,6 +78,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode_template"
@@ -108,7 +110,7 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode_template"
               }, {
@@ -141,6 +143,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode_template"
               }, {
@@ -203,6 +207,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode_template"
               }, {
@@ -401,6 +407,14 @@
                 "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkBootstrapStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkSynthStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkDiffStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode_template"
               } ]
             },
             "tags" : {
@@ -2193,6 +2207,232 @@
               },
               "description" : {
                 "desc" : "This is the description for AwsLambdaRollbackStepInfo"
+              }
+            }
+          },
+          "AwsSamBuildStepNode_template" : {
+            "title" : "AwsSamBuildStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsSamBuild" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsSamBuild"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsSamBuildStepInfo" : {
+            "title" : "AwsSamBuildStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "buildCommandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "samBuildDockerRegistryConnectorRef" : {
+                  "type" : "string"
+                },
+                "samVersion" : {
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "buildCommandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "samBuildDockerRegistryConnectorRef" : {
+                "type" : "string"
+              },
+              "samVersion" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AwsSamBuildStepInfo"
               }
             }
           },
@@ -6028,10 +6268,10 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "CreatePRStepNode_template" : {
-            "title" : "CreatePRStepNode_template",
+          "DownloadManifestsStepNode_template" : {
+            "title" : "DownloadManifestsStepNode_template",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "type" ],
             "properties" : {
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -6063,7 +6303,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "CreatePR" ]
+                "enum" : [ "DownloadManifests" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -6080,26 +6320,25 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "CreatePR"
+                    "const" : "DownloadManifests"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepInfo"
                   }
                 }
               }
             } ]
           },
-          "CreatePRStepInfo" : {
-            "title" : "CreatePRStepInfo",
+          "DownloadManifestsStepInfo" : {
+            "title" : "DownloadManifestsStepInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "overrideConfig", "shell" ],
               "properties" : {
                 "delegateSelectors" : {
                   "oneOf" : [ {
@@ -6109,32 +6348,14 @@
                     }
                   }, {
                     "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
-                },
-                "overrideConfig" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "shell" : {
-                  "type" : "string",
-                  "enum" : [ "Bash" ]
-                },
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptWrapper"
-                },
-                "stringMap" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "overrideConfig", "shell" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -6144,94 +6365,14 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
-              "overrideConfig" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "shell" : {
-                "type" : "string",
-                "enum" : [ "Bash" ]
-              },
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptWrapper"
-              },
-              "stringMap" : {
-                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-              },
               "description" : {
-                "desc" : "This is the description for CreatePRStepInfo"
+                "desc" : "This is the description for DownloadManifestsStepInfo"
               }
             }
-          },
-          "CreatePRStepUpdateConfigScriptWrapper" : {
-            "title" : "CreatePRStepUpdateConfigScriptWrapper",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for CreatePRStepUpdateConfigScriptWrapper"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Inline"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptInlineSource"
-                  }
-                }
-              }
-            } ]
-          },
-          "CreatePRStepUpdateConfigScriptInlineSource" : {
-            "title" : "CreatePRStepUpdateConfigScriptInlineSource",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepUpdateConfigScriptBaseSource"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "updateConfigScript" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CreatePRStepUpdateConfigScriptInlineSource"
-              }
-            }
-          },
-          "CreatePRStepUpdateConfigScriptBaseSource" : {
-            "title" : "CreatePRStepUpdateConfigScriptBaseSource",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for CreatePRStepUpdateConfigScriptBaseSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "EcsBlueGreenCreateServiceStepNode_template" : {
             "title" : "EcsBlueGreenCreateServiceStepNode_template",
@@ -8425,6 +8566,118 @@
               },
               "description" : {
                 "desc" : "This is the description for GoogleFunctionsDeployStepInfo"
+              }
+            }
+          },
+          "GoogleFunctionsGenOneDeployStepNode_template" : {
+            "title" : "GoogleFunctionsGenOneDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "DeployCloudFunctionGenOne" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "DeployCloudFunctionGenOne"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GoogleFunctionsGenOneDeployStepInfo" : {
+            "title" : "GoogleFunctionsGenOneDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "updateFieldMask" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "updateFieldMask" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for GoogleFunctionsGenOneDeployStepInfo"
               }
             }
           },
@@ -14803,6 +15056,154 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "TasRouteMappingStepNode_template" : {
+            "title" : "TasRouteMappingStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "RouteMapping" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "RouteMapping"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "TasRouteMappingStepInfo" : {
+            "title" : "TasRouteMappingStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "appName", "routeType", "routes" ],
+              "properties" : {
+                "appName" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "routeType" : {
+                  "type" : "string",
+                  "enum" : [ "Map", "UnMap" ]
+                },
+                "routes" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "appName", "routeType", "routes" ],
+            "properties" : {
+              "appName" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "routeType" : {
+                "type" : "string",
+                "enum" : [ "Map", "UnMap" ]
+              },
+              "routes" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for TasRouteMappingStepInfo"
+              }
+            }
+          },
           "TasRollbackStepNode_template" : {
             "title" : "TasRollbackStepNode_template",
             "type" : "object",
@@ -18211,6 +18612,772 @@
               }
             }
           },
+          "AwsCdkBootstrapStepNode_template" : {
+            "title" : "AwsCdkBootstrapStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkBootstrap" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkBootstrap"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkBootstrapStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsCdkBootstrapStepInfo" : {
+            "title" : "AwsCdkBootstrapStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "appPath" : {
+                  "type" : "string"
+                },
+                "commandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "exportTemplate" : {
+                  "type" : "boolean"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "appPath" : {
+                "type" : "string"
+              },
+              "commandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "exportTemplate" : {
+                "type" : "boolean"
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCdkBootstrapStepInfo"
+              }
+            }
+          },
+          "AwsCdkSynthStepNode_template" : {
+            "title" : "AwsCdkSynthStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkSynth" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkSynth"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkSynthStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsCdkSynthStepInfo" : {
+            "title" : "AwsCdkSynthStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "appPath" : {
+                  "type" : "string"
+                },
+                "commandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "exportTemplate" : {
+                  "type" : "boolean"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "stackNames" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "appPath" : {
+                "type" : "string"
+              },
+              "commandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "exportTemplate" : {
+                "type" : "boolean"
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "stackNames" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCdkSynthStepInfo"
+              }
+            }
+          },
+          "AwsCdkDiffStepNode_template" : {
+            "title" : "AwsCdkDiffStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkDiff" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkDiff"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkDiffStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsCdkDiffStepInfo" : {
+            "title" : "AwsCdkDiffStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "appPath" : {
+                  "type" : "string"
+                },
+                "commandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "stackNames" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "appPath" : {
+                "type" : "string"
+              },
+              "commandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "stackNames" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCdkDiffStepInfo"
+              }
+            }
+          },
+          "K8sBGStageScaleDownStepNode_template" : {
+            "title" : "K8sBGStageScaleDownStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "K8sBlueGreenStageScaleDown" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "K8sBlueGreenStageScaleDown"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "K8sBGStageScaleDownStepInfo" : {
+            "title" : "K8sBGStageScaleDownStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for K8sBGStageScaleDownStepInfo"
+              }
+            }
+          },
           "TerraformApplyStepNode" : {
             "title" : "TerraformApplyStepNode",
             "type" : "object",
@@ -20367,47 +21534,6 @@
               }
             } ]
           },
-          "DownloadManifestsStepInfo" : {
-            "title" : "DownloadManifestsStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for DownloadManifestsStepInfo"
-              }
-            }
-          },
           "AwsSamBuildStepNode" : {
             "title" : "AwsSamBuildStepNode",
             "type" : "object",
@@ -20484,167 +21610,6 @@
                 }
               }
             } ]
-          },
-          "AwsSamBuildStepInfo" : {
-            "title" : "AwsSamBuildStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "buildCommandOptions" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "samBuildDockerRegistryConnectorRef" : {
-                  "type" : "string"
-                },
-                "samVersion" : {
-                  "oneOf" : [ {
-                    "type" : "string"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "buildCommandOptions" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "samBuildDockerRegistryConnectorRef" : {
-                "type" : "string"
-              },
-              "samVersion" : {
-                "oneOf" : [ {
-                  "type" : "string"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for AwsSamBuildStepInfo"
-              }
-            }
           },
           "AwsSamRollbackStepNode" : {
             "title" : "AwsSamRollbackStepNode",
@@ -21339,155 +22304,6 @@
               }
             } ]
           },
-          "AwsCdkBootstrapStepInfo" : {
-            "title" : "AwsCdkBootstrapStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "appPath" : {
-                  "type" : "string"
-                },
-                "commandOptions" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "exportTemplate" : {
-                  "type" : "boolean"
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "appPath" : {
-                "type" : "string"
-              },
-              "commandOptions" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "exportTemplate" : {
-                "type" : "boolean"
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for AwsCdkBootstrapStepInfo"
-              }
-            }
-          },
           "AwsCdkSynthStepNode" : {
             "title" : "AwsCdkSynthStepNode",
             "type" : "object",
@@ -21565,166 +22381,82 @@
               }
             } ]
           },
-          "AwsCdkSynthStepInfo" : {
-            "title" : "AwsCdkSynthStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "appPath" : {
-                  "type" : "string"
-                },
-                "commandOptions" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "exportTemplate" : {
-                  "type" : "boolean"
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "stackNames" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
+          "AwsCdkDiffStepNode" : {
+            "title" : "AwsCdkDiffStepNode",
             "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
-              "appPath" : {
-                "type" : "string"
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsCdkDiffStepNode"
               },
-              "commandOptions" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "type" : "string"
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>$",
                   "minLength" : 1
                 } ]
               },
-              "connectorRef" : {
-                "type" : "string"
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
-              "delegateSelectors" : {
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "strategy" : {
                 "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkDiff" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkDiff"
                   }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "exportTemplate" : {
-                "type" : "boolean"
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "stackNames" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
                 }
               },
-              "description" : {
-                "desc" : "This is the description for AwsCdkSynthStepInfo"
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkDiffStepInfo"
+                  }
+                }
               }
-            }
+            } ]
           },
           "MergePRStepNode" : {
             "title" : "MergePRStepNode",
@@ -23153,47 +23885,6 @@
               }
             } ]
           },
-          "K8sBGStageScaleDownStepInfo" : {
-            "title" : "K8sBGStageScaleDownStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for K8sBGStageScaleDownStepInfo"
-              }
-            }
-          },
           "SyncStepNode" : {
             "title" : "SyncStepNode",
             "type" : "object",
@@ -24580,83 +25271,6 @@
               }
             } ]
           },
-          "CreatePRStepNode" : {
-            "title" : "CreatePRStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for CreatePRStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "CreatePR" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "CreatePR"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
           "K8sCanaryStepNode" : {
             "title" : "K8sCanaryStepNode",
             "type" : "object",
@@ -25581,53 +26195,6 @@
               }
             } ]
           },
-          "GoogleFunctionsGenOneDeployStepInfo" : {
-            "title" : "GoogleFunctionsGenOneDeployStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "updateFieldMask" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "updateFieldMask" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for GoogleFunctionsGenOneDeployStepInfo"
-              }
-            }
-          },
           "CommandStepNode" : {
             "title" : "CommandStepNode",
             "type" : "object",
@@ -26166,89 +26733,6 @@
                 }
               }
             } ]
-          },
-          "TasRouteMappingStepInfo" : {
-            "title" : "TasRouteMappingStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "appName", "routeType", "routes" ],
-              "properties" : {
-                "appName" : {
-                  "type" : "string",
-                  "minLength" : 1
-                },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "routeType" : {
-                  "type" : "string",
-                  "enum" : [ "Map", "UnMap" ]
-                },
-                "routes" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "appName", "routeType", "routes" ],
-            "properties" : {
-              "appName" : {
-                "type" : "string",
-                "minLength" : 1
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "routeType" : {
-                "type" : "string",
-                "enum" : [ "Map", "UnMap" ]
-              },
-              "routes" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for TasRouteMappingStepInfo"
-              }
-            }
           },
           "UpdateReleaseRepoStepNode" : {
             "title" : "UpdateReleaseRepoStepNode",
@@ -54086,6 +54570,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkBootstrapStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkSynthStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkDiffStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -55417,8 +55903,6 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/cd/CreatePRStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
@@ -55566,6 +56050,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkBootstrapStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkSynthStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsCdkDiffStepNode"
                 } ]
               },
               "stepGroup" : {
