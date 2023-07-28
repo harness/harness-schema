@@ -27203,6 +27203,35 @@
               }
             }
           },
+          "STOYamlSBOM" : {
+            "title" : "STOYamlSBOM",
+            "type" : "object",
+            "properties" : {
+              "format" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "spdx-json", "cyclonedx-json" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "generate" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for STOYamlSBOM"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "BarrierStepNode_template" : {
             "title" : "BarrierStepNode_template",
             "type" : "object",
@@ -33962,7 +33991,7 @@
                   "$ref" : "#/definitions/pipeline/steps/common/STOYamlAuth"
                 },
                 "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldListString"
                 },
                 "config" : {
                   "type" : "string",
@@ -34020,6 +34049,9 @@
                     "type" : "string"
                   } ]
                 },
+                "sbom" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/STOYamlSBOM"
+                },
                 "settings" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
@@ -34046,7 +34078,7 @@
                 "$ref" : "#/definitions/pipeline/steps/common/STOYamlAuth"
               },
               "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldListString"
               },
               "config" : {
                 "type" : "string",
@@ -34104,6 +34136,9 @@
                   "type" : "string"
                 } ]
               },
+              "sbom" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/STOYamlSBOM"
+              },
               "settings" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
@@ -34121,6 +34156,49 @@
                 "desc" : "This is the description for BlackDuckStepInfo"
               }
             }
+          },
+          "ParameterFieldListString" : {
+            "title" : "ParameterFieldListString",
+            "type" : "object",
+            "properties" : {
+              "defaultValue" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "executionInput" : {
+                "type" : "boolean"
+              },
+              "expression" : {
+                "type" : "boolean"
+              },
+              "expressionValue" : {
+                "type" : "string"
+              },
+              "inputSetValidator" : {
+                "$ref" : "#/definitions/pipeline/common/InputSetValidator"
+              },
+              "jsonResponseField" : {
+                "type" : "boolean"
+              },
+              "responseField" : {
+                "type" : "string"
+              },
+              "typeString" : {
+                "type" : "boolean"
+              },
+              "value" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for ParameterFieldListString"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "STOYamlBlackduckToolData" : {
             "title" : "STOYamlBlackduckToolData",
@@ -51310,14 +51388,17 @@
                 "attestation" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
                 },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
                 "source" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
                 },
                 "tool" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
               }
             } ],
@@ -51328,6 +51409,12 @@
               "attestation" : {
                 "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
               },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
               "source" : {
                 "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
               },
@@ -51336,11 +51423,21 @@
               },
               "description" : {
                 "desc" : "This is the description for SscaOrchestrationStepInfo"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
               }
             }
+          },
+          "SbomFile" : {
+            "title" : "SbomFile",
+            "type" : "object",
+            "properties" : {
+              "file" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for SbomFile"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "GitCloneStepNode" : {
             "title" : "GitCloneStepNode",
