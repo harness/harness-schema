@@ -87,12 +87,12 @@ For more information, see [`available steps in harness`](https://developer.harne
     },
     "identifier": {
       "type": "string",
-      "pattern": "^[a-zA-Z_][0-9a-zA-Z_]{0,63}$",
+      "pattern": "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$",
       "desc": "The unique identifier of your step inside a stage / step group. Harness utilise the identifier for all expressions. If you omit `identifier`, harness auto generates with a unique combination."
     },
     "name": {
       "type": "string",
-      "pattern": "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,63}$",
+      "pattern": "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$",
       "desc": "The name of your step."
     },
     "type": {
