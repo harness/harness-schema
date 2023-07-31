@@ -54773,6 +54773,111 @@
               "if" : {
                 "properties" : {
                   "deploymentType" : {
+                    "const" : "AWS_SAM"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AwsSamDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Asg"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AsgDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "AwsLambda"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AwsLambdaDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "AzureWebApp"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "CustomDeployment"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "ECS"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/EcsDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Elastigroup"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/ElastiGroupDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
                     "const" : "GoogleCloudFunctions"
                   }
                 }
@@ -54781,6 +54886,96 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudFunctionDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Kubernetes"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/KubernetesDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "NativeHelm"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/NativeHelmDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "ServerlessAwsLambda"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/ServerlessAwsLambdaDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Ssh"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SshDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "TAS"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/TasDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "WinRm"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/WinrmDeploymentMetaData"
                   }
                 }
               }
@@ -58585,11 +58780,20 @@
               "type" : "object",
               "required" : [ "connectorRef", "packageName", "packageType" ],
               "properties" : {
+                "artifactId" : {
+                  "type" : "string"
+                },
                 "connectorRef" : {
                   "type" : "string",
                   "minLength" : 1
                 },
                 "digest" : {
+                  "type" : "string"
+                },
+                "extension" : {
+                  "type" : "string"
+                },
+                "groupId" : {
                   "type" : "string"
                 },
                 "org" : {
@@ -58602,6 +58806,9 @@
                 "packageType" : {
                   "type" : "string",
                   "enum" : [ "npm", "maven", "rubygems", "nuget", "container" ]
+                },
+                "user" : {
+                  "type" : "string"
                 },
                 "version" : {
                   "type" : "string"
@@ -59752,6 +59959,9 @@
                   "items" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/ServiceHookWrapper"
                   }
+                },
+                "manifestConfigurations" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/ManifestConfigurations"
                 }
               }
             } ],
@@ -60036,6 +60246,19 @@
               }
             } ]
           },
+          "ManifestConfigurations" : {
+            "title" : "ManifestConfigurations",
+            "type" : "object",
+            "properties" : {
+              "primaryManifestRef" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ManifestConfigurations"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "NativeHelmServiceSpec" : {
             "title" : "NativeHelmServiceSpec",
             "allOf" : [ {
@@ -60048,6 +60271,9 @@
                   "items" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/ServiceHookWrapper"
                   }
+                },
+                "manifestConfigurations" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/ManifestConfigurations"
                 }
               }
             } ],
@@ -60388,6 +60614,115 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "AwsSamDeploymentMetaData" : {
+            "title" : "AwsSamDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AwsSamDeploymentMetaData"
+              }
+            }
+          },
+          "DeploymentMetaData" : {
+            "title" : "DeploymentMetaData",
+            "type" : "object",
+            "discriminator" : "deploymentType",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DeploymentMetaData"
+              }
+            }
+          },
+          "AsgDeploymentMetaData" : {
+            "title" : "AsgDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgDeploymentMetaData"
+              }
+            }
+          },
+          "AwsLambdaDeploymentMetaData" : {
+            "title" : "AwsLambdaDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AwsLambdaDeploymentMetaData"
+              }
+            }
+          },
+          "AzureWebAppDeploymentMetaData" : {
+            "title" : "AzureWebAppDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureWebAppDeploymentMetaData"
+              }
+            }
+          },
+          "CustomDeploymentMetaData" : {
+            "title" : "CustomDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CustomDeploymentMetaData"
+              }
+            }
+          },
+          "EcsDeploymentMetaData" : {
+            "title" : "EcsDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for EcsDeploymentMetaData"
+              }
+            }
+          },
+          "ElastiGroupDeploymentMetaData" : {
+            "title" : "ElastiGroupDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ElastiGroupDeploymentMetaData"
+              }
+            }
+          },
           "GoogleCloudFunctionDeploymentMetaData" : {
             "title" : "GoogleCloudFunctionDeploymentMetaData",
             "allOf" : [ {
@@ -60410,14 +60745,87 @@
               }
             }
           },
-          "DeploymentMetaData" : {
-            "title" : "DeploymentMetaData",
-            "type" : "object",
-            "discriminator" : "deploymentType",
+          "KubernetesDeploymentMetaData" : {
+            "title" : "KubernetesDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
               "description" : {
-                "desc" : "This is the description for DeploymentMetaData"
+                "desc" : "This is the description for KubernetesDeploymentMetaData"
+              }
+            }
+          },
+          "NativeHelmDeploymentMetaData" : {
+            "title" : "NativeHelmDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for NativeHelmDeploymentMetaData"
+              }
+            }
+          },
+          "ServerlessAwsLambdaDeploymentMetaData" : {
+            "title" : "ServerlessAwsLambdaDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ServerlessAwsLambdaDeploymentMetaData"
+              }
+            }
+          },
+          "SshDeploymentMetaData" : {
+            "title" : "SshDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SshDeploymentMetaData"
+              }
+            }
+          },
+          "TasDeploymentMetaData" : {
+            "title" : "TasDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for TasDeploymentMetaData"
+              }
+            }
+          },
+          "WinrmDeploymentMetaData" : {
+            "title" : "WinrmDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for WinrmDeploymentMetaData"
               }
             }
           },
