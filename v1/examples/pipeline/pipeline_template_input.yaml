@@ -1,0 +1,35 @@
+version: 1
+
+# Input variables are defined independently in the yaml
+inputs:
+  env:
+    type: string
+    required: true
+    default: qa
+  env2:
+    type: string
+    required: true
+    default: prod
+  timeout:
+    type: string
+    required: true
+    default: 10m
+  
+stages:
+  - type: Custom
+    spec:
+      steps:
+        - type: plugin
+          spec:
+            uses: http
+            timeout: <+ inputs.timeout>
+            with:
+              # Input variables are used by referring to them
+              url: http://<+ inputs.env>.harness.io
+              method: GET
+        - type: tempalate
+          id: http2
+          spec:
+            name: htpl
+            inputs:
+              env: <+ inputs.env2>
