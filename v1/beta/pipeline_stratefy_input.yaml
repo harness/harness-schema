@@ -1,0 +1,34 @@
+# pipeline yaml
+version: 1
+inputs:
+  strategy:
+    type: object
+    required: true
+
+stages:
+  - type: Custom
+    strategy: <+input.strategy>
+    steps:
+      - type: ShellScript
+        timeout: 10m
+        spec:
+          shell: Bash
+          onDelegate: true
+          source:
+            type: Inline
+            spec:
+              script: |-
+                echo "I m under a matric"
+        
+---
+# inputset yaml
+version: 1
+data:
+  strategy: |-
+    matrix:
+      a:
+        - 1
+        - 2
+        - 3
+        - 4
+
