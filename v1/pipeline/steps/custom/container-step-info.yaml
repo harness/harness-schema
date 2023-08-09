@@ -1,0 +1,142 @@
+title: ContainerStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - command
+  - infrastructure
+  properties:
+    command:
+      type: string
+    connectorRef:
+      type: string
+    entrypoint:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+    envVariables:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    image:
+      type: string
+    imagePullPolicy:
+      oneOf:
+      - type: string
+        enum:
+        - Always
+        - Never
+        - IfNotPresent
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    infrastructure:
+      oneOf:
+      - $ref: container-k8s-infra.yaml
+    metadata:
+      type: string
+    outputVariables:
+      oneOf:
+      - type: array
+        items:
+          $ref: ../../common/output-ng-variable.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    privileged:
+      oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    settings:
+      oneOf:
+      - $ref: ../../common/parameter-field-map-string-json-node.yaml
+      - type: string
+    shell:
+      oneOf:
+      - type: string
+        enum:
+        - Sh
+        - Bash
+        - Powershell
+        - Pwsh
+        - Python
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- command
+- infrastructure
+properties:
+  command:
+    type: string
+  connectorRef:
+    type: string
+  entrypoint:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+  envVariables:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  image:
+    type: string
+  imagePullPolicy:
+    oneOf:
+    - type: string
+      enum:
+      - Always
+      - Never
+      - IfNotPresent
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  infrastructure:
+    oneOf:
+    - $ref: container-k8s-infra.yaml
+  metadata:
+    type: string
+  outputVariables:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/output-ng-variable.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  privileged:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  settings:
+    oneOf:
+    - $ref: ../../common/parameter-field-map-string-json-node.yaml
+    - type: string
+  shell:
+    oneOf:
+    - type: string
+      enum:
+      - Sh
+      - Bash
+      - Powershell
+      - Pwsh
+      - Python
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  description:
+    desc: This is the description for ContainerStepInfo
