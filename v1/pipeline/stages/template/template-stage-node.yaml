@@ -1,19 +1,30 @@
 title: TemplateStageNode
 type: object
 required:
-- identifier
-- name
-- template
+- type
 properties:
   description:
     type: string
     desc: This is the description for TemplateStageNode
-  identifier:
+  id:
     type: string
     pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
   name:
     type: string
     pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  type:
+    type: string
+    enum:
+      - template
   template:
     $ref: ../../steps/custom/template-link-config.yaml
 $schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: template
+    then:
+      properties:
+        spec:
+          $ref: ../../steps/custom/template-link-config-v2.yaml

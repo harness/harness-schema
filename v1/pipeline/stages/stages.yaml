@@ -1,16 +1,96 @@
+title: Stage
 type: object
-title: stages
 properties:
-  stage:
-    description: This is stage node. it can be of various types like CI, CD, etc.
-    configRef: "../schema_config.yaml/pipeline_stages"
-#    oneOf:
-#      - "$ref": "#/definitions/ci/IntegrationStageNode"
-#      - "$ref": "#/definitions/cd/DeploymentStageNode"
-#      - "$ref": "#/definitions/security/SecurityStageNode"
-#      - "$ref": "#/definitions/approval/ApprovalStageNode"
-#      - "$ref": "#/definitions/pipeline/PipelineStageNode"
-#      - "$ref": "custom/stage.yaml"
-#      - "$ref": "#/definitions/cf/FeatureFlagStageNode"
-#      - "$ref": "template_node.yaml"
-"$schema": http://json-schema.org/draft-07/schema#
+  desc:
+    description: The stage description.
+    type: string
+  id:
+    description: The unique stage identifier.
+    pattern: '^[a-zA-Z0-9_-]+$'
+    type: string
+  name:
+    description: The stage name.
+    type: string
+#  strategy:
+#    $ref: ./strategy.yaml
+#    description: The stage execution strategy.
+#  delegate:
+#    $ref: ./delegate.yaml
+#    description: Configures the delegate matching logic.
+#  status:
+#    $ref: ./status_stage.yaml
+#    description: Configures the scm status settings.
+  type:
+    description: The stage type.
+    enum:
+      - cd
+      - ci
+      - custom
+      - flag
+      - iacm
+      - template
+      - parallel
+    type: string
+#  when:
+#    description: The stage conditional logic.
+#    $ref: "./when.yaml"
+#  on:
+#    $ref: ./on.yaml
+
+oneOf:
+  - allOf:
+      - properties:
+          type:
+            const: ci
+      - properties:
+          spec:
+            $ref: ./ci/integration-stage-config-impl.yaml
+  - allOf:
+      - properties:
+          type:
+            const: cd
+      - properties:
+          spec:
+            $ref: ./cd/deployment-stage-config.yaml
+  - allOf:
+      - properties:
+          type:
+            const: custom
+      - properties:
+          spec:
+            $ref: ./custom/custom-stage-config.yaml
+  - allOf:
+      - properties:
+          type:
+            const: iacm
+      - properties:
+          spec:
+            $ref: ./iacm/iacmstage-config-impl.yaml
+  - allOf:
+      - properties:
+          type:
+            const: flag
+      - properties:
+          spec:
+            $ref: ./cf/feature-flag-stage-config.yaml
+  - allOf:
+      - properties:
+          type:
+            const: template
+      - properties:
+          spec:
+            $ref: ../steps/custom/template-link-config-v2.yaml
+
+  - allOf:
+      - properties:
+          type:
+            const: parallel
+      - properties:
+          spec:
+            $ref: ./parallel-stages-node-config.yaml
+
+anyOf:
+  - required:
+      - name
+  - required:
+      - id
