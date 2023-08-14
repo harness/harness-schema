@@ -5,7 +5,7 @@
     "required" : [ "stages", "version" ],
     "version" : {
       "description" : "Version defines the schema version.",
-      "type" : [ "string", "number" ]
+      "type" : [ "number" ]
     },
     "name" : {
       "description" : "Pipeline provides the pipeline name.",
@@ -16,7 +16,7 @@
       "items" : {
         "$ref" : "#/definitions/pipeline/stages/Stage"
       },
-      "maxItems" : 2147483647,
+      "maxItems" : 256,
       "minItems" : 1
     },
     "inputs" : {
@@ -60,10 +60,25 @@
               "description" : "The stage name.",
               "type" : "string"
             },
+            "strategy" : {
+              "description" : "The stage execution strategy.",
+              "$ref" : "#/definitions/pipeline/common/Strategy"
+            },
+            "delegate" : {
+              "description" : "Configures the delegate matching logic.",
+              "$ref" : "#/definitions/pipeline/common/Delegate"
+            },
             "type" : {
               "description" : "The stage type.",
-              "enum" : [ "cd", "ci", "custom", "flag", "iacm", "template", "parallel" ],
+              "enum" : [ "cd", "ci", "custom", "flag", "iacm", "template", "parallel", "pipeline" ],
               "type" : "string"
+            },
+            "when" : {
+              "description" : "The stage conditional logic.",
+              "$ref" : "#/definitions/pipeline/common/When"
+            },
+            "on" : {
+              "$ref" : "#/definitions/pipeline/common/On"
             }
           },
           "oneOf" : [ {
@@ -104,7 +119,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageConfig"
+                  "$ref" : "#/definitions/pipeline/stages/custom/ExecutionElementConfig"
                 }
               }
             } ]
@@ -161,6 +176,20 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/pipeline/stages/ParallelStageElementNodeConfig"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "pipeline"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageConfig"
                 }
               }
             } ]
@@ -6925,20 +6954,6 @@
           }
         },
         "custom" : {
-          "CustomStageConfig" : {
-            "title" : "CustomStageConfig",
-            "type" : "object",
-            "required" : [ "execution" ],
-            "properties" : {
-              "execution" : {
-                "$ref" : "#/definitions/pipeline/stages/custom/ExecutionElementConfig"
-              },
-              "description" : {
-                "desc" : "This is the description for CustomStageConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "ExecutionElementConfig" : {
             "title" : "ExecutionElementConfig",
             "type" : "object",
@@ -7237,6 +7252,74 @@
                 "required" : [ "steps" ]
               } ]
             } ]
+          },
+          "PipelineStageConfig" : {
+            "title" : "PipelineStageConfig",
+            "type" : "object",
+            "required" : [ "org", "pipeline", "project" ],
+            "properties" : {
+              "inputSetReferences" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "inputs" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "org" : {
+                "type" : "string"
+              },
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageOutputs"
+                }
+              },
+              "pipeline" : {
+                "type" : "string"
+              },
+              "pipelineInputs" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "project" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PipelineStageConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "PipelineStageOutputs" : {
+            "title" : "PipelineStageOutputs",
+            "type" : "object",
+            "required" : [ "name", "value" ],
+            "properties" : {
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PipelineStageOutputs"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "iacm" : {
@@ -7703,6 +7786,324 @@
         }
       },
       "common" : {
+        "Strategy" : {
+          "title" : "Strategy",
+          "type" : "object",
+          "description" : "Strategy defines an optional execution strategy.",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the execution strategy type.",
+              "type" : "string",
+              "enum" : [ "for", "matrix", "while" ]
+            }
+          },
+          "oneOf" : [ {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "for"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/For"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "matrix"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/Matrix"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "while"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/While"
+                }
+              }
+            } ]
+          } ]
+        },
+        "For" : {
+          "title" : "For",
+          "description" : "Defines a for loop execution strategy.",
+          "type" : "object",
+          "properties" : {
+            "concurrency" : {
+              "description" : "Defines the for loop concurrency.",
+              "type" : "number"
+            },
+            "iterations" : {
+              "type" : "number"
+            }
+          }
+        },
+        "Matrix" : {
+          "title" : "Matrix",
+          "type" : "object",
+          "description" : "Defines a matrix execution strategy.",
+          "properties" : {
+            "axis" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "concurrency" : {
+              "description" : "Defines the matrix concurrency.",
+              "type" : "number"
+            },
+            "include" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "exclude" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "While" : {
+          "title" : "While",
+          "description" : "Defines a while loop execution strategy.",
+          "type" : "object",
+          "properties" : {
+            "condition" : {
+              "type" : "string",
+              "description" : "Defines the while condition."
+            },
+            "iterations" : {
+              "type" : "number",
+              "description" : "Defines the maximum number of interations."
+            }
+          }
+        },
+        "Delegate" : {
+          "title" : "Delegate",
+          "type" : "object",
+          "description" : "Delegate defines the delegate matching logic.",
+          "properties" : {
+            "selectors" : {
+              "items" : {
+                "type" : "string"
+              },
+              "type" : "array",
+              "description" : "Selectors defines tags that are used to match the stage\nwith a delegate."
+            }
+          }
+        },
+        "When" : {
+          "title" : "When",
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "$ref" : "#/definitions/pipeline/common/WhenCond"
+          }, {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/common/WhenCond"
+            }
+          } ]
+        },
+        "WhenCond" : {
+          "title" : "WhenCond",
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/definitions/pipeline/common/WhenExpr"
+          }
+        },
+        "WhenExpr" : {
+          "title" : "WhenExpr",
+          "type" : "object",
+          "properties" : {
+            "eq" : {
+              "type" : "string"
+            },
+            "in" : {
+              "type" : "array"
+            },
+            "not" : {
+              "type" : "object",
+              "properties" : {
+                "eq" : {
+                  "type" : "string"
+                },
+                "in" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "On" : {
+          "title" : "On",
+          "type" : "object",
+          "properties" : {
+            "failure" : {
+              "$ref" : "#/definitions/pipeline/common/Failure"
+            }
+          }
+        },
+        "Failure" : {
+          "title" : "Failure",
+          "type" : "object",
+          "description" : "Failure defines a failure strategy.",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the failure strategy type.",
+              "type" : "string",
+              "enum" : [ "abort", "ignore", "manual-intervention", "retry" ]
+            },
+            "errors" : {
+              "description" : "Errors specifies the types of errors.",
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "enum" : [ "all", "approval-rejection", "authentication", "authorization", "connectivity", "delegate-provioning", "delegate-restart", "input-timeout", "policy-evaluation", "timeout", "unknown", "verification" ]
+              }
+            },
+            "exit_codes" : {
+              "description" : "Exit Codes specifies the exit codes.",
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          },
+          "oneOf" : [ {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "abort"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/Abort"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "ignore"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/Abort"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "retry"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/Retry"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "manual-intervention"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/ManualIntervention"
+                }
+              }
+            } ]
+          } ]
+        },
+        "Abort" : {
+          "title" : "Abort",
+          "type" : "object",
+          "properties" : { }
+        },
+        "Retry" : {
+          "title" : "Retry",
+          "properties" : {
+            "attempts" : {
+              "type" : "number",
+              "example" : 3
+            },
+            "interval" : {
+              "anyOf" : [ {
+                "items" : {
+                  "type" : "string",
+                  "format" : "duration"
+                },
+                "type" : "array",
+                "example" : [ "5s", "10s", "20s" ]
+              }, {
+                "type" : "string",
+                "example" : "1m",
+                "format" : "duration"
+              } ]
+            },
+            "on" : {
+              "$ref" : "#/definitions/pipeline/common/On"
+            }
+          },
+          "type" : "object"
+        },
+        "ManualIntervention" : {
+          "title" : "ManualIntervention",
+          "properties" : {
+            "on" : {
+              "$ref" : "#/definitions/pipeline/common/On"
+            },
+            "timeout" : {
+              "format" : "duration",
+              "type" : "string",
+              "example" : "30m"
+            }
+          },
+          "type" : "object"
+        },
         "StepElementConfig" : {
           "title" : "StepElementConfig",
           "type" : "object",
@@ -50234,42 +50635,18 @@
           "type" : {
             "description" : "Type defines the input type.",
             "type" : "string",
-            "enum" : [ "string", "number", "boolean", "array", "map" ]
+            "enum" : [ "string", "number", "boolean", "list", "object" ]
           },
           "description" : {
             "type" : "string",
             "description" : "Desc defines the input description."
           },
           "default" : {
-            "type" : [ "string", "number", "boolean", "array", "object" ]
+            "type" : [ "string", "number", "boolean", "list", "object" ]
           },
           "required" : {
             "type" : "boolean",
             "description" : "Required indicates the input is required."
-          },
-          "items" : {
-            "description" : "Items defines an arrat type.",
-            "$ref" : "#/definitions/pipeline/InputItems"
-          },
-          "enum" : {
-            "type" : "array",
-            "items" : {
-              "type" : [ "string", "number", "boolean" ]
-            },
-            "description" : "Enum defines a list of accepted input values.",
-            "x-go-type" : "[]string"
-          }
-        }
-      },
-      "InputItems" : {
-        "title" : "InputItems",
-        "type" : "object",
-        "description" : "InputItems defines an array input type",
-        "properties" : {
-          "type" : {
-            "description" : "Type defines the input type.",
-            "type" : "string",
-            "enum" : [ "string", "number", "boolean" ]
           }
         }
       }

@@ -11,7 +11,9 @@ import lombok.Getter;
 
 public enum YamlEntityType {
   PIPELINE_V0("pipeline", SchemaVersion.V0, "pipeline/pipeline_root.yaml"),
-  TEMPLATE_V0("template", SchemaVersion.V0, "template/template_root.yaml");
+  TEMPLATE_V0("template", SchemaVersion.V0, "template/template_root.yaml"),
+  PIPELINE_V1("pipeline", SchemaVersion.V1, "pipeline/pipeline.yaml"),
+  TEMPLATE_V1("template", SchemaVersion.V1, "template/template_root.yaml");
 
   @Getter private final String entityName;
   @Getter private final String entityRootSchemaPath;
