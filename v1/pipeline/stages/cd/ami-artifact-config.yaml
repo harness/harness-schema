@@ -1,0 +1,43 @@
+title: AMIArtifactConfig
+allOf:
+- $ref: artifact-config.yaml
+- type: object
+  required:
+  - connectorRef
+  - region
+  properties:
+    connectorRef:
+      type: string
+      minLength: 1
+    filters:
+      oneOf:
+      - type: array
+        items:
+          $ref: ami-filter.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    region:
+      type: string
+      minLength: 1
+    tags:
+      oneOf:
+      - type: array
+        items:
+          $ref: ami-tag.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    version:
+      type: string
+    versionRegex:
+      type: string
+- oneOf:
+  - required:
+    - versionRegex
+  - required:
+    - version
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for AMIArtifactConfig

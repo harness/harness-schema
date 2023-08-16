@@ -19,8 +19,12 @@ public class SchemaBundlerRegistrar {
   private final Map<YamlEntityType, SchemaBundler> registeredSchemaBundlers = new EnumMap<>(YamlEntityType.class);
   public SchemaBundlerRegistrar() {
     registeredSchemaBundlers.put(
-        YamlEntityType.PIPELINE_V0, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.PIPELINE_V0).build());
+            YamlEntityType.PIPELINE_V0, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.PIPELINE_V0).build());
     registeredSchemaBundlers.put(
-        YamlEntityType.TEMPLATE_V0, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TEMPLATE_V0).build());
+            YamlEntityType.TEMPLATE_V0, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TEMPLATE_V0).build());
+    registeredSchemaBundlers.put(
+        YamlEntityType.PIPELINE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.PIPELINE_V1).build());
+    registeredSchemaBundlers.put(
+        YamlEntityType.TEMPLATE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TEMPLATE_V1).build());
   }
 }

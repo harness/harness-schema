@@ -1,0 +1,45 @@
+title: SecurityStageConfigImpl
+type: object
+properties:
+  cloneCodebase:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  execution:
+    $ref: execution-element-config.yaml
+  infrastructure:
+    oneOf:
+    - $ref: ../../steps/common/docker-infra-yaml.yaml
+    - $ref: ../../steps/common/hosted-vm-infra-yaml.yaml
+    - $ref: ../../steps/common/k8s-direct-infra-yaml.yaml
+    - $ref: ../../steps/common/use-from-stage-infra-yaml.yaml
+    - $ref: ../../steps/common/vm-infra-yaml.yaml
+  platform:
+    oneOf:
+    - $ref: ../../steps/common/platform.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  runtime:
+    oneOf:
+    - $ref: ../../steps/common/cloud-runtime.yaml
+    - $ref: ../../steps/common/docker-runtime.yaml
+  serviceDependencies:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../steps/common/dependency-element.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  sharedPaths:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+  description:
+    desc: This is the description for SecurityStageConfigImpl
+$schema: http://json-schema.org/draft-07/schema#

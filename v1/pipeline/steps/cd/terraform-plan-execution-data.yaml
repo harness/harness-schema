@@ -1,0 +1,56 @@
+title: TerraformPlanExecutionData
+type: object
+required:
+- command
+- configFiles
+- secretManagerRef
+properties:
+  backendConfig:
+    $ref: terraform-backend-config.yaml
+  command:
+    type: string
+    enum:
+    - Apply
+    - Destroy
+  commandFlags:
+    type: array
+    items:
+      $ref: terraform-cli-option-flag.yaml
+  configFiles:
+    $ref: terraform-config-files-wrapper.yaml
+  environmentVariables:
+    type: array
+    items:
+      oneOf:
+      - $ref: ../../common/number-ng-variable.yaml
+      - $ref: ../../common/secret-ng-variable.yaml
+      - $ref: ../../common/string-ng-variable.yaml
+  exportTerraformHumanReadablePlan:
+    oneOf:
+    - type: boolean
+    - type: string
+  exportTerraformPlanJson:
+    oneOf:
+    - type: boolean
+    - type: string
+  secretManagerRef:
+    type: string
+  skipRefreshCommand:
+    oneOf:
+    - type: boolean
+    - type: string
+  targets:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+  varFiles:
+    type: array
+    items:
+      $ref: terraform-var-file-wrapper.yaml
+  workspace:
+    type: string
+  description:
+    desc: This is the description for TerraformPlanExecutionData
+$schema: http://json-schema.org/draft-07/schema#

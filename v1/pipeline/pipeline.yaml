@@ -1,0 +1,34 @@
+type: object
+title: pipeline
+properties:
+  required:
+    - stages
+    - version
+  version:
+    description: Version defines the schema version.
+    type:
+      - number
+  name:
+    description: Pipeline provides the pipeline name.
+    type: string
+  stages:
+    type: array
+    items:
+      configRef: ./schema_config.yaml/pipeline_stages
+    maxItems: 256
+    minItems: 1
+  inputs:
+    type: object
+    description: Inputs defines the pipeline input parameters.
+    additionalProperties:
+      $ref: ./input.yaml
+# TODO - Update input set w.r.t new examples same as variables
+  variables:
+    type: array
+    items:
+      oneOf:
+        - "$ref": "./common/number-ng-variable.yaml"
+        - "$ref": "./common/string-ng-variable.yaml"
+        - "$ref": "./common/secret-ng-variable.yaml"
+# TODO - Check for Variables syntax
+"$schema": http://json-schema.org/draft-07/schema#

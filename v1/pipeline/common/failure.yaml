@@ -1,0 +1,65 @@
+title: Failure
+type: object
+description: Failure defines a failure strategy.
+properties:
+  type:
+    description: Type defines the failure strategy type.
+    type: string
+    enum:
+      - abort
+      - ignore
+      - manual-intervention
+      - retry
+  errors:
+    description: Errors specifies the types of errors.
+    type: array
+    items:
+      type: string
+      enum:
+        - all
+        - approval-rejection
+        - authentication
+        - authorization
+        - connectivity
+        - delegate-provioning
+        - delegate-restart
+        - input-timeout
+        - policy-evaluation
+        - timeout
+        - unknown
+        - verification
+  exit_codes:
+    description: Exit Codes specifies the exit codes.
+    type: array
+    items:
+      type: string
+
+oneOf:
+  - allOf:
+      - properties:
+          type:
+            const: abort
+      - properties:
+          spec:
+            $ref: ./failure_abort.yaml
+  - allOf:
+      - properties:
+          type:
+            const: ignore
+      - properties:
+          spec:
+            $ref: ./failure_ignore.yaml
+  - allOf:
+      - properties:
+          type:
+            const: retry
+      - properties:
+          spec:
+            $ref: ./failure_retry.yaml
+  - allOf:
+      - properties:
+          type:
+            const: manual-intervention
+      - properties:
+          spec:
+            $ref: ./failure_manual.yaml

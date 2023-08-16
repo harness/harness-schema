@@ -10,7 +10,8 @@ package io.harness;
 import lombok.Getter;
 
 public enum SchemaVersion {
-  V0("v0/");
+  V0("v0/"),
+  V1("v1/");
 
   @Getter private final String directoryPath;
 

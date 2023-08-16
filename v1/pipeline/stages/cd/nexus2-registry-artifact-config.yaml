@@ -1,0 +1,74 @@
+title: Nexus2RegistryArtifactConfig
+allOf:
+- $ref: artifact-config.yaml
+- type: object
+  required:
+  - connectorRef
+  - repository
+  - repositoryFormat
+  properties:
+    connectorRef:
+      type: string
+    metadata:
+      type: string
+    repository:
+      type: string
+    repositoryFormat:
+      type: string
+      enum:
+      - maven
+      - npm
+      - nuget
+    tag:
+      type: string
+    tagRegex:
+      type: string
+- if:
+    properties:
+      repositoryFormat:
+        const: docker
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-docker-config.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: maven
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-maven-config.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: npm
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-npm-config.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: nuget
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-nuget-config.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: raw
+  then:
+    properties:
+      spec:
+        $ref: nexus-registry-raw-config.yaml
+- oneOf:
+  - required:
+    - tagRegex
+  - required:
+    - tag
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for Nexus2RegistryArtifactConfig

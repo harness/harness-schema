@@ -1,0 +1,40 @@
+title: Build
+type: object
+required:
+- spec
+- type
+properties:
+  type:
+    type: string
+    enum:
+    - branch
+    - tag
+    - PR
+  description:
+    desc: This is the description for Build
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: PR
+  then:
+    properties:
+      spec:
+        $ref: pr-build-spec.yaml
+- if:
+    properties:
+      type:
+        const: branch
+  then:
+    properties:
+      spec:
+        $ref: branch-build-spec.yaml
+- if:
+    properties:
+      type:
+        const: tag
+  then:
+    properties:
+      spec:
+        $ref: tag-build-spec.yaml

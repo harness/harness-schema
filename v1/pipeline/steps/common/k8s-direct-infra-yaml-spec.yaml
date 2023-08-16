@@ -1,0 +1,94 @@
+title: K8sDirectInfraYamlSpec
+type: object
+required:
+- connectorRef
+- namespace
+properties:
+  annotations:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  automountServiceAccountToken:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  connectorRef:
+    type: string
+  containerSecurityContext:
+    oneOf:
+    - $ref: ../../steps/custom/security-context.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  harnessImageConnectorRef:
+    type: string
+  hostNames:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  initTimeout:
+    type: string
+  labels:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  namespace:
+    type: string
+    minLength: 1
+    maxLength: 256
+  nodeSelector:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  os:
+    oneOf:
+    - type: string
+      enum:
+      - Linux
+      - MacOS
+      - Windows
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  priorityClassName:
+    type: string
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  serviceAccountName:
+    type: string
+  tolerations:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../steps/custom/toleration.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  volumes:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../steps/common/civolume.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  description:
+    desc: This is the description for K8sDirectInfraYamlSpec
+$schema: http://json-schema.org/draft-07/schema#
