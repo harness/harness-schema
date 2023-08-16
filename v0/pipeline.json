@@ -1441,6 +1441,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -8616,6 +8618,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -9024,6 +9028,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -15767,6 +15773,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "connectorRef", "image" ],
               "properties" : {
                 "appPath" : {
                   "type" : "string"
@@ -15797,9 +15804,6 @@
                     "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
-                },
-                "exportTemplate" : {
-                  "type" : "boolean"
                 },
                 "image" : {
                   "type" : "string"
@@ -15838,6 +15842,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "connectorRef", "image" ],
             "properties" : {
               "appPath" : {
                 "type" : "string"
@@ -15868,9 +15873,6 @@
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
-              },
-              "exportTemplate" : {
-                "type" : "boolean"
               },
               "image" : {
                 "type" : "string"
@@ -15993,6 +15995,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "connectorRef", "image" ],
               "properties" : {
                 "appPath" : {
                   "type" : "string"
@@ -16070,6 +16073,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "connectorRef", "image" ],
             "properties" : {
               "appPath" : {
                 "type" : "string"
@@ -16231,6 +16235,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "connectorRef", "image" ],
               "properties" : {
                 "appPath" : {
                   "type" : "string"
@@ -16305,6 +16310,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "connectorRef", "image" ],
             "properties" : {
               "appPath" : {
                 "type" : "string"
@@ -16463,7 +16469,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "provisionerIdentifier" ],
+              "required" : [ "connectorRef", "image", "provisionerIdentifier" ],
               "properties" : {
                 "appPath" : {
                   "type" : "string"
@@ -16541,7 +16547,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "provisionerIdentifier" ],
+            "required" : [ "connectorRef", "image", "provisionerIdentifier" ],
             "properties" : {
               "appPath" : {
                 "type" : "string"
@@ -16703,6 +16709,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "connectorRef", "image" ],
               "properties" : {
                 "appPath" : {
                   "type" : "string"
@@ -16777,6 +16784,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "connectorRef", "image" ],
             "properties" : {
               "appPath" : {
                 "type" : "string"
@@ -16849,6 +16857,132 @@
               },
               "description" : {
                 "desc" : "This is the description for AwsCdkDestroyStepInfo"
+              }
+            }
+          },
+          "AwsCdkRollbackStepNode" : {
+            "title" : "AwsCdkRollbackStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsCdkRollbackStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsCdkRollbackStepInfo" : {
+            "title" : "AwsCdkRollbackStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "provisionerIdentifier" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "provisionerIdentifier" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "provisionerIdentifier" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "provisionerIdentifier" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCdkRollbackStepInfo"
               }
             }
           },
