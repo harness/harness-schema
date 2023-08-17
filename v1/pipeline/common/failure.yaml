@@ -10,6 +10,11 @@ properties:
       - ignore
       - manual-intervention
       - retry
+      - success
+      - fail
+      - retry-step-group
+      - stage-rollback
+      - pipeline-rollback
   errors:
     description: Errors specifies the types of errors.
     type: array
@@ -21,18 +26,14 @@ properties:
         - authentication
         - authorization
         - connectivity
-        - delegate-provioning
+        - delegate-provisioning
         - delegate-restart
         - input-timeout
         - policy-evaluation
         - timeout
         - unknown
         - verification
-  exit_codes:
-    description: Exit Codes specifies the exit codes.
-    type: array
-    items:
-      type: string
+        - user-mark-fail
 
 oneOf:
   - allOf:
@@ -63,3 +64,35 @@ oneOf:
       - properties:
           spec:
             $ref: ./failure_manual.yaml
+  - allOf:
+      - properties:
+          type:
+            const: success
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
+  - allOf:
+      - properties:
+          type:
+            const: fail
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
+  - allOf:
+      - properties:
+          type: retry-step-group
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
+  - allOf:
+      - properties:
+          type: stage-rollback
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
+  - allOf:
+      - properties:
+          type: pipeline-rollback
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
