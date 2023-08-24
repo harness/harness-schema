@@ -3832,7 +3832,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "Generic" ]
+                "enum" : [ "Generic", "ECR" ]
               },
               "description" : {
                 "desc" : "This is the description for OciHelmChartStoreConfigWrapper"
@@ -3840,6 +3840,21 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ECR"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/OciHelmChartStoreEcrConfig"
+                  }
+                }
+              }
+            }, {
               "if" : {
                 "properties" : {
                   "type" : {
@@ -3855,6 +3870,33 @@
                 }
               }
             } ]
+          },
+          "OciHelmChartStoreEcrConfig" : {
+            "title" : "OciHelmChartStoreEcrConfig",
+            "allOf" : [ { }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "region" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "registryId" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for OciHelmChartStoreEcrConfig"
+              }
+            }
           },
           "OciHelmChartStoreGenericConfig" : {
             "title" : "OciHelmChartStoreGenericConfig",
