@@ -28671,7 +28671,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "branch", "tag", "PR" ]
+                "enum" : [ "branch", "tag", "PR", "CommitSha" ]
               },
               "description" : {
                 "desc" : "This is the description for Build"
@@ -28720,6 +28720,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/TagBuildSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CommitSha"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/CommitShaBuildSpec"
                   }
                 }
               }
@@ -28792,6 +28807,26 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for TagBuildSpec"
+              }
+            }
+          },
+          "CommitShaBuildSpec" : {
+            "title" : "CommitShaBuildSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/BuildSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "commitSha" ],
+              "properties" : {
+                "commitSha" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CommitShaBuildSpec"
               }
             }
           },
