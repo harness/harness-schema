@@ -1,0 +1,72 @@
+title: webhook_trigger
+allOf:
+  - "$ref": "../trigger_spec.yaml"
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - AzureRepo
+          - Github
+          - Gitlab
+          - Bitbucket
+          - Custom
+          - AwsCodeCommit
+          - Harness
+  - if:
+      properties:
+        type:
+          const: AwsCodeCommit
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/aws_commit_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: AzureRepo
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/azure_repo_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: Bitbucket
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/bitbucket_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: Custom
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/custom_trigger_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: Github
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/github_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: Gitlab
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/gitlab_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: Harness
+    then:
+      properties:
+        spec:
+          "$ref": "../webhook_trigger/harness_spec.yaml"
+"$schema": http://json-schema.org/draft-07/schema#

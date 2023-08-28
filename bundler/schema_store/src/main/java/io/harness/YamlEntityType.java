@@ -1,7 +1,8 @@
 /*
  * Copyright 2023 Harness Inc. All rights reserved.
  * Use of this source code is governed by the PolyForm Free Trial 1.0.0 license
- * that can be found in the licenses directory at the root of this repository, also available at
+ * that can be found in the licenses directory at the root of this repository,
+ * also available at
  * https://polyformproject.org/wp-content/uploads/2020/05/PolyForm-Free-Trial-1.0.0.txt.
  */
 
@@ -12,6 +13,7 @@ import lombok.Getter;
 public enum YamlEntityType {
   PIPELINE_V0("pipeline", SchemaVersion.V0, "pipeline/pipeline_root.yaml"),
   TEMPLATE_V0("template", SchemaVersion.V0, "template/template_root.yaml"),
+  TRIGGER_V0("trigger", SchemaVersion.V0, "trigger/trigger_root.yaml"),
   PIPELINE_V1("pipeline", SchemaVersion.V1, "pipeline/pipeline.yaml"),
   TEMPLATE_V1("template", SchemaVersion.V1, "template/template_root.yaml");
 
@@ -19,7 +21,8 @@ public enum YamlEntityType {
   @Getter private final String entityRootSchemaPath;
   @Getter private final SchemaVersion schemaVersion;
 
-  YamlEntityType(String entityName, SchemaVersion schemaVersion, String entityRootSchemaPath) {
+  YamlEntityType(String entityName, SchemaVersion schemaVersion,
+                 String entityRootSchemaPath) {
     this.entityName = entityName;
     this.schemaVersion = schemaVersion;
     this.entityRootSchemaPath = entityRootSchemaPath;

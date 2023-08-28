@@ -1,0 +1,58 @@
+title: trigger_source
+type: object
+properties:
+  pollInterval:
+    type: string
+    pattern: "(((([1-9])+\\d*[mh])+(\\s/?\\d+[mh])*)|(^$)|(0))$"
+  type:
+    type: string
+    enum:
+      - Webhook
+      - Artifact
+      - Manifest
+      - Scheduled
+      - MultiRegionArtifact
+  webhookId:
+    type: string
+"$schema": http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: Artifact
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/artifact_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: Manifest
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/manifest_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: MultiRegionArtifact
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/multi_region_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: Scheduled
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/scheduled_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: Webhook
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/webhook_trigger.yaml"
