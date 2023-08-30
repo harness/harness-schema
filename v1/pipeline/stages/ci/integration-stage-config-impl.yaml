@@ -1,48 +1,38 @@
 title: IntegrationStageConfigImpl
 type: object
 properties:
-  caching:
-    oneOf:
-    - $ref: caching.yaml
-  cloneCodebase:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  execution:
-    $ref: execution-element-config.yaml
-  infrastructure:
-    oneOf:
-    - $ref: ../../steps/common/docker-infra-yaml.yaml
-    - $ref: ../../steps/common/hosted-vm-infra-yaml.yaml
-    - $ref: ../../steps/common/k8s-direct-infra-yaml.yaml
-    - $ref: ../../steps/common/use-from-stage-infra-yaml.yaml
-    - $ref: ../../steps/common/vm-infra-yaml.yaml
+  cache:
+    $ref: ./caching.yaml
+    description: Configures the cache behavior.
+  clone:
+    $ref: ./clone_stage.yaml
+    description: Overrides the clone behavior.
+  # clone:
+  #   $ref: ./clone.yaml
+  #   description: Configures the default clone behavior.
+  # repository:
+  #   $ref: ./repository.yaml
+  #   description: Configures the remote repository.
+
   platform:
-    oneOf:
-    - $ref: ../../steps/common/platform.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
+    $ref: ./platform.yaml
+    description: Configures the target execution platform.
   runtime:
-    oneOf:
-    - $ref: ../../steps/common/cloud-runtime.yaml
-    - $ref: ../../steps/common/docker-runtime.yaml
-  serviceDependencies:
-    oneOf:
-    - type: array
-      items:
-        $ref: ../../steps/common/dependency-element.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  sharedPaths:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-  description:
-    desc: This is the description for IntegrationStageConfigImpl
-$schema: http://json-schema.org/draft-07/schema#
+    $ref: ./runtime.yaml
+    description: Configures the target runtime engine.
+  steps:
+    description: Configures a series of steps to executes.
+    items:
+      $ref: ./step.yaml
+    type: array
+  envs:
+    type: object
+    additionalProperties:
+      type: string
+    description: The stage environment variables.
+  volumes:
+    description: Configures a container volumes.
+    items:
+      $ref: ./volume.yaml
+    type: array
+

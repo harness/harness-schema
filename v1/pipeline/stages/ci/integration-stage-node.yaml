@@ -1,76 +1,47 @@
 title: IntegrationStageNode
 type: object
-required:
-- identifier
-- name
-- type
 properties:
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  description:
+  desc:
+    description: The stage description.
     type: string
-    desc: This is the description for IntegrationStageNode
-  failureStrategies:
-    oneOf:
-    - type: array
-      items:
-        $ref: ../../common/failure-strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
-  identifier:
+  id:
+    description: The unique stage identifier.
+    pattern: '^[a-zA-Z0-9_-]+$'
     type: string
-    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
   name:
+    description: The stage name.
     type: string
-    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
-  pipelineVariables:
-    type: array
-    items:
-      oneOf:
-      - $ref: ../../common/number-ng-variable.yaml
-      - $ref: ../../common/secret-ng-variable.yaml
-      - $ref: ../../common/string-ng-variable.yaml
   strategy:
-    oneOf:
-    - $ref: ../../common/strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
-  tags:
-    type: object
-    additionalProperties:
-      type: string
+    $ref: ../../common/strategy.yaml
+    description: The stage execution strategy.
+  delegate:
+    $ref: ../../common/delegate.yaml
+    description: Configures the delegate matching logic.
   type:
-    type: string
+    description: The stage type.
     enum:
-    - CI
-  variables:
-    type: array
-    items:
-      oneOf:
-      - $ref: ../../common/number-ng-variable.yaml
-      - $ref: ../../common/secret-ng-variable.yaml
-      - $ref: ../../common/string-ng-variable.yaml
+      - custom
+    type: string
   when:
-    oneOf:
-    - $ref: ../../steps/custom/stage-when-condition.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+    description: The stage conditional logic.
+    $ref: ../../common/when.yaml
+  on:
+    $ref: ../../common/on.yaml
+
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
-- if:
-    properties:
-      type:
-        const: CI
-  then:
-    properties:
-      spec:
-        $ref: integration-stage-config-impl.yaml
+  - if:
+      properties:
+        type:
+          const: CI
+    then:
+      properties:
+        spec:
+          $ref: integration-stage-config-impl.yaml
+
+anyOf:
+  - required:
+      - name
+  - required:
+      - id
+

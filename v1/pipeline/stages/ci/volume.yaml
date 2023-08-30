@@ -1,0 +1,49 @@
+title: Volume
+type: object
+properties:
+  name:
+    type: string
+  type:
+    type: string
+    enum:
+      - claim
+      - config-map
+      - temp
+      - host
+
+required:
+  - name
+  - type
+
+oneOf:
+  - allOf:
+      - properties:
+          type:
+            const: host
+      - properties:
+          spec:
+            $ref: ./volume_host.yaml
+
+  - allOf:
+      - properties:
+          type:
+            const: claim
+      - properties:
+          spec:
+            $ref: ./volume_claim.yaml
+
+  - allOf:
+      - properties:
+          type:
+            const: temp
+      - properties:
+          spec:
+            $ref: ./volume_temp.yaml
+
+  - allOf:
+      - properties:
+          type:
+            const: config-map
+      - properties:
+          spec:
+            $ref: ./volume_config.yaml

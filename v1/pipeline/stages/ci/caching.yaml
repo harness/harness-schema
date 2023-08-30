@@ -1,22 +1,41 @@
-title: Caching
+title: Cache
 type: object
+description: Cache defines pipeline caching behavior.
 properties:
   enabled:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  key:
-    type: string
+    description: Enabled enables cache intelligence.
+    type: boolean
   paths:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  description:
-    desc: This is the description for Caching
-$schema: http://json-schema.org/draft-07/schema#
+    description: Paths provides a list of paths to cache.
+    type: array
+    items:
+      type: string
+  key:
+    description: Key provides a caching key.
+    type: string
+  policy:
+    type: string
+    description: |
+      Policy configures the pull and push behavior of the cache.
+      By default, the stage pulls the cache when the stage starts
+      and pushes changes to the cache when the stage ends.
+    default: pull-push
+    enum:
+      - pull
+      - pull-push
+      - push
+
+examples:
+  - cache:
+      enabled: true
+  - cache:
+      enabled: true
+      paths:
+        - node_modules
+  - cache:
+      enabled: true
+      paths:
+        - node_modules
+      policy: pull
+
+x-docs-skip: true
