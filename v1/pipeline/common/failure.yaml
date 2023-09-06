@@ -2,19 +2,6 @@ title: Failure
 type: object
 description: Failure defines a failure strategy.
 properties:
-  type:
-    description: Type defines the failure strategy type.
-    type: string
-    enum:
-      - abort
-      - ignore
-      - manual-intervention
-      - retry
-      - success
-      - fail
-      - retry-step-group
-      - stage-rollback
-      - pipeline-rollback
   errors:
     description: Errors specifies the types of errors.
     type: array
@@ -34,65 +21,5 @@ properties:
         - unknown
         - verification
         - user-mark-fail
-
-oneOf:
-  - allOf:
-      - properties:
-          type:
-            const: abort
-      - properties:
-          spec:
-            $ref: ./failure_abort.yaml
-  - allOf:
-      - properties:
-          type:
-            const: ignore
-      - properties:
-          spec:
-            $ref: ./failure_ignore.yaml
-  - allOf:
-      - properties:
-          type:
-            const: retry
-      - properties:
-          spec:
-            $ref: ./failure_retry.yaml
-  - allOf:
-      - properties:
-          type:
-            const: manual-intervention
-      - properties:
-          spec:
-            $ref: ./failure_manual.yaml
-  - allOf:
-      - properties:
-          type:
-            const: success
-      - properties:
-          spec:
-            $ref: ./empty_spec.yaml
-  - allOf:
-      - properties:
-          type:
-            const: fail
-      - properties:
-          spec:
-            $ref: ./empty_spec.yaml
-  - allOf:
-      - properties:
-          type: retry-step-group
-      - properties:
-          spec:
-            $ref: ./empty_spec.yaml
-  - allOf:
-      - properties:
-          type: stage-rollback
-      - properties:
-          spec:
-            $ref: ./empty_spec.yaml
-  - allOf:
-      - properties:
-          type: pipeline-rollback
-      - properties:
-          spec:
-            $ref: ./empty_spec.yaml
+  action:
+    $ref: "./failure_action.yaml"

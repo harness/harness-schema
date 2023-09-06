@@ -1,33 +1,27 @@
-title: TimeoutAction
+title: RetryFailureAction
 type: object
-description: Manual intervention for timeout failure action
+description: Failure action on failure for all retries
 properties:
   type:
     description: Type defines the failure strategy type.
     type: string
     enum:
       - abort
-      - ignore
-      - success
-      - stage-rollback
-      - pipeline-rollback
       - fail
+      - ignore
+      - manual-intervention
+      - pipeline-rollback
+      - stage-rollback
+      - success
 
 oneOf:
   - allOf:
       - properties:
           type:
-            const: abort
+            const: success
       - properties:
           spec:
-            $ref: ./failure_abort.yaml
-  - allOf:
-      - properties:
-          type:
-            const: ignore
-      - properties:
-          spec:
-            $ref: ./failure_ignore.yaml
+            $ref: ./empty_spec.yaml
   - allOf:
       - properties:
           type:
@@ -52,7 +46,21 @@ oneOf:
   - allOf:
       - properties:
           type:
-            const: success
+            const: abort
       - properties:
           spec:
-            $ref: ./empty_spec.yaml
+            $ref: ./failure_abort.yaml
+  - allOf:
+      - properties:
+          type:
+            const: ignore
+      - properties:
+          spec:
+            $ref: ./failure_ignore.yaml
+  - allOf:
+      - properties:
+          type:
+            const: manual-intervention
+      - properties:
+          spec:
+            $ref: ./failure_manual.yaml

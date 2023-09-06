@@ -8109,8 +8109,8 @@
                 "description" : "The stage conditional logic.",
                 "$ref" : "#/definitions/pipeline/common/When"
               },
-              "on" : {
-                "$ref" : "#/definitions/pipeline/common/On"
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -9862,32 +9862,22 @@
             }
           }
         },
-        "On" : {
-          "title" : "On",
-          "type" : "object",
-          "properties" : {
-            "failure" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/common/Failure"
-              }, {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/common/Failure"
-                }
-              } ]
+        "FailureList" : {
+          "title" : "FailureList",
+          "oneOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Failure"
+          }, {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/common/Failure"
             }
-          }
+          } ]
         },
         "Failure" : {
           "title" : "Failure",
           "type" : "object",
           "description" : "Failure defines a failure strategy.",
           "properties" : {
-            "type" : {
-              "description" : "Type defines the failure strategy type.",
-              "type" : "string",
-              "enum" : [ "abort", "ignore", "manual-intervention", "retry", "success", "fail", "retry-step-group", "stage-rollback", "pipeline-rollback" ]
-            },
             "errors" : {
               "description" : "Errors specifies the types of errors.",
               "type" : "array",
@@ -9895,9 +9885,94 @@
                 "type" : "string",
                 "enum" : [ "all", "approval-rejection", "authentication", "authorization", "connectivity", "delegate-provisioning", "delegate-restart", "input-timeout", "policy-evaluation", "timeout", "unknown", "verification", "user-mark-fail" ]
               }
+            },
+            "action" : {
+              "$ref" : "#/definitions/pipeline/common/FailureAction"
+            }
+          }
+        },
+        "FailureAction" : {
+          "title" : "FailureAction",
+          "type" : "object",
+          "description" : "Failure Action defines action to be taken on failure.",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the failure strategy type.",
+              "type" : "string",
+              "enum" : [ "abort", "fail", "ignore", "manual-intervention", "pipeline-rollback", "retry", "retry-step-group", "stage-rollback", "success" ]
             }
           },
           "oneOf" : [ {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "success"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "fail"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "retry-step-group"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "stage-rollback"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "pipeline-rollback"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
+                }
+              }
+            } ]
+          }, {
             "allOf" : [ {
               "properties" : {
                 "type" : {
@@ -9953,71 +10028,12 @@
                 }
               }
             } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "success"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "fail"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : "retry-step-group"
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : "stage-rollback"
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : "pipeline-rollback"
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
-                }
-              }
-            } ]
           } ]
+        },
+        "EmptySpec" : {
+          "title" : "EmptySpec",
+          "type" : "object",
+          "properties" : { }
         },
         "Abort" : {
           "title" : "Abort",
@@ -10045,21 +10061,30 @@
                 "format" : "duration"
               } ]
             },
-            "post_action" : {
-              "$ref" : "#/definitions/pipeline/common/PostAction"
+            "failure" : {
+              "$ref" : "#/definitions/pipeline/common/RetryFailure"
             }
           },
           "type" : "object"
         },
-        "PostAction" : {
-          "title" : "PostAction",
+        "RetryFailure" : {
+          "title" : "RetryFailure",
+          "type" : "object",
+          "properties" : {
+            "action" : {
+              "$ref" : "#/definitions/pipeline/common/RetryFailureAction"
+            }
+          }
+        },
+        "RetryFailureAction" : {
+          "title" : "RetryFailureAction",
           "type" : "object",
           "description" : "Failure action on failure for all retries",
           "properties" : {
             "type" : {
               "description" : "Type defines the failure strategy type.",
               "type" : "string",
-              "enum" : [ "abort", "ignore", "success", "stage-rollback", "pipeline-rollback", "fail", "manual-intervention" ]
+              "enum" : [ "abort", "fail", "ignore", "manual-intervention", "pipeline-rollback", "stage-rollback", "success" ]
             }
           },
           "oneOf" : [ {
@@ -10072,7 +10097,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
@@ -10086,31 +10111,35 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
           }, {
             "allOf" : [ {
               "properties" : {
-                "type" : "stage-rollback"
+                "type" : {
+                  "const" : "stage-rollback"
+                }
               }
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
           }, {
             "allOf" : [ {
               "properties" : {
-                "type" : "pipeline-rollback"
+                "type" : {
+                  "const" : "pipeline-rollback"
+                }
               }
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
@@ -10157,11 +10186,6 @@
               }
             } ]
           } ]
-        },
-        "Empty Spec" : {
-          "title" : "Empty Spec",
-          "type" : "object",
-          "properties" : { }
         },
         "ManualIntervention" : {
           "title" : "ManualIntervention",
@@ -10226,31 +10250,35 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
           }, {
             "allOf" : [ {
               "properties" : {
-                "type" : "stage-rollback"
+                "type" : {
+                  "const" : "stage-rollback"
+                }
               }
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
           }, {
             "allOf" : [ {
               "properties" : {
-                "type" : "pipeline-rollback"
+                "type" : {
+                  "const" : "pipeline-rollback"
+                }
               }
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]
@@ -10264,7 +10292,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Empty Spec"
+                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
                 }
               }
             } ]

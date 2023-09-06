@@ -1,18 +1,20 @@
-title: PostAction
+title: FailureAction
 type: object
-description: Failure action on failure for all retries
+description: Failure Action defines action to be taken on failure.
 properties:
   type:
     description: Type defines the failure strategy type.
     type: string
     enum:
       - abort
-      - ignore
-      - success
-      - stage-rollback
-      - pipeline-rollback
       - fail
+      - ignore
       - manual-intervention
+      - pipeline-rollback
+      - retry
+      - retry-step-group
+      - stage-rollback
+      - success
 
 oneOf:
   - allOf:
@@ -31,13 +33,22 @@ oneOf:
             $ref: ./empty_spec.yaml
   - allOf:
       - properties:
-          type: stage-rollback
+          type:
+            const: retry-step-group
       - properties:
           spec:
             $ref: ./empty_spec.yaml
   - allOf:
       - properties:
-          type: pipeline-rollback
+          type:
+            const: stage-rollback
+      - properties:
+          spec:
+            $ref: ./empty_spec.yaml
+  - allOf:
+      - properties:
+          type:
+            const: pipeline-rollback
       - properties:
           spec:
             $ref: ./empty_spec.yaml
@@ -55,6 +66,13 @@ oneOf:
       - properties:
           spec:
             $ref: ./failure_ignore.yaml
+  - allOf:
+      - properties:
+          type:
+            const: retry
+      - properties:
+          spec:
+            $ref: ./failure_retry.yaml
   - allOf:
       - properties:
           type:
