@@ -28963,7 +28963,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "branch", "tag", "PR", "CommitSha" ]
+                "enum" : [ "branch", "tag", "PR", "commitSha" ]
               },
               "description" : {
                 "desc" : "This is the description for Build"
@@ -29004,6 +29004,21 @@
               "if" : {
                 "properties" : {
                   "type" : {
+                    "const" : "commitSha"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/CommitShaBuildSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
                     "const" : "tag"
                   }
                 }
@@ -29012,21 +29027,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/TagBuildSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "CommitSha"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/CommitShaBuildSpec"
                   }
                 }
               }
@@ -29082,26 +29082,6 @@
               }
             }
           },
-          "TagBuildSpec" : {
-            "title" : "TagBuildSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/BuildSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "tag" ],
-              "properties" : {
-                "tag" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for TagBuildSpec"
-              }
-            }
-          },
           "CommitShaBuildSpec" : {
             "title" : "CommitShaBuildSpec",
             "allOf" : [ {
@@ -29119,6 +29099,26 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for CommitShaBuildSpec"
+              }
+            }
+          },
+          "TagBuildSpec" : {
+            "title" : "TagBuildSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/BuildSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "tag" ],
+              "properties" : {
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for TagBuildSpec"
               }
             }
           },
