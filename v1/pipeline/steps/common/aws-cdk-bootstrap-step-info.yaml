@@ -2,6 +2,9 @@ title: AwsCdkBootstrapStepInfo
 allOf:
 - $ref: ../../common/step-spec-type.yaml
 - type: object
+  required:
+  - connectorRef
+  - image
   properties:
     appPath:
       type: string
@@ -23,8 +26,12 @@ allOf:
       - type: string
         pattern: (<\+.+>.*)
         minLength: 1
-    exportTemplate:
-      type: boolean
+    envVariables:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
     image:
       type: string
     imagePullPolicy:
@@ -52,6 +59,9 @@ allOf:
       - type: string
 $schema: http://json-schema.org/draft-07/schema#
 type: object
+required:
+- connectorRef
+- image
 properties:
   appPath:
     type: string
@@ -73,8 +83,12 @@ properties:
     - type: string
       pattern: (<\+.+>.*)
       minLength: 1
-  exportTemplate:
-    type: boolean
+  envVariables:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
   image:
     type: string
   imagePullPolicy:
