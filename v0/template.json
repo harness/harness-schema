@@ -45562,6 +45562,243 @@
               }
             } ]
           },
+          "SlsaVerificationStepNode" : {
+            "title" : "SlsaVerificationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SlsaVerificationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SlsaVerification" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SlsaVerification"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SlsaVerificationStepInfo" : {
+            "title" : "SlsaVerificationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+                },
+                "verify_attestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+              },
+              "verify_attestation" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationStepInfo"
+              }
+            }
+          },
+          "SlsaVerificationSource" : {
+            "title" : "SlsaVerificationSource",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Docker" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Docker"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaDockerSourceSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "SlsaDockerSourceSpec" : {
+            "title" : "SlsaDockerSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image_path", "tag" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image_path" : {
+                  "type" : "string"
+                },
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaDockerSourceSpec"
+              }
+            }
+          },
+          "SlsaVerificationSourceSpec" : {
+            "title" : "SlsaVerificationSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationSourceSpec"
+              }
+            }
+          },
+          "SlsaVerifyAttestation" : {
+            "title" : "SlsaVerifyAttestation",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerifyAttestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignSlsaVerifyAttestation" : {
+            "title" : "CosignSlsaVerifyAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "public_key" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignSlsaVerifyAttestation"
+              }
+            }
+          },
+          "SlsaVerifyAttestationSpec" : {
+            "title" : "SlsaVerifyAttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaVerifyAttestationSpec"
+              }
+            }
+          },
           "Infrastructure" : {
             "title" : "Infrastructure",
             "type" : "object",
@@ -57492,6 +57729,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -64460,6 +64699,9 @@
                   "type" : "string"
                 } ]
               },
+              "slsa_provenance" : {
+                "$ref" : "#/definitions/pipeline/stages/ci/SlsaConfig"
+              },
               "description" : {
                 "desc" : "This is the description for IntegrationStageConfigImpl"
               }
@@ -64663,6 +64905,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -64794,6 +65038,90 @@
                 "required" : [ "steps" ]
               } ]
             } ]
+          },
+          "SlsaConfig" : {
+            "title" : "SlsaConfig",
+            "type" : "object",
+            "properties" : {
+              "attestation" : {
+                "$ref" : "#/definitions/pipeline/stages/ci/AttestationV1"
+              },
+              "enabled" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AttestationV1" : {
+            "title" : "AttestationV1",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AttestationV1"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/CosignAttestationV1"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignAttestationV1" : {
+            "title" : "CosignAttestationV1",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/ci/AttestationSpecV1"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "password" : {
+                  "type" : "string"
+                },
+                "private_key" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignAttestationV1"
+              }
+            }
+          },
+          "AttestationSpecV1" : {
+            "title" : "AttestationSpecV1",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AttestationSpecV1"
+              }
+            }
           },
           "IntegrationStageNode" : {
             "title" : "IntegrationStageNode",
