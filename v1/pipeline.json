@@ -1,63 +1,94 @@
 {
   "type" : "object",
   "title" : "pipeline",
+  "required" : [ "spec", "version", "kind" ],
   "properties" : {
-    "required" : [ "stages", "version" ],
     "version" : {
       "description" : "Version defines the schema version.",
       "type" : [ "number" ]
     },
-    "stages" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-        } ]
-      },
-      "maxItems" : 256,
-      "minItems" : 1
+    "kind" : {
+      "description" : "defines the kind of yaml (pipeline/template)",
+      "type" : "string",
+      "enum" : [ "pipeline" ]
     },
-    "inputs" : {
-      "type" : "object",
-      "description" : "Inputs defines the pipeline input parameters.",
-      "additionalProperties" : {
-        "$ref" : "#/definitions/pipeline/Input"
-      }
-    },
-    "variables" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-        } ]
-      }
+    "type" : {
+      "description" : "defines the type of yaml (add only when pipeline uses a template)",
+      "type" : "string",
+      "enum" : [ "template" ]
     }
   },
+  "allOf" : [ {
+    "if" : {
+      "properties" : {
+        "type" : {
+          "const" : "template"
+        }
+      }
+    },
+    "then" : {
+      "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+    }
+  }, {
+    "if" : {
+      "not" : {
+        "required" : [ "type" ]
+      }
+    },
+    "then" : {
+      "$ref" : "#/definitions/pipeline/PipelineSpec"
+    }
+  } ],
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "pipeline" : {
+      "PipelineUsingTemplateSpec" : {
+        "type" : "object",
+        "title" : "PipelineUsingTemplateSpec",
+        "properties" : { }
+      },
+      "PipelineSpec" : {
+        "type" : "object",
+        "title" : "PipelineSpec",
+        "required" : [ "stages" ],
+        "properties" : {
+          "stages" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+              } ]
+            },
+            "maxItems" : 256,
+            "minItems" : 1
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "Inputs defines the pipeline input parameters.",
+            "additionalProperties" : {
+              "$ref" : "#/definitions/pipeline/Input"
+            }
+          }
+        }
+      },
       "stages" : {
         "iacm" : {
           "IACMStageNode" : {
@@ -52304,16 +52335,45 @@
             "type" : "string",
             "enum" : [ "string", "number", "boolean", "list", "object" ]
           },
-          "description" : {
+          "desc" : {
             "type" : "string",
             "description" : "Desc defines the input description."
           },
           "default" : {
-            "type" : [ "string", "number", "boolean", "list", "object" ]
+            "type" : [ "string", "number", "boolean", "array", "object" ]
           },
           "required" : {
             "type" : "boolean",
             "description" : "Required indicates the input is required."
+          },
+          "validator" : {
+            "$ref" : "#/definitions/pipeline/Input validator"
+          },
+          "execution_input" : {
+            "description" : "a boolean that defines whether the value is an execution input",
+            "type" : "boolean",
+            "default" : false
+          },
+          "value" : {
+            "description" : "value of the input",
+            "type" : "string",
+            "enum" : [ "string", "number", "boolean", "list", "object" ]
+          }
+        }
+      },
+      "Input validator" : {
+        "title" : "Input validator",
+        "type" : "object",
+        "description" : "an input validator.",
+        "properties" : {
+          "allowed_values" : {
+            "description" : "defines allowed values for an input",
+            "type" : "string",
+            "enum" : [ "string", "number", "boolean", "list", "object" ]
+          },
+          "regex" : {
+            "description" : "defines regex pattern for an input value",
+            "type" : "string"
           }
         }
       }
