@@ -53,7 +53,31 @@
       "PipelineUsingTemplateSpec" : {
         "type" : "object",
         "title" : "PipelineUsingTemplateSpec",
-        "properties" : { }
+        "required" : [ "id", "versionLabel" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "id of template to be linked in pipeline",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "versionLabel" : {
+            "type" : "string",
+            "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,127}$",
+            "description" : "version label of template to be linked in pipeline"
+          },
+          "template_inputs" : {
+            "type" : "object",
+            "description" : "inputs to be used in the linked template",
+            "additionalProperties" : {
+              "type" : {
+                "oneOf" : [ "string", "array", "list", "object", "boolean" ]
+              }
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
+          }
+        }
       },
       "PipelineSpec" : {
         "type" : "object",
@@ -103,6 +127,9 @@
               }, {
                 "$ref" : "#/definitions/pipeline/ObjectInput"
               } ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
             }
           }
         }
@@ -52360,6 +52387,22 @@
             },
             "value" : {
               "type" : "string"
+            },
+            "validator" : {
+              "type" : "object",
+              "properties" : {
+                "allowed_values" : {
+                  "description" : "defines allowed values for an input",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "regex" : {
+                  "description" : "defines regex pattern for an input value",
+                  "type" : "string"
+                }
+              }
             }
           }
         } ],
@@ -52384,28 +52427,10 @@
             "type" : "boolean",
             "description" : "Required indicates the input is required."
           },
-          "validator" : {
-            "$ref" : "#/definitions/pipeline/InputValidator"
-          },
           "execution_input" : {
             "description" : "a boolean that defines whether the value is an execution input",
             "type" : "boolean",
             "default" : false
-          }
-        }
-      },
-      "InputValidator" : {
-        "title" : "InputValidator",
-        "type" : "object",
-        "description" : "an input validator.",
-        "properties" : {
-          "allowed_values" : {
-            "description" : "defines allowed values for an input",
-            "type" : "string"
-          },
-          "regex" : {
-            "description" : "defines regex pattern for an input value",
-            "type" : "string"
           }
         }
       },
@@ -52433,6 +52458,22 @@
                 "type" : "string",
                 "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
               } ]
+            },
+            "validator" : {
+              "type" : "object",
+              "properties" : {
+                "allowed_values" : {
+                  "description" : "defines allowed values for an input",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "number"
+                  }
+                },
+                "regex" : {
+                  "type" : "string",
+                  "description" : "defines regex pattern for an input value"
+                }
+              }
             }
           }
         } ],
@@ -52455,6 +52496,22 @@
             },
             "value" : {
               "type" : "array"
+            },
+            "validator" : {
+              "type" : "object",
+              "properties" : {
+                "allowed_values" : {
+                  "description" : "defines allowed values for an input",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "array"
+                  }
+                },
+                "regex" : {
+                  "type" : "string",
+                  "description" : "defines regex pattern for an input value"
+                }
+              }
             }
           }
         } ],
@@ -52477,6 +52534,22 @@
             },
             "value" : {
               "type" : "boolean"
+            },
+            "validator" : {
+              "type" : "object",
+              "properties" : {
+                "allowed_values" : {
+                  "description" : "defines allowed values for an input",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "boolean"
+                  }
+                },
+                "regex" : {
+                  "type" : "string",
+                  "description" : "defines regex pattern for an input value"
+                }
+              }
             }
           }
         } ],
@@ -52499,6 +52572,22 @@
             },
             "value" : {
               "type" : "object"
+            },
+            "validator" : {
+              "type" : "object",
+              "properties" : {
+                "allowed_values" : {
+                  "description" : "defines allowed values for an input",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object"
+                  }
+                },
+                "regex" : {
+                  "type" : "string",
+                  "description" : "defines regex pattern for an input value"
+                }
+              }
             }
           }
         } ],
