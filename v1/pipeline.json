@@ -27,7 +27,11 @@
       }
     },
     "then" : {
-      "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+      "properties" : {
+        "spec" : {
+          "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+        }
+      }
     }
   }, {
     "if" : {
@@ -36,7 +40,11 @@
       }
     },
     "then" : {
-      "$ref" : "#/definitions/pipeline/PipelineSpec"
+      "properties" : {
+        "spec" : {
+          "$ref" : "#/definitions/pipeline/PipelineSpec"
+        }
+      }
     }
   } ],
   "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -84,7 +92,17 @@
             "type" : "object",
             "description" : "Inputs defines the pipeline input parameters.",
             "additionalProperties" : {
-              "$ref" : "#/definitions/pipeline/Input"
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/StringInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/NumberInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/ArrayInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/BooleanInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/ObjectInput"
+              } ]
             }
           }
         }
@@ -52325,9 +52343,32 @@
           }
         }
       },
+      "StringInput" : {
+        "title" : "StringInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "string" ]
+            },
+            "value" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
       "Input" : {
         "title" : "Input",
         "type" : "object",
+        "discriminator" : "type",
         "description" : "Input defines an input parameter.",
         "properties" : {
           "type" : {
@@ -52338,9 +52379,6 @@
           "desc" : {
             "type" : "string",
             "description" : "Desc defines the input description."
-          },
-          "default" : {
-            "type" : [ "string", "number", "boolean", "array", "object" ]
           },
           "required" : {
             "type" : "boolean",
@@ -52353,11 +52391,6 @@
             "description" : "a boolean that defines whether the value is an execution input",
             "type" : "boolean",
             "default" : false
-          },
-          "value" : {
-            "description" : "value of the input",
-            "type" : "string",
-            "enum" : [ "string", "number", "boolean", "list", "object" ]
           }
         }
       },
@@ -52368,14 +52401,108 @@
         "properties" : {
           "allowed_values" : {
             "description" : "defines allowed values for an input",
-            "type" : "string",
-            "enum" : [ "string", "number", "boolean", "list", "object" ]
+            "type" : "string"
           },
           "regex" : {
             "description" : "defines regex pattern for an input value",
             "type" : "string"
           }
         }
+      },
+      "NumberInput" : {
+        "title" : "NumberInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "default" : {
+              "type" : "number",
+              "format" : "double"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "number" ]
+            },
+            "value" : {
+              "oneOf" : [ {
+                "type" : "number",
+                "format" : "double"
+              }, {
+                "type" : "string",
+                "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ArrayInput" : {
+        "title" : "ArrayInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "default" : {
+              "type" : "array"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "array" ]
+            },
+            "value" : {
+              "type" : "array"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "BooleanInput" : {
+        "title" : "BooleanInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "default" : {
+              "type" : "boolean"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "boolean" ]
+            },
+            "value" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ObjectInput" : {
+        "title" : "ObjectInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "default" : {
+              "type" : "object"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "object" ]
+            },
+            "value" : {
+              "type" : "object"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       }
     }
   }
