@@ -222,6 +222,7 @@ list2=(
   "cv-verify-step-node.yaml"
   "iacmapproval-step-node.yaml"
   "iacmterraform-plugin-step-node.yaml"
+  "update-gitops-app-step-node.yaml"
 )
 
 
