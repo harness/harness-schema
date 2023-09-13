@@ -7,8 +7,9 @@ required:
 properties:
   version:
     description: Version defines the schema version.
-    type:
-      - number
+    type: number
+    enum:
+      - 1
   kind:
     description: defines the kind of yaml (pipeline/template)
     type: string
@@ -20,21 +21,18 @@ properties:
     enum:
       - template
 
-oneOf:
-  - allOf:
-      - properties:
-          type:
-            const: template
-      - properties:
-          spec:
-            $ref: ./pipeline_using_template_spec.yaml
-    required:
-      - type
-  - allOf:
-      - properties:
-          spec:
-            $ref: ./pipeline_spec.yaml
-    not:
-      required:
-        - type
+if:
+  properties:
+    type:
+      const: template
+  required:
+    - type
+then:
+  properties:
+    spec:
+      $ref: ./pipeline_using_template_spec.yaml
+else:
+  properties:
+    spec:
+      $ref: ./pipeline_spec.yaml
 "$schema": http://json-schema.org/draft-07/schema#

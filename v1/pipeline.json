@@ -5,7 +5,8 @@
   "properties" : {
     "version" : {
       "description" : "Version defines the schema version.",
-      "type" : [ "number" ]
+      "type" : "number",
+      "enum" : [ 1 ]
     },
     "kind" : {
       "description" : "defines the kind of yaml (pipeline/template)",
@@ -18,33 +19,28 @@
       "enum" : [ "template" ]
     }
   },
-  "oneOf" : [ {
-    "allOf" : [ {
-      "properties" : {
-        "type" : {
-          "const" : "template"
-        }
+  "if" : {
+    "properties" : {
+      "type" : {
+        "const" : "template"
       }
-    }, {
-      "properties" : {
-        "spec" : {
-          "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
-        }
-      }
-    } ],
+    },
     "required" : [ "type" ]
-  }, {
-    "allOf" : [ {
-      "properties" : {
-        "spec" : {
-          "$ref" : "#/definitions/pipeline/PipelineSpec"
-        }
+  },
+  "then" : {
+    "properties" : {
+      "spec" : {
+        "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
       }
-    } ],
-    "not" : {
-      "required" : [ "type" ]
     }
-  } ],
+  },
+  "else" : {
+    "properties" : {
+      "spec" : {
+        "$ref" : "#/definitions/pipeline/PipelineSpec"
+      }
+    }
+  },
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "pipeline" : {
