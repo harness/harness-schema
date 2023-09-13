@@ -20,13 +20,25 @@ allOf:
             pattern: ((^[+-]?[0-9]*\.?[0-9]+$)|(<\+.+>.*))
       validator:
         type: object
-        properties:
-          allowed_values:
-            description: defines allowed values for an input
-            type: array
-            items:
-              type: number
-          regex:
-            type: string
-            description: defines regex pattern for an input value
+        oneOf:
+          - allOf:
+              - properties:
+                  allowed_values:
+                    description: defines allowed values for an input
+                    type: array
+                    items:
+                      oneOf:
+                        - type: number
+                          format: double
+                        - type: string
+                          pattern: ((^[+-]?[0-9]*\.?[0-9]+$)|(<\+.+>.*))
+            required:
+              - allowed_values
+          - allOf:
+              - properties:
+                  regex:
+                    description: defines regex pattern for an input value
+                    type: string
+            required:
+              - regex
 $schema: http://json-schema.org/draft-07/schema#
