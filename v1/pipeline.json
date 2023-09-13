@@ -1,69 +1,605 @@
 {
   "type" : "object",
   "title" : "pipeline",
+  "required" : [ "pipeline" ],
   "properties" : {
-    "required" : [ "stages", "version" ],
-    "version" : {
-      "description" : "Version defines the schema version.",
-      "type" : [ "number" ]
-    },
-    "stages" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-        } ]
-      },
-      "maxItems" : 256,
-      "minItems" : 1
-    },
-    "inputs" : {
-      "type" : "object",
-      "description" : "Inputs defines the pipeline input parameters.",
-      "additionalProperties" : {
-        "$ref" : "#/definitions/pipeline/Input"
-      }
-    },
-    "variables" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-        } ]
-      }
+    "pipeline" : {
+      "$ref" : "#/definitions/pipeline/pipeline"
     }
   },
-  "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "pipeline" : {
+      "pipeline" : {
+        "type" : "object",
+        "title" : "pipeline",
+        "properties" : {
+          "allowStageExecutions" : {
+            "type" : "boolean"
+          },
+          "delegateSelectors" : {
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }, {
+              "type" : "string",
+              "pattern" : "(<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "flowControl" : {
+            "$ref" : "#/definitions/pipeline/flowControl"
+          },
+          "identifier" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+          },
+          "notificationRules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/NotificationRules"
+            }
+          },
+          "orgIdentifier" : {
+            "type" : "string"
+          },
+          "projectIdentifier" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "properties" : {
+              "ci" : {
+                "type" : "object",
+                "properties" : {
+                  "codebase" : {
+                    "$ref" : "#/definitions/pipeline/codebase"
+                  }
+                }
+              }
+            }
+          },
+          "stages" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/stages/stages"
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
+          },
+          "tags" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "template" : {
+            "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+          },
+          "timeout" : {
+            "type" : "string",
+            "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+          },
+          "variables" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+              } ]
+            }
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "flowControl" : {
+        "type" : "object",
+        "title" : "flowControl",
+        "properties" : {
+          "barriers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/barrierConfig"
+            }
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "barrierConfig" : {
+        "type" : "object",
+        "title" : "barrierConfig",
+        "required" : [ "identifier", "name" ],
+        "properties" : {
+          "identifier" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "NotificationRules" : {
+        "title" : "NotificationRules",
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "notificationMethod" : {
+            "$ref" : "#/definitions/pipeline/NotificationChannelWrapper"
+          },
+          "pipelineEvents" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/PipelineEvent"
+            }
+          },
+          "description" : {
+            "desc" : "This is the description for NotificationRules"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "NotificationChannelWrapper" : {
+        "title" : "NotificationChannelWrapper",
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string"
+          },
+          "description" : {
+            "desc" : "This is the description for NotificationChannelWrapper"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "Email"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsEmailChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "MsTeams"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsMSTeamChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "PagerDuty"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsPagerDutyChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "Slack"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsSlackChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "Webhook"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsWebhookChannel"
+              }
+            }
+          }
+        } ]
+      },
+      "PmsEmailChannel" : {
+        "title" : "PmsEmailChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "recipients" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "userGroups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsEmailChannel"
+          }
+        }
+      },
+      "PmsNotificationChannel" : {
+        "title" : "PmsNotificationChannel",
+        "type" : "object",
+        "discriminator" : "type",
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsNotificationChannel"
+          }
+        }
+      },
+      "PmsMSTeamChannel" : {
+        "title" : "PmsMSTeamChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "msTeamKeys" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "userGroups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsMSTeamChannel"
+          }
+        }
+      },
+      "PmsPagerDutyChannel" : {
+        "title" : "PmsPagerDutyChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "integrationKey" : {
+              "type" : "string"
+            },
+            "userGroups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsPagerDutyChannel"
+          }
+        }
+      },
+      "PmsSlackChannel" : {
+        "title" : "PmsSlackChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "userGroups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "webhookUrl" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsSlackChannel"
+          }
+        }
+      },
+      "PmsWebhookChannel" : {
+        "title" : "PmsWebhookChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "webhookUrl" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "description" : {
+            "desc" : "This is the description for PmsWebhookChannel"
+          }
+        }
+      },
+      "PipelineEvent" : {
+        "title" : "PipelineEvent",
+        "type" : "object",
+        "properties" : {
+          "forStages" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "AllEvents", "PipelineStart", "PipelineSuccess", "PipelineFailed", "PipelineEnd", "PipelinePaused", "StageSuccess", "StageFailed", "StageStart", "StepFailed" ]
+          },
+          "description" : {
+            "desc" : "This is the description for PipelineEvent"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "codebase" : {
+        "type" : "object",
+        "title" : "codebase",
+        "required" : [ "build" ],
+        "properties" : {
+          "build" : {
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/build"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "connectorRef" : {
+            "type" : "string"
+          },
+          "depth" : {
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "prCloneStrategy" : {
+            "oneOf" : [ {
+              "type" : "string",
+              "enum" : [ "MergeCommit", "SourceBranch" ]
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          },
+          "repoName" : {
+            "type" : "string"
+          },
+          "resources" : {
+            "type" : "object",
+            "required" : [ "limits" ],
+            "properties" : {
+              "limits" : {
+                "type" : "object",
+                "properties" : {
+                  "cpu" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "number"
+                    } ]
+                  },
+                  "memory" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          },
+          "sslVerify" : {
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+              "minLength" : 1
+            } ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "build" : {
+        "title" : "build",
+        "type" : "object",
+        "required" : [ "spec", "type" ],
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "branch", "tag", "PR" ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "PR"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "number" ],
+                "properties" : {
+                  "number" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "branch"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "branch" ],
+                "properties" : {
+                  "branch" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "tag"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "type" : "object",
+                "required" : [ "tag" ],
+                "properties" : {
+                  "tag" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        } ]
+      },
       "stages" : {
+        "stages" : {
+          "type" : "object",
+          "title" : "stages",
+          "properties" : {
+            "parallel" : {
+              "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+            },
+            "stage" : {
+              "description" : "This is stage node. it can be of various types like CI, CD, etc.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
+              } ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ParallelStageElementConfig" : {
+          "type" : "array",
+          "title" : "ParallelStageElementConfig",
+          "items" : {
+            "$ref" : "#/definitions/pipeline/stages/stages"
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for ParallelStageElementConfig"
+            }
+          }
+        },
         "iacm" : {
           "IACMStageNode" : {
             "title" : "IACMStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -93,7 +629,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -247,7 +783,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/iacm/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -302,7 +838,7 @@
           "DeploymentStageNode" : {
             "title" : "DeploymentStageNode",
             "type" : "object",
-            "required" : [ "failureStrategies", "type" ],
+            "required" : [ "failureStrategies", "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -332,7 +868,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -701,7 +1237,7 @@
             "title" : "EnvironmentYamlV2",
             "type" : "object",
             "properties" : {
-              "deploy-to-all" : {
+              "deployToAll" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
@@ -710,7 +1246,7 @@
                   "minLength" : 1
                 } ]
               },
-              "inputs" : {
+              "environmentInputs" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/JsonNode"
                 }, {
@@ -718,11 +1254,11 @@
                   "pattern" : "(^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$|^$)"
                 } ]
               },
-              "name" : {
+              "environmentRef" : {
                 "type" : "string",
                 "pattern" : "^(?=\\s*\\S).*$"
               },
-              "use-from-stage" : {
+              "useFromStage" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentInfraUseFromStage"
               },
               "filters" : {
@@ -737,7 +1273,7 @@
                   "minLength" : 1
                 } ]
               },
-              "git-ops-clusters" : {
+              "gitOpsClusters" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
@@ -749,7 +1285,7 @@
                   "minLength" : 1
                 } ]
               },
-              "infrastructure-definition" : {
+              "infrastructureDefinition" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/stages/cd/InfraStructureDefinitionYaml"
                 }, {
@@ -758,7 +1294,7 @@
                   "minLength" : 1
                 } ]
               },
-              "infrastructure-definitions" : {
+              "infrastructureDefinitions" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
@@ -772,7 +1308,7 @@
               "provisioner" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ExecutionElementConfig"
               },
-              "service-override-inputs" : {
+              "serviceOverrideInputs" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/JsonNode"
                 }, {
@@ -780,7 +1316,7 @@
                   "pattern" : "(^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$|^$)"
                 } ]
               },
-              "services-overrides" : {
+              "servicesOverrides" : {
                 "type" : "array",
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/cd/ServiceOverrideInputsYaml"
@@ -910,7 +1446,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/cd/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -1181,6 +1717,10 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
                 } ]
@@ -1520,7 +2060,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/cd/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "strategy" : {
@@ -1609,7 +2149,7 @@
                   "minLength" : 1
                 } ]
               },
-              "name" : {
+              "envGroupRef" : {
                 "type" : "string",
                 "pattern" : "^(?=\\s*\\S).*$"
               },
@@ -3091,7 +3631,7 @@
             "title" : "ServiceYamlV2",
             "type" : "object",
             "properties" : {
-              "inputs" : {
+              "serviceInputs" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/JsonNode"
                 }, {
@@ -3099,11 +3639,11 @@
                   "pattern" : "(^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$|^$)"
                 } ]
               },
-              "name" : {
+              "serviceRef" : {
                 "type" : "string",
                 "pattern" : "^(?=\\s*\\S).*$"
               },
-              "use-from-stage" : {
+              "useFromStage" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServiceUseFromStageV2"
               },
               "description" : {
@@ -3137,16 +3677,16 @@
               "service" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServiceYaml"
               },
-              "defination" : {
+              "serviceDefinition" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServiceDefinition"
               },
-              "name" : {
+              "serviceRef" : {
                 "type" : "string"
               },
-              "stage-overrides" : {
+              "stageOverrides" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/StageOverridesConfig"
               },
-              "use-from-stage" : {
+              "useFromStage" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServiceUseFromStage"
               },
               "description" : {
@@ -3156,17 +3696,17 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
               "oneOf" : [ {
-                "required" : [ "use-from-stage" ]
+                "required" : [ "useFromStage" ]
               }, {
                 "required" : [ "service" ]
               }, {
-                "required" : [ "name" ]
+                "required" : [ "serviceRef" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "use-from-stage" ]
+                "required" : [ "useFromStage" ]
               }, {
-                "required" : [ "defination" ]
+                "required" : [ "serviceDefinition" ]
               } ]
             } ]
           },
@@ -4246,6 +4786,9 @@
               "required" : [ "connectorRef", "repository", "repositoryFormat" ],
               "properties" : {
                 "artifactDirectory" : {
+                  "type" : "string"
+                },
+                "artifactFilter" : {
                   "type" : "string"
                 },
                 "artifactPath" : {
@@ -5673,7 +6216,11 @@
               "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
             }, {
               "type" : "object",
-              "properties" : { }
+              "properties" : {
+                "userData" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/UserDataConfiguration"
+                }
+              }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
@@ -5681,6 +6228,23 @@
                 "desc" : "This is the description for AsgServiceSpec"
               }
             }
+          },
+          "UserDataConfiguration" : {
+            "title" : "UserDataConfiguration",
+            "type" : "object",
+            "required" : [ "store" ],
+            "properties" : {
+              "metadata" : {
+                "type" : "string"
+              },
+              "store" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+              },
+              "description" : {
+                "desc" : "This is the description for UserDataConfiguration"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AwsLambdaServiceSpec" : {
             "title" : "AwsLambdaServiceSpec",
@@ -6497,8 +7061,10 @@
             "type" : "object",
             "properties" : {
               "metadata" : {
-                "readOnly" : true,
                 "$ref" : "#/definitions/pipeline/stages/cd/ServicesMetadata"
+              },
+              "useFromStage" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/ServiceUseFromStageV2"
               },
               "values" : {
                 "oneOf" : [ {
@@ -6755,7 +7321,7 @@
           "SecurityStageNode" : {
             "title" : "SecurityStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -6785,7 +7351,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -6935,7 +7501,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/security/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -7253,6 +7819,9 @@
                   "type" : "string"
                 } ]
               },
+              "slsa_provenance" : {
+                "$ref" : "#/definitions/pipeline/stages/ci/SlsaConfig"
+              },
               "description" : {
                 "desc" : "This is the description for IntegrationStageConfigImpl"
               }
@@ -7303,7 +7872,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/ci/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -7450,6 +8019,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -7533,7 +8104,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/ci/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "strategy" : {
@@ -7581,13 +8152,97 @@
                 "required" : [ "steps" ]
               } ]
             } ]
+          },
+          "SlsaConfig" : {
+            "title" : "SlsaConfig",
+            "type" : "object",
+            "properties" : {
+              "attestation" : {
+                "$ref" : "#/definitions/pipeline/stages/ci/AttestationV1"
+              },
+              "enabled" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AttestationV1" : {
+            "title" : "AttestationV1",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AttestationV1"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/CosignAttestationV1"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignAttestationV1" : {
+            "title" : "CosignAttestationV1",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/ci/AttestationSpecV1"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "password" : {
+                  "type" : "string"
+                },
+                "private_key" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignAttestationV1"
+              }
+            }
+          },
+          "AttestationSpecV1" : {
+            "title" : "AttestationSpecV1",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AttestationSpecV1"
+              }
+            }
           }
         },
         "approval" : {
           "ApprovalStageNode" : {
             "title" : "ApprovalStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -7617,7 +8272,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -7708,7 +8363,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/approval/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -7741,8 +8396,6 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
                 }, {
@@ -7852,7 +8505,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/approval/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "strategy" : {
@@ -7906,7 +8559,7 @@
           "PipelineStageNode" : {
             "title" : "PipelineStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -7936,7 +8589,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -8074,39 +8727,83 @@
           "CustomStageNode" : {
             "title" : "CustomStageNode",
             "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
-              "desc" : {
-                "description" : "The stage description.",
-                "type" : "string"
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
-                "description" : "The unique stage identifier.",
-                "pattern" : "^[a-zA-Z0-9_-]+$",
-                "type" : "string"
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for CustomStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
               "name" : {
-                "description" : "The stage name.",
-                "type" : "string"
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "delegate" : {
-                "description" : "Configures the delegate matching logic.",
-                "$ref" : "#/definitions/pipeline/common/Delegate"
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
               },
               "type" : {
-                "description" : "The stage type.",
-                "enum" : [ "custom" ],
-                "type" : "string"
+                "type" : "string",
+                "enum" : [ "Custom" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "$ref" : "#/definitions/pipeline/common/When"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -8114,48 +8811,60 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "custom"
+                    "const" : "Custom"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementConfig"
+                    "$ref" : "#/definitions/pipeline/stages/custom/CustomStageConfig"
                   }
                 }
               }
-            } ],
-            "anyOf" : [ {
-              "required" : [ "name" ]
-            }, {
-              "required" : [ "id" ]
             } ]
           },
-          "CustomStageSpecElementConfig" : {
-            "title" : "CustomStageSpecElementConfig",
+          "CustomStageConfig" : {
+            "title" : "CustomStageConfig",
+            "type" : "object",
+            "required" : [ "execution" ],
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/custom/ExecutionElementConfig"
+              },
+              "description" : {
+                "desc" : "This is the description for CustomStageConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ExecutionElementConfig" : {
+            "title" : "ExecutionElementConfig",
             "type" : "object",
             "required" : [ "steps" ],
             "properties" : {
               "rollbackSteps" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementWrapperConfig"
+                  "$ref" : "#/definitions/pipeline/stages/custom/ExecutionWrapperConfig"
                 }
               },
               "steps" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementWrapperConfig"
+                  "$ref" : "#/definitions/pipeline/stages/custom/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
+              },
+              "description" : {
+                "desc" : "This is the description for ExecutionElementConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "CustomStageSpecElementWrapperConfig" : {
-            "title" : "CustomStageSpecElementWrapperConfig",
+          "ExecutionWrapperConfig" : {
+            "title" : "ExecutionWrapperConfig",
             "type" : "object",
             "properties" : {
               "parallel" : {
@@ -8296,13 +9005,15 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
                 } ]
               },
               "stepGroup" : {
                 "$ref" : "#/definitions/pipeline/stages/custom/StepGroupElementConfig"
               },
               "description" : {
-                "desc" : "This is the description for CustomStageSpecElementWrapperConfig"
+                "desc" : "This is the description for ExecutionWrapperConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -8311,7 +9022,7 @@
             "title" : "ParallelStepElementConfig",
             "type" : "array",
             "items" : {
-              "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementWrapperConfig"
+              "$ref" : "#/definitions/pipeline/stages/custom/ExecutionWrapperConfig"
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
@@ -8377,9 +9088,9 @@
               "steps" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementWrapperConfig"
+                  "$ref" : "#/definitions/pipeline/stages/custom/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "strategy" : {
@@ -8433,7 +9144,7 @@
           "FeatureFlagStageNode" : {
             "title" : "FeatureFlagStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "type" ],
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -8463,7 +9174,7 @@
                   "minLength" : 1
                 } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -8553,7 +9264,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/cf/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "description" : {
@@ -8704,6 +9415,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -8787,7 +9500,7 @@
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/cf/ExecutionWrapperConfig"
                 },
-                "maxItems" : 256,
+                "maxItems" : 2147483647,
                 "minItems" : 1
               },
               "strategy" : {
@@ -8841,13 +9554,13 @@
           "TemplateStageNode" : {
             "title" : "TemplateStageNode",
             "type" : "object",
-            "required" : [ "type" ],
+            "required" : [ "identifier", "name", "template" ],
             "properties" : {
               "description" : {
                 "type" : "string",
                 "desc" : "This is the description for TemplateStageNode"
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -8855,106 +9568,12 @@
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "template" ]
-              },
               "template" : {
                 "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "template"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfigV2"
-                  }
-                }
-              }
-            } ]
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
-        },
-        "ParallelStageElementConfig" : {
-          "type" : "object",
-          "title" : "ParallelStageElementConfig",
-          "required" : [ "type" ],
-          "properties" : {
-            "id" : {
-              "type" : "string",
-              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-            },
-            "name" : {
-              "type" : "string",
-              "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-            },
-            "description" : {
-              "desc" : "This is the description for ParallelStageElementConfig"
-            },
-            "type" : {
-              "type" : "string",
-              "enum" : [ "parallel" ]
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#",
-          "allOf" : [ {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "parallel"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ParallelStageElementNodeConfig"
-                }
-              }
-            }
-          } ]
-        },
-        "ParallelStageElementNodeConfig" : {
-          "type" : "object",
-          "title" : "ParallelStageElementNodeConfig",
-          "properties" : {
-            "stages" : {
-              "type" : "array",
-              "items" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-                } ]
-              },
-              "maxItems" : 256,
-              "minItems" : 1
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
       "common" : {
@@ -9217,7 +9836,7 @@
               },
               "name" : {
                 "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,127}$"
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
               },
               "type" : {
                 "type" : "string",
@@ -9279,7 +9898,7 @@
               },
               "name" : {
                 "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,127}$"
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
               },
               "type" : {
                 "type" : "string",
@@ -9310,7 +9929,7 @@
               },
               "name" : {
                 "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,127}$"
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
               },
               "type" : {
                 "type" : "string",
@@ -9674,625 +10293,6 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "Strategy" : {
-          "title" : "Strategy",
-          "type" : "object",
-          "description" : "Strategy defines an optional execution strategy.",
-          "properties" : {
-            "type" : {
-              "description" : "Type defines the execution strategy type.",
-              "type" : "string",
-              "enum" : [ "for", "matrix", "while" ]
-            }
-          },
-          "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "for"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/For"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "matrix"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Matrix"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "while"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/While"
-                }
-              }
-            } ]
-          } ]
-        },
-        "For" : {
-          "title" : "For",
-          "description" : "Defines a for loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "concurrency" : {
-              "description" : "Defines the for loop concurrency.",
-              "type" : "number"
-            },
-            "iterations" : {
-              "type" : "number"
-            }
-          }
-        },
-        "Matrix" : {
-          "title" : "Matrix",
-          "type" : "object",
-          "description" : "Defines a matrix execution strategy.",
-          "properties" : {
-            "axis" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "concurrency" : {
-              "description" : "Defines the matrix concurrency.",
-              "type" : "number"
-            },
-            "nodeName" : {
-              "description" : "Defines the naming for matrix nodes.",
-              "type" : "string"
-            },
-            "include" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "exclude" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "While" : {
-          "title" : "While",
-          "description" : "Defines a while loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "condition" : {
-              "type" : "string",
-              "description" : "Defines the while condition."
-            },
-            "iterations" : {
-              "type" : "number",
-              "description" : "Defines the maximum number of interations."
-            }
-          }
-        },
-        "Delegate" : {
-          "title" : "Delegate",
-          "type" : "object",
-          "description" : "Delegate defines the delegate matching logic.",
-          "properties" : {
-            "selectors" : {
-              "items" : {
-                "type" : "string"
-              },
-              "type" : "array",
-              "description" : "Selectors defines tags that are used to match the stage\nwith a delegate."
-            }
-          }
-        },
-        "When" : {
-          "title" : "When",
-          "oneOf" : [ {
-            "type" : "string"
-          }, {
-            "$ref" : "#/definitions/pipeline/common/WhenCond"
-          }, {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/definitions/pipeline/common/WhenCond"
-            }
-          } ]
-        },
-        "WhenCond" : {
-          "title" : "WhenCond",
-          "type" : "object",
-          "additionalProperties" : {
-            "$ref" : "#/definitions/pipeline/common/WhenExpr"
-          }
-        },
-        "WhenExpr" : {
-          "title" : "WhenExpr",
-          "type" : "object",
-          "properties" : {
-            "eq" : {
-              "type" : "string"
-            },
-            "in" : {
-              "type" : "array"
-            },
-            "not" : {
-              "type" : "object",
-              "properties" : {
-                "eq" : {
-                  "type" : "string"
-                },
-                "in" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "FailureList" : {
-          "title" : "FailureList",
-          "oneOf" : [ {
-            "$ref" : "#/definitions/pipeline/common/Failure"
-          }, {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/definitions/pipeline/common/Failure"
-            }
-          } ]
-        },
-        "Failure" : {
-          "title" : "Failure",
-          "type" : "object",
-          "description" : "Failure defines a failure strategy.",
-          "properties" : {
-            "errors" : {
-              "description" : "Errors specifies the types of errors.",
-              "type" : "array",
-              "items" : {
-                "type" : "string",
-                "enum" : [ "all", "approval-rejection", "authentication", "authorization", "connectivity", "delegate-provisioning", "delegate-restart", "input-timeout", "policy-evaluation", "timeout", "unknown", "verification", "user-mark-fail" ]
-              }
-            },
-            "action" : {
-              "$ref" : "#/definitions/pipeline/common/FailureAction"
-            }
-          }
-        },
-        "FailureAction" : {
-          "title" : "FailureAction",
-          "type" : "object",
-          "description" : "Failure Action defines action to be taken on failure.",
-          "properties" : {
-            "type" : {
-              "description" : "Type defines the failure strategy type.",
-              "type" : "string",
-              "enum" : [ "abort", "fail", "ignore", "manual-intervention", "pipeline-rollback", "retry", "retry-step-group", "stage-rollback", "success" ]
-            }
-          },
-          "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "success"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "fail"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "retry-step-group"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "stage-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "pipeline-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "abort"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "ignore"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "retry"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Retry"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "manual-intervention"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/ManualIntervention"
-                }
-              }
-            } ]
-          } ]
-        },
-        "EmptySpec" : {
-          "title" : "EmptySpec",
-          "type" : "object",
-          "properties" : { }
-        },
-        "Abort" : {
-          "title" : "Abort",
-          "type" : "object",
-          "properties" : { }
-        },
-        "Retry" : {
-          "title" : "Retry",
-          "properties" : {
-            "attempts" : {
-              "type" : "number",
-              "example" : 3
-            },
-            "interval" : {
-              "anyOf" : [ {
-                "items" : {
-                  "type" : "string",
-                  "format" : "duration"
-                },
-                "type" : "array",
-                "example" : [ "5s", "10s", "20s" ]
-              }, {
-                "type" : "string",
-                "example" : "1m",
-                "format" : "duration"
-              } ]
-            },
-            "failure" : {
-              "$ref" : "#/definitions/pipeline/common/RetryFailure"
-            }
-          },
-          "type" : "object"
-        },
-        "RetryFailure" : {
-          "title" : "RetryFailure",
-          "type" : "object",
-          "properties" : {
-            "action" : {
-              "$ref" : "#/definitions/pipeline/common/RetryFailureAction"
-            }
-          }
-        },
-        "RetryFailureAction" : {
-          "title" : "RetryFailureAction",
-          "type" : "object",
-          "description" : "Failure action on failure for all retries",
-          "properties" : {
-            "type" : {
-              "description" : "Type defines the failure strategy type.",
-              "type" : "string",
-              "enum" : [ "abort", "fail", "ignore", "manual-intervention", "pipeline-rollback", "stage-rollback", "success" ]
-            }
-          },
-          "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "success"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "fail"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "stage-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "pipeline-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "abort"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "ignore"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "manual-intervention"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/ManualIntervention"
-                }
-              }
-            } ]
-          } ]
-        },
-        "ManualIntervention" : {
-          "title" : "ManualIntervention",
-          "properties" : {
-            "timeout_action" : {
-              "$ref" : "#/definitions/pipeline/common/TimeoutAction"
-            },
-            "timeout" : {
-              "format" : "duration",
-              "type" : "string",
-              "example" : "30m"
-            }
-          },
-          "type" : "object"
-        },
-        "TimeoutAction" : {
-          "title" : "TimeoutAction",
-          "type" : "object",
-          "description" : "Manual intervention for timeout failure action",
-          "properties" : {
-            "type" : {
-              "description" : "Type defines the failure strategy type.",
-              "type" : "string",
-              "enum" : [ "abort", "ignore", "success", "stage-rollback", "pipeline-rollback", "fail" ]
-            }
-          },
-          "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "abort"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "ignore"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "fail"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "stage-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "pipeline-rollback"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "success"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/EmptySpec"
-                }
-              }
-            } ]
-          } ]
         }
       },
       "steps" : {
@@ -10452,6 +10452,7 @@
               "$ref" : "#/definitions/pipeline/steps/custom/StoreSpec"
             }, {
               "type" : "object",
+              "required" : [ "file" ],
               "properties" : {
                 "file" : {
                   "type" : "string"
@@ -10755,7 +10756,7 @@
               "namespace" : {
                 "type" : "string",
                 "minLength" : 1,
-                "maxLength" : 256
+                "maxLength" : 2147483647
               },
               "nodeSelector" : {
                 "oneOf" : [ {
@@ -10878,6 +10879,7 @@
               "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
             }, {
               "type" : "object",
+              "required" : [ "image" ],
               "properties" : {
                 "connector" : {
                   "type" : "string"
@@ -12492,6 +12494,12 @@
                 "issueKey" : {
                   "type" : "string"
                 },
+                "issueType" : {
+                  "type" : "string"
+                },
+                "projectKey" : {
+                  "type" : "string"
+                },
                 "transitionTo" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/TransitionTo"
                 }
@@ -12709,6 +12717,10 @@
                 "ticketNumber" : {
                   "type" : "string"
                 },
+                "retryInterval" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+                },
                 "ticketType" : {
                   "type" : "string"
                 }
@@ -12884,6 +12896,10 @@
                 },
                 "rejectionCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+                },
+                "retryInterval" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
                 }
               }
             } ],
@@ -13105,7 +13121,7 @@
                   "items" : {
                     "type" : "string"
                   },
-                  "maxItems" : 256,
+                  "maxItems" : 2147483647,
                   "minItems" : 1
                 }, {
                   "type" : "string",
@@ -14507,30 +14523,6 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "TemplateLinkConfigV2" : {
-            "title" : "TemplateLinkConfigV2",
-            "type" : "object",
-            "required" : [ "name", "version" ],
-            "properties" : {
-              "inputs" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "name" : {
-                "type" : "string"
-              },
-              "variables" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "version" : {
-                "type" : "string",
-                "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,63}$"
-              },
-              "description" : {
-                "desc" : "This is the description for TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "common" : {
@@ -15502,7 +15494,7 @@
               "namespace" : {
                 "type" : "string",
                 "minLength" : 1,
-                "maxLength" : 256
+                "maxLength" : 2147483647
               },
               "nodeSelector" : {
                 "oneOf" : [ {
@@ -15561,6 +15553,16 @@
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -17373,6 +17375,389 @@
               },
               "description" : {
                 "desc" : "This is the description for AwsCdkDestroyStepInfo"
+              }
+            }
+          },
+          "AwsCdkRollbackStepNode" : {
+            "title" : "AwsCdkRollbackStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsCdkRollbackStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsCdkRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsCdkRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsCdkRollbackStepInfo" : {
+            "title" : "AwsCdkRollbackStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "provisionerIdentifier" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "provisionerIdentifier" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "provisionerIdentifier" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "envVariables" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "provisionerIdentifier" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCdkRollbackStepInfo"
+              }
+            }
+          },
+          "SlsaVerificationStepNode" : {
+            "title" : "SlsaVerificationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SlsaVerificationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SlsaVerification" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SlsaVerification"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SlsaVerificationStepInfo" : {
+            "title" : "SlsaVerificationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+                },
+                "verify_attestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+              },
+              "verify_attestation" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationStepInfo"
+              }
+            }
+          },
+          "SlsaVerificationSource" : {
+            "title" : "SlsaVerificationSource",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Docker" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Docker"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaDockerSourceSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "SlsaDockerSourceSpec" : {
+            "title" : "SlsaDockerSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image_path", "tag" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image_path" : {
+                  "type" : "string"
+                },
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaDockerSourceSpec"
+              }
+            }
+          },
+          "SlsaVerificationSourceSpec" : {
+            "title" : "SlsaVerificationSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaVerificationSourceSpec"
+              }
+            }
+          },
+          "SlsaVerifyAttestation" : {
+            "title" : "SlsaVerifyAttestation",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SlsaVerifyAttestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignSlsaVerifyAttestation" : {
+            "title" : "CosignSlsaVerifyAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "public_key" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignSlsaVerifyAttestation"
+              }
+            }
+          },
+          "SlsaVerifyAttestationSpec" : {
+            "title" : "SlsaVerifyAttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaVerifyAttestationSpec"
               }
             }
           },
@@ -36916,6 +37301,10 @@
                 "connectorRef" : {
                   "type" : "string"
                 },
+                "consoleLogPollFrequency" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(([5-9])+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -36960,6 +37349,10 @@
             "properties" : {
               "connectorRef" : {
                 "type" : "string"
+              },
+              "consoleLogPollFrequency" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(([5-9])+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
               },
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -43684,7 +44077,13 @@
                   "type" : "string"
                 },
                 "samVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -43755,7 +44154,13 @@
                 "type" : "string"
               },
               "samVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for AwsSamBuildStepInfo"
@@ -44570,10 +44975,22 @@
                   } ]
                 },
                 "samVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 },
                 "stackName" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -44642,10 +45059,22 @@
                 } ]
               },
               "samVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "stackName" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for AwsSamDeployStepInfo"
@@ -44924,7 +45353,7 @@
                     "items" : {
                       "type" : "string"
                     },
-                    "maxItems" : 256,
+                    "maxItems" : 2147483647,
                     "minItems" : 1
                   }, {
                     "type" : "string",
@@ -44994,7 +45423,7 @@
                   "items" : {
                     "type" : "string"
                   },
-                  "maxItems" : 256,
+                  "maxItems" : 2147483647,
                   "minItems" : 1
                 }, {
                   "type" : "string",
@@ -50992,7 +51421,13 @@
                   } ]
                 },
                 "serverlessVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -51060,7 +51495,13 @@
                 } ]
               },
               "serverlessVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for ServerlessAwsLambdaDeployV2StepInfo"
@@ -51212,7 +51653,13 @@
                   } ]
                 },
                 "serverlessVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -51280,7 +51727,13 @@
                 } ]
               },
               "serverlessVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for ServerlessAwsLambdaPackageV2StepInfo"
@@ -51420,7 +51873,13 @@
                   } ]
                 },
                 "serverlessVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -51476,7 +51935,13 @@
                 } ]
               },
               "serverlessVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for ServerlessAwsLambdaPrepareRollbackV2StepInfo"
@@ -51616,7 +52081,13 @@
                   } ]
                 },
                 "serverlessVersion" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -51672,7 +52143,13 @@
                 } ]
               },
               "serverlessVersion" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for ServerlessAwsLambdaRollbackV2StepInfo"
@@ -52613,29 +53090,6 @@
                 "desc" : "This is the description for ConfiguredMonitoredServiceSpec"
               }
             }
-          }
-        }
-      },
-      "Input" : {
-        "title" : "Input",
-        "type" : "object",
-        "description" : "Input defines an input parameter.",
-        "properties" : {
-          "type" : {
-            "description" : "Type defines the input type.",
-            "type" : "string",
-            "enum" : [ "string", "number", "boolean", "list", "object" ]
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "Desc defines the input description."
-          },
-          "default" : {
-            "type" : [ "string", "number", "boolean", "list", "object" ]
-          },
-          "required" : {
-            "type" : "boolean",
-            "description" : "Required indicates the input is required."
           }
         }
       }
