@@ -1,32 +1,23 @@
 # A runtime input field depends on other fixed value field
 
-pipeline:
-  name: test
-  identifier: test
-  description: description
-  projectIdentifier: hotstar
-  orgIdentifier: a_org
-  tags: {}
+version: 1
+kind: pipeline
+spec:
   stages:
-    - stage:
-        name: test
-        identifier: test
-        description:
-        type: Custom
-        spec:
-          execution:
-            steps:
-              - step:
-                  type: JiraCreate
-                  name: JiraCreate_1
-                  identifier: JiraCreate_1
-                  spec:
-                    connectorRef: account.Test_jira
-                    projectKey: <+inputs.input-1>
-                    issueType: dummy-issue
-                    fields: []
-                  timeout: 10m
-        tags: {}
+    - name: test
+      type: custom
+      spec:
+        steps:
+          - name: JiraCreate_1
+            type: JiraCreate
+            id: JiraCreate_1
+            spec:
+              connectorRef: account.Test_jira
+              projectKey: <+inputs.input-1>
+              issueType: dummy-issue
+              fields: []
+            timeout: 10m
+      tags: {}
   inputs:
     input-1:
       type: string
