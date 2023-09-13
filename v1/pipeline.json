@@ -47,7 +47,7 @@
       "PipelineUsingTemplateSpec" : {
         "type" : "object",
         "title" : "PipelineUsingTemplateSpec",
-        "required" : [ "id", "versionLabel" ],
+        "required" : [ "id", "version_label" ],
         "properties" : {
           "id" : {
             "type" : "string",
@@ -59,7 +59,7 @@
             "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,127}$",
             "description" : "version label of template to be linked in pipeline"
           },
-          "template_inputs" : {
+          "inputs" : {
             "type" : "object",
             "description" : "inputs to be used in the linked template",
             "additionalProperties" : {
@@ -118,6 +118,8 @@
                 "$ref" : "#/definitions/pipeline/BooleanInput"
               }, {
                 "$ref" : "#/definitions/pipeline/ObjectInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/SecretInput"
               } ]
             },
             "propertyNames" : {
@@ -52385,7 +52387,7 @@
               "oneOf" : [ {
                 "allOf" : [ {
                   "properties" : {
-                    "allowed_values" : {
+                    "allowed" : {
                       "description" : "defines allowed values for an input",
                       "type" : "array",
                       "items" : {
@@ -52467,7 +52469,7 @@
               "oneOf" : [ {
                 "allOf" : [ {
                   "properties" : {
-                    "allowed_values" : {
+                    "allowed" : {
                       "description" : "defines allowed values for an input",
                       "type" : "array",
                       "items" : {
@@ -52522,7 +52524,7 @@
               "oneOf" : [ {
                 "allOf" : [ {
                   "properties" : {
-                    "allowed_values" : {
+                    "allowed" : {
                       "description" : "defines allowed values for an input",
                       "type" : "array",
                       "items" : {
@@ -52565,33 +52567,6 @@
             },
             "value" : {
               "type" : "boolean"
-            },
-            "validator" : {
-              "type" : "object",
-              "oneOf" : [ {
-                "allOf" : [ {
-                  "properties" : {
-                    "allowed_values" : {
-                      "description" : "defines allowed values for an input",
-                      "type" : "array",
-                      "items" : {
-                        "type" : "boolean"
-                      }
-                    }
-                  }
-                } ],
-                "required" : [ "allowed_values" ]
-              }, {
-                "allOf" : [ {
-                  "properties" : {
-                    "regex" : {
-                      "description" : "defines regex pattern for an input value",
-                      "type" : "string"
-                    }
-                  }
-                } ],
-                "required" : [ "regex" ]
-              } ]
             }
           }
         } ],
@@ -52620,7 +52595,7 @@
               "oneOf" : [ {
                 "allOf" : [ {
                   "properties" : {
-                    "allowed_values" : {
+                    "allowed" : {
                       "description" : "defines allowed values for an input",
                       "type" : "array",
                       "items" : {
@@ -52641,6 +52616,28 @@
                 } ],
                 "required" : [ "regex" ]
               } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "SecretInput" : {
+        "title" : "SecretInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "secret" ]
+            },
+            "value" : {
+              "type" : "string"
             }
           }
         } ],
