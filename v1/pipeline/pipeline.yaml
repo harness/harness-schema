@@ -20,21 +20,21 @@ properties:
     enum:
       - template
 
-allOf:
-  - if:
-      properties:
-        type:
-          const: template
-    then:
-      properties:
-        spec:
-          $ref: ./pipeline_using_template_spec.yaml
-  - if:
-      not:
-        required:
-          - type
-    then:
-      properties:
-        spec:
-          $ref: ./pipeline_spec.yaml
+oneOf:
+  - allOf:
+      - properties:
+          type:
+            const: template
+      - properties:
+          spec:
+            $ref: ./pipeline_using_template_spec.yaml
+    required:
+      - type
+  - allOf:
+      - properties:
+          spec:
+            $ref: ./pipeline_spec.yaml
+    not:
+      required:
+        - type
 "$schema": http://json-schema.org/draft-07/schema#
