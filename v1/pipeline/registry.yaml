@@ -1,0 +1,56 @@
+title: Registry
+description: Registry provides container registry details.
+type: object
+properties:
+  connector:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          oneOf:
+            - type: object
+              $ref: ./registry_conn.yaml
+            - type: string
+      - type: object
+        $ref: ./registry_conn.yaml
+  mirror:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+
+# skip and manually create go file
+x-go-skip: true
+
+# example pipelines that demonstrate registry
+# credential usage.
+examples:
+  # example global registry credential (one)
+  - registry:
+      connector: connector.dockerhub
+
+  # example global registry credentials (multiple)
+  - registry:
+      connector:
+        - connector.dockerhub
+        - connector.gcr
+
+  # example global registry credentials when
+  # we need to help the system match the connector
+  # with the correct registry domain name.
+  - registry:
+      connector:
+        - name: connector.dockerhub
+        - name: connector.gcr
+          match: us.gcr.io
+
+  # example global registry mirror
+  - registry:
+      mirror: mirror.gcr.io
+
+  # example global registry mirrors
+  - registry:
+      mirror:
+        - mirror.gcr.io
+        - mirror.harness.io

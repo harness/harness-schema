@@ -125,6 +125,16 @@
             "propertyNames" : {
               "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
             }
+          },
+          "timeout" : {
+            "type" : "string",
+            "description" : "Defines pipeline timeout",
+            "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+          },
+          "options" : {
+            "type" : "object",
+            "description" : "Options defines global configuration options.",
+            "$ref" : "#/definitions/pipeline/Options"
           }
         }
       },
@@ -52647,6 +52657,242 @@
           }
         } ],
         "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "Options" : {
+        "type" : "object",
+        "title" : "Options",
+        "properties" : {
+          "clone" : {
+            "description" : "Configures the default clone behavior.",
+            "$ref" : "#/definitions/pipeline/Clone"
+          },
+          "repository" : {
+            "description" : "Configures the default repository.",
+            "$ref" : "#/definitions/pipeline/Repository"
+          },
+          "registry" : {
+            "description" : "Provides the default registry credentials.",
+            "$ref" : "#/definitions/pipeline/Registry"
+          },
+          "resources" : {
+            "description" : "Configures the default stage and step resources.",
+            "$ref" : "#/definitions/pipeline/Resources"
+          },
+          "delegate" : {
+            "description" : "Configures the default delegate matching logic.",
+            "anyOf" : [ {
+              "items" : {
+                "type" : "string"
+              },
+              "type" : "array"
+            }, {
+              "type" : "string"
+            } ]
+          },
+          "status" : {
+            "description" : "Configures the scm status checks.",
+            "$ref" : "#/definitions/pipeline/Status"
+          },
+          "envs" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Provides the default environment variables."
+          }
+        }
+      },
+      "Clone" : {
+        "title" : "Clone",
+        "type" : "object",
+        "description" : "Clone defines the default clone behavior.",
+        "properties" : {
+          "depth" : {
+            "description" : "Depth defines the clone depth.",
+            "type" : "number"
+          },
+          "disabled" : {
+            "description" : "Disabled disables the default clone step.",
+            "type" : "boolean"
+          },
+          "insecure" : {
+            "description" : "Insecure disables ssl verification.",
+            "type" : "boolean"
+          },
+          "strategy" : {
+            "description" : "Strategy configures the clone strategy.",
+            "type" : "string",
+            "enum" : [ "source-branch", "merge" ]
+          },
+          "trace" : {
+            "description" : "Trace enables trace logging.",
+            "type" : "boolean"
+          },
+          "ref" : {
+            "description" : "Reference defines the clone ref.",
+            "$ref" : "#/definitions/pipeline/Reference"
+          }
+        }
+      },
+      "Reference" : {
+        "title" : "Reference",
+        "description" : "Reference defines a git clone reference.",
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "description" : "Name provides ref name.",
+            "type" : "string"
+          },
+          "type" : {
+            "description" : "Type defines the ref type.",
+            "type" : "string",
+            "enum" : [ "branch", "tag", "pr" ]
+          },
+          "sha" : {
+            "description" : "Sha provides the ref sha.",
+            "type" : "string"
+          }
+        }
+      },
+      "Repository" : {
+        "title" : "Repository",
+        "description" : "Repository defines a remote git repository.",
+        "type" : "object",
+        "properties" : {
+          "connector" : {
+            "description" : "Connector provides the repository connector.",
+            "type" : "string"
+          },
+          "name" : {
+            "description" : "Name provides the repository name.",
+            "type" : "string"
+          }
+        }
+      },
+      "Registry" : {
+        "title" : "Registry",
+        "description" : "Registry provides container registry details.",
+        "type" : "object",
+        "properties" : {
+          "connector" : {
+            "oneOf" : [ {
+              "type" : "string"
+            }, {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "$ref" : "#/definitions/pipeline/RegistryConnector"
+                }, {
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "type" : "object",
+              "$ref" : "#/definitions/pipeline/RegistryConnector"
+            } ]
+          },
+          "mirror" : {
+            "oneOf" : [ {
+              "type" : "string"
+            }, {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            } ]
+          }
+        },
+        "x-go-skip" : true,
+        "examples" : [ {
+          "registry" : {
+            "connector" : "connector.dockerhub"
+          }
+        }, {
+          "registry" : {
+            "connector" : [ "connector.dockerhub", "connector.gcr" ]
+          }
+        }, {
+          "registry" : {
+            "connector" : [ {
+              "name" : "connector.dockerhub"
+            }, {
+              "name" : "connector.gcr",
+              "match" : "us.gcr.io"
+            } ]
+          }
+        }, {
+          "registry" : {
+            "mirror" : "mirror.gcr.io"
+          }
+        }, {
+          "registry" : {
+            "mirror" : [ "mirror.gcr.io", "mirror.harness.io" ]
+          }
+        } ]
+      },
+      "RegistryConnector" : {
+        "title" : "RegistryConnector",
+        "description" : "RegistryConnector provides a registry connector.",
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "description" : "Name provides the registry connector name.",
+            "type" : "string"
+          },
+          "match" : {
+            "description" : "Match provides the regitry connector endpoint.",
+            "type" : "string"
+          }
+        },
+        "x-go-skip" : true
+      },
+      "Resources" : {
+        "title" : "Resources",
+        "description" : "Defines the container resource request and limits.",
+        "properties" : {
+          "limits" : {
+            "$ref" : "#/definitions/pipeline/Resource"
+          },
+          "requests" : {
+            "$ref" : "#/definitions/pipeline/Resource"
+          }
+        },
+        "type" : "object"
+      },
+      "Resource" : {
+        "title" : "Resource",
+        "type" : "object",
+        "description" : "Resource defines the system resources.",
+        "properties" : {
+          "cpu" : {
+            "type" : [ "string", "number" ]
+          },
+          "memory" : {
+            "format" : "bytes",
+            "type" : [ "string", "number" ]
+          }
+        }
+      },
+      "Status" : {
+        "title" : "Status",
+        "type" : "object",
+        "properties" : {
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "pipeline", "stage" ]
+          },
+          "matrix" : {
+            "type" : "string",
+            "enum" : [ "itemize", "summarize" ]
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
       }
     }
   }
