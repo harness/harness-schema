@@ -1065,8 +1065,10 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1079,8 +1081,17 @@
                     "minLength" : 1
                   } ]
                 },
+                "instances" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
+                },
                 "loadBalancer" : {
                   "type" : "string"
+                },
+                "loadBalancers" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsAsgLoadBalancerConfigYaml"
+                  }
                 },
                 "prodListener" : {
                   "type" : "string"
@@ -1107,8 +1118,10 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1121,8 +1134,17 @@
                   "minLength" : 1
                 } ]
               },
+              "instances" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
+              },
               "loadBalancer" : {
                 "type" : "string"
+              },
+              "loadBalancers" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsAsgLoadBalancerConfigYaml"
+                }
               },
               "prodListener" : {
                 "type" : "string"
@@ -1149,6 +1171,154 @@
                 "desc" : "This is the description for AsgBlueGreenDeployStepInfo"
               }
             }
+          },
+          "AsgInstances" : {
+            "title" : "AsgInstances",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Fixed", "CurrentRunning" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AsgInstances"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CurrentRunning"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCurrentRunningInstances"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Fixed"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgFixedInstances"
+                  }
+                }
+              }
+            } ]
+          },
+          "AsgCurrentRunningInstances" : {
+            "title" : "AsgCurrentRunningInstances",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/AsgInstancesSpec"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgCurrentRunningInstances"
+              }
+            }
+          },
+          "AsgInstancesSpec" : {
+            "title" : "AsgInstancesSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Fixed", "CurrentRunning" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AsgInstancesSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AsgFixedInstances" : {
+            "title" : "AsgFixedInstances",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/AsgInstancesSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "desired", "max", "min" ],
+              "properties" : {
+                "desired" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "max" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "min" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgFixedInstances"
+              }
+            }
+          },
+          "AwsAsgLoadBalancerConfigYaml" : {
+            "title" : "AwsAsgLoadBalancerConfigYaml",
+            "type" : "object",
+            "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
+            "properties" : {
+              "loadBalancer" : {
+                "type" : "string"
+              },
+              "prodListener" : {
+                "type" : "string"
+              },
+              "prodListenerRuleArn" : {
+                "type" : "string"
+              },
+              "stageListener" : {
+                "type" : "string"
+              },
+              "stageListenerRuleArn" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AwsAsgLoadBalancerConfigYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AsgBlueGreenRollbackStepNode_template" : {
             "title" : "AsgBlueGreenRollbackStepNode_template",
@@ -1561,6 +1731,9 @@
               "type" : "object",
               "required" : [ "instanceSelection" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1582,6 +1755,9 @@
             "type" : "object",
             "required" : [ "instanceSelection" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1789,8 +1965,10 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "useAlreadyRunningInstances" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1813,6 +1991,9 @@
                     "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
+                },
+                "instances" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
                 },
                 "minimumHealthyPercentage" : {
                   "oneOf" : [ {
@@ -1848,8 +2029,10 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "useAlreadyRunningInstances" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1872,6 +2055,9 @@
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
+              },
+              "instances" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
               },
               "minimumHealthyPercentage" : {
                 "oneOf" : [ {
