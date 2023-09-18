@@ -1,0 +1,59 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: custom2
+      id: Custom
+      type: custom
+      spec:
+        steps:
+          - name: group
+            type: group
+            spec:
+              steps:
+                - name: http2
+                  type: http
+                  desc: my http step
+                  id: http2
+                  spec:
+                    url: httpsss://www.dummyurl.com
+                    method: GET
+                    inputVariables: [ ]
+                    headers: [ ]
+                    outputVariables: [ ]
+                    requestBody: null
+                  timeout: 10s
+                  failure:
+                    errors:
+                      - connectivity
+                    action:
+                      type: retry
+                      spec:
+                        attempts: 2
+                        interval: 1m
+                        failure:
+                          action:
+                            type: manual-intervention
+                            spec:
+                              timeout: 10s
+                              timeout_action:
+                                type: abort
+            failure:
+              errors:
+                - authorization
+              action:
+                type: retry-step-group
+                spec:
+                  interval:
+                    - 10s
+                    - 20s
+                  attempts: 2
+      failure:
+        - errors:
+            - authentication
+          action:
+            type: ignore
+        - errors:
+            - all
+          action:
+            type: success

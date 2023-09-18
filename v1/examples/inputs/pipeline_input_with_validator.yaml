@@ -1,0 +1,54 @@
+# For the following inputs, we haven't provided a value so, it's value will be asked during the runtime.
+# Default value for input-1 is abc and for input-2, it is 1, so, if user doesn't provide a value during runtime,
+# input-1 will be set as abc and input-2 will be set as 1.
+# Also, there's a validation that value of input-1 should be one of a, b, abc
+# for input-2, it should be a single digit number from 1 to 9
+
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: test
+      id: test
+      desc: <+inputs.input_1>
+      type: custom
+      spec:
+        steps:
+          - type: jira-create
+            name: JiraCreate_1
+            id: JiraCreate_1
+            spec:
+              connectorRef: account.Test_jira
+              projectKey: dummy-project
+              issueType: dummy-issue
+              fields: []
+            timeout: 10m
+      tags: {}
+  inputs:
+    input_1:
+      type: string
+      default: abc
+      validator:
+        allowed_values:
+          - a
+          - b
+          - abc
+    input-2:
+      type: number
+      default: 1
+      validator:
+        regex: "[1-9]"
+    input-3:
+      type: array
+      default:
+        - a
+        - b
+      validator:
+        allowed_values:
+          - - a
+            - b
+          - - c
+            - d
+          - - e
+            - f
+            - g
