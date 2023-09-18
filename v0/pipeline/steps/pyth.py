@@ -2,7 +2,7 @@ import json
 import yaml
 import os
 from yaml.loader import SafeLoader
-f = open('prod.json')
+f = open('test.json')
 moduleSuffix = {}
 data = json.load(f)
 duplicateFileName = {}

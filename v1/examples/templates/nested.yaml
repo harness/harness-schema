@@ -1,10 +1,10 @@
 version: 1
-template:
-  id: nested
-  versionLabel: v1
-  type: Stage
+kind: template
+spec:
+  ref: nested@v1
+  type: stage
   spec:
-    type: Custom
+    type: custom
     timeout: 30m
     spec:
         steps:
@@ -23,17 +23,17 @@ template:
               inputs:
                 env: <+ template.inputs.env>
     outputs:
-      // Only status is exported out for the step and not other outputs produced by 
-      // http step like httpBody etc. User can also use the operators here to massage the 
-      // output like process body using json.select
+#      Only status is exported out for the step and not other outputs produced by
+#      http step like httpBody etc. User can also use the operators here to massage the
+#      output like process body using json.select
       url:
         desc: "some desc"
-        // This replaces line 5
+        # This replaces line 5
         value: <+ spec.steps.http1.spec.with.url>
       status:
         desc: "some desc"
         value: <+ spec.steps.http2.outputs.httpStatus>
-      // Please note this expresiion  
+      # Please note this expresiion
       timeout:
         desc: "some desc"
         value: <+ timeout>

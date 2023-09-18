@@ -1,0 +1,40 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: custom2
+      type: custom
+      spec:
+        steps:
+          - name: http2
+            type: http
+            desc: my http step
+            id: http2
+            spec:
+              url: https://www.dummyurl.com
+              method: GET
+              inputVariables: [ ]
+              headers: [ ]
+              outputVariables: [ ]
+              requestBody: null
+            timeout: 10s
+  options:
+    delegate:
+      - a
+      - b
+    clone:
+      depth: 50
+      disabled: false
+      insecure: false
+      strategy: merge
+      trace: false
+    envs:
+      foo: bar
+      baz: qux
+    registry:
+      connector: account.docker
+      mirror:
+        - https://mirror.gcr.io
+    repository:
+      connector: connector.repo
+      name: harness

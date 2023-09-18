@@ -425,6 +425,8 @@
                 "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode_template"
               } ]
             },
             "tags" : {
@@ -1059,8 +1061,10 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1073,8 +1077,17 @@
                     "minLength" : 1
                   } ]
                 },
+                "instances" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
+                },
                 "loadBalancer" : {
                   "type" : "string"
+                },
+                "loadBalancers" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsAsgLoadBalancerConfigYaml"
+                  }
                 },
                 "prodListener" : {
                   "type" : "string"
@@ -1101,8 +1114,10 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1115,8 +1130,17 @@
                   "minLength" : 1
                 } ]
               },
+              "instances" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
+              },
               "loadBalancer" : {
                 "type" : "string"
+              },
+              "loadBalancers" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsAsgLoadBalancerConfigYaml"
+                }
               },
               "prodListener" : {
                 "type" : "string"
@@ -1143,6 +1167,154 @@
                 "desc" : "This is the description for AsgBlueGreenDeployStepInfo"
               }
             }
+          },
+          "AsgInstances" : {
+            "title" : "AsgInstances",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Fixed", "CurrentRunning" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AsgInstances"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CurrentRunning"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCurrentRunningInstances"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Fixed"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgFixedInstances"
+                  }
+                }
+              }
+            } ]
+          },
+          "AsgCurrentRunningInstances" : {
+            "title" : "AsgCurrentRunningInstances",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/AsgInstancesSpec"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgCurrentRunningInstances"
+              }
+            }
+          },
+          "AsgInstancesSpec" : {
+            "title" : "AsgInstancesSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Fixed", "CurrentRunning" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AsgInstancesSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AsgFixedInstances" : {
+            "title" : "AsgFixedInstances",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/AsgInstancesSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "desired", "max", "min" ],
+              "properties" : {
+                "desired" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "max" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "min" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgFixedInstances"
+              }
+            }
+          },
+          "AwsAsgLoadBalancerConfigYaml" : {
+            "title" : "AwsAsgLoadBalancerConfigYaml",
+            "type" : "object",
+            "required" : [ "loadBalancer", "prodListener", "prodListenerRuleArn", "stageListener", "stageListenerRuleArn" ],
+            "properties" : {
+              "loadBalancer" : {
+                "type" : "string"
+              },
+              "prodListener" : {
+                "type" : "string"
+              },
+              "prodListenerRuleArn" : {
+                "type" : "string"
+              },
+              "stageListener" : {
+                "type" : "string"
+              },
+              "stageListenerRuleArn" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AwsAsgLoadBalancerConfigYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AsgBlueGreenRollbackStepNode_template" : {
             "title" : "AsgBlueGreenRollbackStepNode_template",
@@ -1555,6 +1727,9 @@
               "type" : "object",
               "required" : [ "instanceSelection" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1576,6 +1751,9 @@
             "type" : "object",
             "required" : [ "instanceSelection" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1783,8 +1961,10 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "useAlreadyRunningInstances" ],
               "properties" : {
+                "asgName" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -1807,6 +1987,9 @@
                     "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
+                },
+                "instances" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
                 },
                 "minimumHealthyPercentage" : {
                   "oneOf" : [ {
@@ -1842,8 +2025,10 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "useAlreadyRunningInstances" ],
             "properties" : {
+              "asgName" : {
+                "type" : "string"
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -1866,6 +2051,9 @@
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
+              },
+              "instances" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
               },
               "minimumHealthyPercentage" : {
                 "oneOf" : [ {
@@ -4531,6 +4719,15 @@
               "type" : "object",
               "required" : [ "deploymentSlot", "webApp" ],
               "properties" : {
+                "clean" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -4557,6 +4754,15 @@
             "type" : "object",
             "required" : [ "deploymentSlot", "webApp" ],
             "properties" : {
+              "clean" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "delegateSelectors" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -18918,6 +19124,320 @@
               }
             }
           },
+          "UpdateGitOpsAppStepNode_template" : {
+            "title" : "UpdateGitOpsAppStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "UpdateGitOpsApp" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "UpdateGitOpsApp"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "UpdateGitOpsAppStepInfo" : {
+            "title" : "UpdateGitOpsAppStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "agentId", "applicationName" ],
+              "properties" : {
+                "agentId" : {
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "applicationName" : {
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "helm" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmValues"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "kustomize" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/KustomizeValues"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "targetRevision" : {
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "agentId", "applicationName" ],
+            "properties" : {
+              "agentId" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "applicationName" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "helm" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/HelmValues"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "kustomize" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/KustomizeValues"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "targetRevision" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for UpdateGitOpsAppStepInfo"
+              }
+            }
+          },
+          "HelmValues" : {
+            "title" : "HelmValues",
+            "type" : "object",
+            "properties" : {
+              "fileParameters" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmFileParameters"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "parameters" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmParameters"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "valueFiles" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HelmValues"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "HelmFileParameters" : {
+            "title" : "HelmFileParameters",
+            "type" : "object",
+            "required" : [ "name", "path" ],
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "path" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for HelmFileParameters"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "HelmParameters" : {
+            "title" : "HelmParameters",
+            "type" : "object",
+            "required" : [ "name", "value" ],
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for HelmParameters"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "KustomizeValues" : {
+            "title" : "KustomizeValues",
+            "type" : "object",
+            "properties" : {
+              "images" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "namespace" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "replicas" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/KustomizeReplicas"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for KustomizeValues"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "KustomizeReplicas" : {
+            "title" : "KustomizeReplicas",
+            "type" : "object",
+            "required" : [ "count", "name" ],
+            "properties" : {
+              "count" : {
+                "type" : "string"
+              },
+              "name" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for KustomizeReplicas"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "TerraformApplyStepNode" : {
             "title" : "TerraformApplyStepNode",
             "type" : "object",
@@ -26074,6 +26594,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "UpdateGitOpsAppStepNode" : {
+            "title" : "UpdateGitOpsAppStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for UpdateGitOpsAppStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "UpdateGitOpsApp" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "UpdateGitOpsApp"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepInfo"
                   }
                 }
               }
@@ -51879,7 +52476,7 @@
               "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
             }, {
               "type" : "object",
-              "required" : [ "args", "buildTool", "language" ],
+              "required" : [ "buildTool", "language" ],
               "properties" : {
                 "args" : {
                   "type" : "string"
@@ -52056,7 +52653,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "args", "buildTool", "language" ],
+            "required" : [ "buildTool", "language" ],
             "properties" : {
               "args" : {
                 "type" : "string"
@@ -57811,6 +58408,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -58505,6 +59104,9 @@
               "type" : "object",
               "required" : [ "connectorRef", "region" ],
               "properties" : {
+                "baseAsgName" : {
+                  "type" : "string"
+                },
                 "connectorRef" : {
                   "type" : "string"
                 },
@@ -62067,7 +62669,11 @@
               "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
             }, {
               "type" : "object",
-              "properties" : { }
+              "properties" : {
+                "userData" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/UserDataConfiguration"
+                }
+              }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
@@ -62075,6 +62681,23 @@
                 "desc" : "This is the description for AsgServiceSpec"
               }
             }
+          },
+          "UserDataConfiguration" : {
+            "title" : "UserDataConfiguration",
+            "type" : "object",
+            "required" : [ "store" ],
+            "properties" : {
+              "metadata" : {
+                "type" : "string"
+              },
+              "store" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+              },
+              "description" : {
+                "desc" : "This is the description for UserDataConfiguration"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AwsLambdaServiceSpec" : {
             "title" : "AwsLambdaServiceSpec",
@@ -64711,13 +65334,7 @@
                 } ]
               },
               "key" : {
-                "oneOf" : [ {
-                  "type" : "string"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+                "type" : "string"
               },
               "paths" : {
                 "oneOf" : [ {
