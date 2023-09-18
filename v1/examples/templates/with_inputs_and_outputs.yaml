@@ -1,0 +1,45 @@
+version: 1
+kind: template
+spec:
+  type: stage
+  spec:
+    type: custom
+    timeout: 30m
+    spec:
+        steps:
+          - type: plugin
+            id: http1
+            timeout: 10m
+            spec:
+                uses: http
+                with:
+                    url: https://www.<+ template.inputs.env>.harness.io
+                    method: GET
+          - type: plugin
+            id: http2
+            timeout: 10m
+            spec:
+                uses: http
+                with:
+                    url: https://www.google.com
+                    method: GET
+    outputs:
+#      Only status is exported out for the step and not other outputs produced by
+#      http step like httpBody etc. User can also use the operators here to massage the
+#      output like process body using json.select
+      status:
+        desc: "some desc"
+#        This replaces line 5
+        value: <+ spec.steps.http1.outputs.httpStatus>
+      url:
+        desc: "some desc"
+        value: <+ spec.steps.http2.spec.with.url>
+#       Please note this expresiion
+      timeout:
+        desc: "some desc"
+        value: <+ timeout>
+  inputs:
+    env:
+      type: string
+      required: true
+      desc: "the env in which the the stage is executing"
