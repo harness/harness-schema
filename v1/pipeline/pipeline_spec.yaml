@@ -1,0 +1,24 @@
+type: object
+title: PipelineSpec
+required:
+  - stages
+properties:
+  stages:
+    type: array
+    items:
+      configRef: ./schema_config.yaml/pipeline_stages
+    maxItems: 256
+    minItems: 1
+  inputs:
+    type: object
+    description: Inputs defines the pipeline input parameters.
+    additionalProperties:
+      oneOf:
+        - "$ref": ./string-input.yaml
+        - "$ref": ./number-input.yaml
+        - "$ref": ./array-input.yaml
+        - "$ref": ./boolean-input.yaml
+        - "$ref": ./object-input.yaml
+        - "$ref": ./secret-input.yaml
+    propertyNames:
+      pattern: "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"

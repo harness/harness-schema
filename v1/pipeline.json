@@ -1,63 +1,129 @@
 {
   "type" : "object",
   "title" : "pipeline",
+  "required" : [ "spec", "version", "kind" ],
   "properties" : {
-    "required" : [ "stages", "version" ],
     "version" : {
       "description" : "Version defines the schema version.",
-      "type" : [ "number" ]
+      "type" : "number",
+      "enum" : [ 1 ]
     },
-    "stages" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-        }, {
-          "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-        } ]
-      },
-      "maxItems" : 256,
-      "minItems" : 1
+    "kind" : {
+      "description" : "defines the kind of yaml (pipeline/template)",
+      "type" : "string",
+      "enum" : [ "pipeline" ]
     },
-    "inputs" : {
-      "type" : "object",
-      "description" : "Inputs defines the pipeline input parameters.",
-      "additionalProperties" : {
-        "$ref" : "#/definitions/pipeline/Input"
+    "type" : {
+      "description" : "defines the type of yaml (add only when pipeline uses a template)",
+      "type" : "string",
+      "enum" : [ "template" ]
+    }
+  },
+  "if" : {
+    "properties" : {
+      "type" : {
+        "const" : "template"
       }
     },
-    "variables" : {
-      "type" : "array",
-      "items" : {
-        "oneOf" : [ {
-          "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-        }, {
-          "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-        } ]
+    "required" : [ "type" ]
+  },
+  "then" : {
+    "properties" : {
+      "spec" : {
+        "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+      }
+    }
+  },
+  "else" : {
+    "properties" : {
+      "spec" : {
+        "$ref" : "#/definitions/pipeline/PipelineSpec"
       }
     }
   },
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "pipeline" : {
+      "PipelineUsingTemplateSpec" : {
+        "type" : "object",
+        "title" : "PipelineUsingTemplateSpec",
+        "required" : [ "ref" ],
+        "properties" : {
+          "ref" : {
+            "type" : "string",
+            "description" : "ref of the template to be linked in the pipeline, format - id@version",
+            "example" : "my_template@v1.0",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}@[0-9a-zA-Z][^\\s/&]{0,127}$"
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "inputs to be used in the linked template",
+            "additionalProperties" : {
+              "anyOf" : [ "string", "array", "list", "object", "boolean" ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
+          }
+        }
+      },
+      "PipelineSpec" : {
+        "type" : "object",
+        "title" : "PipelineSpec",
+        "required" : [ "stages" ],
+        "properties" : {
+          "stages" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+              } ]
+            },
+            "maxItems" : 256,
+            "minItems" : 1
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "Inputs defines the pipeline input parameters.",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/StringInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/NumberInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/ArrayInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/BooleanInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/ObjectInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/SecretInput"
+              } ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
+          }
+        }
+      },
       "stages" : {
         "iacm" : {
           "IACMStageNode" : {
@@ -10016,7 +10082,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
+                  "$ref" : "#/definitions/pipeline/common/Ignore"
                 }
               }
             } ]
@@ -10057,6 +10123,11 @@
         },
         "Abort" : {
           "title" : "Abort",
+          "type" : "object",
+          "properties" : { }
+        },
+        "Ignore" : {
+          "title" : "Ignore",
           "type" : "object",
           "properties" : { }
         },
@@ -10187,7 +10258,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
+                  "$ref" : "#/definitions/pipeline/common/Ignore"
                 }
               }
             } ]
@@ -10256,7 +10327,7 @@
             }, {
               "properties" : {
                 "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Abort"
+                  "$ref" : "#/definitions/pipeline/common/Ignore"
                 }
               }
             } ]
@@ -52844,28 +52915,284 @@
           }
         }
       },
+      "StringInput" : {
+        "title" : "StringInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "string" ]
+            },
+            "value" : {
+              "type" : "string"
+            },
+            "validator" : {
+              "type" : "object",
+              "oneOf" : [ {
+                "allOf" : [ {
+                  "properties" : {
+                    "allowed" : {
+                      "description" : "defines allowed values for an input",
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                } ],
+                "required" : [ "allowed_values" ]
+              }, {
+                "allOf" : [ {
+                  "properties" : {
+                    "regex" : {
+                      "description" : "defines regex pattern for an input value",
+                      "type" : "string"
+                    }
+                  }
+                } ],
+                "required" : [ "regex" ]
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
       "Input" : {
         "title" : "Input",
         "type" : "object",
+        "discriminator" : "type",
         "description" : "Input defines an input parameter.",
         "properties" : {
           "type" : {
             "description" : "Type defines the input type.",
             "type" : "string",
-            "enum" : [ "string", "number", "boolean", "list", "object" ]
+            "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
           },
-          "description" : {
+          "desc" : {
             "type" : "string",
             "description" : "Desc defines the input description."
-          },
-          "default" : {
-            "type" : [ "string", "number", "boolean", "list", "object" ]
           },
           "required" : {
             "type" : "boolean",
             "description" : "Required indicates the input is required."
+          },
+          "execution_input" : {
+            "description" : "a boolean that defines whether the value is an execution input",
+            "type" : "boolean",
+            "default" : false
           }
         }
+      },
+      "NumberInput" : {
+        "title" : "NumberInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "number",
+              "format" : "double"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "number" ]
+            },
+            "value" : {
+              "oneOf" : [ {
+                "type" : "number",
+                "format" : "double"
+              }, {
+                "type" : "string",
+                "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+              } ]
+            },
+            "validator" : {
+              "type" : "object",
+              "oneOf" : [ {
+                "allOf" : [ {
+                  "properties" : {
+                    "allowed" : {
+                      "description" : "defines allowed values for an input",
+                      "type" : "array",
+                      "items" : {
+                        "oneOf" : [ {
+                          "type" : "number",
+                          "format" : "double"
+                        }, {
+                          "type" : "string",
+                          "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                        } ]
+                      }
+                    }
+                  }
+                } ],
+                "required" : [ "allowed_values" ]
+              }, {
+                "allOf" : [ {
+                  "properties" : {
+                    "regex" : {
+                      "description" : "defines regex pattern for an input value",
+                      "type" : "string"
+                    }
+                  }
+                } ],
+                "required" : [ "regex" ]
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ArrayInput" : {
+        "title" : "ArrayInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "array"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "array" ]
+            },
+            "value" : {
+              "type" : "array"
+            },
+            "validator" : {
+              "type" : "object",
+              "oneOf" : [ {
+                "allOf" : [ {
+                  "properties" : {
+                    "allowed" : {
+                      "description" : "defines allowed values for an input",
+                      "type" : "array",
+                      "items" : {
+                        "type" : "array"
+                      }
+                    }
+                  }
+                } ],
+                "required" : [ "allowed_values" ]
+              }, {
+                "allOf" : [ {
+                  "properties" : {
+                    "regex" : {
+                      "description" : "defines regex pattern for an input value",
+                      "type" : "string"
+                    }
+                  }
+                } ],
+                "required" : [ "regex" ]
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "BooleanInput" : {
+        "title" : "BooleanInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "boolean"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "boolean" ]
+            },
+            "value" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ObjectInput" : {
+        "title" : "ObjectInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "object"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "object" ]
+            },
+            "value" : {
+              "type" : "object"
+            },
+            "validator" : {
+              "type" : "object",
+              "oneOf" : [ {
+                "allOf" : [ {
+                  "properties" : {
+                    "allowed" : {
+                      "description" : "defines allowed values for an input",
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object"
+                      }
+                    }
+                  }
+                } ],
+                "required" : [ "allowed_values" ]
+              }, {
+                "allOf" : [ {
+                  "properties" : {
+                    "regex" : {
+                      "description" : "defines regex pattern for an input value",
+                      "type" : "string"
+                    }
+                  }
+                } ],
+                "required" : [ "regex" ]
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "SecretInput" : {
+        "title" : "SecretInput",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/Input"
+        }, {
+          "type" : "object",
+          "required" : [ "type" ],
+          "properties" : {
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "secret" ]
+            },
+            "value" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       }
     }
   }

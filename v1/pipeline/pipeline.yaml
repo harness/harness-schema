@@ -1,31 +1,38 @@
 type: object
 title: pipeline
+required:
+  - spec
+  - version
+  - kind
 properties:
-  required:
-    - stages
-    - version
   version:
     description: Version defines the schema version.
+    type: number
+    enum:
+      - 1
+  kind:
+    description: defines the kind of yaml (pipeline/template)
+    type: string
+    enum:
+      - pipeline
+  type:
+    description: defines the type of yaml (add only when pipeline uses a template)
+    type: string
+    enum:
+      - template
+
+if:
+  properties:
     type:
-      - number
-  stages:
-    type: array
-    items:
-      configRef: ./schema_config.yaml/pipeline_stages
-    maxItems: 256
-    minItems: 1
-  inputs:
-    type: object
-    description: Inputs defines the pipeline input parameters.
-    additionalProperties:
-      $ref: ./input.yaml
-# TODO - Update input set w.r.t new examples same as variables
-  variables:
-    type: array
-    items:
-      oneOf:
-        - "$ref": "./common/number-ng-variable.yaml"
-        - "$ref": "./common/string-ng-variable.yaml"
-        - "$ref": "./common/secret-ng-variable.yaml"
-# TODO - Check for Variables syntax
+      const: template
+  required:
+    - type
+then:
+  properties:
+    spec:
+      $ref: ./pipeline_using_template_spec.yaml
+else:
+  properties:
+    spec:
+      $ref: ./pipeline_spec.yaml
 "$schema": http://json-schema.org/draft-07/schema#
