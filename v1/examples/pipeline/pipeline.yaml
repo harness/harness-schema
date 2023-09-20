@@ -2,14 +2,7 @@ version: 1
 kind: pipeline
 spec:
   stages:
-    - type: template
-      ref: nested@v1
-      spec:
-        name: cstpl
-        inputs:
-          env: abc
     - type: custom
-      when: <+ stages.nested.outputs.status> == 200
       spec:
         steps:
           - type: plugin
@@ -17,3 +10,5 @@ spec:
               uses: http
               with:
                 url: <+ stages.nested.outputs.url>
+                method: GET
+  timeout: 10m

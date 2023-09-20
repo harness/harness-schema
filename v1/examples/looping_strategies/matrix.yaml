@@ -1,0 +1,31 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: custom
+      type: custom
+      spec:
+        steps:
+          - name: http
+            type: http
+            spec:
+              url: https://www.google.com
+              method: GET
+            strategy:
+              type: matrix
+              spec:
+                axis:
+                  a:
+                    - a1
+                    - a2
+                  b:
+                    - b1
+                    - b2
+                concurrency: 2
+                nodeName: stage_matrix
+                include:
+                  - a1: b1
+                  - a2: b2
+                exclude:
+                  - a1: b2
+                  - a2: b1
