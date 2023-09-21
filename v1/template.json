@@ -242,38 +242,6 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/ArtifactoryUploadNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/BitriseStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/BuildAndPushACRNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/BuildAndPushDockerNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/BuildAndPushECRNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/BuildAndPushGCRNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/GCSUploadNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheGCSNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheS3Node_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/S3UploadNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheGCSNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3Node_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepNode_template"
-              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AquaTrivyScanNode_template"
@@ -537,8 +505,6 @@
                 "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode_template"
               }, {
@@ -26707,298 +26673,6 @@
               }
             }
           },
-          "EnforcementPolicy" : {
-            "title" : "EnforcementPolicy",
-            "type" : "object",
-            "properties" : {
-              "store" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/PolicyStore"
-              },
-              "description" : {
-                "desc" : "This is the description for EnforcementPolicy"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "PolicyStore" : {
-            "title" : "PolicyStore",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Harness" ]
-              },
-              "description" : {
-                "desc" : "This is the description for PolicyStore"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Harness"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessStore"
-                  }
-                }
-              }
-            } ]
-          },
-          "SbomSource" : {
-            "title" : "SbomSource",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "image" ]
-              },
-              "description" : {
-                "desc" : "This is the description for SbomSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "image"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ImageSbomSource"
-                  }
-                }
-              }
-            } ]
-          },
-          "ImageSbomSource" : {
-            "title" : "ImageSbomSource",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for ImageSbomSource"
-              }
-            }
-          },
-          "SbomSourceSpec" : {
-            "title" : "SbomSourceSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SbomSourceSpec"
-              }
-            }
-          },
-          "VerifyAttestation" : {
-            "title" : "VerifyAttestation",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "cosign" ]
-              },
-              "description" : {
-                "desc" : "This is the description for VerifyAttestation"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "cosign"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
-                  }
-                }
-              }
-            } ]
-          },
-          "CosignVerifyAttestation" : {
-            "title" : "CosignVerifyAttestation",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestationSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "publicKey" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CosignVerifyAttestation"
-              }
-            }
-          },
-          "VerifyAttestationSpec" : {
-            "title" : "VerifyAttestationSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for VerifyAttestationSpec"
-              }
-            }
-          },
-          "Attestation" : {
-            "title" : "Attestation",
-            "type" : "object",
-            "properties" : {
-              "privateKey" : {
-                "type" : "string"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "cosign" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Attestation"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "cosign"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
-                  }
-                }
-              }
-            } ]
-          },
-          "CosignAttestation" : {
-            "title" : "CosignAttestation",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "password" : {
-                  "type" : "string"
-                },
-                "privateKey" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CosignAttestation"
-              }
-            }
-          },
-          "AttestationSpec" : {
-            "title" : "AttestationSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AttestationSpec"
-              }
-            }
-          },
-          "SbomOrchestrationTool" : {
-            "title" : "SbomOrchestrationTool",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Syft" ]
-              },
-              "description" : {
-                "desc" : "This is the description for SbomOrchestrationTool"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Syft"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
-                  }
-                }
-              }
-            } ]
-          },
-          "SyftSbomOrchestration" : {
-            "title" : "SyftSbomOrchestration",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "format" : {
-                  "type" : "string",
-                  "enum" : [ "spdx-json", "cyclonedx-json" ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SyftSbomOrchestration"
-              }
-            }
-          },
-          "SbomOrchestrationSpec" : {
-            "title" : "SbomOrchestrationSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SbomOrchestrationSpec"
-              }
-            }
-          },
           "BarrierStepNode_template" : {
             "title" : "BarrierStepNode_template",
             "type" : "object",
@@ -31942,6 +31616,172 @@
               }
             }
           },
+          "EnforcementPolicy" : {
+            "title" : "EnforcementPolicy",
+            "type" : "object",
+            "properties" : {
+              "store" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/PolicyStore"
+              },
+              "description" : {
+                "desc" : "This is the description for EnforcementPolicy"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "PolicyStore" : {
+            "title" : "PolicyStore",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Harness" ]
+              },
+              "description" : {
+                "desc" : "This is the description for PolicyStore"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Harness"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessStore"
+                  }
+                }
+              }
+            } ]
+          },
+          "SbomSource" : {
+            "title" : "SbomSource",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "image" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "image"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ImageSbomSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "ImageSbomSource" : {
+            "title" : "ImageSbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ImageSbomSource"
+              }
+            }
+          },
+          "SbomSourceSpec" : {
+            "title" : "SbomSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomSourceSpec"
+              }
+            }
+          },
+          "VerifyAttestation" : {
+            "title" : "VerifyAttestation",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for VerifyAttestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignVerifyAttestation" : {
+            "title" : "CosignVerifyAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "publicKey" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignVerifyAttestation"
+              }
+            }
+          },
+          "VerifyAttestationSpec" : {
+            "title" : "VerifyAttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for VerifyAttestationSpec"
+              }
+            }
+          },
           "CdSscaOrchestrationStepNode" : {
             "title" : "CdSscaOrchestrationStepNode",
             "type" : "object",
@@ -32066,6 +31906,132 @@
               }
             }
           },
+          "Attestation" : {
+            "title" : "Attestation",
+            "type" : "object",
+            "properties" : {
+              "privateKey" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Attestation"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            } ]
+          },
+          "CosignAttestation" : {
+            "title" : "CosignAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "password" : {
+                  "type" : "string"
+                },
+                "privateKey" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CosignAttestation"
+              }
+            }
+          },
+          "AttestationSpec" : {
+            "title" : "AttestationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AttestationSpec"
+              }
+            }
+          },
+          "SbomOrchestrationTool" : {
+            "title" : "SbomOrchestrationTool",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Syft" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationTool"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Syft"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
+                  }
+                }
+              }
+            } ]
+          },
+          "SyftSbomOrchestration" : {
+            "title" : "SyftSbomOrchestration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "spdx-json", "cyclonedx-json" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SyftSbomOrchestration"
+              }
+            }
+          },
+          "SbomOrchestrationSpec" : {
+            "title" : "SbomOrchestrationSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomOrchestrationSpec"
+              }
+            }
+          },
           "TemplateLinkConfigV2" : {
             "title" : "TemplateLinkConfigV2",
             "type" : "object",
@@ -32134,72 +32100,6 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "UnitTestReport" : {
-            "title" : "UnitTestReport",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "JUnit" ]
-              },
-              "description" : {
-                "desc" : "This is the description for UnitTestReport"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "JUnit"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/JUnitTestReport"
-                  }
-                }
-              }
-            } ]
-          },
-          "JUnitTestReport" : {
-            "title" : "JUnitTestReport",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/UnitTestReportSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "paths" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for JUnitTestReport"
-              }
-            }
-          },
-          "UnitTestReportSpec" : {
-            "title" : "UnitTestReportSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for UnitTestReportSpec"
-              }
-            }
           },
           "ActionStepNode_template" : {
             "title" : "ActionStepNode_template",
@@ -33563,6 +33463,72 @@
               },
               "description" : {
                 "desc" : "This is the description for BackgroundStepInfo"
+              }
+            }
+          },
+          "UnitTestReport" : {
+            "title" : "UnitTestReport",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "JUnit" ]
+              },
+              "description" : {
+                "desc" : "This is the description for UnitTestReport"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "JUnit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/JUnitTestReport"
+                  }
+                }
+              }
+            } ]
+          },
+          "JUnitTestReport" : {
+            "title" : "JUnitTestReport",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/UnitTestReportSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "paths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for JUnitTestReport"
+              }
+            }
+          },
+          "UnitTestReportSpec" : {
+            "title" : "UnitTestReportSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UnitTestReportSpec"
               }
             }
           },
@@ -50174,139 +50140,256 @@
                 "desc" : "This is the description for DependencySpecType"
               }
             }
-          }
-        },
-        "ci" : {
-          "ArtifactoryUploadNode_template" : {
-            "title" : "ArtifactoryUploadNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "ArtifactoryUpload" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "ArtifactoryUpload"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UploadToArtifactoryStepInfo"
-                  }
-                }
-              }
-            } ]
           },
-          "UploadToArtifactoryStepInfo" : {
-            "title" : "UploadToArtifactoryStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "sourcePath", "target" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "connectorRef" : {
+          "StepGroup" : {
+            "type" : "object",
+            "title" : "StepGroup",
+            "properties" : {
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/Step"
+                }
+              }
+            }
+          },
+          "StepParallel" : {
+            "type" : "object",
+            "title" : "StepParallel",
+            "properties" : {
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/Step"
+                }
+              }
+            }
+          },
+          "StepTemplate" : {
+            "type" : "object",
+            "title" : "StepTemplate",
+            "properties" : {
+              "name" : {
+                "type" : "string",
+                "description" : "Template name."
+              },
+              "inputs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "overlays" : {
+                "type" : "object"
+              }
+            }
+          },
+          "StepRun" : {
+            "title" : "StepRun",
+            "type" : "object",
+            "properties" : {
+              "shell" : {
+                "type" : "string",
+                "enum" : [ "sh", "bash", "powershell", "pwsh", "python" ]
+              },
+              "script" : {
+                "anyOf" : [ {
+                  "items" : {
+                    "type" : "string"
+                  },
+                  "type" : "array"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "container" : {
+                "$ref" : "#/definitions/pipeline/steps/common/Container"
+              },
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
                   "type" : "string"
                 },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                "description" : "The step environment variables."
+              },
+              "reports" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Report"
+                }
+              },
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
+                }
+              }
+            }
+          },
+          "Container" : {
+            "title" : "Container",
+            "description" : "Container configures step execution inside a container.",
+            "oneOf" : [ {
+              "type" : "string"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "image" : {
+                  "type" : "string",
+                  "description" : "Container image."
                 },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
+                "connector" : {
+                  "type" : "string",
+                  "description" : "Connect used to authenticate to the registry."
+                },
+                "credentials" : {
+                  "description" : "Credentials used to authenticate to the registry.",
+                  "$ref" : "#/definitions/pipeline/steps/common/Credentials"
+                },
+                "pull" : {
+                  "type" : "string",
+                  "enum" : [ "always", "never", "if-not-exists" ]
+                },
+                "entrypoint" : {
+                  "type" : "string"
+                },
+                "args" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "dns" : {
+                  "anyOf" : [ {
+                    "items" : {
+                      "type" : "string"
+                    },
+                    "type" : "array"
                   }, {
                     "type" : "string"
                   } ]
                 },
-                "sourcePath" : {
+                "dsn_search" : {
+                  "anyOf" : [ {
+                    "items" : {
+                      "type" : "string"
+                    },
+                    "type" : "array"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "extra_hosts" : {
+                  "anyOf" : [ {
+                    "items" : {
+                      "type" : "string"
+                    },
+                    "type" : "array"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "network" : {
                   "type" : "string"
                 },
-                "target" : {
+                "network_mode" : {
                   "type" : "string"
+                },
+                "privileged" : {
+                  "type" : "boolean"
+                },
+                "workdir" : {
+                  "type" : "string"
+                },
+                "ports" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "volumes" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "user" : {
+                  "type" : "string"
+                },
+                "group" : {
+                  "type" : "string"
+                },
+                "cpu" : {
+                  "type" : [ "string", "number" ]
+                },
+                "memory" : {
+                  "format" : "bytes",
+                  "type" : [ "string", "number" ]
+                },
+                "shm_size" : {
+                  "format" : "bytes",
+                  "type" : [ "string", "number" ]
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "x-go-skip" : true,
+            "x-docs-title" : "container"
+          },
+          "Credentials" : {
             "type" : "object",
-            "required" : [ "connectorRef", "sourcePath", "target" ],
+            "title" : "Credentials",
+            "description" : "Configures registry credentials.",
             "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              "username" : {
+                "type" : "string",
+                "description" : "Username defines registry username."
               },
-              "connectorRef" : {
-                "type" : "string"
+              "password" : {
+                "type" : "string",
+                "description" : "Username defines registry password."
               },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              "aws" : {
+                "description" : "Configures registry credentials for AWS / EC2.",
+                "$ref" : "#/definitions/pipeline/steps/common/CredentialsAWS"
+              }
+            },
+            "examples" : [ {
+              "credentials" : {
+                "username" : "${{ secrets.get(\"username\") }}",
+                "password" : "${{ secrets.get(\"password\") }}"
+              }
+            }, {
+              "credentials" : {
+                "aws" : {
+                  "access_key" : "${{ secrets.get(\"access_key\") }}",
+                  "secret_key" : "${{ secrets.get(\"secret_key\") }}"
+                }
+              }
+            } ]
+          },
+          "CredentialsAWS" : {
+            "type" : "object",
+            "title" : "CredentialsAWS",
+            "description" : "Configures AWS credentials.",
+            "properties" : {
+              "access_key" : {
+                "type" : "string",
+                "description" : "Provides the AWS access key"
               },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePath" : {
-                "type" : "string"
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for UploadToArtifactoryStepInfo"
+              "secret_key" : {
+                "type" : "string",
+                "description" : "Provides the AWS secret key"
               }
             }
-          },
+          }
+        },
+        "ci" : {
           "CIStepInfo" : {
             "title" : "CIStepInfo",
             "type" : "object",
@@ -50361,129 +50444,15 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "BitriseStepNode_template" : {
-            "title" : "BitriseStepNode_template",
+          "GitCloneStepNode" : {
+            "title" : "GitCloneStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Bitrise" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Bitrise"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/BitriseStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "BitriseStepInfo" : {
-            "title" : "BitriseStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "uses" ],
-              "properties" : {
-                "env" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "uses" : {
-                  "type" : "string"
-                },
-                "with" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "uses" ],
-            "properties" : {
-              "env" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "uses" : {
-                "type" : "string"
-              },
-              "with" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                }, {
-                  "type" : "string"
-                } ]
-              },
               "description" : {
-                "desc" : "This is the description for BitriseStepInfo"
-              }
-            }
-          },
-          "BuildAndPushACRNode_template" : {
-            "title" : "BuildAndPushACRNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
+                "type" : "string",
+                "desc" : "This is the description for GitCloneStepNode"
+              },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
@@ -50499,1207 +50468,13 @@
                   "minLength" : 1
                 } ]
               },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
+              "identifier" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
-              "type" : {
+              "name" : {
                 "type" : "string",
-                "enum" : [ "BuildAndPushACR" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "BuildAndPushACR"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ACRStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ACRStepInfo" : {
-            "title" : "ACRStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "repository", "tags" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "buildArgs" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "context" : {
-                  "type" : "string"
-                },
-                "dockerfile" : {
-                  "type" : "string"
-                },
-                "labels" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "optimize" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "remoteCacheImage" : {
-                  "type" : "string"
-                },
-                "repository" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "subscriptionId" : {
-                  "type" : "string"
-                },
-                "tags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "connectorRef", "repository", "tags" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "buildArgs" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "context" : {
-                "type" : "string"
-              },
-              "dockerfile" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "optimize" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "remoteCacheImage" : {
-                "type" : "string"
-              },
-              "repository" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "subscriptionId" : {
-                "type" : "string"
-              },
-              "tags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for ACRStepInfo"
-              }
-            }
-          },
-          "BuildAndPushDockerNode_template" : {
-            "title" : "BuildAndPushDockerNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "BuildAndPushDockerRegistry" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "BuildAndPushDockerRegistry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/DockerStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "DockerStepInfo" : {
-            "title" : "DockerStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "repo", "tags" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "buildArgs" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheFrom" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheTo" : {
-                  "type" : "string"
-                },
-                "caching" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "context" : {
-                  "type" : "string"
-                },
-                "dockerfile" : {
-                  "type" : "string"
-                },
-                "labels" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "optimize" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "remoteCacheRepo" : {
-                  "type" : "string"
-                },
-                "repo" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "tags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "connectorRef", "repo", "tags" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "buildArgs" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheFrom" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheTo" : {
-                "type" : "string"
-              },
-              "caching" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "context" : {
-                "type" : "string"
-              },
-              "dockerfile" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "optimize" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "remoteCacheRepo" : {
-                "type" : "string"
-              },
-              "repo" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "tags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for DockerStepInfo"
-              }
-            }
-          },
-          "BuildAndPushECRNode_template" : {
-            "title" : "BuildAndPushECRNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "BuildAndPushECR" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "BuildAndPushECR"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ECRStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ECRStepInfo" : {
-            "title" : "ECRStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "account", "connectorRef", "imageName", "region", "tags" ],
-              "properties" : {
-                "account" : {
-                  "type" : "string"
-                },
-                "baseImageConnectorRefs" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "buildArgs" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheFrom" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheTo" : {
-                  "type" : "string"
-                },
-                "caching" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "context" : {
-                  "type" : "string"
-                },
-                "dockerfile" : {
-                  "type" : "string"
-                },
-                "imageName" : {
-                  "type" : "string"
-                },
-                "labels" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "optimize" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "remoteCacheImage" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "tags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "account", "connectorRef", "imageName", "region", "tags" ],
-            "properties" : {
-              "account" : {
-                "type" : "string"
-              },
-              "baseImageConnectorRefs" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "buildArgs" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheFrom" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheTo" : {
-                "type" : "string"
-              },
-              "caching" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "context" : {
-                "type" : "string"
-              },
-              "dockerfile" : {
-                "type" : "string"
-              },
-              "imageName" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "optimize" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "region" : {
-                "type" : "string"
-              },
-              "remoteCacheImage" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "tags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for ECRStepInfo"
-              }
-            }
-          },
-          "BuildAndPushGCRNode_template" : {
-            "title" : "BuildAndPushGCRNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "BuildAndPushGCR" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "BuildAndPushGCR"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/GCRStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "GCRStepInfo" : {
-            "title" : "GCRStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "host", "imageName", "projectID", "tags" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "buildArgs" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheFrom" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "cacheTo" : {
-                  "type" : "string"
-                },
-                "caching" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "context" : {
-                  "type" : "string"
-                },
-                "dockerfile" : {
-                  "type" : "string"
-                },
-                "host" : {
-                  "type" : "string"
-                },
-                "imageName" : {
-                  "type" : "string"
-                },
-                "labels" : {
-                  "oneOf" : [ {
-                    "type" : "object",
-                    "additionalProperties" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "optimize" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "projectID" : {
-                  "type" : "string"
-                },
-                "remoteCacheImage" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "tags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "connectorRef", "host", "imageName", "projectID", "tags" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "buildArgs" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheFrom" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "cacheTo" : {
-                "type" : "string"
-              },
-              "caching" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "context" : {
-                "type" : "string"
-              },
-              "dockerfile" : {
-                "type" : "string"
-              },
-              "host" : {
-                "type" : "string"
-              },
-              "imageName" : {
-                "type" : "string"
-              },
-              "labels" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "optimize" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "projectID" : {
-                "type" : "string"
-              },
-              "remoteCacheImage" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "tags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for GCRStepInfo"
-              }
-            }
-          },
-          "GCSUploadNode_template" : {
-            "title" : "GCSUploadNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "GCSUpload" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GCSUpload"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UploadToGCSStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "UploadToGCSStepInfo" : {
-            "title" : "UploadToGCSStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "sourcePath" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "sourcePath" : {
-                  "type" : "string"
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "sourcePath" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePath" : {
-                "type" : "string"
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for UploadToGCSStepInfo"
-              }
-            }
-          },
-          "GitCloneStepNode_template" : {
-            "title" : "GitCloneStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
                 "oneOf" : [ {
@@ -52055,420 +50830,78 @@
             "title" : "RestoreCacheGCSNode_template",
             "type" : "object",
             "required" : [ "spec", "type" ],
+          "Resources" : {
+            "title" : "Resources",
+            "description" : "Defines the container resource request and limits.",
             "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              "limits" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Resource"
               },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "RestoreCacheGCS" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+              "requests" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Resource"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "RestoreCacheGCS"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheGCSStepInfo"
-                  }
-                }
-              }
-            } ]
+            "type" : "object"
           },
-          "RestoreCacheGCSStepInfo" : {
-            "title" : "RestoreCacheGCSStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "key" ],
-              "properties" : {
-                "archiveFormat" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Tar", "Gzip" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "failIfKeyNotFound" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "key" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
+          "Resource" : {
+            "title" : "Resource",
             "type" : "object",
-            "required" : [ "bucket", "connectorRef", "key" ],
+            "description" : "Resource defines the system resources.",
             "properties" : {
-              "archiveFormat" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Tar", "Gzip" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+              "cpu" : {
+                "type" : [ "string", "number" ]
               },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "failIfKeyNotFound" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for RestoreCacheGCSStepInfo"
+              "memory" : {
+                "format" : "bytes",
+                "type" : [ "string", "number" ]
               }
             }
           },
-          "RestoreCacheS3Node_template" : {
-            "title" : "RestoreCacheS3Node_template",
+          "StepAction" : {
+            "title" : "StepAction",
             "type" : "object",
-            "required" : [ "spec", "type" ],
             "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              "uses" : {
+                "type" : "string"
               },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+              "with" : {
+                "type" : "object"
               },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The stage environment variables."
               },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "RestoreCacheS3" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "RestoreCacheS3"
-                  }
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
                 }
               },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheS3StepInfo"
-                  }
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
                 }
-              }
-            } ]
-          },
-          "RestoreCacheS3StepInfo" : {
-            "title" : "RestoreCacheS3StepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "key" ],
-              "properties" : {
-                "archiveFormat" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Tar", "Gzip" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "endpoint" : {
-                  "type" : "string"
-                },
-                "failIfKeyNotFound" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "key" : {
-                  "type" : "string"
-                },
-                "pathStyle" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "key" ],
-            "properties" : {
-              "archiveFormat" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Tar", "Gzip" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "endpoint" : {
-                "type" : "string"
-              },
-              "failIfKeyNotFound" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "pathStyle" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "region" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for RestoreCacheS3StepInfo"
               }
             }
           },
-          "RunTestStepNode_template" : {
-            "title" : "RunTestStepNode_template",
+          "Mount" : {
+            "title" : "Mount",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "description" : "Mount defines a volume mount.",
             "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              "name" : {
+                "description" : "Name defines the volume name.",
+                "type" : "string"
               },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "RunTests" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+              "path" : {
+                "description" : "Path specifies the target mount path.",
+                "type" : "string"
               }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "RunTests"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/RunTestsStepInfo"
-                  }
-                }
-              }
-            } ]
+            }
           },
           "RunTestsStepInfo" : {
             "title" : "RunTestsStepInfo",
@@ -52654,8 +51087,50 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
             "required" : [ "buildTool", "language" ],
+          "StepBackground" : {
+            "title" : "StepBackground",
+            "type" : "object",
             "properties" : {
+              "image" : {
+                "type" : "string"
+              },
+              "user" : {
+                "type" : "string"
+              },
+              "pull" : {
+                "type" : "string",
+                "enum" : [ "always", "never", "if-not-exists" ]
+              },
+              "shell" : {
+                "type" : "string",
+                "enum" : [ "sh", "bash", "powershell", "pwsh" ]
+              },
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The step environment variables."
+              },
+              "run" : {
+                "type" : "string"
+              },
+              "entrypoint" : {
+                "type" : "string"
+              },
               "args" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "ports" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "network" : {
                 "type" : "string"
               },
               "buildEnvironment" : {
@@ -52682,27 +51157,82 @@
                 "type" : "string"
               },
               "enableTestSplitting" : {
+              "privileged" : {
                 "type" : "boolean"
               },
-              "envVariables" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Resources"
               },
-              "frameworkVersion" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "5.0", "6.0" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
+                }
+              }
+            }
+          },
+          "StepBitrise" : {
+            "title" : "StepBitrise",
+            "type" : "object",
+            "properties" : {
+              "uses" : {
+                "type" : "string"
+              },
+              "with" : {
+                "type" : "object"
+              },
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The stage environment variables."
+              },
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
+                }
+              }
+            }
+          },
+          "StepTest" : {
+            "title" : "StepTest",
+            "type" : "object",
+            "properties" : {
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The stage environment variables."
+              },
+              "uses" : {
+                "type" : "string"
+              },
+              "with" : {
+                "type" : "object"
+              },
+              "splitting" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Splitting"
+              },
+              "reports" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Report"
+                }
+              },
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
+                }
               },
               "image" : {
                 "type" : "string"
@@ -52728,976 +51258,134 @@
                 } ]
               },
               "namespaces" : {
+              "connector" : {
                 "type" : "string"
               },
-              "outputVariables" : {
-                "oneOf" : [ {
-                  "type" : "array",
+              "user" : {
+                "type" : "string"
+              },
+              "pull" : {
+                "type" : "string",
+                "enum" : [ "always", "never", "if-not-exists" ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Resources"
+              }
+            },
+            "examples" : [ {
+              "type" : "test",
+              "spec" : {
+                "uses" : "maven",
+                "with" : {
+                  "packages" : [ "foo", "bar" ]
+                },
+                "splitting" : {
+                  "enabled" : true,
+                  "concurrency" : 3
+                }
+              }
+            } ]
+          },
+          "Splitting" : {
+            "title" : "Splitting",
+            "type" : "object",
+            "properties" : {
+              "enabled" : {
+                "type" : "boolean"
+              },
+              "concurrency" : {
+                "type" : "number"
+              },
+              "strategy" : {
+                "type" : "string"
+              }
+            }
+          },
+          "Report" : {
+            "title" : "Report",
+            "type" : "object",
+            "description" : "Report defines a report artifact.",
+            "properties" : {
+              "path" : {
+                "description" : "Path provides the report file path.",
+                "anyOf" : [ {
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                  }
+                    "type" : "string"
+                  },
+                  "type" : "array"
                 }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
+                  "type" : "string"
                 } ]
               },
-              "packages" : {
+              "type" : {
+                "type" : "string",
+                "description" : "Type provides the report type.",
+                "enum" : [ "junit", "xunit", "nunit" ]
+              }
+            },
+            "required" : [ "path", "type" ]
+          },
+          "StepPlugin" : {
+            "title" : "StepPlugin",
+            "type" : "object",
+            "properties" : {
+              "image" : {
                 "type" : "string"
               },
-              "postCommand" : {
+              "uses" : {
                 "type" : "string"
               },
-              "preCommand" : {
+              "connector" : {
                 "type" : "string"
               },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+              "pull" : {
+                "type" : "string",
+                "enum" : [ "always", "never", "if-not-exists" ]
               },
-              "pythonVersion" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "3", "2" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The step environment variables."
               },
               "reports" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/UnitTestReport"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Report"
+                }
+              },
+              "privileged" : {
+                "type" : "boolean"
+              },
+              "user" : {
+                "type" : "string"
+              },
+              "group" : {
+                "type" : "string"
+              },
+              "network" : {
+                "type" : "string"
+              },
+              "with" : {
+                "type" : "object"
+              },
+              "outputs" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
               },
               "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                "$ref" : "#/definitions/pipeline/steps/ci/Resources"
               },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "runOnlySelectedTests" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "shell" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Sh", "Bash", "Powershell", "Pwsh", "Python" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "testAnnotations" : {
-                "type" : "string"
-              },
-              "testGlobs" : {
-                "type" : "string"
-              },
-              "testRoot" : {
-                "type" : "string"
-              },
-              "testSplitStrategy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "ClassTiming", "TestCount" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for RunTestsStepInfo"
+              "mount" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/Mount"
+                }
               }
             }
-          },
-          "S3UploadNode_template" : {
-            "title" : "S3UploadNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "S3Upload" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "S3Upload"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UploadToS3StepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "UploadToS3StepInfo" : {
-            "title" : "UploadToS3StepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "endpoint" : {
-                  "type" : "string"
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "sourcePath" : {
-                  "type" : "string"
-                },
-                "stripPrefix" : {
-                  "type" : "string"
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "endpoint" : {
-                "type" : "string"
-              },
-              "region" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePath" : {
-                "type" : "string"
-              },
-              "stripPrefix" : {
-                "type" : "string"
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for UploadToS3StepInfo"
-              }
-            }
-          },
-          "SaveCacheGCSNode_template" : {
-            "title" : "SaveCacheGCSNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SaveCacheGCS" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SaveCacheGCS"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheGCSStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SaveCacheGCSStepInfo" : {
-            "title" : "SaveCacheGCSStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "key", "sourcePaths" ],
-              "properties" : {
-                "archiveFormat" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Tar", "Gzip" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "key" : {
-                  "type" : "string"
-                },
-                "override" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "sourcePaths" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "key", "sourcePaths" ],
-            "properties" : {
-              "archiveFormat" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Tar", "Gzip" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "override" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePaths" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for SaveCacheGCSStepInfo"
-              }
-            }
-          },
-          "SaveCacheS3Node_template" : {
-            "title" : "SaveCacheS3Node_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SaveCacheS3" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SaveCacheS3"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3StepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SaveCacheS3StepInfo" : {
-            "title" : "SaveCacheS3StepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "key", "sourcePaths" ],
-              "properties" : {
-                "archiveFormat" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Tar", "Gzip" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "endpoint" : {
-                  "type" : "string"
-                },
-                "key" : {
-                  "type" : "string"
-                },
-                "override" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "pathStyle" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "sourcePaths" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "key", "sourcePaths" ],
-            "properties" : {
-              "archiveFormat" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Tar", "Gzip" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "endpoint" : {
-                "type" : "string"
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "override" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "pathStyle" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "region" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePaths" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for SaveCacheS3StepInfo"
-              }
-            }
-          },
-          "SscaEnforcementStepNode_template" : {
-            "title" : "SscaEnforcementStepNode_template",
-            "type" : "object",
-            "required" : [ "spec" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaEnforcement" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaEnforcement"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaEnforcementStepInfo" : {
-            "title" : "SscaEnforcementStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "policy", "source" ],
-              "properties" : {
-                "policy" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
-                },
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-                },
-                "verifyAttestation" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "policy", "source" ],
-            "properties" : {
-              "policy" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
-              },
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-              },
-              "verifyAttestation" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
-              },
-              "description" : {
-                "desc" : "This is the description for SscaEnforcementStepInfo"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              }
-            }
-          },
-          "SscaOrchestrationStepNode_template" : {
-            "title" : "SscaOrchestrationStepNode_template",
-            "type" : "object",
-            "required" : [ "spec" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaOrchestration" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaOrchestration"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaOrchestrationStepInfo" : {
-            "title" : "SscaOrchestrationStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "source" ],
-              "properties" : {
-                "attestation" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
-                },
-                "ingestion" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
-                },
-                "mode" : {
-                  "type" : "string",
-                  "enum" : [ "generation", "ingestion" ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-                },
-                "tool" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "source" ],
-            "properties" : {
-              "attestation" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
-              },
-              "ingestion" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
-              },
-              "mode" : {
-                "type" : "string",
-                "enum" : [ "generation", "ingestion" ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-              },
-              "tool" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
-              },
-              "description" : {
-                "desc" : "This is the description for SscaOrchestrationStepInfo"
-              }
-            }
-          },
-          "SbomFile" : {
-            "title" : "SbomFile",
-            "type" : "object",
-            "properties" : {
-              "file" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for SbomFile"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "GitCloneStepNode" : {
-            "title" : "GitCloneStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for GitCloneStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "GitClone" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GitClone"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepInfo"
-                  }
-                }
-              }
-            } ]
           }
         },
         "cvng" : {
@@ -54778,6 +52466,172 @@
               }
             } ]
           }
+        },
+        "Step" : {
+          "title" : "Step",
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "description" : "The unique step identifier.",
+              "type" : "string",
+              "pattern" : "^[a-zA-Z0-9_-]+$"
+            },
+            "name" : {
+              "type" : "string",
+              "description" : "The step name."
+            },
+            "desc" : {
+              "type" : "string",
+              "description" : "The step description."
+            },
+            "type" : {
+              "type" : "string",
+              "description" : "The step type.",
+              "enum" : [ "action", "background", "bitrise", "group", "parallel", "plugin", "template", "test", "run" ]
+            },
+            "timeout" : {
+              "type" : "string",
+              "description" : "The step timeout.",
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "$ref" : "#/definitions/pipeline/common/When"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/On"
+              }
+            }
+          },
+          "oneOf" : [ {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "action"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/StepAction"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "background"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/StepBackground"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "bitrise"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/StepBitrise"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "test"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/StepTest"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "group"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/StepGroup"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "parallel"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/StepParallel"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "plugin"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/StepPlugin"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "template"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/StepTemplate"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "run"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/StepRun"
+                }
+              }
+            } ]
+          } ]
         }
       },
       "common" : {
@@ -55456,7 +53310,18 @@
                 }
               }
             } ]
-          } ]
+          } ],
+          "examples" : [ {
+            "strategy" : {
+              "matrix" : {
+                "axis" : {
+                  "golang" : [ 1.19, 1.21 ],
+                  "node" : [ 16, 18 ]
+                }
+              }
+            }
+          } ],
+          "x-docs-title" : "strategy"
         },
         "For" : {
           "title" : "For",
@@ -55545,6 +53410,7 @@
         },
         "When" : {
           "title" : "When",
+          "description" : "Expression used to evaluate whether or not a Stage or Step should execute.",
           "oneOf" : [ {
             "type" : "string"
           }, {
@@ -63084,8 +60950,6 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
@@ -64102,11 +61966,9 @@
                 } ]
               },
               "key" : {
-                "type" : "string"
-=======
+                "type" : "string",
                 "description" : "Enabled enables cache intelligence.",
                 "type" : "boolean"
->>>>>>> 3b64841 (added static schema for CI steps for V1 version)
               },
               "paths" : {
                 "description" : "Paths provides a list of paths to cache.",
@@ -67297,6 +65159,435 @@
             "required" : [ "id" ]
           } ]
         },
+        "ci" : {
+          "IntegrationStageConfigImpl" : {
+            "title" : "IntegrationStageConfigImpl",
+            "type" : "object",
+            "properties" : {
+              "cache" : {
+                "description" : "Configures the cache behavior.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Caching"
+              },
+              "clone" : {
+                "description" : "Overrides the clone behavior.",
+                "$ref" : "#/definitions/pipeline/stages/ci/CloneStage"
+              },
+              "platform" : {
+                "description" : "Configures the target execution platform.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Platform"
+              },
+              "runtime" : {
+                "description" : "Configures the target runtime engine.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Runtime"
+              },
+              "steps" : {
+                "description" : "Configures a series of steps to executes.",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/Step"
+                },
+                "type" : "array"
+              },
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The stage environment variables."
+              },
+              "volumes" : {
+                "description" : "Configures a container volumes.",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/ci/Volume"
+                },
+                "type" : "array"
+              }
+            }
+          },
+          "Caching" : {
+            "title" : "Caching",
+            "type" : "object",
+            "description" : "Cache defines caching behavior.",
+            "properties" : {
+              "enabled" : {
+                "description" : "Enabled enables cache intelligence.",
+                "type" : "boolean"
+              },
+              "paths" : {
+                "description" : "Paths provides a list of paths to cache.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "key" : {
+                "description" : "Key provides a caching key.",
+                "type" : "string"
+              },
+              "policy" : {
+                "type" : "string",
+                "description" : "Policy configures the pull and push behavior of the cache.\nBy default, the stage pulls the cache when the stage starts\nand pushes changes to the cache when the stage ends.\n",
+                "default" : "pull-push",
+                "enum" : [ "pull", "pull-push", "push" ]
+              }
+            }
+          },
+          "CloneStage" : {
+            "title" : "CloneStage",
+            "type" : "object",
+            "description" : "Clone defines the stage clone behavior.",
+            "properties" : {
+              "depth" : {
+                "description" : "Depth defines the clone depth.",
+                "type" : "number"
+              },
+              "disabled" : {
+                "description" : "Disabled disables the default clone step.",
+                "type" : "boolean"
+              },
+              "insecure" : {
+                "description" : "Insecure disables ssl verification.",
+                "type" : "boolean"
+              },
+              "strategy" : {
+                "description" : "Strategy configures the clone strategy.",
+                "type" : "string",
+                "enum" : [ "source-branch", "merge" ]
+              },
+              "trace" : {
+                "description" : "Trace enables trace logging.",
+                "type" : "boolean"
+              }
+            }
+          },
+          "Platform" : {
+            "title" : "Platform",
+            "description" : "Platform defines the target execution environment.",
+            "type" : "object",
+            "properties" : {
+              "arch" : {
+                "description" : "Arch defines the target cpu architecture.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Arch"
+              },
+              "features" : {
+                "description" : "Features defines the target platform features.",
+                "items" : {
+                  "type" : "string"
+                },
+                "type" : "array"
+              },
+              "os" : {
+                "description" : "OS defines the target operating system.",
+                "$ref" : "#/definitions/pipeline/stages/ci/OS"
+              },
+              "variant" : {
+                "description" : "Variant defines the target cpu architecture variant.",
+                "type" : "string"
+              },
+              "version" : {
+                "description" : "Version defines the target operating system version.",
+                "type" : "string"
+              }
+            },
+            "examples" : [ {
+              "platform" : {
+                "os" : "linux"
+              }
+            }, {
+              "platform" : {
+                "os" : "linux",
+                "arch" : "amd64"
+              }
+            } ]
+          },
+          "Arch" : {
+            "title" : "Arch",
+            "type" : "string",
+            "description" : "List of cpu architectures.",
+            "enum" : [ "amd64", "arm", "arm64" ]
+          },
+          "OS" : {
+            "title" : "OS",
+            "type" : "string",
+            "description" : "List of operating systems.",
+            "enum" : [ "linux", "windows", "macos" ]
+          },
+          "Runtime" : {
+            "title" : "Runtime",
+            "description" : "Defines the runtime execution engine.",
+            "properties" : {
+              "type" : {
+                "description" : "The runtime type.",
+                "enum" : [ "cloud", "machine", "kubernetes", "vm" ],
+                "type" : "string"
+              }
+            },
+            "type" : "object",
+            "oneOf" : [ {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "cloud"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeCloud"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "machine"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeMachine"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "kubernetes"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeKube"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "vm"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeVM"
+                  }
+                }
+              } ]
+            } ]
+          },
+          "RuntimeCloud" : {
+            "title" : "RuntimeCloud",
+            "type" : "object",
+            "properties" : {
+              "size" : {
+                "type" : "string"
+              }
+            }
+          },
+          "RuntimeMachine" : {
+            "title" : "RuntimeMachine",
+            "type" : "object",
+            "properties" : { }
+          },
+          "RuntimeKube" : {
+            "title" : "RuntimeKube",
+            "type" : "object",
+            "properties" : {
+              "connector" : {
+                "type" : "string"
+              },
+              "namespace" : {
+                "type" : "string"
+              },
+              "annotations" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "labels" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/Resources"
+              },
+              "mount_service_token" : {
+                "type" : "boolean"
+              },
+              "service_account" : {
+                "type" : "string"
+              },
+              "security_context" : {
+                "type" : "string"
+              },
+              "priority_class" : {
+                "type" : "string"
+              },
+              "init_timeout" : {
+                "format" : "duration",
+                "type" : "string"
+              },
+              "user" : {
+                "type" : "string"
+              },
+              "image_pull_secrets" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "node" : {
+                "type" : "string"
+              },
+              "node_selector" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "tolerations" : {
+                "type" : "object"
+              }
+            }
+          },
+          "RuntimeVM" : {
+            "title" : "RuntimeVM",
+            "type" : "object",
+            "properties" : {
+              "pool" : {
+                "type" : "string"
+              }
+            }
+          },
+          "Volume" : {
+            "title" : "Volume",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "claim", "config-map", "temp", "host" ]
+              }
+            },
+            "required" : [ "name", "type" ],
+            "oneOf" : [ {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "host"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeHost"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "claim"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeClaim"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "temp"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeTemp"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "config-map"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeConfigMap"
+                  }
+                }
+              } ]
+            } ]
+          },
+          "VolumeHost" : {
+            "title" : "VolumeHost",
+            "type" : "object",
+            "properties" : {
+              "path" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "path" ]
+          },
+          "VolumeClaim" : {
+            "title" : "VolumeClaim",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "name" ]
+          },
+          "VolumeTemp" : {
+            "title" : "VolumeTemp",
+            "type" : "object",
+            "properties" : {
+              "medium" : {
+                "type" : "string",
+                "enum" : [ "memory" ]
+              },
+              "limit" : {
+                "type" : [ "string", "number" ]
+              }
+            }
+          },
+          "VolumeConfigMap" : {
+            "title" : "VolumeConfigMap",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "mode" : {
+                "type" : "string"
+              },
+              "optional" : {
+                "type" : "boolean"
+              }
+            },
+            "required" : [ "name" ]
+          }
+        },
         "ParallelStageElementNodeConfig" : {
           "type" : "object",
           "title" : "ParallelStageElementNodeConfig",
@@ -67310,8 +65601,6 @@
                   "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
                 }, {

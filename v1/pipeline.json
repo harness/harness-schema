@@ -22,7 +22,38 @@
   "if" : {
     "properties" : {
       "type" : {
-        "const" : "template"
+        "const": "template",
+    "stages" : {
+      "type" : "array",
+      "items" : {
+        "oneOf" : [ {
+          "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
+        }, {
+          "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+        } ]
+      },
+      "maxItems" : 256,
+      "minItems" : 1
+    },
+    "inputs" : {
+      "type" : "object",
+      "description" : "Inputs defines the pipeline input parameters.",
+      "additionalProperties" : {
+        "$ref" : "#/definitions/pipeline/Input"
       }
     },
     "required" : [ "type" ]
@@ -9527,8 +9558,6 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
@@ -10294,8 +10323,6 @@
                   "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
                 }, {
@@ -11088,7 +11115,18 @@
                 }
               }
             } ]
-          } ]
+          } ],
+          "examples" : [ {
+            "strategy" : {
+              "matrix" : {
+                "axis" : {
+                  "golang" : [ 1.19, 1.21 ],
+                  "node" : [ 16, 18 ]
+                }
+              }
+            }
+          } ],
+          "x-docs-title" : "strategy"
         },
         "For" : {
           "title" : "For",
@@ -11177,6 +11215,7 @@
         },
         "When" : {
           "title" : "When",
+          "description" : "Expression used to evaluate whether or not a Stage or Step should execute.",
           "oneOf" : [ {
             "type" : "string"
           }, {
