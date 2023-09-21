@@ -19,23 +19,31 @@ properties:
       - action
       - background
       - bitrise
-      - script
       - group
       - parallel
       - plugin
       - template
       - test
+      - run
   timeout:
     type: string
     description: The step timeout.
-  strategy:
-    $ref: ./strategy.yaml
-    description: The stage execution strategy.
-  when:
-    description: The stage conditional logic.
-    $ref: "./when.yaml"
-  on:
-    $ref: ./on.yaml
+    strategy:
+      $ref: ../common/strategy.yaml
+      description: The stage execution strategy.
+    when:
+      description: The stage conditional logic.
+      $ref: "../common/when.yaml"
+    failure:
+      $ref: ../common/on.yaml
+
+  # internal properties
+  x-properties:
+    inputs:
+      type: object
+      additionalProperties:
+        type: object
+      x-go-type: "map[string]interface{}"
 
 oneOf:
   - allOf:
@@ -44,60 +52,60 @@ oneOf:
             const: action
       - properties:
           spec:
-            $ref: ./step_action.yaml
+            $ref: ./ci/step_action.yaml
   - allOf:
       - properties:
           type:
             const: background
       - properties:
           spec:
-            $ref: ./step_background.yaml
+            $ref: ./ci/step_background.yaml
   - allOf:
       - properties:
           type:
             const: bitrise
       - properties:
           spec:
-            $ref: ./step_bitrise.yaml
-  - allOf:
-      - properties:
-          type:
-            const: script
-      - properties:
-          spec:
-            $ref: ./step_exec.yaml
+            $ref: ./ci/step_bitrise.yaml
   - allOf:
       - properties:
           type:
             const: test
       - properties:
           spec:
-            $ref: ./step_ti.yaml
+            $ref: ./ci/step_ti.yaml
   - allOf:
       - properties:
           type:
             const: group
       - properties:
           spec:
-            $ref: ../../common/step_group.yaml
+            $ref: ./common/step_group.yaml
   - allOf:
       - properties:
           type:
             const: parallel
       - properties:
           spec:
-            $ref: ../../common/step_parallel.yaml
+            $ref: ./common/step_parallel.yaml
   - allOf:
       - properties:
           type:
             const: plugin
       - properties:
           spec:
-            $ref: ./step_plugin.yaml
+            $ref: ./ci/step_plugin.yaml
   - allOf:
       - properties:
           type:
             const: template
       - properties:
           spec:
-            $ref: ../../common/step_template.yaml
+            $ref: ./common/step_template.yaml
+  - allOf:
+      - properties:
+          type:
+            const: run
+      - properties:
+          spec:
+            $ref: ./common/step_run.yaml
