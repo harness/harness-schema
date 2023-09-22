@@ -16,7 +16,8 @@ public enum YamlEntityType {
   TRIGGER_V0("trigger", SchemaVersion.V0, "trigger/trigger_root.yaml"),
   PIPELINE_V1("pipeline", SchemaVersion.V1, "pipeline/pipeline.yaml"),
   TEMPLATE_V1("template", SchemaVersion.V1, "template/template_root.yaml"),
-  INPUT_SET_V1("inputSet", SchemaVersion.V1, "inputSet/inputSet.yaml");
+  INPUT_SET_V1("inputSet", SchemaVersion.V1, "inputSet/inputSet.yaml"),
+  OVERLAY_INPUT_SET_V1("overlayInputSet", SchemaVersion.V1, "overlayInputSet/overlayInputSet.yaml");
 
   @Getter private final String entityName;
   @Getter private final String entityRootSchemaPath;
