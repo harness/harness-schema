@@ -28,5 +28,7 @@ public class SchemaBundlerRegistrar {
         YamlEntityType.PIPELINE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.PIPELINE_V1).build());
     registeredSchemaBundlers.put(
         YamlEntityType.TEMPLATE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TEMPLATE_V1).build());
+    registeredSchemaBundlers.put(
+            YamlEntityType.INPUT_SET_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.INPUT_SET_V1).build());
   }
 }
