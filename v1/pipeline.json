@@ -101,7 +101,29 @@
             "minItems" : 1
           },
           "inputs" : {
-            "type" : "object",
+            "anyOf" : [ {
+              "type" : null
+            }, {
+              "type" : "object",
+              "additionalProperties" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/StringInput"
+                }, {
+                  "$ref" : "#/definitions/pipeline/NumberInput"
+                }, {
+                  "$ref" : "#/definitions/pipeline/ArrayInput"
+                }, {
+                  "$ref" : "#/definitions/pipeline/BooleanInput"
+                }, {
+                  "$ref" : "#/definitions/pipeline/ObjectInput"
+                }, {
+                  "$ref" : "#/definitions/pipeline/SecretInput"
+                } ]
+              },
+              "propertyNames" : {
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+              }
+            } ],
             "description" : "Inputs defines the pipeline input parameters.",
             "additionalProperties" : {
               "oneOf" : [ {
@@ -123,7 +145,7 @@
             }
           },
           "timeout" : {
-            "type" : "string",
+            "type" : [ "string", null ],
             "description" : "Defines pipeline timeout",
             "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
           },
