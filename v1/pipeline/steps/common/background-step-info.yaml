@@ -5,7 +5,7 @@ allOf:
   properties:
     command:
       type: string
-    connectorRef:
+    connector_ref:
       type: string
     entrypoint:
       oneOf:
@@ -13,7 +13,7 @@ allOf:
         items:
           type: string
       - type: string
-    envVariables:
+    env_variables:
       oneOf:
       - type: object
         additionalProperties:
@@ -21,15 +21,14 @@ allOf:
       - type: string
     image:
       type: string
-    imagePullPolicy:
+    image_pull_olicy:
       oneOf:
       - type: string
         enum:
-        - Always
-        - Never
-        - IfNotPresent
+        - always
+        - never
+        - if-not-present
       - type: string
-        pattern: (<\+.+>.*)
         minLength: 1
     portBindings:
       oneOf:
@@ -41,17 +40,15 @@ allOf:
       oneOf:
       - type: boolean
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
         minLength: 1
     reports:
       oneOf:
       - $ref: ../common/unit-test-report.yaml
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
         minLength: 1
     resources:
       $ref: ../../common/container-resource.yaml
-    runAsUser:
+    run_as_user:
       oneOf:
       - type: integer
         format: int32
@@ -60,81 +57,12 @@ allOf:
       oneOf:
       - type: string
         enum:
-        - Sh
-        - Bash
-        - Powershell
-        - Pwsh
-        - Python
+        - sh
+        - bash
+        - powershell
+        - pwsh
+        - python
       - type: string
         pattern: (<\+.+>.*)
         minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-properties:
-  command:
-    type: string
-  connectorRef:
-    type: string
-  entrypoint:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-  envVariables:
-    oneOf:
-    - type: object
-      additionalProperties:
-        type: string
-    - type: string
-  image:
-    type: string
-  imagePullPolicy:
-    oneOf:
-    - type: string
-      enum:
-      - Always
-      - Never
-      - IfNotPresent
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  portBindings:
-    oneOf:
-    - type: object
-      additionalProperties:
-        type: string
-    - type: string
-  privileged:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  reports:
-    oneOf:
-    - $ref: ../common/unit-test-report.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  resources:
-    $ref: ../../common/container-resource.yaml
-  runAsUser:
-    oneOf:
-    - type: integer
-      format: int32
-    - type: string
-  shell:
-    oneOf:
-    - type: string
-      enum:
-      - Sh
-      - Bash
-      - Powershell
-      - Pwsh
-      - Python
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  description:
-    desc: This is the description for BackgroundStepInfo
