@@ -1,0 +1,42 @@
+title: Runtime
+description: Defines the runtime execution engine.
+properties:
+  type:
+    description: The runtime type.
+    enum:
+      - cloud
+      - machine
+      - kubernetes
+      - vm
+    type: string
+type: object
+
+oneOf:
+  - allOf:
+      - properties:
+          type:
+            const: cloud
+      - properties:
+          spec:
+            $ref: ./runtime_cloud.yaml
+  - allOf:
+      - properties:
+          type:
+            const: machine
+      - properties:
+          spec:
+            $ref: ./runtime_machine.yaml
+  - allOf:
+      - properties:
+          type:
+            const: kubernetes
+      - properties:
+          spec:
+            $ref: ./runtime_kubernetes.yaml
+  - allOf:
+      - properties:
+          type:
+            const: vm
+      - properties:
+          spec:
+            $ref: ./runtime_vm.yaml

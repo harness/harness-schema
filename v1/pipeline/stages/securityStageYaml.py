@@ -49,8 +49,6 @@ def convertFileName(s):
 		return "secret-ng-variable.yaml"
 	elif modified_s == "string-ngvariable.yaml":
 		return "string-ng-variable.yaml"
-	elif modified_s == "cistep-info.yaml":
-		return "ci-step-info.yaml"
 	elif modified_s == "prbuild-spec.yaml":
 		return "pr-build-spec.yaml"
 
