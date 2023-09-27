@@ -8,6 +8,9 @@ allOf:
   properties:
     connectorRef:
       type: string
+      inputProperties:
+        type: string
+        internalType: jenkins_connector
     delegateSelectors:
       oneOf:
       - type: array
@@ -18,6 +21,10 @@ allOf:
         minLength: 1
     jobName:
       type: string
+      inputProperties:
+        type: string
+        internalType: jenkins_job_name
+        dependsOn: [ connectorRef ]
     jobParameter:
       oneOf:
       - type: array
@@ -26,6 +33,10 @@ allOf:
       - type: string
         pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
         minLength: 1
+      inputProperties:
+        type: object
+        internalType: jenkins_job_parameter
+        dependsOn: [ connectorRef, jobName ]
     metadata:
       type: string
     unstableStatusAsSuccess:
@@ -40,6 +51,9 @@ required:
 properties:
   connectorRef:
     type: string
+    inputProperties:
+      type: string
+      internalType: jenkins_connector
   delegateSelectors:
     oneOf:
     - type: array
@@ -50,6 +64,10 @@ properties:
       minLength: 1
   jobName:
     type: string
+    inputProperties:
+      type: string
+      internalType: jenkins_job_name
+      dependsOn: [ connectorRef ]
   jobParameter:
     oneOf:
     - type: array
@@ -58,6 +76,10 @@ properties:
     - type: string
       pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
       minLength: 1
+    inputProperties:
+      type: object
+      internalType: jenkins_job_parameter
+      dependsOn: [ connectorRef, jobName ]
   metadata:
     type: string
   unstableStatusAsSuccess:
