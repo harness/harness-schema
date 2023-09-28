@@ -4,9 +4,11 @@ allOf:
 - type: object
   required:
   - connectorRef
-  - ticketNumber
   - ticketType
   - useServiceNowTemplate
+  oneOf:
+  - ticketNumber
+  - updateMultiple
   properties:
     connectorRef:
       type: string
@@ -30,35 +32,6 @@ allOf:
       type: string
     useServiceNowTemplate:
       type: boolean
+    updateMultiple:
+      $ref: service-now-update-multiple-task-node.yaml
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-- connectorRef
-- ticketNumber
-- ticketType
-- useServiceNowTemplate
-properties:
-  connectorRef:
-    type: string
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  fields:
-    type: array
-    items:
-      $ref: service-now-field.yaml
-  templateName:
-    type: string
-  ticketNumber:
-    type: string
-  ticketType:
-    type: string
-  useServiceNowTemplate:
-    type: boolean
-  description:
-    desc: This is the description for ServiceNowUpdateStepInfo
