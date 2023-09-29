@@ -1,5 +1,8 @@
 title: CustomStageNode
 type: object
+required:
+  - type
+  - spec
 properties:
   desc:
     description: The stage description.
@@ -27,6 +30,31 @@ properties:
     type: string
   failure:
     $ref: ../../common/failure_list.yaml
+  variables:
+    type: object
+    description: Variables defines the pipeline variable parameters.
+    additionalProperties:
+      oneOf:
+        - "$ref": ../../string-variable.yaml
+        - "$ref": ../../number-variable.yaml
+        - "$ref": ../../array-variable.yaml
+        - "$ref": ../../boolean-variable.yaml
+        - "$ref": ../../object-variable.yaml
+        - "$ref": ../../secret-variable.yaml
+    propertyNames:
+      pattern: "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+  timeout:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(<\+.+>.*)|(^$))$
+  labels:
+    type: object
+    additionalProperties:
+      type: string
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+
 
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
@@ -38,9 +66,3 @@ allOf:
     properties:
       spec:
         $ref: ./custom-stage-spec-element-config.yaml
-        
-anyOf:
-  - required:
-      - name
-  - required:
-      - id
