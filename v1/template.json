@@ -62716,8 +62716,13 @@
             "description" : "Cache defines pipeline caching behavior.",
             "properties" : {
               "enabled" : {
-                "description" : "Enabled enables cache intelligence.",
-                "type" : "boolean"
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "paths" : {
                 "description" : "Paths provides a list of paths to cache.",
@@ -62733,8 +62738,14 @@
               "policy" : {
                 "type" : "string",
                 "description" : "Policy configures the pull and push behavior of the cache.\nBy default, the stage pulls the cache when the stage starts\nand pushes changes to the cache when the stage ends.\n",
-                "default" : "pull-push",
-                "enum" : [ "pull", "pull-push", "push" ]
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "pull", "push", "pull-push" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               }
             }
           },
