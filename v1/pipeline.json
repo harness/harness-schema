@@ -10736,19 +10736,28 @@
           "EmailStepNode" : {
             "title" : "EmailStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for EmailStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -10757,20 +10766,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "email" ]
+                "enum" : [ "Email" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -10778,7 +10797,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "email"
+                    "const" : "Email"
                   }
                 }
               },
@@ -10805,7 +10824,7 @@
                 "cc" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -10826,24 +10845,63 @@
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "subject", "to" ],
+            "properties" : {
+              "body" : {
+                "type" : "string"
+              },
+              "cc" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "subject" : {
+                "type" : "string"
+              },
+              "to" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for EmailStepInfo"
+              }
+            }
           },
           "QueueStepNode" : {
             "title" : "QueueStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for QueueStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -10852,20 +10910,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "queue" ]
+                "enum" : [ "Queue" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -10873,7 +10941,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "queue"
+                    "const" : "Queue"
                   }
                 }
               },
@@ -10899,12 +10967,25 @@
                 },
                 "scope" : {
                   "type" : "string",
-                  "enum" : [ "pipeline", "stage" ]
+                  "enum" : [ "Pipeline", "Stage" ]
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "key", "scope" ],
+            "properties" : {
+              "key" : {
+                "type" : "string"
+              },
+              "scope" : {
+                "type" : "string",
+                "enum" : [ "Pipeline", "Stage" ]
+              },
+              "description" : {
+                "desc" : "This is the description for QueueStepInfo"
+              }
+            }
           },
           "ShellScriptStepNode" : {
             "title" : "ShellScriptStepNode",
@@ -11061,19 +11142,28 @@
           "CustomApprovalStepNode" : {
             "title" : "CustomApprovalStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for CustomApprovalStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11082,20 +11172,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "custom-approval" ]
+                "enum" : [ "CustomApproval" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11103,7 +11203,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "custom-approval"
+                    "const" : "CustomApproval"
                   }
                 }
               },
@@ -11122,12 +11222,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approval_criteria", "interval", "timeout", "shell", "source" ],
+              "required" : [ "approvalCriteria", "retryInterval", "scriptTimeout", "shell", "source" ],
               "properties" : {
-                "approval_criteria" : {
+                "approvalCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -11139,7 +11239,7 @@
                     "minLength" : 1
                   } ]
                 },
-                "env_vars" : {
+                "environmentVariables" : {
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
@@ -11151,7 +11251,7 @@
                     } ]
                   }
                 },
-                "output_vars" : {
+                "outputVariables" : {
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
@@ -11163,14 +11263,14 @@
                     } ]
                   }
                 },
-                "rejection_criteria" : {
+                "rejectionCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
-                "interval" : {
+                "retryInterval" : {
                   "type" : "string",
                   "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
                 },
-                "timeout" : {
+                "scriptTimeout" : {
                   "type" : "string",
                   "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
                 },
@@ -11184,7 +11284,70 @@
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "approvalCriteria", "retryInterval", "scriptTimeout", "shell", "source" ],
+            "properties" : {
+              "approvalCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "environmentVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "outputVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "rejectionCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "retryInterval" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+              },
+              "scriptTimeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+              },
+              "shell" : {
+                "type" : "string",
+                "enum" : [ "Bash", "PowerShell" ]
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/common/ShellScriptSourceWrapper"
+              },
+              "description" : {
+                "desc" : "This is the description for CustomApprovalStepInfo"
+              }
+            }
           },
           "CriteriaSpecWrapper" : {
             "title" : "CriteriaSpecWrapper",
@@ -11193,7 +11356,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "jexl", "key-values" ]
+                "enum" : [ "Jexl", "KeyValues" ]
               },
               "description" : {
                 "desc" : "This is the description for CriteriaSpecWrapper"
@@ -11204,7 +11367,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "jexl"
+                    "const" : "Jexl"
                   }
                 }
               },
@@ -11219,7 +11382,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "key-values"
+                    "const" : "KeyValues"
                   }
                 }
               },
@@ -11303,7 +11466,7 @@
               },
               "operator" : {
                 "type" : "string",
-                "enum" : [ "equals", "not-equals", "in", "not-in" ]
+                "enum" : [ "equals", "not equals", "in", "not in" ]
               },
               "value" : {
                 "type" : "string",
@@ -11318,19 +11481,28 @@
           "JiraCreateStepNode" : {
             "title" : "JiraCreateStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for JiraCreateStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11339,20 +11511,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "jira-create" ]
+                "enum" : [ "JiraCreate" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11360,7 +11542,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "jira-create"
+                    "const" : "JiraCreate"
                   }
                 }
               },
@@ -11379,12 +11561,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connector", "issue", "project" ],
+              "required" : [ "connectorRef", "issueType", "projectKey" ],
               "properties" : {
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -11402,16 +11584,49 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                   }
                 },
-                "issue" : {
+                "issueType" : {
                   "type" : "string"
                 },
-                "project" : {
+                "projectKey" : {
                   "type" : "string"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "connectorRef", "issueType", "projectKey" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "fields" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
+                }
+              },
+              "issueType" : {
+                "type" : "string"
+              },
+              "projectKey" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for JiraCreateStepInfo"
+              }
+            }
           },
           "JiraField" : {
             "title" : "JiraField",
@@ -11434,19 +11649,28 @@
           "JiraUpdateStepNode" : {
             "title" : "JiraUpdateStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for JiraUpdateStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11455,20 +11679,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "jira-update" ]
+                "enum" : [ "JiraUpdate" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11476,7 +11710,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "jira-update"
+                    "const" : "JiraUpdate"
                   }
                 }
               },
@@ -11495,12 +11729,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connector", "issue" ],
+              "required" : [ "connectorRef", "issueKey" ],
               "properties" : {
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -11518,16 +11752,49 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
                   }
                 },
-                "issue" : {
+                "issueKey" : {
                   "type" : "string"
                 },
-                "transition" : {
+                "transitionTo" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/TransitionTo"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "connectorRef", "issueKey" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "fields" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraField"
+                }
+              },
+              "issueKey" : {
+                "type" : "string"
+              },
+              "transitionTo" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/TransitionTo"
+              },
+              "description" : {
+                "desc" : "This is the description for JiraUpdateStepInfo"
+              }
+            }
           },
           "TransitionTo" : {
             "title" : "TransitionTo",
@@ -11537,11 +11804,11 @@
               "status" : {
                 "type" : "string"
               },
-              "name" : {
+              "transitionName" : {
                 "type" : "string"
               },
-              "desc" : {
-                "description" : "This is the description for TransitionTo"
+              "description" : {
+                "desc" : "This is the description for TransitionTo"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -11549,13 +11816,13 @@
           "TemplateStepNode" : {
             "title" : "TemplateStepNode",
             "type" : "object",
-            "required" : [ "template" ],
+            "required" : [ "identifier", "name", "template" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for TemplateStepNode"
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11572,16 +11839,23 @@
           "TemplateLinkConfig" : {
             "title" : "TemplateLinkConfig",
             "type" : "object",
-            "required" : [ "ref" ],
+            "required" : [ "templateRef" ],
             "properties" : {
-              "inputs" : {
+              "templateInputs" : {
                 "$ref" : "#/definitions/pipeline/common/JsonNode"
               },
-              "ref" : {
+              "templateRef" : {
                 "type" : "string"
               },
-              "variables" : {
+              "templateVariables" : {
                 "$ref" : "#/definitions/pipeline/common/JsonNode"
+              },
+              "versionLabel" : {
+                "type" : "string",
+                "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,63}$"
+              },
+              "description" : {
+                "desc" : "This is the description for TemplateLinkConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -11589,19 +11863,28 @@
           "ServiceNowApprovalStepNode" : {
             "title" : "ServiceNowApprovalStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for ServiceNowApprovalStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11610,20 +11893,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "service-now-approval" ]
+                "enum" : [ "ServiceNowApproval" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11631,7 +11924,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "service-now-approval"
+                    "const" : "ServiceNowApproval"
                   }
                 }
               },
@@ -11650,18 +11943,18 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approval_criteria", "connector", "ticket_number", "ticket_type" ],
+              "required" : [ "approvalCriteria", "connectorRef", "ticketNumber", "ticketType" ],
               "properties" : {
-                "approval_criteria" : {
+                "approvalCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
-                "change_window" : {
+                "changeWindow" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowChangeWindowSpec"
                 },
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -11673,28 +11966,65 @@
                     "minLength" : 1
                   } ]
                 },
-                "rejection_criteria" : {
+                "rejectionCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
-                "ticket_number" : {
+                "ticketNumber" : {
                   "type" : "string"
                 },
-                "ticket_type" : {
+                "ticketType" : {
                   "type" : "string"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "approvalCriteria", "connectorRef", "ticketNumber", "ticketType" ],
+            "properties" : {
+              "approvalCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "changeWindow" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowChangeWindowSpec"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "rejectionCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "ticketNumber" : {
+                "type" : "string"
+              },
+              "ticketType" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ServiceNowApprovalStepInfo"
+              }
+            }
           },
           "ServiceNowChangeWindowSpec" : {
             "title" : "ServiceNowChangeWindowSpec",
             "type" : "object",
-            "required" : [ "end_field", "start_field" ],
+            "required" : [ "endField", "startField" ],
             "properties" : {
-              "end_field" : {
+              "endField" : {
                 "type" : "string"
               },
-              "start_field" : {
+              "startField" : {
                 "type" : "string"
               },
               "description" : {
@@ -11706,19 +12036,28 @@
           "JiraApprovalStepNode" : {
             "title" : "JiraApprovalStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for JiraApprovalStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11727,20 +12066,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "jira-approval" ]
+                "enum" : [ "JiraApproval" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11748,7 +12097,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "jira-approval"
+                    "const" : "JiraApproval"
                   }
                 }
               },
@@ -11767,15 +12116,15 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approval_criteria", "connector", "issue_key" ],
+              "required" : [ "approvalCriteria", "connectorRef", "issueKey" ],
               "properties" : {
-                "approval_criteria" : {
+                "approvalCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 },
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -11787,39 +12136,84 @@
                     "minLength" : 1
                   } ]
                 },
-                "issue_key" : {
+                "issueKey" : {
                   "type" : "string"
                 },
-                "issue_type" : {
+                "issueType" : {
                   "type" : "string"
                 },
-                "project" : {
+                "projectKey" : {
                   "type" : "string"
                 },
-                "rejection_criteria" : {
+                "rejectionCriteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "approvalCriteria", "connectorRef", "issueKey" ],
+            "properties" : {
+              "approvalCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "issueKey" : {
+                "type" : "string"
+              },
+              "issueType" : {
+                "type" : "string"
+              },
+              "projectKey" : {
+                "type" : "string"
+              },
+              "rejectionCriteria" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+              },
+              "description" : {
+                "desc" : "This is the description for JiraApprovalStepInfo"
+              }
+            }
           },
           "HarnessApprovalStepNode" : {
             "title" : "HarnessApprovalStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for HarnessApprovalStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11828,20 +12222,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "harness-approval" ]
+                "enum" : [ "HarnessApproval" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11849,7 +12253,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "harness-approval"
+                    "const" : "HarnessApproval"
                   }
                 }
               },
@@ -11868,13 +12272,13 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approvers", "include_pipeline_execution_history" ],
+              "required" : [ "approvers", "includePipelineExecutionHistory" ],
               "properties" : {
-                "message" : {
+                "approvalMessage" : {
                   "type" : "string",
                   "minLength" : 1
                 },
-                "inputs" : {
+                "approverInputs" : {
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/ApproverInputInfo"
@@ -11883,7 +12287,7 @@
                 "approvers" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
                 },
-                "include_pipeline_execution_history" : {
+                "includePipelineExecutionHistory" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
@@ -11893,7 +12297,33 @@
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "approvers", "includePipelineExecutionHistory" ],
+            "properties" : {
+              "approvalMessage" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "approverInputs" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ApproverInputInfo"
+                }
+              },
+              "approvers" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
+              },
+              "includePipelineExecutionHistory" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HarnessApprovalStepInfo"
+              }
+            }
           },
           "ApproverInputInfo" : {
             "title" : "ApproverInputInfo",
@@ -11955,19 +12385,28 @@
           "BarrierStepNode" : {
             "title" : "BarrierStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for BarrierStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -11976,20 +12415,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "barrier" ]
+                "enum" : [ "Barrier" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11997,7 +12446,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "barrier"
+                    "const" : "Barrier"
                   }
                 }
               },
@@ -12016,32 +12465,50 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "ref" ],
+              "required" : [ "barrierRef" ],
               "properties" : {
-                "ref" : {
+                "barrierRef" : {
                   "type" : "string"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "barrierRef" ],
+            "properties" : {
+              "barrierRef" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for BarrierStepInfo"
+              }
+            }
           },
           "ServiceNowCreateStepNode" : {
             "title" : "ServiceNowCreateStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for ServiceNowCreateStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12050,20 +12517,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "service-now-create" ]
+                "enum" : [ "ServiceNowCreate" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12071,7 +12548,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "service-now-create"
+                    "const" : "ServiceNowCreate"
                   }
                 }
               },
@@ -12090,12 +12567,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connector", "ticket", "use_template" ],
+              "required" : [ "connectorRef", "ticketType", "useServiceNowTemplate" ],
               "properties" : {
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -12113,19 +12590,55 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                   }
                 },
-                "template" : {
+                "templateName" : {
                   "type" : "string"
                 },
-                "ticket" : {
+                "ticketType" : {
                   "type" : "string"
                 },
-                "use_template" : {
+                "useServiceNowTemplate" : {
                   "type" : "boolean"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "connectorRef", "ticketType", "useServiceNowTemplate" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "fields" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
+                }
+              },
+              "templateName" : {
+                "type" : "string"
+              },
+              "ticketType" : {
+                "type" : "string"
+              },
+              "useServiceNowTemplate" : {
+                "type" : "boolean"
+              },
+              "description" : {
+                "desc" : "This is the description for ServiceNowCreateStepInfo"
+              }
+            }
           },
           "ServiceNowField" : {
             "title" : "ServiceNowField",
@@ -12147,19 +12660,28 @@
           "ServiceNowUpdateStepNode" : {
             "title" : "ServiceNowUpdateStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for ServiceNowUpdateStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12168,20 +12690,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "service-now-update" ]
+                "enum" : [ "ServiceNowUpdate" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12189,7 +12721,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "service-now-update"
+                    "const" : "ServiceNowUpdate"
                   }
                 }
               },
@@ -12208,12 +12740,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connector", "ticket_number", "ticket_type", "use_template" ],
+              "required" : [ "connectorRef", "ticketNumber", "ticketType", "useServiceNowTemplate" ],
               "properties" : {
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -12231,39 +12763,87 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
                   }
                 },
-                "template" : {
+                "templateName" : {
                   "type" : "string"
                 },
-                "ticket_number" : {
+                "ticketNumber" : {
                   "type" : "string"
                 },
-                "ticket_type" : {
+                "ticketType" : {
                   "type" : "string"
                 },
-                "use_template" : {
+                "useServiceNowTemplate" : {
                   "type" : "boolean"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "connectorRef", "ticketNumber", "ticketType", "useServiceNowTemplate" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "fields" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowField"
+                }
+              },
+              "templateName" : {
+                "type" : "string"
+              },
+              "ticketNumber" : {
+                "type" : "string"
+              },
+              "ticketType" : {
+                "type" : "string"
+              },
+              "useServiceNowTemplate" : {
+                "type" : "boolean"
+              },
+              "description" : {
+                "desc" : "This is the description for ServiceNowUpdateStepInfo"
+              }
+            }
           },
           "ServiceNowImportSetStepNode" : {
             "title" : "ServiceNowImportSetStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for ServiceNowImportSetStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12272,20 +12852,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "service-now-import-set" ]
+                "enum" : [ "ServiceNowImportSet" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12293,7 +12883,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "service-now-import-set"
+                    "const" : "ServiceNowImportSet"
                   }
                 }
               },
@@ -12312,12 +12902,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connector", "data", "staging_table" ],
+              "required" : [ "connectorRef", "importData", "stagingTableName" ],
               "properties" : {
-                "connector" : {
+                "connectorRef" : {
                   "type" : "string"
                 },
-                "delegate" : {
+                "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -12329,16 +12919,43 @@
                     "minLength" : 1
                   } ]
                 },
-                "data" : {
+                "importData" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpecWrapper"
                 },
-                "staging_table" : {
+                "stagingTableName" : {
                   "type" : "string"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "connectorRef", "importData", "stagingTableName" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "importData" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ImportDataSpecWrapper"
+              },
+              "stagingTableName" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ServiceNowImportSetStepInfo"
+              }
+            }
           },
           "ImportDataSpecWrapper" : {
             "title" : "ImportDataSpecWrapper",
@@ -12443,19 +13060,28 @@
           "PolicyStepNode" : {
             "title" : "PolicyStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for PolicyStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12464,20 +13090,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "policy" ]
+                "enum" : [ "Policy" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12485,7 +13121,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "policy"
+                    "const" : "Policy"
                   }
                 }
               },
@@ -12504,7 +13140,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "custom"
+                    "const" : "Custom"
                   }
                 }
               },
@@ -12518,12 +13154,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "policy_sets" ],
+              "required" : [ "policySets" ],
               "properties" : {
                 "metadata" : {
                   "type" : "string"
                 },
-                "policy_sets" : {
+                "policySets" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -12531,7 +13167,7 @@
                     }
                   }, {
                     "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
@@ -12543,7 +13179,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "custom"
+                    "const" : "Custom"
                   }
                 }
               },
@@ -12555,7 +13191,32 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "policySets" ],
+            "properties" : {
+              "metadata" : {
+                "type" : "string"
+              },
+              "policySets" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "type" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PolicyStepInfo"
+              }
+            }
           },
           "CustomPolicyStepSpec" : {
             "title" : "CustomPolicyStepSpec",
@@ -12594,19 +13255,28 @@
           "WaitStepNode" : {
             "title" : "WaitStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for WaitStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12615,16 +13285,26 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "wait" ]
+                "enum" : [ "Wait" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12632,7 +13312,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "wait"
+                    "const" : "Wait"
                   }
                 }
               },
@@ -12655,7 +13335,7 @@
               "properties" : {
                 "duration" : {
                   "type" : "string",
-                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
                 },
                 "metadata" : {
                   "type" : "string"
@@ -12663,7 +13343,20 @@
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "duration" ],
+            "properties" : {
+              "duration" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+              },
+              "metadata" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for WaitStepInfo"
+              }
+            }
           },
           "ContainerStepNode" : {
             "title" : "ContainerStepNode",
@@ -12934,19 +13627,28 @@
           "FlagConfigurationStepNode" : {
             "title" : "FlagConfigurationStepNode",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
-              "desc" : {
+              "description" : {
                 "type" : "string",
                 "desc" : "This is the description for FlagConfigurationStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
-              "id" : {
+              "identifier" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -12955,20 +13657,30 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               },
               "timeout" : {
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "flag-configuration" ]
+                "enum" : [ "FlagConfiguration" ]
               },
               "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12976,7 +13688,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "flag-configuration"
+                    "const" : "FlagConfiguration"
                   }
                 }
               },
@@ -12995,9 +13707,9 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "env", "feature", "instructions" ],
+              "required" : [ "environment", "feature", "instructions" ],
               "properties" : {
-                "env" : {
+                "environment" : {
                   "type" : "string"
                 },
                 "feature" : {
@@ -13011,14 +13723,38 @@
                     }
                   }, {
                     "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
+            "type" : "object",
+            "required" : [ "environment", "feature", "instructions" ],
+            "properties" : {
+              "environment" : {
+                "type" : "string"
+              },
+              "feature" : {
+                "type" : "string"
+              },
+              "instructions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for FlagConfigurationStepInfo"
+              }
+            }
           },
           "PatchInstruction" : {
             "title" : "PatchInstruction",
