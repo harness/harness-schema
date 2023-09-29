@@ -30764,7 +30764,12 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "ticketNumber", "ticketType", "useServiceNowTemplate" ],
+              "required" : [ "connectorRef", "ticketType", "useServiceNowTemplate" ],
+              "oneOf" : [ {
+                "required" : [ "updateMultiple" ]
+              }, {
+                "required" : [ "ticketNumber" ]
+              } ],
               "properties" : {
                 "connectorRef" : {
                   "type" : "string"
@@ -30798,12 +30803,20 @@
                 },
                 "useServiceNowTemplate" : {
                   "type" : "boolean"
+                },
+                "updateMultiple" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateMultipleNode"
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "connectorRef", "ticketNumber", "ticketType", "useServiceNowTemplate" ],
+            "required" : [ "connectorRef", "ticketType", "useServiceNowTemplate" ],
+            "oneOf" : [ {
+              "required" : [ "updateMultiple" ]
+            }, {
+              "required" : [ "ticketNumber" ]
+            } ],
             "properties" : {
               "connectorRef" : {
                 "type" : "string"
@@ -30838,10 +30851,62 @@
               "useServiceNowTemplate" : {
                 "type" : "boolean"
               },
+              "updateMultiple" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateMultipleNode"
+              },
               "description" : {
                 "desc" : "This is the description for ServiceNowUpdateStepInfo"
               }
             }
+          },
+          "ServiceNowUpdateMultipleNode" : {
+            "title" : "ServiceNowUpdateMultipleNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ServiceNowUpdateMultipleNode"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CHANGE_TASK" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CHANGE_TASK"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateMultipleChangeTaskSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "ServiceNowUpdateMultipleChangeTaskSpec" : {
+            "title" : "ServiceNowUpdateMultipleChangeTaskSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "changeRequestNumber" ],
+              "properties" : {
+                "changeRequestNumber" : {
+                  "type" : "string"
+                },
+                "changeTaskType" : {
+                  "type" : "string"
+                }
+              }
+            } ]
           },
           "ShellScriptStepNode_template" : {
             "title" : "ShellScriptStepNode_template",
