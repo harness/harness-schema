@@ -1,0 +1,53 @@
+# V0 version of the template
+template:
+  templateRef: tpl
+  versionLabel: "0"
+  templateInputs:
+    type: ShellScript
+    spec:
+      environmentVariables:
+        - name: abc
+          type: String
+          value: <+input>
+    timeout: <+input>
+---
+# Pipeline v1 with v0 version of the templates
+version: 1
+kind: pipeline
+spec:
+# Input variables are defined independently in the yaml
+  inputs:
+    env:
+      type: string
+      required: true
+      default: qa
+    timeout:
+      type: string
+      required: true
+      default: 10m
+
+  stages:
+    - type: custom
+      spec:
+        steps:
+          - type: template
+            spec:
+              ref: tpl@v0
+              inputs:
+                timeout: <+inputs.timeout>
+                type: ShellScript
+                spec:
+                  environmentVariables:
+                    - name: abc
+                      type: String
+                      value: <+inputs.env>
+
+---
+
+# InputSet
+
+version: 1
+kind: input-set
+spec:
+  env: prod
+  timeout: 30m
