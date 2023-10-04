@@ -28668,15 +28668,24 @@
                   "type" : "string"
                 },
                 "output_vars" : {
-                  "type" : "array",
-                  "items" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretVariable"
                     } ]
+                  },
+                  "propertyNames" : {
+                    "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
                   }
                 },
                 "body" : {
@@ -29893,15 +29902,24 @@
                   } ]
                 },
                 "env_vars" : {
-                  "type" : "array",
-                  "items" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretVariable"
                     } ]
+                  },
+                  "propertyNames" : {
+                    "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
                   }
                 },
                 "execution_target" : {
@@ -29925,15 +29943,24 @@
                   } ]
                 },
                 "output_vars" : {
-                  "type" : "array",
-                  "items" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretVariable"
                     } ]
+                  },
+                  "propertyNames" : {
+                    "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
                   }
                 },
                 "shell" : {
@@ -53353,6 +53380,285 @@
             }
           }
         },
+        "StringVariable" : {
+          "title" : "StringVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "string" ]
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Variable" : {
+          "title" : "Variable",
+          "type" : "object",
+          "discriminator" : "type",
+          "description" : "Variable defines a variable object",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the variable type.",
+              "type" : "string",
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+            },
+            "desc" : {
+              "type" : "string",
+              "description" : "Desc defines the variable description."
+            },
+            "required" : {
+              "type" : "boolean",
+              "description" : "Required indicates the variable is required."
+            },
+            "execution_input" : {
+              "description" : "a boolean that defines whether the value is an execution input",
+              "type" : "boolean",
+              "default" : false
+            }
+          }
+        },
+        "NumberVariable" : {
+          "title" : "NumberVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "number",
+                "format" : "double"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "number" ]
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "number",
+                  "format" : "double"
+                }, {
+                  "type" : "string",
+                  "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                } ]
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "type" : "number",
+                            "format" : "double"
+                          }, {
+                            "type" : "string",
+                            "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                          } ]
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ArrayVariable" : {
+          "title" : "ArrayVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "array"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "array" ]
+              },
+              "value" : {
+                "type" : "array"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "array"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BooleanVariable" : {
+          "title" : "BooleanVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "boolean"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "boolean" ]
+              },
+              "value" : {
+                "type" : "boolean"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ObjectVariable" : {
+          "title" : "ObjectVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "object"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "object" ]
+              },
+              "value" : {
+                "type" : "object"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "SecretVariable" : {
+          "title" : "SecretVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "secret" ]
+              },
+              "value" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "Delegate" : {
           "title" : "Delegate",
           "type" : "object",
@@ -60385,6 +60691,7 @@
           "CustomStageNode_template" : {
             "title" : "CustomStageNode_template",
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "description" : "The stage description.",
@@ -60414,6 +60721,38 @@
               },
               "failure" : {
                 "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "variables" : {
+                "type" : "object",
+                "description" : "Variables defines the pipeline variable parameters.",
+                "additionalProperties" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/NumberVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretVariable"
+                  } ]
+                },
+                "propertyNames" : {
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+                }
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "labels" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -60432,11 +60771,6 @@
                   }
                 }
               }
-            } ],
-            "anyOf" : [ {
-              "required" : [ "name" ]
-            }, {
-              "required" : [ "id" ]
             } ]
           },
           "CustomStageSpecElementConfig" : {
@@ -60776,6 +61110,7 @@
           "CustomStageNode" : {
             "title" : "CustomStageNode",
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "description" : "The stage description.",
@@ -60809,6 +61144,38 @@
               },
               "failure" : {
                 "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "variables" : {
+                "type" : "object",
+                "description" : "Variables defines the pipeline variable parameters.",
+                "additionalProperties" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/NumberVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretVariable"
+                  } ]
+                },
+                "propertyNames" : {
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+                }
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "labels" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -60827,11 +61194,6 @@
                   }
                 }
               }
-            } ],
-            "anyOf" : [ {
-              "required" : [ "name" ]
-            }, {
-              "required" : [ "id" ]
             } ]
           }
         },
