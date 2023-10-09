@@ -58,9 +58,13 @@ allOf:
         format: int32
       - type: string
     stackNames:
-      type: array
-      items:
-        type: string
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
@@ -119,8 +123,12 @@ properties:
       format: int32
     - type: string
   stackNames:
-    type: array
-    items:
-      type: string
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
   description:
     desc: This is the description for AwsCdkDestroyStepInfo
