@@ -17169,6 +17169,9 @@
                   } ]
                 }
               },
+              "providerCredential" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredential"
+              },
               "targets" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -17192,6 +17195,62 @@
                 "desc" : "This is the description for TerraformExecutionData"
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerraformProviderCredential" : {
+            "title" : "TerraformProviderCredential",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Aws" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Aws"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AWSIAMRoleCredentialSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "AWSIAMRoleCredentialSpec" : {
+            "title" : "AWSIAMRoleCredentialSpec",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredentialSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerraformProviderCredentialSpec" : {
+            "title" : "TerraformProviderCredentialSpec",
+            "type" : "object",
+            "discriminator" : "type",
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TerraformCloudRollbackStepNode_template" : {
@@ -18266,6 +18325,9 @@
                     "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                   } ]
                 }
+              },
+              "providerCredential" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredential"
               },
               "exportTerraformHumanReadablePlan" : {
                 "oneOf" : [ {
