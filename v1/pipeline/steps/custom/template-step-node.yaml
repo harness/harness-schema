@@ -1,7 +1,8 @@
 title: TemplateStepNode
 type: object
 required:
-- template
+- type
+- spec
 properties:
   desc:
     type: string
@@ -12,6 +13,19 @@ properties:
   name:
     type: string
     pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
-  template:
-    $ref: template-link-config.yaml
+  type:
+    type: string
+    enum:
+      - template
+  spec:
+    $ref: ../../pipeline_using_template_spec.yaml
 $schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: template
+    then:
+      properties:
+        spec:
+          $ref: ../../pipeline_using_template_spec.yaml

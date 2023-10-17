@@ -30015,7 +30015,7 @@
           "TemplateStepNode_template" : {
             "title" : "TemplateStepNode_template",
             "type" : "object",
-            "required" : [ "template" ],
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "type" : "string",
@@ -30025,32 +30025,31 @@
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "TemplateLinkConfig" : {
-            "title" : "TemplateLinkConfig",
-            "type" : "object",
-            "required" : [ "ref" ],
-            "properties" : {
-              "inputs" : {
-                "type" : "object",
-                "description" : "inputs to be used in the linked template",
-                "additionalProperties" : {
-                  "anyOf" : [ "string", "array", "list", "object", "boolean" ]
-                },
-                "propertyNames" : {
-                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
                 }
               },
-              "ref" : {
-                "type" : "string"
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+                  }
+                }
               }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
           },
           "WaitStepNode_template" : {
             "title" : "WaitStepNode_template",
@@ -30531,7 +30530,7 @@
           "TemplateStepNode" : {
             "title" : "TemplateStepNode",
             "type" : "object",
-            "required" : [ "template" ],
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "type" : "string",
@@ -30545,11 +30544,31 @@
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+                  }
+                }
+              }
+            } ]
           },
           "ServiceNowApprovalStepNode" : {
             "title" : "ServiceNowApprovalStepNode",
@@ -32147,6 +32166,27 @@
                 "desc" : "This is the description for SbomOrchestrationSpec"
               }
             }
+          },
+          "TemplateLinkConfig" : {
+            "title" : "TemplateLinkConfig",
+            "type" : "object",
+            "required" : [ "ref" ],
+            "properties" : {
+              "inputs" : {
+                "type" : "object",
+                "description" : "inputs to be used in the linked template",
+                "additionalProperties" : {
+                  "anyOf" : [ "string", "array", "list", "object", "boolean" ]
+                },
+                "propertyNames" : {
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+                }
+              },
+              "ref" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TemplateLinkConfigV2" : {
             "title" : "TemplateLinkConfigV2",
@@ -54085,6 +54125,29 @@
           }
         }
       },
+      "PipelineUsingTemplateSpec" : {
+        "type" : "object",
+        "title" : "PipelineUsingTemplateSpec",
+        "required" : [ "ref" ],
+        "properties" : {
+          "ref" : {
+            "type" : "string",
+            "description" : "ref of the template to be linked in the pipeline, format - id@version",
+            "example" : "my_template@v1.0",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}@[0-9a-zA-Z][^\\s/&]{0,127}$"
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "inputs to be used in the linked template",
+            "additionalProperties" : {
+              "anyOf" : [ "string", "array", "list", "object", "boolean" ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
+          }
+        }
+      },
       "stages" : {
         "cd" : {
           "CustomDeploymentConfig_template" : {
@@ -61740,7 +61803,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 }, {
@@ -62002,6 +62065,90 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageConfig"
+                  }
+                }
+              }
+            } ]
+          }
+        },
+        "template" : {
+          "TemplateStageNode" : {
+            "title" : "TemplateStageNode",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for TemplateStageNode"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "TemplateStageNode_template" : {
+            "title" : "TemplateStageNode_template",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for TemplateStageNode"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/PipelineUsingTemplateSpec"
                   }
                 }
               }
@@ -62911,86 +63058,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/security/SecurityStageConfigImpl"
-                  }
-                }
-              }
-            } ]
-          }
-        },
-        "template" : {
-          "TemplateStageNode_template" : {
-            "title" : "TemplateStageNode_template",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "template" ]
-              },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "template"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfigV2"
-                  }
-                }
-              }
-            } ]
-          },
-          "TemplateStageNode" : {
-            "title" : "TemplateStageNode",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for TemplateStageNode"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "template" ]
-              },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "template"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfigV2"
                   }
                 }
               }
