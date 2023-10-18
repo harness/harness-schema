@@ -1,35 +1,46 @@
+$schema: http://json-schema.org/draft-07/schema#
 title: DeploymentStageConfig
 type: object
 required:
-- execution
+- steps
 properties:
-  customDeploymentRef:
+  custom_deployment_ref:
     $ref: step-template-ref.yaml
-  deploymentType:
+  deployment:
     type: string
     enum:
-    - Kubernetes
-    - NativeHelm
-    - Ssh
-    - WinRm
-    - ServerlessAwsLambda
-    - AzureWebApp
-    - CustomDeployment
-    - ECS
-    - Elastigroup
-    - TAS
-    - Asg
-    - GoogleCloudFunctions
-    - AwsLambda
-    - AWS_SAM
+    - kubernetes
+    - native-helm
+    - ssh
+    - win-rm
+    - serverless-aws-lambda
+    - azure-web-app
+    - custom-deployment
+    - ecs
+    - elastigroup
+    - tas
+    - asg
+    - google-cloud-functions
+    - aws-lambda
+    - aws-sam
+  steps:
+    type: array
+    items:
+      $ref: ./deployment-stage-spec-element-wrapper-config.yaml/steps
+    maxItems: 256
+    minItems: 1
+  rollbackSteps:
+    type: array
+    items:
+      $ref: ./deployment-stage-spec-element-wrapper-config.yaml/steps
+    maxItems: 256
+    minItems: 1
   environment:
     $ref: environment-yaml-v2.yaml
   environmentGroup:
     $ref: environment-group-yaml.yaml
   environments:
     $ref: environments-yaml.yaml
-  execution:
-    $ref: execution-element-config.yaml
   gitOpsEnabled:
     type: boolean
   infrastructure:
@@ -40,121 +51,120 @@ properties:
     $ref: service-config.yaml
   services:
     $ref: services-yaml.yaml
-  description:
-    desc: This is the description for DeploymentStageConfig
-$schema: http://json-schema.org/draft-07/schema#
+  desc:
+    description: This is the description for DeploymentStageConfig
 allOf:
 - if:
     properties:
-      deploymentType:
-        const: AWS_SAM
+      deployment:
+        const: aws-sam
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: aws-sam-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: Asg
+      deployment:
+        const: asg
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: asg-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: AwsLambda
+      deployment:
+        const: aws-lambda
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: aws-lambda-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: AzureWebApp
+      deployment:
+        const: azure-web-app
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: azure-web-app-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: CustomDeployment
+      deployment:
+        const: custom-deployment
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: custom-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: ECS
+      deployment:
+        const: ecs
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: ecs-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: Elastigroup
+      deployment:
+        const: elastigroup
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: elasti-group-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: GoogleCloudFunctions
+      deployment:
+        const: google-cloud-functions
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: google-cloud-function-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: Kubernetes
+      deployment:
+        const: kubernetes
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: kubernetes-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: NativeHelm
+      deployment:
+        const: native-helm
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: native-helm-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: ServerlessAwsLambda
+      deployment:
+        const: serverless-aws-lambda
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: serverless-aws-lambda-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: Ssh
+      deployment:
+        const: ssh
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: ssh-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: TAS
+      deployment:
+        const: tas
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: tas-deployment-meta-data.yaml
 - if:
     properties:
-      deploymentType:
-        const: WinRm
+      deployment:
+        const: win-rm
   then:
     properties:
-      deploymentMetadata:
+      metadata:
         $ref: winrm-deployment-meta-data.yaml
 - oneOf:
   - required:
