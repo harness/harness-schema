@@ -1,38 +1,22 @@
 type: object
-title: template
+title: PipelineTemplate
 required:
-  - identifier
-  - name
   - type
-  - versionLabel
+  - spec
 properties:
-  identifier:
-    type: string
-    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-  name:
-    type: string
-    pattern: "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
   type:
+    description: defines the type of template
     type: string
     enum:
-      - Pipeline
-  variables:
-    type: array
-    items:
-      oneOf:
-        - "$ref": "../../pipeline/number_variable.yaml"
-        - "$ref": "../../pipeline/secret_variable.yaml"
-        - "$ref": "../../pipeline/string_variable.yaml"
-  versionLabel:
-    type: string
-    pattern: "^[0-9a-zA-Z][^\\s/&]{0,127}$"
+      - pipeline
   spec:
     $ref: ./pipeline_spec.yaml
-  tags:
-    type: object
-    additionalProperties:
-      type: string
-  description:
-    type: string
-  icon:
-    type: string
+#allOf:
+#  - if:
+#      properties:
+#        type:
+#          const: pipeline
+#    then:
+#      properties:
+#        spec:
+#          $ref: ./pipeline_spec.yaml

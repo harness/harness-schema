@@ -1,38 +1,22 @@
 type: object
-title: template
+title: StageTemplate
 required:
-  - identifier
-  - name
   - type
-  - versionLabel
+  - spec
 properties:
-  identifier:
-    type: string
-    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-  name:
-    type: string
-    pattern: "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
   type:
+    description: defines the type of template
     type: string
     enum:
-      - Stage
-  variables:
-    type: array
-    items:
-      oneOf:
-        - "$ref": "../../pipeline/number_variable.yaml"
-        - "$ref": "../../pipeline/secret_variable.yaml"
-        - "$ref": "../../pipeline/string_variable.yaml"
-  versionLabel:
-    type: string
-    pattern: "^[0-9a-zA-Z][^\\s/&]{0,127}$"
+      - stage
   spec:
-    configRef: ../template_config.yaml/stage_template_types
-  tags:
-    type: object
-    additionalProperties:
-      type: string
-  description:
-    type: string
-  icon:
-    type: string
+    configRef: ../../pipeline/schema_config.yaml/pipeline_stages
+#allOf:
+#  - if:
+#      properties:
+#        type:
+#          const: stage
+#    then:
+#      properties:
+#        spec:
+#          configRef: ../../pipeline/schema_config.yaml/pipeline_stages
