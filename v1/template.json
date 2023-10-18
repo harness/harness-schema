@@ -12,27 +12,40 @@
       "description" : "defines the kind of yaml",
       "type" : "string",
       "enum" : [ "template" ]
-    },
-    "spec" : {
-      "oneOf" : [ {
-        "$ref" : "#/definitions/template/step/StepTemplate"
-      }, {
-        "$ref" : "#/definitions/template/secretmanager/SecretManagerTemplate"
-      }, {
-        "$ref" : "#/definitions/template/stage/StageTemplate"
-      }, {
-        "$ref" : "#/definitions/template/pipeline/PipelineTemplate"
-      }, {
-        "$ref" : "#/definitions/template/stepgroup/StepGroupTemplate"
-      }, {
-        "$ref" : "#/definitions/template/monitoredservice/template"
-      }, {
-        "$ref" : "#/definitions/template/artifactsourcetemplate/ArtifactSourceTemplate"
-      }, {
-        "$ref" : "#/definitions/template/customdeployment/CustomDeploymentTemplate"
-      } ]
     }
   },
+  "allOf" : [ {
+    "if" : {
+      "properties" : {
+        "kind" : {
+          "const" : "template"
+        }
+      }
+    },
+    "then" : {
+      "properties" : {
+        "spec" : {
+          "oneOf" : [ {
+            "$ref" : "#/definitions/template/step/StepTemplate"
+          }, {
+            "$ref" : "#/definitions/template/secretmanager/SecretManagerTemplate"
+          }, {
+            "$ref" : "#/definitions/template/stage/StageTemplate"
+          }, {
+            "$ref" : "#/definitions/template/pipeline/PipelineTemplate"
+          }, {
+            "$ref" : "#/definitions/template/stepgroup/StepGroupTemplate"
+          }, {
+            "$ref" : "#/definitions/template/monitoredservice/template"
+          }, {
+            "$ref" : "#/definitions/template/artifactsourcetemplate/ArtifactSourceTemplate"
+          }, {
+            "$ref" : "#/definitions/template/customdeployment/CustomDeploymentTemplate"
+          } ]
+        }
+      }
+    }
+  } ],
   "definitions" : {
     "template" : {
       "step" : {
@@ -45,353 +58,366 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "step" ]
-            },
-            "spec" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AquaTrivyScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsEcrScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsSecurityHubScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/BanditScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/BlackDuckScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/BrakemanScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/BurpScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ClairScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/CodeqlScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/CoverityScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/CustomIngestScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/DataTheoremScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/DockerContentTrustScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/FortifyOnDemandScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/FossaScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/GitleaksScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/GrypeScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/JfrogXrayScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/MendScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/MetasploitScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/NessusScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/NexusIQScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/NiktoScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/NmapScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/OpenvasScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/OwaspScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/PrismaCloudScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ProwlerScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/QualysScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ReapsawScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/RunStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SecurityNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SemgrepScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ShiftLeftScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SniperScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SnykScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SonarqubeScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/SysdigScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/TenableScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/VeracodeScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/ZapScanNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode_template"
-              } ]
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "step"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AquaTrivyScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsEcrScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsSecurityHubScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BanditScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BlackDuckScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BrakemanScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BurpScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ClairScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/CodeqlScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/CoverityScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/CustomIngestScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/DataTheoremScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/DockerContentTrustScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/FortifyOnDemandScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/FossaScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/GitleaksScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/GrypeScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/JfrogXrayScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/MendScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/MetasploitScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/NessusScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/NexusIQScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/NiktoScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/NmapScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/OpenvasScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/OwaspScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/PrismaCloudScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ProwlerScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/QualysScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ReapsawScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/RunStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SecurityNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SemgrepScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ShiftLeftScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SniperScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SnykScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SonarqubeScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/SysdigScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/TenableScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/VeracodeScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ZapScanNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode_template"
+                  } ]
+                }
+              }
+            }
+          } ]
         }
       },
       "secretmanager" : {
@@ -404,11 +430,24 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "secret-manager" ]
-            },
-            "spec" : {
-              "type" : "object"
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "secret-manager"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ]
         }
       },
       "stage" : {
@@ -421,29 +460,42 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "stage" ]
-            },
-            "spec" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-              } ]
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "stage"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
+                  } ]
+                }
+              }
+            }
+          } ]
         }
       },
       "pipeline" : {
@@ -456,11 +508,24 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "pipeline" ]
-            },
-            "spec" : {
-              "$ref" : "#/definitions/template/pipeline/PipelineTemplateSpec"
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "pipeline"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/template/pipeline/PipelineTemplateSpec"
+                }
+              }
+            }
+          } ]
         },
         "PipelineTemplateSpec" : {
           "type" : "object",
@@ -544,9 +609,24 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "group" ]
+            }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "group"
+                }
+              }
             },
-            "spec" : "object"
-          }
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ]
         }
       },
       "monitoredservice" : {
@@ -559,9 +639,24 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "monitered-service" ]
+            }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "monitered-service"
+                }
+              }
             },
-            "spec" : "object"
-          }
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ]
         }
       },
       "artifactsourcetemplate" : {
@@ -574,13 +669,22 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "artifact-source" ]
-            },
-            "spec" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/stages/cd/ArtifactSource_template"
-              } ]
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "artifact-source"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : { }
+              }
+            }
+          } ]
         }
       },
       "customdeployment" : {
@@ -593,13 +697,26 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "custom-deployment" ]
-            },
-            "spec" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig_template"
-              } ]
             }
-          }
+          },
+          "allOf" : [ {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "artifact-source"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig_template"
+                  } ]
+                }
+              }
+            }
+          } ]
         }
       }
     },
@@ -16716,6 +16833,9 @@
                   } ]
                 }
               },
+              "providerCredential" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredential"
+              },
               "targets" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -16739,6 +16859,62 @@
                 "desc" : "This is the description for TerraformExecutionData"
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerraformProviderCredential" : {
+            "title" : "TerraformProviderCredential",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Aws" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Aws"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AWSIAMRoleCredentialSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "AWSIAMRoleCredentialSpec" : {
+            "title" : "AWSIAMRoleCredentialSpec",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredentialSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerraformProviderCredentialSpec" : {
+            "title" : "TerraformProviderCredentialSpec",
+            "type" : "object",
+            "discriminator" : "type",
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TerraformCloudRollbackStepNode_template" : {
@@ -17813,6 +17989,9 @@
                     "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                   } ]
                 }
+              },
+              "providerCredential" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredential"
               },
               "exportTerraformHumanReadablePlan" : {
                 "oneOf" : [ {
@@ -29694,7 +29873,7 @@
           "TemplateStepNode_template" : {
             "title" : "TemplateStepNode_template",
             "type" : "object",
-            "required" : [ "template" ],
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "type" : "string",
@@ -29704,32 +29883,31 @@
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "TemplateLinkConfig" : {
-            "title" : "TemplateLinkConfig",
-            "type" : "object",
-            "required" : [ "ref" ],
-            "properties" : {
-              "inputs" : {
-                "type" : "object",
-                "description" : "inputs to be used in the linked template",
-                "additionalProperties" : {
-                  "anyOf" : [ "string", "array", "list", "object", "boolean" ]
-                },
-                "propertyNames" : {
-                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
                 }
               },
-              "ref" : {
-                "type" : "string"
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+                  }
+                }
               }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
           },
           "WaitStepNode_template" : {
             "title" : "WaitStepNode_template",
@@ -30769,7 +30947,7 @@
           "TemplateStepNode" : {
             "title" : "TemplateStepNode",
             "type" : "object",
-            "required" : [ "template" ],
+            "required" : [ "type", "spec" ],
             "properties" : {
               "desc" : {
                 "type" : "string",
@@ -30783,11 +30961,31 @@
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+                  }
+                }
+              }
+            } ]
           },
           "ServiceNowApprovalStepNode" : {
             "title" : "ServiceNowApprovalStepNode",
@@ -31384,6 +31582,27 @@
               }
             } ]
           },
+          "TemplateLinkConfig" : {
+            "title" : "TemplateLinkConfig",
+            "type" : "object",
+            "required" : [ "ref" ],
+            "properties" : {
+              "inputs" : {
+                "type" : "object",
+                "description" : "inputs to be used in the linked template",
+                "additionalProperties" : {
+                  "anyOf" : [ "string", "array", "list", "object", "boolean" ]
+                },
+                "propertyNames" : {
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+                }
+              },
+              "ref" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "FlagConfigurationStepNode" : {
             "title" : "FlagConfigurationStepNode",
             "type" : "object",
@@ -31826,30 +32045,6 @@
                 }
               }
             } ]
-          },
-          "TemplateLinkConfigV2" : {
-            "title" : "TemplateLinkConfigV2",
-            "type" : "object",
-            "required" : [ "name", "version" ],
-            "properties" : {
-              "inputs" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "name" : {
-                "type" : "string"
-              },
-              "variables" : {
-                "$ref" : "#/definitions/pipeline/common/JsonNode"
-              },
-              "version" : {
-                "type" : "string",
-                "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,63}$"
-              },
-              "description" : {
-                "desc" : "This is the description for TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "common" : {
@@ -53361,6 +53556,29 @@
           "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
+      "TemplateLinkConfigSpec" : {
+        "type" : "object",
+        "title" : "TemplateLinkConfigSpec",
+        "required" : [ "ref" ],
+        "properties" : {
+          "ref" : {
+            "type" : "string",
+            "description" : "ref of the template to be linked in the pipeline, format - id@version",
+            "example" : "my_template@v1.0",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}@[0-9a-zA-Z][^\\s/&]{0,127}$"
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "inputs to be used in the linked template",
+            "additionalProperties" : {
+              "anyOf" : [ "string", "array", "list", "object", "boolean" ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
+          }
+        }
+      },
       "stages" : {
         "cd" : {
           "CustomDeploymentConfig_template" : {
@@ -59863,277 +60081,6 @@
                 "desc" : "This is the description for WinrmDeploymentMetaData"
               }
             }
-          },
-          "ArtifactSource_template" : {
-            "title" : "ArtifactSource_template",
-            "type" : "object",
-            "required" : [ ],
-            "properties" : {
-              "metadata" : {
-                "type" : "string"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource" ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Acr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AcrArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "AmazonMachineImage"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AMIArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "AmazonS3"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AmazonS3ArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "ArtifactoryRegistry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/ArtifactoryRegistryArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "AzureArtifacts"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AzureArtifactsConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Bamboo"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/BambooArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "CustomArtifact"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/CustomArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "DockerRegistry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/DockerHubArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Ecr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/EcrArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Gcr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/GcrArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GithubPackageRegistry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/GithubPackagesArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GoogleArtifactRegistry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/GoogleArtifactRegistryConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GoogleCloudSource"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudSourceArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "GoogleCloudStorage"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudStorageArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Jenkins"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/JenkinsArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Nexus2Registry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/Nexus2RegistryArtifactConfig"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Nexus3Registry"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/NexusRegistryArtifactConfig"
-                  }
-                }
-              }
-            } ]
           }
         },
         "iacm" : {
@@ -60843,7 +60790,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 }, {
@@ -61008,6 +60955,51 @@
               }, {
                 "required" : [ "steps" ]
               } ]
+            } ]
+          }
+        },
+        "template" : {
+          "TemplateStageNode" : {
+            "title" : "TemplateStageNode",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for TemplateStageNode"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+                  }
+                }
+              }
             } ]
           }
         },
@@ -61969,51 +61961,6 @@
               }, {
                 "required" : [ "steps" ]
               } ]
-            } ]
-          }
-        },
-        "template" : {
-          "TemplateStageNode" : {
-            "title" : "TemplateStageNode",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for TemplateStageNode"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "template" ]
-              },
-              "template" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "template"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfigV2"
-                  }
-                }
-              }
             } ]
           }
         },
