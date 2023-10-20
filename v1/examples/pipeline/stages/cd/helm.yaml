@@ -1,0 +1,29 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        service:
+          serviceRef: test
+        environment:
+          environmentRef: dev
+          deployToAll: false
+          infrastructureDefinitions:
+            - identifier: aks
+        deployment: native-helm
+        steps:
+          - identifier: step1
+            name: step1
+            type: HelmDeploy
+            spec: {}
+        rollbackSteps:
+          - identifier: step2
+            name: step2
+            type: HelmRollback
+            spec: {}

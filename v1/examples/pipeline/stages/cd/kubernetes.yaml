@@ -1,0 +1,56 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: stage1
+      type: deployment
+      strategy:
+        type: for
+        spec:
+          concurrency: 2
+          iterations: 10
+      delegate:
+        selectors:
+          - delegate1
+      when: success
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+            spec: {}
+      variables: {}
+      timeout: 10m
+      labels: {}
+      skip_instances: false
+      spec:
+        service:
+          serviceRef: test
+        environment:
+          environmentRef: dev
+          deployToAll: false
+          infrastructureDefinitions:
+            - identifier: aks
+        deployment: kubernetes
+        steps:
+          - identifier: step1
+            name: step1
+            type: K8sRollingDeploy
+            spec: {}
+            timeout: 10m
+          - identifier: step2
+            name: step2
+            type: K8sRollingDeploy
+            spec: {}
+            timeout: 10m
+        rollbackSteps:
+          - identifier: step1
+            name: step1
+            type: K8sRollingRollback
+            spec: {}
+            timeout: 10m
+          - identifier: step2
+            name: step2
+            type: K8sRollingRollback
+            spec: {}
+            timeout: 10m
