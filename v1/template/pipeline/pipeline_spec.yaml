@@ -1,44 +1,36 @@
 type: object
-title: pipeline
+title: PipelineTemplateSpec
+required:
+  - stages
 properties:
-  allowStageExecutions:
-    type: boolean
-  delegateSelectors:
-    oneOf:
-      - type: array
-        items:
-          type: string
-      - type: string
-        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
-        minLength: 1
-  flowControl:
-    "$ref": "../../pipeline/flow_control.yaml"
-  #  notificationRules:
-  #    type: array
-  #    items:
-  #      "$ref": "#/definitions/NotificationRules"
-  properties:
-    type: object
-    properties:
-      ci:
-        type: object
-        properties:
-          codebase:
-            $ref: "../../pipeline/codebase.yaml"
   stages:
     type: array
     items:
-      "$ref": "../../pipeline/stages/stages.yaml"
+      configRef: ../../pipeline/schema_config.yaml/pipeline_stages
     maxItems: 256
     minItems: 1
+  inputs:
+    type: object
+    description: Inputs defines the pipeline template input parameters.
+    additionalProperties:
+      oneOf:
+        - "$ref": ../../pipeline/common/string-input.yaml
+        - "$ref": ../../pipeline/common/number-input.yaml
+        - "$ref": ../../pipeline/common/array-input.yaml
+        - "$ref": ../../pipeline/common/boolean-input.yaml
+        - "$ref": ../../pipeline/common/object-input.yaml
+        - "$ref": ../../pipeline/common/secret-input.yaml
+    propertyNames:
+      pattern: "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
   timeout:
     type: string
-    pattern: "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
-  variables:
-    type: array
-    items:
-      oneOf:
-        - "$ref": "../../pipeline/number_variable.yaml"
-        - "$ref": "../../pipeline/string_variable.yaml"
-        - "$ref": "../../pipeline/secret_variable.yaml"
-"$schema": http://json-schema.org/draft-07/schema#
+    description: Defines pipeline timeout
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  options:
+    type: object
+    $ref: ../../pipeline/options.yaml
+    description: Options defines global configuration options.
+  labels:
+    type: object
+    additionalProperties:
+      type: string
