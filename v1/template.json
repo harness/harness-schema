@@ -2753,6 +2753,20 @@
           "$schema" : "http://json-schema.org/draft-07/schema#",
           "allOf" : [ ]
         },
+        "Delegate" : {
+          "title" : "Delegate",
+          "type" : "object",
+          "description" : "Delegate defines the delegate matching logic.",
+          "properties" : {
+            "selectors" : {
+              "items" : {
+                "type" : "string"
+              },
+              "type" : "array",
+              "description" : "Selectors defines tags that are used to match the stage\nwith a delegate."
+            }
+          }
+        },
         "K8sDirectInfra" : {
           "title" : "K8sDirectInfra",
           "allOf" : [ {
@@ -2791,20 +2805,6 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "Delegate" : {
-          "title" : "Delegate",
-          "type" : "object",
-          "description" : "Delegate defines the delegate matching logic.",
-          "properties" : {
-            "selectors" : {
-              "items" : {
-                "type" : "string"
-              },
-              "type" : "array",
-              "description" : "Selectors defines tags that are used to match the stage\nwith a delegate."
-            }
-          }
         }
       },
       "steps" : {
@@ -29738,6 +29738,651 @@
                 }
               }
             } ]
+          },
+          "StepGroupNode" : {
+            "title" : "StepGroupNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for step group"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "group" ]
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "group"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "required" : [ "steps" ],
+                    "properties" : {
+                      "steps" : {
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                          } ]
+                        },
+                        "maxItems" : 256,
+                        "minItems" : 1
+                      }
+                    }
+                  }
+                }
+              }
+            } ]
+          },
+          "ParallelNode" : {
+            "title" : "ParallelNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for parallel steps"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "parallel" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "parallel"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "required" : [ "steps" ],
+                    "properties" : {
+                      "steps" : {
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                          } ]
+                        },
+                        "maxItems" : 256,
+                        "minItems" : 1
+                      }
+                    }
+                  }
+                }
+              }
+            } ]
           }
         },
         "custom" : {
@@ -54528,100 +55173,87 @@
             }
           },
           "DeploymentStageNode" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
             "title" : "DeploymentStageNode",
             "type" : "object",
-            "required" : [ "failureStrategies", "type" ],
+            "required" : [ "failure", "type" ],
             "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
+              "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for DeploymentStageNode"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+                "description" : "The stage description."
               },
               "id" : {
                 "type" : "string",
+                "description" : "The unique stage identifier.",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
               "name" : {
                 "type" : "string",
+                "description" : "The stage name.",
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
-              "skipInstances" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
               "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
               },
-              "tags" : {
+              "delegate" : {
+                "description" : "Configures the delegate matching logic.",
+                "$ref" : "#/definitions/pipeline/common/Delegate"
+              },
+              "type" : {
+                "type" : "string",
+                "description" : "The stage type.",
+                "enum" : [ "deployment" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "variables" : {
+                "type" : "object",
+                "description" : "Variables defines the pipeline variable parameters.",
+                "additionalProperties" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/NumberVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretVariable"
+                  } ]
+                }
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "labels" : {
                 "type" : "object",
                 "additionalProperties" : {
                   "type" : "string"
                 }
               },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Deployment" ]
-              },
-              "variables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "when" : {
+              "skip_instances" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                  "type" : "boolean"
                 }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
+                  "type" : "string"
                 } ]
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Deployment"
+                    "const" : "deployment"
                   }
                 }
               },
@@ -54635,16 +55267,565 @@
             } ]
           },
           "DeploymentStageConfig" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
             "title" : "DeploymentStageConfig",
             "type" : "object",
-            "required" : [ "execution" ],
+            "required" : [ "steps" ],
             "properties" : {
-              "customDeploymentRef" : {
+              "custom_deployment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/StepTemplateRef"
               },
-              "deploymentType" : {
+              "deployment" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
+                "enum" : [ "kubernetes", "native-helm", "ssh", "winrm", "serverless-aws-lambda", "azure-webapp", "custom-deployment", "ecs", "elastigroup", "tas", "asg", "google-cloud-functions", "aws-lambda", "aws-sam" ]
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  } ]
+                },
+                "maxItems" : 256,
+                "minItems" : 1
+              },
+              "rollback_steps" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  } ]
+                },
+                "maxItems" : 256,
+                "minItems" : 1
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -54654,9 +55835,6 @@
               },
               "environments" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentsYaml"
-              },
-              "execution" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/ExecutionElementConfig"
               },
               "gitOpsEnabled" : {
                 "type" : "boolean"
@@ -54673,22 +55851,21 @@
               "services" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServicesYaml"
               },
-              "description" : {
-                "desc" : "This is the description for DeploymentStageConfig"
+              "desc" : {
+                "description" : "This is the description for DeploymentStageConfig"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "AWS_SAM"
+                  "deployment" : {
+                    "const" : "aws-sam"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AwsSamDeploymentMetaData"
                   }
                 }
@@ -54696,14 +55873,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "Asg"
+                  "deployment" : {
+                    "const" : "asg"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AsgDeploymentMetaData"
                   }
                 }
@@ -54711,14 +55888,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "AwsLambda"
+                  "deployment" : {
+                    "const" : "aws-lambda"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AwsLambdaDeploymentMetaData"
                   }
                 }
@@ -54726,14 +55903,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "AzureWebApp"
+                  "deployment" : {
+                    "const" : "azure-web-app"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppDeploymentMetaData"
                   }
                 }
@@ -54741,14 +55918,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "CustomDeployment"
+                  "deployment" : {
+                    "const" : "custom-deployment"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentMetaData"
                   }
                 }
@@ -54756,14 +55933,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "ECS"
+                  "deployment" : {
+                    "const" : "ecs"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/EcsDeploymentMetaData"
                   }
                 }
@@ -54771,14 +55948,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "Elastigroup"
+                  "deployment" : {
+                    "const" : "elastigroup"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/ElastiGroupDeploymentMetaData"
                   }
                 }
@@ -54786,14 +55963,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "GoogleCloudFunctions"
+                  "deployment" : {
+                    "const" : "google-cloud-functions"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudFunctionDeploymentMetaData"
                   }
                 }
@@ -54801,14 +55978,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "Kubernetes"
+                  "deployment" : {
+                    "const" : "kubernetes"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/KubernetesDeploymentMetaData"
                   }
                 }
@@ -54816,14 +55993,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "NativeHelm"
+                  "deployment" : {
+                    "const" : "native-helm"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/NativeHelmDeploymentMetaData"
                   }
                 }
@@ -54831,14 +56008,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "ServerlessAwsLambda"
+                  "deployment" : {
+                    "const" : "serverless-aws-lambda"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/ServerlessAwsLambdaDeploymentMetaData"
                   }
                 }
@@ -54846,14 +56023,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "Ssh"
+                  "deployment" : {
+                    "const" : "ssh"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/SshDeploymentMetaData"
                   }
                 }
@@ -54861,14 +56038,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "TAS"
+                  "deployment" : {
+                    "const" : "tas"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/TasDeploymentMetaData"
                   }
                 }
@@ -54876,14 +56053,14 @@
             }, {
               "if" : {
                 "properties" : {
-                  "deploymentType" : {
-                    "const" : "WinRm"
+                  "deployment" : {
+                    "const" : "win-rm"
                   }
                 }
               },
               "then" : {
                 "properties" : {
-                  "deploymentMetadata" : {
+                  "metadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/WinrmDeploymentMetaData"
                   }
                 }
@@ -54921,6 +56098,26 @@
               },
               "description" : {
                 "desc" : "This is the description for StepTemplateRef"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CustomDeploymentConfig" : {
+            "title" : "CustomDeploymentConfig",
+            "type" : "object",
+            "required" : [ "execution", "infrastructure" ],
+            "properties" : {
+              "execution" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentExecutionConfig"
+              },
+              "infrastructure" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentInfraConfig"
+              },
+              "metadata" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for CustomDeploymentConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -55432,7 +56629,273 @@
             "title" : "ParallelStepElementConfig",
             "type" : "array",
             "items" : {
-              "$ref" : "#/definitions/pipeline/stages/cd/ExecutionWrapperConfig"
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+              } ]
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
@@ -55440,26 +56903,6 @@
                 "desc" : "This is the description for ParallelStepElementConfig"
               }
             }
-          },
-          "CustomDeploymentConfig" : {
-            "title" : "CustomDeploymentConfig",
-            "type" : "object",
-            "required" : [ "execution", "infrastructure" ],
-            "properties" : {
-              "execution" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentExecutionConfig"
-              },
-              "infrastructure" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentInfraConfig"
-              },
-              "metadata" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for CustomDeploymentConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "StepGroupElementConfig" : {
             "title" : "StepGroupElementConfig",
@@ -55518,7 +56961,273 @@
               "steps" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/cd/ExecutionWrapperConfig"
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/MergePRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCanaryAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupSwapRouteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/BambooBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDryRunManifestStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchLinkedAppsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/JenkinsBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGStageScaleDownStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBlueGreenStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenCreateServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsServiceSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBasicRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateARMResourceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenSwapTargetGroupsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/FetchInstanceScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sScaleStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSwapSlotStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasBasicAppSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsTrafficShiftStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBGStageSetupStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sCanaryStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsCanaryDeleteStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sBGSwapServicesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureARMRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureCreateBPStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsDeployWithoutTrafficStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsSamDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasCommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRollingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenSwapServiceStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleFunctionsGenOneDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CommandStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformCloudRunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureWebAppSlotDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformApplyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasSwapRoutesStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadManifestsStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TasRouteMappingStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/GitCloneStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/TemplateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPackageV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaPrepareRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaRollbackV2StepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkBootstrapStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkSynthStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDiffStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  } ]
                 },
                 "maxItems" : 256,
                 "minItems" : 1
@@ -60576,11 +62285,11 @@
           "DeploymentMetaData" : {
             "title" : "DeploymentMetaData",
             "type" : "object",
-            "discriminator" : "deploymentType",
+            "discriminator" : "deployment",
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
-              "description" : {
-                "desc" : "This is the description for DeploymentMetaData"
+              "desc" : {
+                "description" : "This is the description for DeploymentMetaData"
               }
             }
           },
