@@ -1,40 +1,44 @@
 title: AsgBlueGreenDeployStepInfo
 allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  properties:
-    asgName:
-      type: string
-    delegateSelectors:
-      oneOf:
-      - type: array
-        items:
-          type: string
-      - type: string
-        pattern: (<\+.+>.*)
-        minLength: 1
-    instances:
-      $ref: asg-instances.yaml
-    loadBalancer:
-      type: string
-    loadBalancers:
-      type: array
-      items:
-        $ref: aws-asg-load-balancer-config-yaml.yaml
-    prodListener:
-      type: string
-    prodListenerRuleArn:
-      type: string
-    stageListener:
-      type: string
-    stageListenerRuleArn:
-      type: string
-    useAlreadyRunningInstances:
-      oneOf:
-      - type: boolean
-      - type: string
-        pattern: (<\+.+>.*)
-        minLength: 1
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    properties:
+      asgName:
+        type: string
+      delegateSelectors:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      instances:
+        $ref: asg-instances.yaml
+      loadBalancer:
+        type: string
+      loadBalancers:
+        oneOf:
+          - type: array
+            items:
+              $ref: aws-asg-load-balancer-config-yaml.yaml
+          - type: string
+            pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+            minLength: 1
+      prodListener:
+        type: string
+      prodListenerRuleArn:
+        type: string
+      stageListener:
+        type: string
+      stageListenerRuleArn:
+        type: string
+      useAlreadyRunningInstances:
+        oneOf:
+          - type: boolean
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 properties:
@@ -42,20 +46,24 @@ properties:
     type: string
   delegateSelectors:
     oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
   instances:
     $ref: asg-instances.yaml
   loadBalancer:
     type: string
   loadBalancers:
-    type: array
-    items:
-      $ref: aws-asg-load-balancer-config-yaml.yaml
+    oneOf:
+      - type: array
+        items:
+          $ref: aws-asg-load-balancer-config-yaml.yaml
+      - type: string
+        pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+        minLength: 1
   prodListener:
     type: string
   prodListenerRuleArn:
@@ -66,9 +74,9 @@ properties:
     type: string
   useAlreadyRunningInstances:
     oneOf:
-    - type: boolean
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
   description:
     desc: This is the description for AsgBlueGreenDeployStepInfo
