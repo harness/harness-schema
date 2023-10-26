@@ -278,9 +278,9 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3Node_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
               }, {
@@ -33684,6 +33684,249 @@
               }
             }
           },
+          "SscaEnforcementStepNode_template" : {
+            "title" : "SscaEnforcementStepNode_template",
+            "type" : "object",
+            "required" : [ "spec" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaEnforcement" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaEnforcement"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SscaEnforcementStepInfo" : {
+            "title" : "SscaEnforcementStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "policy", "source" ],
+              "properties" : {
+                "policy" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
+                },
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+                },
+                "verifyAttestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "policy", "source" ],
+            "properties" : {
+              "policy" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+              },
+              "verifyAttestation" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
+              },
+              "description" : {
+                "desc" : "This is the description for SscaEnforcementStepInfo"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              }
+            }
+          },
+          "SscaOrchestrationStepNode_template" : {
+            "title" : "SscaOrchestrationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaOrchestration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaOrchestration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SscaOrchestrationStepInfo" : {
+            "title" : "SscaOrchestrationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "source" ],
+              "properties" : {
+                "attestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SbomFile"
+                },
+                "mode" : {
+                  "type" : "string",
+                  "enum" : [ "generation", "ingestion" ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "source" ],
+            "properties" : {
+              "attestation" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SbomFile"
+              },
+              "mode" : {
+                "type" : "string",
+                "enum" : [ "generation", "ingestion" ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
+              },
+              "description" : {
+                "desc" : "This is the description for SscaOrchestrationStepInfo"
+              }
+            }
+          },
+          "SbomFile" : {
+            "title" : "SbomFile",
+            "type" : "object",
+            "properties" : {
+              "file" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for SbomFile"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "ActionStepNode_template" : {
             "title" : "ActionStepNode_template",
             "type" : "object",
@@ -48109,6 +48352,160 @@
               }
             } ]
           },
+          "SscaEnforcementStepNode" : {
+            "title" : "SscaEnforcementStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SscaEnforcementStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaEnforcement" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaEnforcement"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SscaOrchestrationStepNode" : {
+            "title" : "SscaOrchestrationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SscaOrchestrationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaOrchestration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaOrchestration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "SlsaVerificationStepNode" : {
             "title" : "SlsaVerificationStepNode",
             "type" : "object",
@@ -56079,249 +56476,6 @@
               }
             }
           },
-          "SscaEnforcementStepNode_template" : {
-            "title" : "SscaEnforcementStepNode_template",
-            "type" : "object",
-            "required" : [ "spec" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaEnforcement" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaEnforcement"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaEnforcementStepInfo" : {
-            "title" : "SscaEnforcementStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "policy", "source" ],
-              "properties" : {
-                "policy" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
-                },
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-                },
-                "verifyAttestation" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "policy", "source" ],
-            "properties" : {
-              "policy" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
-              },
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-              },
-              "verifyAttestation" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
-              },
-              "description" : {
-                "desc" : "This is the description for SscaEnforcementStepInfo"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              }
-            }
-          },
-          "SscaOrchestrationStepNode_template" : {
-            "title" : "SscaOrchestrationStepNode_template",
-            "type" : "object",
-            "required" : [ "spec" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaOrchestration" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaOrchestration"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaOrchestrationStepInfo" : {
-            "title" : "SscaOrchestrationStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "source" ],
-              "properties" : {
-                "attestation" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
-                },
-                "ingestion" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
-                },
-                "mode" : {
-                  "type" : "string",
-                  "enum" : [ "generation", "ingestion" ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-                },
-                "tool" : {
-                  "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "source" ],
-            "properties" : {
-              "attestation" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/Attestation"
-              },
-              "ingestion" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/SbomFile"
-              },
-              "mode" : {
-                "type" : "string",
-                "enum" : [ "generation", "ingestion" ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
-              },
-              "tool" : {
-                "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationTool"
-              },
-              "description" : {
-                "desc" : "This is the description for SscaOrchestrationStepInfo"
-              }
-            }
-          },
-          "SbomFile" : {
-            "title" : "SbomFile",
-            "type" : "object",
-            "properties" : {
-              "file" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for SbomFile"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "GitCloneStepNode" : {
             "title" : "GitCloneStepNode",
             "type" : "object",
@@ -57472,160 +57626,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3StepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaEnforcementStepNode" : {
-            "title" : "SscaEnforcementStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for SscaEnforcementStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaEnforcement" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaEnforcement"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "SscaOrchestrationStepNode" : {
-            "title" : "SscaOrchestrationStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for SscaOrchestrationStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaOrchestration" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaOrchestration"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepInfo"
                   }
                 }
               }
@@ -60510,6 +60510,10 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/CdSscaOrchestrationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/CdSscaEnforcementStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
@@ -67720,9 +67724,9 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3Node"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SscaEnforcementStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/ci/SscaOrchestrationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
                 }, {
