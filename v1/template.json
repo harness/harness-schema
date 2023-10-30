@@ -715,7 +715,7 @@
         "StepGroupTemplate" : {
           "type" : "object",
           "title" : "StepGroupTemplate",
-          "required" : [ "type", "spec" ],
+          "required" : [ "type", "spec" ,"stage"],
           "properties" : {
             "labels" : {
               "type" : "object",
@@ -749,20 +749,25 @@
               "description" : "defines the type of template",
               "type" : "string",
               "enum" : [ "group" ]
+            },
+            "stage" : {
+              "description" : "defines the stage type of the group template",
+              "type" : "string",
+              "enum" : [ "custom", "deployment", "ci" ]
             }
           },
           "allOf" : [ {
             "if" : {
               "properties" : {
-                "type" : {
-                  "const" : "group"
+                "stage" : {
+                  "const" : "custom"
                 }
               }
             },
             "then" : {
               "properties" : {
                 "spec" : {
-                  "type" : "object"
+                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageSpecElementConfig"
                 }
               }
             }
@@ -63237,5 +63242,6 @@
         }
       }
     }
-  }
+  },
+  "$schema" : "http://json-schema.org/draft-07/schema#"
 }
