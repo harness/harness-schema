@@ -2,13 +2,20 @@ version: 1
 kind: template
 spec:
   type: group
+  stage: custom
   spec:
     steps:
-      - type: plugin
-        id: http1
-        timeout: 10m
+      - type: http
+        id: http_1
         spec:
-          uses: http
-          with:
-            url: https://www.<+ template.inputs.env>.harness.io
-            method: GET
+          url: https://www.google.com
+          method: GET
+      - type: shell-script
+        id: shell_script_1
+        spec:
+          shell: bash
+          on_delegate: true
+          source:
+            type: Inline
+            spec:
+              script: echo Hi
