@@ -1,0 +1,698 @@
+
+# WaitStepNode
+
+
+
+Harness Wait Step Yaml schema.
+
+## `description`
+
+This is the description for WaitStepNode
+
+- Type: string
+
+- Required: No
+
+
+
+
+## `enforce`
+
+
+
+- Type: undefined
+
+- Required: No
+
+
+
+
+## `failureStrategies`
+
+
+
+- Type: oneOf
+
+- Required: No
+
+
+#### Option 1:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/pipeline/common/FailureStrategyConfig"
+  }
+}
+```
+
+#### Option 2:
+
+```json
+{
+  "type": "string",
+  "pattern": "^<\\+input>$",
+  "minLength": 1
+}
+```
+
+
+## `identifier`
+
+
+
+- Type: string
+
+- Required: Yes
+
+
+
+
+## `name`
+
+
+
+- Type: string
+
+- Required: Yes
+
+
+
+
+## `strategy`
+
+
+
+- Type: oneOf
+
+- Required: No
+
+
+#### Option 1:
+
+```json
+{
+  "$ref": "#/definitions/pipeline/common/StrategyConfig"
+}
+```
+
+#### Option 2:
+
+```json
+{
+  "type": "string",
+  "pattern": "^<\\+input>$",
+  "minLength": 1
+}
+```
+
+
+## `type`
+
+
+
+- Type: string
+
+- Required: Yes
+
+
+
+
+## `when`
+
+
+
+- Type: oneOf
+
+- Required: No
+
+
+#### Option 1:
+
+```json
+{
+  "$ref": "#/definitions/pipeline/common/StepWhenCondition"
+}
+```
+
+#### Option 2:
+
+```json
+{
+  "type": "string",
+  "pattern": "^<\\+input>$",
+  "minLength": 1
+}
+```
+
+
+## `spec`
+
+
+
+- Type: undefined
+
+- Required: Yes
+
+
+
+
+## JSON Schema
+
+```json
+{
+  "title": "WaitStepNode",
+  "type": "object",
+  "required": [
+    "identifier",
+    "name",
+    "spec",
+    "type"
+  ],
+  "properties": {
+    "description": {
+      "type": "string",
+      "desc": "This is the description for WaitStepNode"
+    },
+    "enforce": {
+      "$ref": "#/definitions/pipeline/common/PolicyConfig"
+    },
+    "failureStrategies": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pipeline/common/FailureStrategyConfig"
+          }
+        },
+        {
+          "type": "string",
+          "pattern": "^<\\+input>$",
+          "minLength": 1
+        }
+      ]
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+    },
+    "strategy": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/pipeline/common/StrategyConfig"
+        },
+        {
+          "type": "string",
+          "pattern": "^<\\+input>$",
+          "minLength": 1
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Wait"
+      ]
+    },
+    "when": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/pipeline/common/StepWhenCondition"
+        },
+        {
+          "type": "string",
+          "pattern": "^<\\+input>$",
+          "minLength": 1
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "Wait"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "$ref": "#/definitions/pipeline/steps/custom/WaitStepInfo"
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "pipeline": {
+      "common": {
+        "PolicyConfig": {
+          "title": "PolicyConfig",
+          "type": "object",
+          "required": [
+            "policySets"
+          ],
+          "properties": {
+            "policySets": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "string",
+                  "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength": 1
+                }
+              ]
+            },
+            "description": {
+              "desc": "This is the description for PolicyConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "FailureStrategyConfig": {
+          "title": "FailureStrategyConfig",
+          "type": "object",
+          "required": [
+            "onFailure"
+          ],
+          "properties": {
+            "onFailure": {
+              "$ref": "#/definitions/pipeline/common/OnFailureConfig"
+            },
+            "description": {
+              "desc": "This is the description for FailureStrategyConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "OnFailureConfig": {
+          "title": "OnFailureConfig",
+          "type": "object",
+          "required": [
+            "action",
+            "errors"
+          ],
+          "properties": {
+            "action": {
+              "$ref": "#/definitions/pipeline/common/FailureStrategyActionConfig"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Unknown",
+                  "AllErrors",
+                  "Authentication",
+                  "Connectivity",
+                  "Timeout",
+                  "Authorization",
+                  "Verification",
+                  "DelegateProvisioning",
+                  "PolicyEvaluationFailure",
+                  "InputTimeoutError",
+                  "ApprovalRejection",
+                  "DelegateRestart",
+                  "UserMarkedFailure"
+                ]
+              }
+            },
+            "description": {
+              "desc": "This is the description for OnFailureConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "FailureStrategyActionConfig": {
+          "title": "FailureStrategyActionConfig",
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "discriminator": "type",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Ignore",
+                "Retry",
+                "MarkAsSuccess",
+                "Abort",
+                "StageRollback",
+                "StepGroupRollback",
+                "PipelineRollback",
+                "ManualIntervention",
+                "ProceedWithDefaultValues",
+                "MarkAsFailure",
+                "RetryStepGroup"
+              ]
+            },
+            "description": {
+              "desc": "This is the description for FailureStrategyActionConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "StrategyConfig": {
+          "title": "StrategyConfig",
+          "type": "object",
+          "properties": {
+            "matrix": {
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/pipeline/common/ParameterFieldMatrixConfigInterface"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength": 1
+                }
+              ]
+            },
+            "parallelism": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "repeat": {
+              "$ref": "#/definitions/pipeline/common/HarnessForConfig"
+            },
+            "description": {
+              "desc": "This is the description for StrategyConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "allOf": [
+            {
+              "oneOf": [
+                {
+                  "required": [
+                    "repeat"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallelism"
+                  ]
+                },
+                {
+                  "required": [
+                    "matrix"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "ParameterFieldMatrixConfigInterface": {
+          "title": "ParameterFieldMatrixConfigInterface",
+          "type": "object",
+          "properties": {
+            "defaultValue": {
+              "$ref": "#/definitions/pipeline/common/MatrixConfigInterface"
+            },
+            "executionInput": {
+              "type": "boolean"
+            },
+            "expression": {
+              "type": "boolean"
+            },
+            "expressionValue": {
+              "type": "string"
+            },
+            "inputSetValidator": {
+              "$ref": "#/definitions/pipeline/common/InputSetValidator"
+            },
+            "jsonResponseField": {
+              "type": "boolean"
+            },
+            "responseField": {
+              "type": "string"
+            },
+            "typeString": {
+              "type": "boolean"
+            },
+            "value": {
+              "$ref": "#/definitions/pipeline/common/MatrixConfigInterface"
+            },
+            "description": {
+              "desc": "This is the description for ParameterFieldMatrixConfigInterface"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "MatrixConfigInterface": {
+          "title": "MatrixConfigInterface",
+          "type": "object",
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "properties": {
+            "description": {
+              "desc": "This is the description for MatrixConfigInterface"
+            }
+          }
+        },
+        "InputSetValidator": {
+          "title": "InputSetValidator",
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "string"
+            },
+            "validatorType": {
+              "type": "string",
+              "enum": [
+                "ALLOWED_VALUES",
+                "REGEX"
+              ]
+            },
+            "description": {
+              "desc": "This is the description for InputSetValidator"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "HarnessForConfig": {
+          "title": "HarnessForConfig",
+          "type": "object",
+          "properties": {
+            "end": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "items": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "maxConcurrency": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "partitionSize": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "start": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "times": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "pattern": "(<\\+.+>.*)",
+                  "minLength": 1
+                }
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "Percentage",
+                "Count"
+              ]
+            },
+            "description": {
+              "desc": "This is the description for HarnessForConfig"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "allOf": [
+            {
+              "oneOf": [
+                {
+                  "required": [
+                    "times"
+                  ]
+                },
+                {
+                  "required": [
+                    "items"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "StepWhenCondition": {
+          "title": "StepWhenCondition",
+          "type": "object",
+          "required": [
+            "stageStatus"
+          ],
+          "properties": {
+            "condition": {
+              "type": "string",
+              "pattern": "^(?!<\\+input>.*\\.executionInput\\(\\)(.*)$)"
+            },
+            "stageStatus": {
+              "type": "string",
+              "enum": [
+                "Success",
+                "Failure",
+                "All"
+              ]
+            },
+            "description": {
+              "desc": "This is the description for StepWhenCondition"
+            }
+          },
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "StepSpecType": {
+          "title": "StepSpecType",
+          "type": "object",
+          "discriminator": "type",
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "properties": {
+            "description": {
+              "desc": "This is the description for StepSpecType"
+            }
+          }
+        }
+      },
+      "steps": {
+        "custom": {
+          "WaitStepInfo": {
+            "title": "WaitStepInfo",
+            "allOf": [
+              {
+                "$ref": "#/definitions/pipeline/common/StepSpecType"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "duration"
+                ],
+                "properties": {
+                  "duration": {
+                    "type": "string",
+                    "pattern": "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+                  },
+                  "metadata": {
+                    "type": "string"
+                  }
+                }
+              }
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "required": [
+              "duration"
+            ],
+            "properties": {
+              "duration": {
+                "type": "string",
+                "pattern": "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+              },
+              "metadata": {
+                "type": "string"
+              },
+              "description": {
+                "desc": "This is the description for WaitStepInfo"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```

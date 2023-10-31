@@ -8,6 +8,13 @@ const propertyTemplate = `
 - Required: {required}
 
 {exampleSection}
+{oneOfSection}
+`;
+
+const childTemplate = `
+\`\`\`json
+{schema}
+\`\`\`
 `;
 
 
@@ -28,5 +35,6 @@ Harness Wait Step Yaml schema.
 
 module.exports = {
     propertyTemplate,
-    schemaTemplate
+    schemaTemplate,
+    childTemplate
   };
