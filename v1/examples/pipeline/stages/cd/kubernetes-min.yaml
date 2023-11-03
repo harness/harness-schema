@@ -1,0 +1,21 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        service:
+          serviceRef: test
+        environment:
+          environmentRef: dev
+          deployToAll: false
+          infrastructureDefinitions:
+            - identifier: aks
+        steps:
+          - type: k8s-rolling-deploy
+            spec: {}
