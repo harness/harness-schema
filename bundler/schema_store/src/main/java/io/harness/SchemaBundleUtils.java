@@ -205,36 +205,64 @@ public class SchemaBundleUtils implements SchemaBundler {
     return jsonNode;
   }
   private void handleConfigRef(Path parentDir, ObjectNode node) {
+    ArrayNode oneOfNodes = YAML_OBJECT_MAPPER.createArrayNode();
+    Set<String> oneOfNodesNameSet = new HashSet<>();
     JsonNode configRefNode = node.remove(CONFIG_REF_NODE);
     if (configRefNode != null && configRefNode.isTextual()) {
-      String configRefValue = configRefNode.textValue();
-      if (configRefValue.contains(".yaml")) {
-        int lastSlashIndex = configRefValue.lastIndexOf("/");
-        if (lastSlashIndex == -1) {
-          throw new InvalidRequestStateException(String.format("ConfigRef %s does not have / in it.", configRefValue));
+      handleConfigRefInternal(parentDir,configRefNode,node,oneOfNodesNameSet,oneOfNodes);
+    } else if(configRefNode != null && configRefNode.isObject()){
+      // This is the case when there are nested configRefs. So first we go to the first level of configRef and find the list of final configRefs that should apply to the current node.
+      try {
+        String refValue = configRefNode.get(REF_NODE).asText();
+        String configWrapperFilePath = refValue.substring(0,refValue.lastIndexOf("/"));
+        configWrapperFilePath = parentDir.resolve(configWrapperFilePath).normalize().toString();
+        JsonNode configWrapperNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER,readFile(configWrapperFilePath));
+        String configWrapperFieldName = refValue.substring(refValue.lastIndexOf("/")+1);
+        ArrayNode configRefs = (ArrayNode) configWrapperNode.get(configWrapperFieldName);
+
+        for(JsonNode configRefElement: configRefs){
+          handleConfigRefInternal(parentDir,configRefElement,node,oneOfNodesNameSet,oneOfNodes);
         }
-        String configFileName = configRefValue.substring(0, lastSlashIndex);
-        String fieldInConfigFile = configRefValue.substring(lastSlashIndex + 1);
-        Path configFilePath = parentDir.resolve(configFileName);
-        configFilePath = configFilePath.normalize();
-        String configFile = readFile(configFilePath.toString());
-        JsonNode configFileNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER, configFile);
-        if (!configFileNode.has(fieldInConfigFile)) {
-          throw new InvalidRequestStateException("Invalid config file reference: " + configRefValue);
-        }
-        JsonNode configNode = configFileNode.get(fieldInConfigFile);
-        if (configNode.isArray()) {
-          ArrayNode oneOfNodes = YAML_OBJECT_MAPPER.createArrayNode();
-          Iterator<JsonNode> elements = configNode.elements();
-          while (elements.hasNext()) {
-            ObjectNode n = YAML_OBJECT_MAPPER.createObjectNode();
-            String value = elements.next().textValue();
-            String configFileDirectoryRelativeToParent = configFileName + "/../";
-            String refValueRelativeToParent = configFileDirectoryRelativeToParent + value;
-            n.put(REF_NODE, refValueRelativeToParent);
-            oneOfNodes.add(n);
+      } catch (Exception ex){
+        throw new InvalidRequestStateException("Could not handle the nexted configRefs. Probably during step-group schema creation.");
+      }
+    }
+    if(oneOfNodes.size()>0){
+      node.set("oneOf", oneOfNodes);
+    }
+  }
+
+  private void handleConfigRefInternal(Path parentDir, JsonNode configRefNode,ObjectNode node, Set<String> oneOfNodesNameSet, ArrayNode oneOfNodes){
+    String configRefValue = configRefNode.textValue();
+    if (configRefValue.contains(".yaml")) {
+      int lastSlashIndex = configRefValue.lastIndexOf("/");
+      if (lastSlashIndex == -1) {
+        throw new InvalidRequestStateException(String.format("ConfigRef %s does not have / in it.", configRefValue));
+      }
+      String configFileName = configRefValue.substring(0, lastSlashIndex);
+      String fieldInConfigFile = configRefValue.substring(lastSlashIndex + 1);
+      Path configFilePath = parentDir.resolve(configFileName);
+      configFilePath = configFilePath.normalize();
+      String configFile = readFile(configFilePath.toString());
+      JsonNode configFileNode = convertYamlToJsonNode(YAML_OBJECT_MAPPER, configFile);
+      if (!configFileNode.has(fieldInConfigFile)) {
+        throw new InvalidRequestStateException("Invalid config file reference: " + configRefValue);
+      }
+      JsonNode configNode = configFileNode.get(fieldInConfigFile);
+      if (configNode.isArray()) {
+        Iterator<JsonNode> elements = configNode.elements();
+        while (elements.hasNext()) {
+          ObjectNode n = YAML_OBJECT_MAPPER.createObjectNode();
+          String value = elements.next().textValue();
+          String oneOfNodeName = value.substring(value.lastIndexOf("./")+1);
+          if(oneOfNodesNameSet.contains(oneOfNodeName)){
+            continue;
           }
-          node.set("oneOf", oneOfNodes);
+          oneOfNodesNameSet.add(oneOfNodeName);
+          String configFileDirectoryRelativeToParent = configFileName + "/../";
+          String refValueRelativeToParent = configFileDirectoryRelativeToParent + value;
+          n.put(REF_NODE, refValueRelativeToParent);
+          oneOfNodes.add(n);
         }
       }
     }
