@@ -45454,7 +45454,7 @@
               },
               "provider" : {
                 "type" : "string",
-                "enum" : [ "smi", "istio" ]
+                "enum" : [ "SMI", "Istio" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -45462,7 +45462,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "smi"
+                    "const" : "SMI"
                   }
                 }
               },
@@ -45477,14 +45477,14 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "istio"
+                    "const" : "Istio"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/IstioProviderSpec"
+                    "$ref" : "#/definitions/pipeline/steps/cd/IstioProvider"
                   }
                 }
               }
@@ -45493,21 +45493,11 @@
           "SMIProvider" : {
             "title" : "SMIProvider",
             "type" : "object",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
-            } ],
+            "required" : [ "rootService", "routes", "destinations" ],
             "properties" : {
               "rootService" : {
                 "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ProviderBaseSpec" : {
-            "title" : "ProviderBaseSpec",
-            "type" : "object",
-            "required" : [ "routes", "destinations" ],
-            "properties" : {
+              },
               "routes" : {
                 "type" : "array",
                 "items" : {
@@ -45534,7 +45524,7 @@
                 "properties" : {
                   "type" : {
                     "type" : "string",
-                    "enum" : [ "http" ]
+                    "enum" : [ "http", "tcp", "udp", "tls" ]
                   },
                   "rules" : {
                     "type" : "array",
@@ -45543,7 +45533,7 @@
                       "required" : [ "rule" ],
                       "properties" : {
                         "rule" : {
-                          "$ref" : "#/definitions/pipeline/steps/cd/TrafficRouteRule"
+                          "$ref" : "#/definitions/pipeline/steps/cd/TrafficRoute"
                         }
                       },
                       "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -45555,14 +45545,14 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "TrafficRouteRule" : {
-            "title" : "TrafficRouteRule",
+          "TrafficRoute" : {
+            "title" : "TrafficRoute",
             "type" : "object",
             "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "uri", "method", "header", "port", "scheme", "authority" ]
+                "enum" : [ "uri", "method", "header", "port", "scheme", "authority", "host" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -45639,8 +45629,7 @@
                           "enum" : [ "exact", "prefix", "regex" ]
                         }
                       }
-                    } ],
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    } ]
                   }
                 }
               }
@@ -45678,8 +45667,7 @@
                             "matchType" : {
                               "type" : "string",
                               "enum" : [ "exact", "prefix", "regex" ]
-                            },
-                            "$schema" : "http://json-schema.org/draft-07/schema#"
+                            }
                           }
                         }
                       }
@@ -45707,13 +45695,13 @@
                         "name" : {
                           "type" : "string"
                         },
-                        "values" : {
+                        "values" : [ {
                           "type" : "array",
                           "items" : {
                             "type" : "number",
                             "minLength" : 1
                           }
-                        }
+                        } ]
                       }
                     }, {
                       "required" : [ "name", "value" ],
@@ -45725,8 +45713,7 @@
                           "type" : "number"
                         }
                       }
-                    } ],
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    } ]
                   }
                 }
               }
@@ -45790,6 +45777,36 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "host"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleHostSpec",
+                    "type" : "object",
+                    "required" : [ "name", "values" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "values" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string",
+                          "minLength" : 1
+                        }
+                      }
+                    },
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
             } ]
           },
           "TrafficRoutingDestination" : {
@@ -45799,7 +45816,7 @@
             "properties" : {
               "destination" : {
                 "type" : "object",
-                "required" : [ "host" ],
+                "required" : [ "host", "weight" ],
                 "properties" : {
                   "host" : {
                     "type" : "string"
@@ -45813,12 +45830,10 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "IstioProviderSpec" : {
-            "title" : "IstioProviderSpec",
+          "IstioProvider" : {
+            "title" : "IstioProvider",
             "type" : "object",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
-            } ],
+            "required" : [ "routes", "destinations" ],
             "properties" : {
               "gateways" : {
                 "type" : "array",
@@ -45830,6 +45845,18 @@
                 "type" : "array",
                 "items" : {
                   "type" : "string"
+                }
+              },
+              "routes" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/RouteSpec"
+                }
+              },
+              "destinations" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/TrafficRoutingDestination"
                 }
               }
             },
