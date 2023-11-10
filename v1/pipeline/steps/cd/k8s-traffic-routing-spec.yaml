@@ -1,0 +1,31 @@
+title: TrafficRouting
+type: object
+required:
+  - spec
+  - provider
+properties:
+  spec:
+    type: object
+  provider:
+    type: string
+    enum:
+      - SMI
+      - Istio
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: SMI
+    then:
+      properties:
+        spec:
+          $ref: k8s-smi-provider-spec.yaml
+  - if:
+      properties:
+        type:
+          const: Istio
+    then:
+      properties:
+        spec:
+          $ref: k8s-istio-provider-spec.yaml
