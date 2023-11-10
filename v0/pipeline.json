@@ -45493,11 +45493,21 @@
           "SMIProvider" : {
             "title" : "SMIProvider",
             "type" : "object",
-            "required" : [ "routes", "destinations" ],
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
+            } ],
             "properties" : {
               "rootService" : {
                 "type" : "string"
-              },
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ProviderBaseSpec" : {
+            "title" : "ProviderBaseSpec",
+            "type" : "object",
+            "required" : [ "routes", "destinations" ],
+            "properties" : {
               "routes" : {
                 "type" : "array",
                 "items" : {
@@ -45819,7 +45829,7 @@
             "properties" : {
               "destination" : {
                 "type" : "object",
-                "required" : [ "host", "weight" ],
+                "required" : [ "host" ],
                 "properties" : {
                   "host" : {
                     "type" : "string"
@@ -45836,7 +45846,9 @@
           "IstioProviderSpec" : {
             "title" : "IstioProviderSpec",
             "type" : "object",
-            "required" : [ "routes", "destinations" ],
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
+            } ],
             "properties" : {
               "gateways" : {
                 "type" : "array",
@@ -45848,18 +45860,6 @@
                 "type" : "array",
                 "items" : {
                   "type" : "string"
-                }
-              },
-              "routes" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/RouteSpec"
-                }
-              },
-              "destinations" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/TrafficRoutingDestination"
                 }
               }
             },
