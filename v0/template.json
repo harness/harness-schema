@@ -12846,6 +12846,9 @@
               "instanceSelection" : {
                 "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
               },
+              "trafficRouting" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/TrafficRouting"
+              },
               "skipDryRun" : {
                 "oneOf" : [ {
                   "type" : "boolean"
@@ -12963,6 +12966,397 @@
                 "desc" : "This is the description for PercentageInstanceSelection"
               }
             }
+          },
+          "TrafficRouting" : {
+            "title" : "TrafficRouting",
+            "type" : "object",
+            "required" : [ "spec", "provider" ],
+            "properties" : {
+              "spec" : {
+                "type" : "object"
+              },
+              "provider" : {
+                "type" : "string",
+                "enum" : [ "smi", "istio" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "smi"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SMIProvider"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "istio"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/IstioProviderSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "SMIProvider" : {
+            "title" : "SMIProvider",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
+            } ],
+            "properties" : {
+              "rootService" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ProviderBaseSpec" : {
+            "title" : "ProviderBaseSpec",
+            "type" : "object",
+            "required" : [ "routes", "destinations" ],
+            "properties" : {
+              "routes" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/RouteSpec"
+                }
+              },
+              "destinations" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/TrafficRoutingDestination"
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "RouteSpec" : {
+            "title" : "RouteSpec",
+            "type" : "object",
+            "required" : [ "route" ],
+            "properties" : {
+              "route" : {
+                "type" : "object",
+                "required" : [ "type", "rules" ],
+                "properties" : {
+                  "type" : {
+                    "type" : "string",
+                    "enum" : [ "http" ]
+                  },
+                  "rules" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "rule" ],
+                      "properties" : {
+                        "rule" : {
+                          "$ref" : "#/definitions/pipeline/steps/cd/TrafficRouteRule"
+                        }
+                      },
+                      "$schema" : "http://json-schema.org/draft-07/schema#"
+                    }
+                  }
+                },
+                "$schema" : "http://json-schema.org/draft-07/schema#"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TrafficRouteRule" : {
+            "title" : "TrafficRouteRule",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "uri", "method", "header", "port", "scheme", "authority" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "uri"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleURISpec",
+                    "type" : "object",
+                    "required" : [ "name", "value" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "matchType" : {
+                        "type" : "string",
+                        "enum" : [ "exact", "prefix", "regex" ]
+                      }
+                    },
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "method"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleMethodSpec",
+                    "type" : "object",
+                    "oneOf" : [ {
+                      "required" : [ "name", "values" ],
+                      "properties" : {
+                        "name" : {
+                          "type" : "string"
+                        },
+                        "values" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string",
+                            "minLength" : 1,
+                            "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
+                          }
+                        }
+                      }
+                    }, {
+                      "required" : [ "name", "value", "matchType" ],
+                      "properties" : {
+                        "name" : {
+                          "type" : "string"
+                        },
+                        "value" : {
+                          "type" : "string",
+                          "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
+                        },
+                        "matchType" : {
+                          "type" : "string",
+                          "enum" : [ "exact", "prefix", "regex" ]
+                        }
+                      }
+                    } ],
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "header"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleHeaderSpec",
+                    "type" : "object",
+                    "required" : [ "name", "values" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "values" : {
+                        "type" : "array",
+                        "items" : {
+                          "minLength" : 1,
+                          "type" : "object",
+                          "required" : [ "key", "value" ],
+                          "properties" : {
+                            "key" : {
+                              "type" : "string"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "matchType" : {
+                              "type" : "string",
+                              "enum" : [ "exact", "prefix", "regex" ]
+                            },
+                            "$schema" : "http://json-schema.org/draft-07/schema#"
+                          }
+                        }
+                      }
+                    },
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "port"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRulePortSpec",
+                    "type" : "object",
+                    "oneOf" : [ {
+                      "required" : [ "name", "values" ],
+                      "properties" : {
+                        "name" : {
+                          "type" : "string"
+                        },
+                        "values" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "number",
+                            "minLength" : 1
+                          }
+                        }
+                      }
+                    }, {
+                      "required" : [ "name", "value" ],
+                      "properties" : {
+                        "name" : {
+                          "type" : "string"
+                        },
+                        "value" : {
+                          "type" : "number"
+                        }
+                      }
+                    } ],
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "scheme"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleSchemeSpec",
+                    "type" : "object",
+                    "required" : [ "name", "value", "matchType" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "matchType" : {
+                        "type" : "string",
+                        "enum" : [ "exact", "prefix", "regex" ]
+                      }
+                    },
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "authority"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "title" : "TrafficRoutingRuleAuthoritySpec",
+                    "type" : "object",
+                    "required" : [ "name", "value", "matchType" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "matchType" : {
+                        "type" : "string",
+                        "enum" : [ "exact", "prefix", "regex" ]
+                      }
+                    },
+                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                  }
+                }
+              }
+            } ]
+          },
+          "TrafficRoutingDestination" : {
+            "title" : "TrafficRoutingDestination",
+            "type" : "object",
+            "required" : [ "destination" ],
+            "properties" : {
+              "destination" : {
+                "type" : "object",
+                "required" : [ "host" ],
+                "properties" : {
+                  "host" : {
+                    "type" : "string"
+                  },
+                  "weight" : {
+                    "type" : "number"
+                  }
+                },
+                "$schema" : "http://json-schema.org/draft-07/schema#"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "IstioProviderSpec" : {
+            "title" : "IstioProviderSpec",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ProviderBaseSpec"
+            } ],
+            "properties" : {
+              "gateways" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "hosts" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "K8sDeleteStepNode_template" : {
             "title" : "K8sDeleteStepNode_template",
