@@ -208,6 +208,7 @@ list2=(
   "iacmapproval-step-node.yaml"
   "iacmterraform-plugin-step-node.yaml"
   "update-git-ops-app-step-node.yaml"
+  "k8s-traffic-routing-step-node.yaml"
 )
 
 
