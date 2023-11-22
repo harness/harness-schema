@@ -446,6 +446,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode_template"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingStepNode_template"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode_template"
                   } ]
                 }
               }
@@ -921,6 +923,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/StepGroupNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ParallelNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                 } ]
               },
               "maxItems" : 256,
@@ -23133,6 +23137,194 @@
               }
             }
           },
+          "DownloadAwsS3StepNode_template" : {
+            "title" : "DownloadAwsS3StepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "DownloadAwsS3" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "DownloadAwsS3"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "DownloadAwsS3StepInfo" : {
+            "title" : "DownloadAwsS3StepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "downloadPath" : {
+                  "type" : "string"
+                },
+                "bucketName" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "paths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "outputFilePathsContent" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "downloadPath" : {
+                "type" : "string"
+              },
+              "bucketName" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "paths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "outputFilePathsContent" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for DownloadAwsS3StepInfo"
+              }
+            }
+          },
           "MergePRStepNode" : {
             "title" : "MergePRStepNode",
             "type" : "object",
@@ -30998,6 +31190,8 @@
                             "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                           } ]
                         },
                         "maxItems" : 256,
@@ -31317,12 +31511,91 @@
                             "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                           } ]
                         },
                         "maxItems" : 256,
                         "minItems" : 1
                       }
                     }
+                  }
+                }
+              }
+            } ]
+          },
+          "DownloadAwsS3StepNode" : {
+            "title" : "DownloadAwsS3StepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for DownloadAwsS3StepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "DownloadAwsS3" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "DownloadAwsS3"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepInfo"
                   }
                 }
               }
@@ -36064,6 +36337,8 @@
                             "$ref" : "#/definitions/pipeline/steps/custom/StepGroupNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/custom/ParallelNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                           } ]
                         },
                         "maxItems" : 256,
@@ -36251,6 +36526,8 @@
                             "$ref" : "#/definitions/pipeline/steps/custom/StepGroupNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/custom/ParallelNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                           } ]
                         },
                         "maxItems" : 256,
@@ -55921,7 +56198,7 @@
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for IACMApprovalStepNode"
+                "desc" : "This is the description for IDPCookieCutterStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -56706,6 +56983,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                   } ]
                 },
                 "maxItems" : 256,
@@ -56982,6 +57261,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                   } ]
                 },
                 "maxItems" : 256,
@@ -57569,6 +57850,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                 } ]
               },
               "stepGroup" : {
@@ -57852,6 +58135,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
               } ]
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -58186,6 +58471,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/StepGroupNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                   } ]
                 },
                 "maxItems" : 256,
@@ -64821,6 +65108,8 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/StepGroupNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/custom/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                   } ]
                 }
               },
@@ -64963,6 +65252,8 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/StepGroupNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/custom/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                   } ]
                 },
                 "maxItems" : 256,
@@ -65247,6 +65538,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                 } ]
               },
               "stepGroup" : {
