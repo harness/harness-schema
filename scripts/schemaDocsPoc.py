@@ -1,7 +1,7 @@
 from json_schema_for_humans.generate import generate_from_filename
 from json_schema_for_humans.generation_configuration import GenerationConfiguration
 
-config = GenerationConfiguration(copy_css=True, expand_buttons=True, show_breadcrumbs=False)
+config = GenerationConfiguration(copy_css=True, expand_buttons=True, show_breadcrumbs=False, custom_template_path="jsHarnessCustomTemplate/base.html")
 
 
  # json-schema-for-humans - Library
