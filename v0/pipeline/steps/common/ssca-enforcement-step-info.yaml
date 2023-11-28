@@ -2,12 +2,18 @@ title: SscaEnforcementStepInfo
 allOf:
 - $ref: ../../common/step-spec-type.yaml
 - type: object
-  required:
-  - policy
-  - source
   properties:
+    description:
+      desc: This is the description for SscaEnforcementStepInfo
     policy:
-      $ref: ../custom/enforcement-policy.yaml
+      oneOf:
+        - $ref: ../custom/enforcement-policy.yaml
+        - type: object
+          properties:
+            policySet:
+              type: string
+          description:
+            desc: The reference of the SBOM OPA policy set.
     source:
       $ref: ../custom/sbom-source.yaml
     verifyAttestation:
@@ -19,14 +25,3 @@ type: object
 required:
 - policy
 - source
-properties:
-  policy:
-    $ref: ../custom/enforcement-policy.yaml
-  source:
-    $ref: ../custom/sbom-source.yaml
-  verifyAttestation:
-    $ref: ../custom/verify-attestation.yaml
-  description:
-    desc: This is the description for SscaEnforcementStepInfo
-  resources:
-    $ref: ../../common/container-resource.yaml
