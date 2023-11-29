@@ -34610,21 +34610,15 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "infrastructure", "policy", "source", "verifyAttestation" ],
               "properties" : {
-                "description" : {
-                  "desc" : "This is the description for CdSscaEnforcementStepInfo"
-                },
                 "infrastructure" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
                   } ]
                 },
                 "policy" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/custom/SscaOpaPolicyConfig"
-                  } ]
+                  "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
                 },
                 "source" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
@@ -34636,7 +34630,26 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "infrastructure", "policy", "source", "verifyAttestation" ]
+            "required" : [ "infrastructure", "policy", "source" ],
+            "properties" : {
+              "infrastructure" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
+                } ]
+              },
+              "policy" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/EnforcementPolicy"
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SbomSource"
+              },
+              "verifyAttestation" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestation"
+              },
+              "description" : {
+                "desc" : "This is the description for CdSscaEnforcementStepInfo"
+              }
+            }
           },
           "EnforcementPolicy" : {
             "title" : "EnforcementPolicy",
@@ -34682,20 +34695,6 @@
                 }
               }
             } ]
-          },
-          "SscaOpaPolicyConfig" : {
-            "title" : "SscaOpaPolicyConfig",
-            "type" : "object",
-            "required" : [ "policySet" ],
-            "properties" : {
-              "policySet" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "The reference of the SBOM OPA policy set."
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "VerifyAttestation" : {
             "title" : "VerifyAttestation",

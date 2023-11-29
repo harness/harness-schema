@@ -2,16 +2,17 @@ title: CdSscaEnforcementStepInfo
 allOf:
 - $ref: ../../common/step-spec-type.yaml
 - type: object
+  required:
+  - infrastructure
+  - policy
+  - source
+  - verifyAttestation
   properties:
-    description:
-      desc: This is the description for CdSscaEnforcementStepInfo
     infrastructure:
       oneOf:
       - $ref: container-k8s-infra.yaml
     policy:
-      oneOf:
-        - $ref: ../custom/enforcement-policy.yaml
-        - $ref: ../custom/ssca-opa-policy-config.yaml
+      $ref: enforcement-policy.yaml
     source:
       $ref: sbom-source.yaml
     verifyAttestation:
@@ -22,5 +23,15 @@ required:
 - infrastructure
 - policy
 - source
-- verifyAttestation
-
+properties:
+  infrastructure:
+    oneOf:
+    - $ref: container-k8s-infra.yaml
+  policy:
+    $ref: enforcement-policy.yaml
+  source:
+    $ref: sbom-source.yaml
+  verifyAttestation:
+    $ref: verify-attestation.yaml
+  description:
+    desc: This is the description for CdSscaEnforcementStepInfo
