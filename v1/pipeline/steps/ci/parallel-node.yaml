@@ -1,0 +1,39 @@
+title: ParallelNode
+type: object
+required:
+  - spec
+  - type
+properties:
+  desc:
+    type: string
+    description: This is the description for parallel steps
+  id:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  type:
+    type: string
+    enum:
+      - parallel
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: parallel
+    then:
+      properties:
+        spec:
+          type: object
+          required:
+            - steps
+          properties:
+            steps:
+              type: array
+              items:
+                configRef: ../../stages/ci/ci-stage-spec-element-wrapper-config.yaml/steps
+              maxItems: 256
+              minItems: 1
+
