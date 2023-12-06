@@ -1,6 +1,18 @@
-title: IntegrationStageConfigImpl
+title: CIStageSpecElementConfig
 type: object
+required:
+- steps
 properties:
+  rollbackSteps:
+    type: array
+    items:
+      configRef: ./ci-stage-spec-element-wrapper-config.yaml/steps
+  steps:
+    type: array
+    items:
+      configRef: ./ci-stage-spec-element-wrapper-config.yaml/steps
+    maxItems: 256
+    minItems: 1
   cache:
     $ref: ./caching.yaml
     description: Configures the cache behavior.
@@ -13,11 +25,6 @@ properties:
   runtime:
     $ref: ./runtime.yaml
     description: Configures the target runtime engine.
-  steps:
-    description: Configures a series of steps to executes.
-    items:
-      $ref: ../../steps/step.yaml
-    type: array
   envs:
     type: object
     additionalProperties:
@@ -28,4 +35,4 @@ properties:
     items:
       $ref: ./volume.yaml
     type: array
-
+$schema: http://json-schema.org/draft-07/schema#
