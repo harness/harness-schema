@@ -3,58 +3,41 @@ type: object
 required:
 - type
 properties:
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  description:
-    type: string
-    desc: This is the description for ApprovalStageNode
-  failureStrategies:
-    oneOf:
-    - type: array
-      items:
-        $ref: ../../common/failure-strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+  delegates:
+    $ref: ../../common/delegate.yaml
+    description: Configures the delegate matching logic.
+  failure:
+    $ref: ../../common/failure_list.yaml
   id:
+    description: The unique stage identifier.
+    pattern: '^[a-zA-Z0-9_-]+$'
     type: string
-    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
   name:
+    description: The stage name.
     type: string
-    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
   strategy:
-    oneOf:
-    - $ref: ../../common/strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
-  tags:
-    type: object
-    additionalProperties:
-      type: string
+    $ref: ../../common/strategy.yaml
+    description: The stage execution strategy.
   type:
     type: string
     enum:
     - Approval
   variables:
-    type: array
-    items:
+    type: object
+    description: Variables defines the pipeline variable parameters.
+    additionalProperties:
       oneOf:
-      - $ref: ../../common/number-ng-variable.yaml
-      - $ref: ../../common/secret-ng-variable.yaml
-      - $ref: ../../common/string-ng-variable.yaml
+        - "$ref": ../../common/string-variable.yaml
+        - "$ref": ../../common/number-variable.yaml
+        - "$ref": ../../common/array-variable.yaml
   when:
-    oneOf:
-    - $ref: ../../steps/custom/stage-when-condition.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+    description: The stage conditional logic.
+    type: string
+  labels:
+    type: object
+    additionalProperties:
+      type: string
+
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
 - if:
@@ -64,4 +47,4 @@ allOf:
   then:
     properties:
       spec:
-        $ref: approval-stage-config.yaml
+        $ref: ./approval-stage-config.yaml
