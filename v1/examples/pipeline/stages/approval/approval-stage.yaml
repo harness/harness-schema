@@ -1,0 +1,26 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: approval
+      name: approval
+      id: Approval
+      timeout: 10m
+      when: <+environment.name? != "QA"
+      spec: 
+        steps:
+          - type: http
+            name: http2
+            desc: my http step
+            id: http2
+            spec: 
+              url: https://abc.com
+              method: GET
+              input_vars: 
+                var1:
+                  type: string
+                  name: var1
+                  value: val1
+              output_vars: {}
+              headers: []
+            timeout: 10m

@@ -1,67 +1,63 @@
 title: ApprovalStageNode
 type: object
 required:
-- type
+  - type
+  - spec
 properties:
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  description:
-    type: string
-    desc: This is the description for ApprovalStageNode
-  failureStrategies:
-    oneOf:
-    - type: array
-      items:
-        $ref: ../../common/failure-strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+  delegates:
+    $ref: ../../common/delegate.yaml
+    description: Configures the delegate matching logic.
+  failure:
+    $ref: ../../common/failure_list.yaml
   id:
+    description: The unique stage identifier.
+    pattern: '^[a-zA-Z0-9_-]+$'
     type: string
-    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
   name:
+    description: The stage name.
     type: string
-    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  desc:
+    description: The stage description.
+    type: string
   strategy:
-    oneOf:
-    - $ref: ../../common/strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
-  tags:
+    $ref: ../../common/strategy.yaml
+    description: The stage execution strategy.
+  type:
+    description: The stage type.
+    type: string
+    enum:
+      - approval
+  variables:
+    type: object
+    description: Variables defines the pipeline variable parameters.
+    additionalProperties:
+      oneOf:
+        - "$ref": ../../common/string-variable.yaml
+        - "$ref": ../../common/number-variable.yaml
+        - "$ref": ../../common/array-variable.yaml
+        - "$ref": ../../common/boolean-variable.yaml
+        - "$ref": ../../common/object-variable.yaml
+        - "$ref": ../../common/secret-variable.yaml
+    propertyNames:
+      pattern: "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+  when:
+    description: The stage conditional logic.
+    type: string
+  timeout:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(<\+.+>.*)|(^$))$
+  labels:
     type: object
     additionalProperties:
       type: string
-  type:
-    type: string
-    enum:
-    - Approval
-  variables:
-    type: array
-    items:
-      oneOf:
-      - $ref: ../../common/number-ng-variable.yaml
-      - $ref: ../../common/secret-ng-variable.yaml
-      - $ref: ../../common/string-ng-variable.yaml
-  when:
-    oneOf:
-    - $ref: ../../steps/custom/stage-when-condition.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
 - if:
     properties:
       type:
-        const: Approval
+        const: approval
   then:
     properties:
       spec:
-        $ref: approval-stage-config.yaml
+        $ref: ./approval-stage-config.yaml
