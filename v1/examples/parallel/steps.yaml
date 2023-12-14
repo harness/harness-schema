@@ -2,31 +2,29 @@ version: 1
 kind: pipeline
 spec:
   stages:
-    name: custom
-    type: custom
-    spec:
-      steps:
-        - name: parallelSteps
-          type: parallel
-          spec:
-            steps:
-              - name: http
-                type: http
-                desc: my http step
-                id: http1
-                spec:
-                  url: https://www.google.com
-                  method: GET
-                  headers: []
-                  body:
-                timeout: 10m
-              - name: http
-                type: http
-                desc: my http step
-                id: http2
-                spec:
-                  url: https://www.google.com
-                  method: GET
-                  headers: []
-                  body:
-                timeout: 10m
+    - name: custom
+      type: custom
+      spec:
+        steps:
+          - name: parallelSteps
+            type: parallel
+            spec:
+              steps:
+                - type: shell-script
+                  spec:
+                    on_delegate: true
+                    shell: bash
+                    source:
+                      type: inline
+                      spec:
+                        script: echo firstStepInParallel
+                  id: shellscript_12
+                - type: shell-script
+                  spec:
+                    on_delegate: true
+                    shell: bash
+                    source:
+                      type: inline
+                      spec:
+                        script: echo secondStepInParallel
+                  id: shellscript_11
