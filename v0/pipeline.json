@@ -41089,7 +41089,6 @@
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestinations"
             } ],
-            "required" : [ "routes" ],
             "properties" : {
               "routes" : {
                 "type" : "array",
@@ -41107,6 +41106,7 @@
             "properties" : {
               "destinations" : {
                 "type" : "array",
+                "minItems" : 2,
                 "items" : {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestination"
                 }
@@ -41142,7 +41142,7 @@
             "properties" : {
               "route" : {
                 "type" : "object",
-                "required" : [ "type", "rules" ],
+                "required" : [ "type" ],
                 "properties" : {
                   "type" : {
                     "type" : "string",
@@ -41221,40 +41221,23 @@
                   "spec" : {
                     "title" : "K8sTrafficRoutingRuleMethodSpec",
                     "type" : "object",
-                    "oneOf" : [ {
-                      "required" : [ "name", "values" ],
-                      "properties" : {
-                        "name" : {
-                          "type" : "string"
-                        },
-                        "values" : {
-                          "type" : "array",
-                          "items" : {
-                            "type" : "string",
-                            "minLength" : 1,
-                            "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
-                          }
-                        }
+                    "required" : [ "name", "value" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string",
+                        "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
+                      },
+                      "matchType" : {
+                        "type" : "string",
+                        "enum" : [ "exact", "prefix", "regex" ]
                       }
-                    }, {
-                      "required" : [ "name", "value", "matchType" ],
-                      "properties" : {
-                        "name" : {
-                          "type" : "string"
-                        },
-                        "value" : {
-                          "type" : "string",
-                          "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
-                        },
-                        "matchType" : {
-                          "type" : "string",
-                          "enum" : [ "exact", "prefix", "regex" ]
-                        }
-                      }
-                    } ],
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    }
                   }
-                }
+                },
+                "$schema" : "http://json-schema.org/draft-07/schema#"
               }
             }, {
               "if" : {
@@ -41313,34 +41296,18 @@
                   "spec" : {
                     "title" : "K8sTrafficRoutingRulePortSpec",
                     "type" : "object",
-                    "oneOf" : [ {
-                      "required" : [ "name", "values" ],
-                      "properties" : {
-                        "name" : {
-                          "type" : "string"
-                        },
-                        "values" : {
-                          "type" : "array",
-                          "items" : {
-                            "type" : "number",
-                            "minLength" : 1
-                          }
-                        }
+                    "required" : [ "name", "value" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "number"
                       }
-                    }, {
-                      "required" : [ "name", "value" ],
-                      "properties" : {
-                        "name" : {
-                          "type" : "string"
-                        },
-                        "value" : {
-                          "type" : "number"
-                        }
-                      }
-                    } ],
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    }
                   }
-                }
+                },
+                "$schema" : "http://json-schema.org/draft-07/schema#"
               }
             }, {
               "if" : {
@@ -41355,7 +41322,7 @@
                   "spec" : {
                     "title" : "K8sTrafficRoutingRuleSchemeSpec",
                     "type" : "object",
-                    "required" : [ "name", "value", "matchType" ],
+                    "required" : [ "name", "value" ],
                     "properties" : {
                       "name" : {
                         "type" : "string"
@@ -41385,7 +41352,7 @@
                   "spec" : {
                     "title" : "K8sTrafficRoutingRuleAuthoritySpec",
                     "type" : "object",
-                    "required" : [ "name", "value", "matchType" ],
+                    "required" : [ "name", "value" ],
                     "properties" : {
                       "name" : {
                         "type" : "string"
