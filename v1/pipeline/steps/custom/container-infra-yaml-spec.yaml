@@ -1,7 +1,7 @@
 title: ContainerInfraYamlSpec
 type: object
 required:
-- connectorRef
+- connector
 - namespace
 properties:
   annotations:
@@ -10,21 +10,21 @@ properties:
       additionalProperties:
         type: string
     - type: string
-  automountServiceAccountToken:
+  mount_service_token:
     oneOf:
     - type: boolean
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: '^\<[^>]+\>$'
       minLength: 1
-  connectorRef:
+  connector:
     type: string
-  containerSecurityContext:
+  security_context:
     oneOf:
     - $ref: ../../steps/custom/security-context.yaml
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: '^\<[^>]+\>$'
       minLength: 1
-  initTimeout:
+  init_timeout:
     type: string
   labels:
     oneOf:
@@ -36,34 +36,36 @@ properties:
     type: string
     minLength: 1
     maxLength: 256
-  nodeSelector:
+  node_selector:
     oneOf:
     - type: object
       additionalProperties:
         type: string
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: '^\<[^>]+\>$'
       minLength: 1
-  os:
-    oneOf:
-    - type: string
-      enum:
-      - Linux
-      - MacOS
-      - Windows
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  priorityClassName:
+#  This field is missing in Drone Schema - Confirm
+#  os:
+#    oneOf:
+#    - type: string
+#      enum:
+#      - linux
+#      - mac_os
+#      - windows
+#    - type: string
+#      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+#      minLength: 1
+  priority_class:
     type: string
   resources:
     $ref: ../../common/container-resource.yaml
-  runAsUser:
-    oneOf:
-    - type: integer
-      format: int32
-    - type: string
-  serviceAccountName:
+#  This field is missing in Drone Schema - Confirm
+#  runAsUser:
+#    oneOf:
+#    - type: integer
+#      format: int32
+#    - type: string
+  service_account:
     type: string
   tolerations:
     oneOf:
@@ -71,16 +73,17 @@ properties:
       items:
         $ref: ../../steps/custom/toleration.yaml
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      pattern: '^\<[^>]+\>$'
       minLength: 1
-  volumes:
-    oneOf:
-    - type: array
-      items:
-        $ref: container-volume.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  description:
-    desc: This is the description for ContainerInfraYamlSpec
+#  This field is missing in Drone Schema - Confirm
+#  volumes:
+#    oneOf:
+#    - type: array
+#      items:
+#        $ref: container-volume.yaml
+#    - type: string
+#      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+#      minLength: 1
+#  description:
+#    desc: This is the description for ContainerInfraYamlSpec
 $schema: http://json-schema.org/draft-07/schema#

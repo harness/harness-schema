@@ -1703,36 +1703,16 @@
         "ContainerResource" : {
           "title" : "ContainerResource",
           "type" : "object",
-          "required" : [ "limits" ],
-          "properties" : {
-            "limits" : {
-              "$ref" : "#/definitions/pipeline/common/Limits"
-            },
-            "description" : {
-              "desc" : "This is the description for ContainerResource"
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "Limits" : {
-          "title" : "Limits",
-          "type" : "object",
+          "description" : "This is the description for ContainerResource",
           "properties" : {
             "cpu" : {
-              "oneOf" : [ {
-                "type" : "string"
-              }, {
-                "type" : "number"
-              } ]
+              "type" : [ "string", "number" ]
             },
             "memory" : {
-              "type" : "string"
-            },
-            "description" : {
-              "desc" : "This is the description for Limits"
+              "format" : "bytes",
+              "type" : [ "string", "number" ]
             }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
+          }
         },
         "NumberNGVariable" : {
           "title" : "NumberNGVariable",
@@ -2951,7 +2931,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
+                "enum" : [ "kubernetes-direct", "delegate", "noop" ]
               }
             }
           } ],
@@ -2969,10 +2949,10 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
+              "enum" : [ "kubernetes-direct", "delegate", "noop" ]
             },
             "description" : {
-              "desc" : "This is the description for StepGroupInfra"
+              "desc" : "This is the description for step-group-Infra"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -32329,7 +32309,7 @@
           "ContainerInfraYamlSpec" : {
             "title" : "ContainerInfraYamlSpec",
             "type" : "object",
-            "required" : [ "connectorRef", "namespace" ],
+            "required" : [ "connector", "namespace" ],
             "properties" : {
               "annotations" : {
                 "oneOf" : [ {
@@ -32341,28 +32321,28 @@
                   "type" : "string"
                 } ]
               },
-              "automountServiceAccountToken" : {
+              "mount_service_token" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "containerSecurityContext" : {
+              "security_context" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "initTimeout" : {
+              "init_timeout" : {
                 "type" : "string"
               },
               "labels" : {
@@ -32380,7 +32360,7 @@
                 "minLength" : 1,
                 "maxLength" : 256
               },
-              "nodeSelector" : {
+              "node_selector" : {
                 "oneOf" : [ {
                   "type" : "object",
                   "additionalProperties" : {
@@ -32388,35 +32368,17 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "priorityClassName" : {
+              "priority_class" : {
                 "type" : "string"
               },
               "resources" : {
                 "$ref" : "#/definitions/pipeline/common/ContainerResource"
               },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "serviceAccountName" : {
+              "service_account" : {
                 "type" : "string"
               },
               "tolerations" : {
@@ -32427,24 +32389,9 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
-              },
-              "volumes" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerVolume"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for ContainerInfraYamlSpec"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -32453,12 +32400,12 @@
             "title" : "SecurityContext",
             "type" : "object",
             "properties" : {
-              "allowPrivilegeEscalation" : {
+              "privilege_escalation" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
@@ -32470,42 +32417,42 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "procMount" : {
+              "proc_mount" : {
                 "type" : "string"
               },
-              "readOnlyRootFilesystem" : {
+              "read_only_root_fs" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "runAsGroup" : {
+              "run_as_group" : {
                 "oneOf" : [ {
                   "type" : "integer",
                   "format" : "int32"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "runAsNonRoot" : {
+              "run_as_non_root" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
-              "runAsUser" : {
+              "run_as_user" : {
                 "oneOf" : [ {
                   "type" : "integer",
                   "format" : "int32"
@@ -32531,7 +32478,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
@@ -32543,7 +32490,7 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^\\<[^>]+\\>$",
                   "minLength" : 1
                 } ]
               },
@@ -32575,21 +32522,6 @@
               },
               "description" : {
                 "desc" : "This is the description for Toleration"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ContainerVolume" : {
-            "title" : "ContainerVolume",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
-              },
-              "description" : {
-                "desc" : "This is the description for ContainerVolume"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -59632,7 +59564,7 @@
                   "minLength" : 1
                 } ]
               },
-              "stepGroupInfra" : {
+              "infra" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
@@ -63368,7 +63300,7 @@
                   "minLength" : 1
                 } ]
               },
-              "stepGroupInfra" : {
+              "infra" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 } ]
