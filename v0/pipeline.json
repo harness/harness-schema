@@ -3483,7 +3483,7 @@
               "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
             }, {
               "type" : "object",
-              "required" : [ "awsInstanceFilter", "connectorRef", "credentialsRef", "hostConnectionType", "region" ],
+              "required" : [ "connectorRef", "credentialsRef", "hostConnectionType", "region" ],
               "properties" : {
                 "awsInstanceFilter" : {
                   "$ref" : "#/definitions/pipeline/stages/cd/AwsInstanceFilter"
@@ -3507,6 +3507,9 @@
                 "region" : {
                   "type" : "string",
                   "minLength" : 1
+                },
+                "asgName" : {
+                  "type" : "string"
                 }
               }
             } ],
@@ -3532,10 +3535,16 @@
                 } ]
               },
               "vpcs" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for AwsInstanceFilter"
