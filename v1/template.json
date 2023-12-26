@@ -1423,6 +1423,12 @@
               "desc" : "This is the description for PolicyConfig"
             }
           },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "object",
+              "internalType" : "policy_config"
+            }
+          },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "FailureStrategyConfig" : {
@@ -1435,6 +1441,12 @@
             },
             "description" : {
               "desc" : "This is the description for FailureStrategyConfig"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "failure_strategy"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1505,6 +1517,12 @@
             },
             "description" : {
               "desc" : "This is the description for StrategyConfig"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "object",
+              "internalType" : "strategy_config"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -1685,6 +1703,12 @@
             },
             "description" : {
               "desc" : "This is the description for StepWhenCondition"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "conditional_execution"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1945,7 +1969,13 @@
             "type" : "object",
             "properties" : {
               "script" : {
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "type" : "string",
+                    "internalType" : "shell_script"
+                  }
+                }
               }
             }
           } ],
@@ -2050,6 +2080,12 @@
             },
             "action" : {
               "$ref" : "#/definitions/pipeline/common/FailureAction"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "object",
+              "internalType" : "failure_strategy"
             }
           }
         },
@@ -2476,6 +2512,12 @@
               "enum" : [ "for", "matrix", "while" ]
             }
           },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "object",
+              "internalType" : "looping_strategy"
+            }
+          },
           "oneOf" : [ {
             "allOf" : [ {
               "properties" : {
@@ -2602,6 +2644,18 @@
           }, {
             "type" : "string"
           } ]
+        },
+        "Timeout" : {
+          "title" : "Timeout",
+          "type" : "string",
+          "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$",
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "duration"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "StringVariable" : {
           "title" : "StringVariable",
@@ -33188,8 +33242,7 @@
                 "$ref" : "#/definitions/pipeline/common/Strategy"
               },
               "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "$ref" : "#/definitions/pipeline/common/Timeout"
               },
               "type" : {
                 "type" : "string",
@@ -33197,7 +33250,13 @@
               },
               "when" : {
                 "description" : "The stage conditional logic.",
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "type" : "string",
+                    "internalType" : "conditional_execution"
+                  }
+                }
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -33239,7 +33298,13 @@
                   }
                 },
                 "method" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "metadata" : {
+                    "inputProperties" : {
+                      "type" : "string",
+                      "internalType" : "http_method"
+                    }
+                  }
                 },
                 "output_vars" : {
                   "type" : "object",
@@ -33281,10 +33346,22 @@
                   }
                 },
                 "body" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "metadata" : {
+                    "inputProperties" : {
+                      "type" : "string",
+                      "internalType" : "text_area"
+                    }
+                  }
                 },
                 "url" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "metadata" : {
+                    "inputProperties" : {
+                      "type" : "string",
+                      "internalType" : "url"
+                    }
+                  }
                 }
               }
             } ],
@@ -34380,8 +34457,7 @@
                 "$ref" : "#/definitions/pipeline/common/Strategy"
               },
               "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "$ref" : "#/definitions/pipeline/common/Timeout"
               },
               "type" : {
                 "type" : "string",
@@ -34489,7 +34565,13 @@
                 },
                 "shell" : {
                   "type" : "string",
-                  "enum" : [ "bash", "power-shell" ]
+                  "enum" : [ "bash", "power-shell" ],
+                  "metadata" : {
+                    "inputProperties" : {
+                      "type" : "string",
+                      "internalType" : "shell_type"
+                    }
+                  }
                 },
                 "source" : {
                   "$ref" : "#/definitions/pipeline/common/ShellScriptSourceWrapper"
@@ -35191,8 +35273,7 @@
                 "$ref" : "#/definitions/pipeline/common/Strategy"
               },
               "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "$ref" : "#/definitions/pipeline/common/Timeout"
               },
               "type" : {
                 "type" : "string",
@@ -35200,7 +35281,13 @@
               },
               "when" : {
                 "description" : "The stage conditional logic.",
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "type" : "string",
+                    "internalType" : "conditional_execution"
+                  }
+                }
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -35365,8 +35452,7 @@
                 "$ref" : "#/definitions/pipeline/common/Strategy"
               },
               "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+                "$ref" : "#/definitions/pipeline/common/Timeout"
               },
               "type" : {
                 "type" : "string",
