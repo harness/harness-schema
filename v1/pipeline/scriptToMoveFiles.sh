@@ -103,6 +103,7 @@ file_list=(
   "nessus-scan-node.yaml"
   "zap-scan-node.yaml"
   "openvas-scan-node.yaml"
+  "osv-scanner-scan-node.yaml"
   "aws-ecr-scan-node.yaml"
   "burp-scan-node.yaml"
   "checkmarx-scan-node.yaml"
