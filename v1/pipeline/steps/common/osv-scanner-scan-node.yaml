@@ -1,4 +1,4 @@
-title: ShellScriptStepNode
+title: OsvScannerScanNode
 type: object
 required:
 - identifier
@@ -8,7 +8,7 @@ required:
 properties:
   description:
     type: string
-    desc: This is the description for ShellScriptStepNode
+    desc: This is the description for OsvScannerScanNode
   enforce:
     $ref: ../../common/policy-config.yaml
   failureStrategies:
@@ -32,11 +32,12 @@ properties:
       pattern: ^<\+input>$
       minLength: 1
   timeout:
-    $ref: ../../common/timeout.yaml
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
   type:
     type: string
     enum:
-    - ShellScript
+    - OsvScanner
   when:
     oneOf:
     - $ref: ../../common/step-when-condition.yaml
@@ -48,8 +49,8 @@ allOf:
 - if:
     properties:
       type:
-        const: ShellScript
+        const: OsvScanner
   then:
     properties:
       spec:
-        $ref: shell-script-step-info.yaml
+        $ref: osv-scanner-step-info.yaml
