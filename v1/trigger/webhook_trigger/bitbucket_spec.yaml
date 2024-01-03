@@ -1,0 +1,36 @@
+title: bitbucket_spec
+allOf:
+  - "$ref": "./webhook_trigger_spec.yaml"
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - pull-request
+          - push
+          - pr-comment
+  - if:
+      properties:
+        type:
+          const: pr-comment
+    then:
+      properties:
+        spec:
+          "$ref": "./bitbucket_pr_comment_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: pull-request
+    then:
+      properties:
+        spec:
+          "$ref": "./bitbucket_pr_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: push
+    then:
+      properties:
+        spec:
+          "$ref": "./bitbucket_push_spec.yaml"
+"$schema": http://json-schema.org/draft-07/schema#
