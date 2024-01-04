@@ -1,17 +1,23 @@
 title: ServicesYaml
 type: object
 properties:
-  metadata:
-    readOnly: true
-    $ref: services-metadata.yaml
   values:
     oneOf:
     - type: array
       items:
-        $ref: service-yaml-v2.yaml
+        $ref: service-yaml.yaml
     - type: string
       pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
       minLength: 1
+  inherit:
+    $ref: inherit-service.yaml
+  sequential:
+    oneOf:
+      - type: boolean
+      - type: string
   description:
     desc: This is the description for ServicesYaml
 $schema: http://json-schema.org/draft-07/schema#
+anyOf:
+  - values
+  - inherit

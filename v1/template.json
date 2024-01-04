@@ -59178,9 +59178,6 @@
               "gitops_enabled" : {
                 "type" : "boolean"
               },
-              "service" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedServiceYaml"
-              },
               "services" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServicesYaml"
               },
@@ -60550,9 +60547,43 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "SimplifiedServiceYaml" : {
-            "title" : "SimplifiedServiceYaml",
+          "ServicesYaml" : {
+            "title" : "ServicesYaml",
             "type" : "object",
+            "properties" : {
+              "values" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/ServiceYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "inherit" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/InheritService"
+              },
+              "sequential" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for ServicesYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "anyOf" : [ "values", "inherit" ]
+          },
+          "ServiceYaml" : {
+            "title" : "ServiceYaml",
+            "type" : "object",
+            "required" : [ "ref" ],
             "properties" : {
               "inputs" : {
                 "oneOf" : [ {
@@ -60566,72 +60597,23 @@
                 "type" : "string",
                 "pattern" : "^(?=\\s*\\S).*$"
               },
-              "use-from-stage" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/ServiceUseFromStageV2"
-              },
               "desc" : {
-                "description" : "This is the description for SimplifiedServiceYaml"
+                "description" : "This is the description for ServiceYaml"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "ServiceUseFromStageV2" : {
-            "title" : "ServiceUseFromStageV2",
+          "InheritService" : {
+            "title" : "InheritService",
             "type" : "object",
             "required" : [ "stage" ],
             "properties" : {
-              "metadata" : {
-                "type" : "string"
-              },
               "stage" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
               "description" : {
-                "desc" : "This is the description for ServiceUseFromStageV2"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ServicesYaml" : {
-            "title" : "ServicesYaml",
-            "type" : "object",
-            "properties" : {
-              "metadata" : {
-                "readOnly" : true,
-                "$ref" : "#/definitions/pipeline/stages/cd/ServicesMetadata"
-              },
-              "values" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedServiceYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for ServicesYaml"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ServicesMetadata" : {
-            "title" : "ServicesMetadata",
-            "type" : "object",
-            "properties" : {
-              "parallel" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for ServicesMetadata"
+                "desc" : "This is the description for InheritService"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
