@@ -1046,9 +1046,6 @@
                 "maxItems" : 256,
                 "minItems" : 1
               },
-              "environment" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
-              },
               "environmentGroup" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupYaml"
               },
@@ -1353,6 +1350,60 @@
               }
             }
           },
+          "EnvironmentGroupYaml" : {
+            "title" : "EnvironmentGroupYaml",
+            "type" : "object",
+            "required" : [ "envGroupRef" ],
+            "properties" : {
+              "__uuid" : {
+                "type" : "string"
+              },
+              "deployToAll" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^(?=\\s*\\S).*$"
+              },
+              "environments" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "filters" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "metadata" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupMetadata"
+              },
+              "description" : {
+                "desc" : "This is the description for EnvironmentGroupYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "SimplifiedEnvironmentYaml" : {
             "title" : "SimplifiedEnvironmentYaml",
             "type" : "object",
@@ -1409,7 +1460,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedInfraDefYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/InfraDefYaml"
                   }
                 }, {
                   "type" : "string",
@@ -1460,42 +1511,42 @@
           "FilterYaml" : {
             "title" : "FilterYaml",
             "type" : "object",
-            "required" : [ "entities", "identifier", "spec", "type" ],
+            "required" : [ "envs", "infra" ],
             "properties" : {
-              "entities" : {
+              "envs" : {
                 "type" : "array",
-                "uniqueItems" : true,
-                "items" : {
-                  "type" : "string",
-                  "enum" : [ "infrastructures", "gitOpsClusters", "environments" ]
-                }
+                "$ref" : "#/definitions/pipeline/stages/cd/TagsTypeFilter"
               },
-              "identifier" : {
-                "type" : "string"
+              "infra_defs" : {
+                "type" : "array",
+                "$ref" : "#/definitions/pipeline/stages/cd/TagsTypeFilter"
               },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/FilterSpec"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "tags", "all" ]
-              },
-              "description" : {
-                "desc" : "This is the description for FilterYaml"
+              "desc" : {
+                "description" : "This is the description for FilterYaml"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FilterSpec" : {
-            "title" : "FilterSpec",
+          "TagsTypeFilter" : {
+            "title" : "TagsTypeFilter",
             "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "required" : [ "tags" ],
             "properties" : {
-              "description" : {
-                "desc" : "This is the description for FilterSpec"
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "condition" : {
+                "type" : "string",
+                "enum" : [ "AND", "OR" ]
+              },
+              "desc" : {
+                "description" : "This is the description for TagsTypeFilter"
               }
-            }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ClusterYaml" : {
             "title" : "ClusterYaml",
@@ -1514,29 +1565,24 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "SimplifiedInfraDefYaml" : {
-            "title" : "SimplifiedInfraDefYaml",
+          "InfraDefYaml" : {
+            "title" : "InfraDefYaml",
             "type" : "object",
             "required" : [ "id" ],
             "properties" : {
               "id" : {
-                "type" : "string",
-                "pattern" : "^(?=\\s*\\S).*$"
+                "type" : "string"
               },
               "inputs" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                  "$ref" : "#/definitions/pipeline/common/Inputs"
                 }, {
                   "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
+                  "pattern" : "^<\\+inputs\\..*>$"
                 } ]
               },
-              "metadata" : {
-                "type" : "string"
-              },
               "desc" : {
-                "description" : "This is the description for SimplifiedInfraDefYaml"
+                "description" : "This is the description for InfraDefYaml"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -2543,60 +2589,6 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "EnvironmentGroupYaml" : {
-            "title" : "EnvironmentGroupYaml",
-            "type" : "object",
-            "required" : [ "envGroupRef" ],
-            "properties" : {
-              "__uuid" : {
-                "type" : "string"
-              },
-              "deployToAll" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^(?=\\s*\\S).*$"
-              },
-              "environments" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "filters" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "metadata" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupMetadata"
-              },
-              "description" : {
-                "desc" : "This is the description for EnvironmentGroupYaml"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "EnvironmentGroupMetadata" : {
             "title" : "EnvironmentGroupMetadata",
             "type" : "object",
@@ -2614,49 +2606,107 @@
             "title" : "EnvironmentsYaml",
             "type" : "object",
             "properties" : {
-              "filters" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "metadata" : {
-                "readOnly" : true,
-                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentsMetadata"
-              },
               "values" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYaml"
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
+                  "pattern" : "^<\\+inputs\\..*>$"
                 } ]
               },
-              "description" : {
-                "desc" : "This is the description for EnvironmentsYaml"
+              "inherit" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/InheritEnvironment"
+              },
+              "filters" : {
+                "oneOf" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
+                  }
+                }
+              },
+              "sequential" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "desc" : {
+                "description" : "This is the description for EnvironmentsYaml"
+              }
+            },
+            "anyOf" : [ "values", "inherit", "filters" ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EnvironmentYaml" : {
+            "title" : "EnvironmentYaml",
+            "type" : "object",
+            "required" : [ "ref", "infra" ],
+            "properties" : {
+              "ref" : {
+                "type" : "string"
+              },
+              "inputs" : {
+                "$ref" : "#/definitions/pipeline/common/Inputs"
+              },
+              "infra" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/InfraDefYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+inputs\\..*>$"
+                } ]
+              },
+              "desc" : {
+                "description" : "This is the description for EnvironmentYaml"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "EnvironmentsMetadata" : {
-            "title" : "EnvironmentsMetadata",
+          "InheritEnvironment" : {
+            "title" : "InheritEnvironment",
             "type" : "object",
+            "required" : [ "stage" ],
             "properties" : {
-              "parallel" : {
-                "type" : "boolean"
+              "stage" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
-              "description" : {
-                "desc" : "This is the description for EnvironmentsMetadata"
+              "with" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/InheritEnvironmentWithConfig"
+                }
+              },
+              "desc" : {
+                "description" : "This is the description for InheritEnvironment"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "InheritEnvironmentWithConfig" : {
+            "title" : "InheritEnvironmentWithConfig",
+            "type" : "object",
+            "required" : [ "env", "infra" ],
+            "properties" : {
+              "env" : {
+                "type" : "string"
+              },
+              "infra" : {
+                "type" : "string"
+              },
+              "inputs" : {
+                "$ref" : "#/definitions/pipeline/common/Inputs"
+              },
+              "desc" : {
+                "description" : "This is the description for InheritEnvironmentWithConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -6683,6 +6733,17 @@
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "Inputs" : {
+          "title" : "Inputs",
+          "type" : "object",
+          "description" : "inputs to be used for entities",
+          "additionalProperties" : {
+            "anyOf" : [ "string", "array", "number", "object", "boolean" ]
+          },
+          "propertyNames" : {
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0, 127}$"
+          }
+        },
         "K8sDirectInfra" : {
           "title" : "K8sDirectInfra",
           "allOf" : [ {
@@ -6721,17 +6782,6 @@
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "Inputs" : {
-          "title" : "Inputs",
-          "type" : "object",
-          "description" : "inputs to be used for entities",
-          "additionalProperties" : {
-            "anyOf" : [ "string", "array", "number", "object", "boolean" ]
-          },
-          "propertyNames" : {
-            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0, 127}$"
-          }
         },
         "StringInput" : {
           "title" : "StringInput",
