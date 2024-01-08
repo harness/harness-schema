@@ -1,0 +1,33 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        services:
+          values:
+            - ref: acc.k8sProd
+              inputs:
+                tag: latest
+          sequential : true # Optional
+        environments:
+          values:
+            - ref: prod-3
+              inputs:
+                replica: 3
+              infra:
+                - id: k8s-us
+                  inputs:
+                    namespace: default
+          sequential: true  # Optional
+        steps:
+          - type: helm-deploy
+            spec: {}
+        rollback_steps:
+          - type: helm-rollback
+            spec: {}
