@@ -1,0 +1,23 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        services:
+          values: <+inputs.services_values>
+          sequential : true # Optional
+        environments:
+          values: <+inputs.environments_values>
+          sequential: true  # Optional
+        steps:
+          - type: helm-deploy
+            spec: {}
+        rollback_steps:
+          - type: helm-rollback
+            spec: {}

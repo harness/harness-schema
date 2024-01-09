@@ -1,0 +1,30 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        services:
+          inherit:
+            stage: pre-qa # a previous stage in pipeline
+          sequential : true
+        environments:
+          inherit:
+            stage: pre-qa # a previous stage in pipeline
+            with:       # optional
+              - env: preqa-environment
+                infra: infra-us-east
+                inputs:
+                  cluster: us-east
+          sequential: true    # optional
+        steps:
+          - type: helm-deploy
+            spec: {}
+        rollback_steps:
+          - type: helm-rollback
+            spec: {}

@@ -1,0 +1,48 @@
+version: 1
+kind: service
+type: native-helm
+spec:
+  manifests:
+    primary: <+inputs.primary_manifest>
+    sources:
+      - type: HelmChart
+        id: mongo-manifest
+        spec:
+          type: Github
+          spec:
+            connector: harness-automation
+            repo:  helm-charts          # optional
+            location: refs/heads/main:/charts
+          values:                       # optional
+            - /abc/xyz.yaml
+          skip_versioning: false        # optional
+          declarative_rollback: false   # optional
+  artifacts:
+    primary:  <+inputs.primary_artifact>
+    sources:
+      - id: nginx
+        type: DockerRegistry
+        spec:
+          connector: harness-docker
+          location: /library/nginx:<+inputs.nginx_tag>
+      - id: mongo
+        type: DockerRegistry
+        spec:
+          connector: harness-docker
+          location: /library/mongo:<+inputs.mongo_tag>
+      - id: prometheus
+        sidecar: true                   # optional
+        type: DockerRegistry
+        spec:
+          connector: harness-docker
+        location: /homecentr/prometheus:<+inputs.prometheus_tag>
+  config_files:
+    - id: values
+      type: Harness
+      spec:
+        files:
+          - /configs.yaml
+  variables:
+    tag:
+      type: String
+      value: 1.9.0
