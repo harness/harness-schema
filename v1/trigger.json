@@ -1,89 +1,58 @@
 {
-  "$schema" : "http://json-schema.org/draft-07/schema#",
   "type" : "object",
   "title" : "trigger",
-  "required" : [ "trigger" ],
+  "required" : [ "spec", "version", "kind" ],
   "properties" : {
-    "trigger" : {
-      "$ref" : "#/definitions/trigger/trigger"
+    "version" : {
+      "description" : "Version defines the schema version.",
+      "type" : "number",
+      "enum" : [ 1 ]
+    },
+    "kind" : {
+      "description" : "defines the kind of yaml (pipeline/template/trigger)",
+      "type" : "string",
+      "enum" : [ "trigger" ]
+    },
+    "spec" : {
+      "$ref" : "#/definitions/trigger/trigger_source"
     }
   },
+  "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "trigger" : {
-      "trigger" : {
-        "type" : "object",
-        "title" : "trigger",
-        "required" : [ "identifier", "orgIdentifier", "projectIdentifier" ],
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "enabled" : {
-            "type" : "boolean"
-          },
-          "encryptedWebhookSecretIdentifier" : {
-            "type" : "string"
-          },
-          "identifier" : {
-            "type" : "string",
-            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-          },
-          "inputSetRefs" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "inputYaml" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string",
-            "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-          },
-          "orgIdentifier" : {
-            "type" : "string"
-          },
-          "pipelineBranchName" : {
-            "type" : "string"
-          },
-          "pipelineIdentifier" : {
-            "type" : "string"
-          },
-          "projectIdentifier" : {
-            "type" : "string"
-          },
-          "source" : {
-            "$ref" : "#/definitions/trigger/trigger_source"
-          },
-          "stagesToExecute" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "tags" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
-      },
       "trigger_source" : {
         "title" : "trigger_source",
         "type" : "object",
+        "required" : [ "type", "spec" ],
         "properties" : {
-          "pollInterval" : {
+          "input_set_refs" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "inputs" : {
+            "description" : "input yaml for the pipeline",
+            "type" : "string"
+          },
+          "execute_stages" : {
+            "description" : "stage identifiers of the stages to be executed in the pipeline",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "interval" : {
+            "description" : "polling interval",
             "type" : "string",
             "pattern" : "(((([1-9])+\\d*[mh])+(\\s/?\\d+[mh])*)|(^$)|(0))$"
           },
           "type" : {
             "type" : "string",
-            "enum" : [ "Webhook", "Artifact", "Manifest", "Scheduled", "MultiRegionArtifact" ]
+            "enum" : [ "webhook", "artifact", "manifest", "scheduled", "multi-region-artifact" ]
           },
-          "webhookId" : {
+          "webhook" : {
+            "description" : "webhook identifier",
             "type" : "string"
           }
         },
@@ -92,7 +61,7 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "Artifact"
+                "const" : "artifact"
               }
             }
           },
@@ -107,7 +76,7 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "Manifest"
+                "const" : "manifest"
               }
             }
           },
@@ -122,7 +91,7 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "MultiRegionArtifact"
+                "const" : "multi-region-artifact"
               }
             }
           },
@@ -137,7 +106,7 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "Scheduled"
+                "const" : "scheduled"
               }
             }
           },
@@ -152,7 +121,7 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "Webhook"
+                "const" : "webhook"
               }
             }
           },
@@ -172,23 +141,18 @@
             "$ref" : "#/definitions/trigger/trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
-              "artifactRef" : {
-                "type" : "string"
-              },
-              "stageIdentifier" : {
-                "type" : "string"
-              },
               "type" : {
                 "type" : "string",
-                "enum" : [ "Gcr", "Ecr", "DockerRegistry", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "Acr", "AmazonS3", "Jenkins", "CustomArtifact", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "GoogleCloudStorage", "Bamboo" ]
+                "enum" : [ "gcr", "ecr", "docker-registry", "nexus3-registry", "nexus2-registry", "artifactory-registry", "acr", "amazon-s3", "jenkins", "custom", "google-artifact-registry", "github-package-registry", "azure", "amazon-machine-image", "google-cloud-storage", "bamboo" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Acr"
+                  "const" : "acr"
                 }
               }
             },
@@ -203,7 +167,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AmazonMachineImage"
+                  "const" : "amazon-machine-image"
                 }
               }
             },
@@ -218,7 +182,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AmazonS3"
+                  "const" : "amazon-s3"
                 }
               }
             },
@@ -233,7 +197,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "ArtifactoryRegistry"
+                  "const" : "artifactory-registry"
                 }
               }
             },
@@ -248,7 +212,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AzureArtifacts"
+                  "const" : "azure"
                 }
               }
             },
@@ -263,7 +227,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Bamboo"
+                  "const" : "bamboo"
                 }
               }
             },
@@ -278,7 +242,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "CustomArtifact"
+                  "const" : "custom"
                 }
               }
             },
@@ -293,7 +257,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "DockerRegistry"
+                  "const" : "docker-registry"
                 }
               }
             },
@@ -308,7 +272,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Ecr"
+                  "const" : "ecr"
                 }
               }
             },
@@ -323,7 +287,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Gcr"
+                  "const" : "gcr"
                 }
               }
             },
@@ -338,7 +302,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GithubPackageRegistry"
+                  "const" : "github-package-registry"
                 }
               }
             },
@@ -353,7 +317,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GoogleArtifactRegistry"
+                  "const" : "google-artifact-registry"
                 }
               }
             },
@@ -368,7 +332,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GoogleCloudStorage"
+                  "const" : "google-cloud-storage"
                 }
               }
             },
@@ -383,7 +347,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Jenkins"
+                  "const" : "jenkins"
                 }
               }
             },
@@ -398,7 +362,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Nexus2Registry"
+                  "const" : "nexus2-registry"
                 }
               }
             },
@@ -413,7 +377,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Nexus3Registry"
+                  "const" : "nexus3-registry"
                 }
               }
             },
@@ -433,23 +397,18 @@
             "$ref" : "#/definitions/trigger/trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
-              "manifestRef" : {
-                "type" : "string"
-              },
-              "stageIdentifier" : {
-                "type" : "string"
-              },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart" ]
+                "enum" : [ "helm-chart" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "HelmChart"
+                  "const" : "helm-chart"
                 }
               }
             },
@@ -469,24 +428,10 @@
             "$ref" : "#/definitions/trigger/trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "sources" ],
             "properties" : {
-              "artifactRef" : {
-                "type" : "string"
-              },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "sources" : {
                 "type" : "array",
@@ -494,12 +439,9 @@
                   "$ref" : "#/definitions/trigger/multi_region_artifact/artifact_type_spec_wrapper"
                 }
               },
-              "stageIdentifier" : {
-                "type" : "string"
-              },
               "type" : {
                 "type" : "string",
-                "enum" : [ "Gcr", "Ecr", "DockerRegistry", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "Acr", "AmazonS3", "Jenkins", "CustomArtifact", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "GoogleCloudStorage", "Bamboo" ]
+                "enum" : [ "gcr", "ecr", "docker-registry", "nexus3-registry", "nexus2-registry", "artifactory-registry", "acr", "amazon-s3", "jenkins", "custom", "google-artifact-registry", "github-package-registry", "azure", "amazon-machine-image", "google-cloud-storage", "bamboo" ]
               }
             }
           } ],
@@ -511,6 +453,7 @@
             "$ref" : "#/definitions/trigger/trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string"
@@ -520,7 +463,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Cron"
+                  "const" : "cron"
                 }
               }
             },
@@ -540,17 +483,18 @@
             "$ref" : "#/definitions/trigger/trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "AzureRepo", "Github", "Gitlab", "Bitbucket", "Custom", "AwsCodeCommit", "Harness" ]
+                "enum" : [ "azure-repo", "github", "gitlab", "bitbucket", "custom", "aws-code-commit", "harness" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AwsCodeCommit"
+                  "const" : "aws-code-commit"
                 }
               }
             },
@@ -565,7 +509,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AzureRepo"
+                  "const" : "azure-repo"
                 }
               }
             },
@@ -580,7 +524,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Bitbucket"
+                  "const" : "bitbucket"
                 }
               }
             },
@@ -595,7 +539,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Custom"
+                  "const" : "custom"
                 }
               }
             },
@@ -610,7 +554,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Github"
+                  "const" : "github"
                 }
               }
             },
@@ -625,7 +569,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Gitlab"
+                  "const" : "gitlab"
                 }
               }
             },
@@ -640,7 +584,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Harness"
+                  "const" : "harness"
                 }
               }
             },
@@ -669,31 +613,20 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "registry" : {
                 "type" : "string"
               },
-              "repository" : {
+              "repo" : {
                 "type" : "string"
               },
-              "subscriptionId" : {
+              "subscription" : {
+                "description" : "subscription identifier",
                 "type" : "string"
               },
               "tag" : {
@@ -709,6 +642,27 @@
           "discriminator" : "type",
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "conditions" : {
+          "title" : "conditions",
+          "description" : "conditions for artifact trigger",
+          "properties" : {
+            "event" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/trigger/trigger_event_data"
+              }
+            },
+            "jexl" : {
+              "type" : "string"
+            },
+            "metadata" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/trigger/trigger_event_data"
+              }
+            }
+          }
+        },
         "ami_registry_spec" : {
           "title" : "ami_registry_spec",
           "allOf" : [ {
@@ -716,14 +670,8 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
-              },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
               },
               "filters" : {
                 "type" : "array",
@@ -731,14 +679,8 @@
                   "$ref" : "#/definitions/trigger/artifact_trigger/ami_filter"
                 }
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "region" : {
                 "type" : "string"
@@ -752,7 +694,7 @@
               "version" : {
                 "type" : "string"
               },
-              "versionRegex" : {
+              "version_regex" : {
                 "type" : "string"
               }
             }
@@ -792,29 +734,17 @@
           }, {
             "type" : "object",
             "properties" : {
-              "bucketName" : {
+              "bucket" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "filePathRegex" : {
+              "path_regex" : {
                 "type" : "string"
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
               },
               "region" : {
                 "type" : "string"
@@ -830,45 +760,41 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactDirectory" : {
+              "directory" : {
                 "type" : "string"
               },
-              "artifactFilter" : {
+              "filter" : {
                 "type" : "string"
               },
-              "artifactPath" : {
+              "path" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repository" : {
-                "type" : "string"
-              },
-              "repositoryFormat" : {
-                "type" : "string"
-              },
-              "repositoryUrl" : {
-                "type" : "string"
+              "repo" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/artifact repository details"
               }
             }
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "artifact repository details" : {
+          "title" : "artifact repository details",
+          "properties" : {
+            "name" : {
+              "type" : "string"
+            },
+            "format" : {
+              "type" : "string"
+            },
+            "url" : {
+              "type" : "string"
+            }
+          }
         },
         "azure_artifact" : {
           "title" : "azure_artifact",
@@ -877,32 +803,17 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "feed" : {
                 "type" : "string"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "packageName" : {
-                "type" : "string"
-              },
-              "packageType" : {
-                "type" : "string"
+              "pkg" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/Package details"
               },
               "project" : {
                 "type" : "string"
@@ -910,12 +821,25 @@
               "version" : {
                 "type" : "string"
               },
-              "versionRegex" : {
+              "version_regex" : {
                 "type" : "string"
               }
             }
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Package details" : {
+          "title" : "Package details",
+          "properties" : {
+            "name" : {
+              "type" : "string",
+              "description" : "package name"
+            },
+            "type" : {
+              "type" : "string",
+              "description" : "package type"
+            }
+          }
         },
         "bamboo" : {
           "title" : "bamboo",
@@ -924,7 +848,7 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactPaths" : {
+              "paths" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string"
@@ -933,25 +857,13 @@
               "build" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "planKey" : {
+              "plan_key" : {
                 "type" : "string"
               }
             }
@@ -965,14 +877,11 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactsArrayPath" : {
+              "path" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "inputs" : {
                 "type" : "array",
@@ -984,15 +893,6 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/stringVariable"
                   } ]
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
                 }
               },
               "metadata" : {
@@ -1007,7 +907,7 @@
               "version" : {
                 "type" : "string"
               },
-              "versionPath" : {
+              "version_path" : {
                 "type" : "string"
               }
             }
@@ -1021,28 +921,14 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "imagePath" : {
-                "type" : "string"
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "tag" : {
+              "location" : {
+                "description" : "image path and tag, format-> image_path:tag",
                 "type" : "string"
               }
             }
@@ -1056,35 +942,22 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "imagePath" : {
-                "type" : "string"
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "region" : {
                 "type" : "string"
               },
-              "registryId" : {
+              "registry" : {
+                "description" : "registry identifier",
                 "type" : "string"
               },
-              "tag" : {
-                "type" : "string"
+              "location" : {
+                "type" : "string",
+                "description" : "image path and tag, format-> image_path:tag"
               }
             }
           } ],
@@ -1097,31 +970,17 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "imagePath" : {
-                "type" : "string"
+              "location" : {
+                "type" : "string",
+                "description" : "image path and tag, format-> image_path:tag"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "registryHostname" : {
-                "type" : "string"
-              },
-              "tag" : {
+              "registry_hostname" : {
                 "type" : "string"
               }
             }
@@ -1135,32 +994,17 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "org" : {
                 "type" : "string"
               },
-              "packageName" : {
-                "type" : "string"
-              },
-              "packageType" : {
-                "type" : "string"
+              "pkg" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/Package details"
               }
             }
           } ],
@@ -1173,23 +1017,11 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "pkg" : {
                 "type" : "string"
@@ -1200,7 +1032,8 @@
               "region" : {
                 "type" : "string"
               },
-              "repositoryName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               },
               "version" : {
@@ -1217,29 +1050,17 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactPath" : {
+              "path" : {
                 "type" : "string"
               },
               "bucket" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "project" : {
                 "type" : "string"
@@ -1255,32 +1076,21 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactPath" : {
+              "path" : {
                 "type" : "string"
               },
               "build" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
-              "jexlCondition" : {
+              "job" : {
+                "description" : "job name",
                 "type" : "string"
-              },
-              "jobName" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
               }
             }
           } ],
@@ -1293,47 +1103,31 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactId" : {
+              "artifact" : {
+                "description" : "artifact identifier",
                 "type" : "string"
               },
               "classifier" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
               },
               "extension" : {
                 "type" : "string"
               },
-              "groupId" : {
+              "group_id" : {
                 "type" : "string"
               },
-              "jexlCondition" : {
+              "pkg" : {
+                "description" : "package name",
                 "type" : "string"
               },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "packageName" : {
-                "type" : "string"
-              },
-              "repositoryFormat" : {
-                "type" : "string"
-              },
-              "repositoryName" : {
-                "type" : "string"
-              },
-              "repositoryUrl" : {
-                "type" : "string"
+              "repo" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/artifact repository details"
               },
               "tag" : {
                 "type" : "string"
@@ -1349,20 +1143,15 @@
           }, {
             "type" : "object",
             "properties" : {
-              "artifactId" : {
+              "artifact" : {
+                "description" : "artifact identifier",
                 "type" : "string"
               },
               "classifier" : {
                 "type" : "string"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
-              },
-              "eventConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
               },
               "extension" : {
                 "type" : "string"
@@ -1370,35 +1159,22 @@
               "group" : {
                 "type" : "string"
               },
-              "groupId" : {
+              "group_id" : {
                 "type" : "string"
               },
-              "imagePath" : {
+              "location" : {
+                "type" : "string",
+                "description" : "image path and tag, format-> image_path:tag"
+              },
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/conditions"
+              },
+              "pkg" : {
+                "description" : "package name",
                 "type" : "string"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "metaDataConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "packageName" : {
-                "type" : "string"
-              },
-              "repository" : {
-                "type" : "string"
-              },
-              "repositoryFormat" : {
-                "type" : "string"
-              },
-              "repositoryUrl" : {
-                "type" : "string"
-              },
-              "tag" : {
-                "type" : "string"
+              "repo" : {
+                "$ref" : "#/definitions/trigger/artifact_trigger/artifact repository details"
               }
             }
           } ],
@@ -1414,7 +1190,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "In", "Equals", "NotEquals", "NotIn", "Regex", "EndsWith", "StartsWith", "Contains", "DoesNotContain" ]
+            "enum" : [ "in", "equals", "not-equals", "not-in", "regex", "ends-with", "starts-with", "contains", "does-not-contain" ]
           },
           "value" : {
             "type" : "string"
@@ -1430,21 +1206,19 @@
           }, {
             "type" : "object",
             "properties" : {
-              "chartName" : {
+              "chart" : {
+                "description" : "chart details, format-> chart_name@version",
                 "type" : "string"
               },
-              "chartVersion" : {
-                "type" : "string"
-              },
-              "eventConditions" : {
+              "event_conditions" : {
                 "type" : "array",
                 "items" : {
                   "$ref" : "#/definitions/trigger/trigger_event_data"
                 }
               },
-              "helmVersion" : {
+              "helm_version" : {
                 "type" : "string",
-                "enum" : [ "V2", "V3", "V380" ]
+                "enum" : [ "v2", "v3", "v380" ]
               },
               "store" : {
                 "$ref" : "#/definitions/trigger/manifest_trigger/build_store"
@@ -1462,10 +1236,11 @@
         "build_store" : {
           "title" : "build_store",
           "type" : "object",
+          "required" : [ "type", "spec" ],
           "properties" : {
             "type" : {
               "type" : "string",
-              "enum" : [ "Http", "S3", "Gcs" ]
+              "enum" : [ "http", "s3", "gcs" ]
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -1473,7 +1248,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Gcs"
+                  "const" : "gcs"
                 }
               }
             },
@@ -1488,7 +1263,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Http"
+                  "const" : "http"
                 }
               }
             },
@@ -1503,7 +1278,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "S3"
+                  "const" : "s3"
                 }
               }
             },
@@ -1523,13 +1298,11 @@
           }, {
             "type" : "object",
             "properties" : {
-              "bucketName" : {
+              "location" : {
+                "description" : "bucket name and path to the manifest folder, format-> bucket_name:folder_path",
                 "type" : "string"
               },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "folderPath" : {
+              "connector" : {
                 "type" : "string"
               }
             }
@@ -1549,7 +1322,7 @@
           }, {
             "type" : "object",
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               }
             }
@@ -1563,13 +1336,10 @@
           }, {
             "type" : "object",
             "properties" : {
-              "bucketName" : {
-                "type" : "string"
+              "location" : {
+                "description" : "bucket name and path to the manifest folder, format-> bucket_name:folder_path"
               },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "folderPath" : {
+              "connector" : {
                 "type" : "string"
               },
               "region" : {
@@ -1585,12 +1355,13 @@
           "title" : "artifact_type_spec_wrapper",
           "type" : "object",
           "properties" : { },
+          "required" : [ "type", "spec" ],
           "$schema" : "http://json-schema.org/draft-07/schema#",
           "allOf" : [ {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Acr"
+                  "const" : "acr"
                 }
               }
             },
@@ -1605,7 +1376,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AmazonMachineImage"
+                  "const" : "amazon-machine-image"
                 }
               }
             },
@@ -1620,7 +1391,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AmazonS3"
+                  "const" : "amazon-s3"
                 }
               }
             },
@@ -1635,7 +1406,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "ArtifactoryRegistry"
+                  "const" : "artifactory-registry"
                 }
               }
             },
@@ -1650,7 +1421,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "AzureArtifacts"
+                  "const" : "azure"
                 }
               }
             },
@@ -1665,7 +1436,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Bamboo"
+                  "const" : "bamboo"
                 }
               }
             },
@@ -1680,7 +1451,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "CustomArtifact"
+                  "const" : "custom"
                 }
               }
             },
@@ -1695,7 +1466,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "DockerRegistry"
+                  "const" : "docker-registry"
                 }
               }
             },
@@ -1710,7 +1481,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Ecr"
+                  "const" : "ecr"
                 }
               }
             },
@@ -1725,7 +1496,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Gcr"
+                  "const" : "gcr"
                 }
               }
             },
@@ -1740,7 +1511,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GithubPackageRegistry"
+                  "const" : "github-package-registry"
                 }
               }
             },
@@ -1755,7 +1526,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GoogleArtifactRegistry"
+                  "const" : "google-artifact-registry"
                 }
               }
             },
@@ -1770,7 +1541,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "GoogleCloudStorage"
+                  "const" : "google-cloud-storage"
                 }
               }
             },
@@ -1785,7 +1556,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Jenkins"
+                  "const" : "jenkins"
                 }
               }
             },
@@ -1800,7 +1571,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Nexus2Registry"
+                  "const" : "nexus2-registry"
                 }
               }
             },
@@ -1815,7 +1586,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Nexus3Registry"
+                  "const" : "nexus3-registry"
                 }
               }
             },
@@ -1836,6 +1607,7 @@
             "$ref" : "#/definitions/trigger/scheduled_trigger/scheduled_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "expression" ],
             "properties" : {
               "expression" : {
                 "type" : "string"
@@ -1861,17 +1633,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Push" ]
+                "enum" : [ "push" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -1897,20 +1670,24 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/aws_commit_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "connector" ],
             "properties" : {
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
+              "conditions" : {
+                "jexl" : {
+                  "type" : "string"
+                },
+                "payload" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/trigger/trigger_event_data"
+                  }
                 }
               },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -1929,17 +1706,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push", "IssueComment" ]
+                "enum" : [ "pr", "push", "issue-comment" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "IssueComment"
+                  "const" : "issue-comment"
                 }
               }
             },
@@ -1954,7 +1732,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "PullRequest"
+                  "const" : "pr"
                 }
               }
             },
@@ -1969,7 +1747,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -1989,36 +1767,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/azure_repo_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete" ]
+                  "enum" : [ "create", "edit", "delete" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2031,42 +1799,54 @@
           "discriminator" : "type",
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "conditions" : {
+          "title" : "conditions",
+          "description" : "conditions for webhook trigger",
+          "properties" : {
+            "header" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/trigger/trigger_event_data"
+              }
+            },
+            "jexl" : {
+              "type" : "string"
+            },
+            "payload" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/trigger/trigger_event_data"
+              }
+            }
+          }
+        },
         "azure_repo_pr_spec" : {
           "title" : "azure_repo_pr_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/azure_repo_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Update", "Merge" ]
+                  "enum" : [ "create", "update", "merge" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
+                "description" : "abort previous executions",
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2079,29 +1859,19 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/azure_repo_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "connector" ],
             "properties" : {
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2114,17 +1884,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push", "PRComment" ]
+                "enum" : [ "pr", "push", "pr-comment" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "PRComment"
+                  "const" : "pr-comment"
                 }
               }
             },
@@ -2139,7 +1910,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "PullRequest"
+                  "const" : "pr"
                 }
               }
             },
@@ -2154,7 +1925,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -2174,36 +1945,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/bitbucket_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete" ]
+                  "enum" : [ "create", "edit", "delete" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2222,36 +1983,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/bitbucket_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Update", "Merge", "Decline" ]
+                  "enum" : [ "create", "update", "merge", "decline" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2264,29 +2015,19 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/bitbucket_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "connector" ],
             "properties" : {
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2300,20 +2041,8 @@
           }, {
             "type" : "object",
             "properties" : {
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               }
             }
           } ],
@@ -2325,17 +2054,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push", "IssueComment", "Release" ]
+                "enum" : [ "pr", "push", "issue-comment", "release" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "IssueComment"
+                  "const" : "issue-comment"
                 }
               }
             },
@@ -2350,7 +2080,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "PullRequest"
+                  "const" : "pr"
                 }
               }
             },
@@ -2365,7 +2095,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -2380,7 +2110,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Release"
+                  "const" : "release"
                 }
               }
             },
@@ -2400,36 +2130,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete" ]
+                  "enum" : [ "create", "edit", "delete" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2448,36 +2168,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Close", "Edit", "Open", "Reopen", "Label", "Unlabel", "Synchronize", "ReadyForReview" ]
+                  "enum" : [ "close", "edit", "open", "reopen", "label", "unlabel", "sync", "ready-for-review" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2490,29 +2200,19 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "connector" ],
             "properties" : {
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2525,36 +2225,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete", "Prerelease", "Publish", "Release", "Unpublish" ]
+                  "enum" : [ "create", "edit", "delete", "pre-release", "publish", "release", "unpublish" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2567,17 +2257,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "MergeRequest", "Push", "MRComment" ]
+                "enum" : [ "mr", "push", "mr-comment" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "MRComment"
+                  "const" : "mr-comment"
                 }
               }
             },
@@ -2592,7 +2283,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "MergeRequest"
+                  "const" : "mr"
                 }
               }
             },
@@ -2607,7 +2298,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -2627,36 +2318,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create" ]
+                  "enum" : [ "create" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2675,36 +2356,26 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions", "connector" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Open", "Close", "Reopen", "Merge", "Update", "Sync" ]
+                  "enum" : [ "open", "close", "reopen", "merge", "update", "sync" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2717,29 +2388,19 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "connector" ],
             "properties" : {
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "connectorRef" : {
+              "connector" : {
                 "type" : "string"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2752,17 +2413,18 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
           }, {
             "type" : "object",
+            "required" : [ "type", "spec" ],
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push", "IssueComment" ]
+                "enum" : [ "pr", "push", "issue-comment" ]
               }
             }
           }, {
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "IssueComment"
+                  "const" : "issue-comment"
                 }
               }
             },
@@ -2777,7 +2439,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "PullRequest"
+                  "const" : "pr"
                 }
               }
             },
@@ -2792,7 +2454,7 @@
             "if" : {
               "properties" : {
                 "type" : {
-                  "const" : "Push"
+                  "const" : "push"
                 }
               }
             },
@@ -2812,33 +2474,23 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete" ]
+                  "enum" : [ "create", "edit", "delete" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2857,33 +2509,23 @@
             "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
           }, {
             "type" : "object",
+            "required" : [ "actions" ],
             "properties" : {
               "actions" : {
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Close", "Edit", "Open", "Reopen", "Label", "Unlabel", "Synchronize" ]
+                  "enum" : [ "close", "edit", "open", "reopen", "label", "unlabel", "sync" ]
                 }
               },
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }
@@ -2897,25 +2539,14 @@
           }, {
             "type" : "object",
             "properties" : {
-              "autoAbortPreviousExecutions" : {
+              "abort_previous" : {
                 "type" : "boolean"
               },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
+              "repo" : {
+                "description" : "repository name",
                 "type" : "string"
               }
             }

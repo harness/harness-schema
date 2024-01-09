@@ -1,0 +1,39 @@
+title: azure_repo_spec
+allOf:
+  - "$ref": "./webhook_trigger_spec.yaml"
+  - type: object
+    required:
+      - type
+      - spec
+    properties:
+      type:
+        type: string
+        enum:
+          - pr
+          - push
+          - issue-comment
+  - if:
+      properties:
+        type:
+          const: issue-comment
+    then:
+      properties:
+        spec:
+          "$ref": "./azure_issue_comment_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: pr
+    then:
+      properties:
+        spec:
+          "$ref": "./azure_repo_pr_spec.yaml"
+  - if:
+      properties:
+        type:
+          const: push
+    then:
+      properties:
+        spec:
+          "$ref": "./azure_repo_push_spec.yaml"
+"$schema": http://json-schema.org/draft-07/schema#

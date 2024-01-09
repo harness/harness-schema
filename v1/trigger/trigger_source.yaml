@@ -1,0 +1,75 @@
+title: trigger_source
+type: object
+required:
+  - type
+  - spec
+properties:
+  input_set_refs:
+    type: array
+    items:
+      type: string
+  inputs:
+    description: input yaml for the pipeline
+    type: string
+  execute_stages:
+    description: stage identifiers of the stages to be executed in the pipeline
+    type: array
+    items:
+      type: string
+  interval:
+    description: polling interval
+    type: string
+    pattern: "(((([1-9])+\\d*[mh])+(\\s/?\\d+[mh])*)|(^$)|(0))$"
+  type:
+    type: string
+    enum:
+      - webhook
+      - artifact
+      - manifest
+      - scheduled
+      - multi-region-artifact
+  webhook:
+    description: webhook identifier
+    type: string
+"$schema": http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: artifact
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/artifact_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: manifest
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/manifest_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: multi-region-artifact
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/multi_region_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: scheduled
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/scheduled_trigger.yaml"
+  - if:
+      properties:
+        type:
+          const: webhook
+    then:
+      properties:
+        spec:
+          "$ref": "./trigger_type/webhook_trigger.yaml"
