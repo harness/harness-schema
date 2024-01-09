@@ -32779,128 +32779,13 @@
           "CriteriaSpecWrapper" : {
             "title" : "CriteriaSpecWrapper",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "expression" ],
             "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "jexl", "key-values" ]
-              },
               "description" : {
                 "desc" : "This is the description for CriteriaSpecWrapper"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "jexl"
-                  }
-                }
               },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/JexlCriteriaSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "key-values"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/KeyValuesCriteriaSpec"
-                  }
-                }
-              }
-            } ]
-          },
-          "JexlCriteriaSpec" : {
-            "title" : "JexlCriteriaSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "expression" ],
-              "properties" : {
-                "expression" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for JexlCriteriaSpec"
-              }
-            }
-          },
-          "CriteriaSpec" : {
-            "title" : "CriteriaSpec",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CriteriaSpec"
-              }
-            }
-          },
-          "KeyValuesCriteriaSpec" : {
-            "title" : "KeyValuesCriteriaSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "conditions" ],
-              "properties" : {
-                "conditions" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/Condition"
-                  }
-                },
-                "matchAnyCondition" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for KeyValuesCriteriaSpec"
-              }
-            }
-          },
-          "Condition" : {
-            "title" : "Condition",
-            "type" : "object",
-            "required" : [ "key", "operator", "value" ],
-            "properties" : {
-              "key" : {
+              "expression" : {
                 "type" : "string"
-              },
-              "operator" : {
-                "type" : "string",
-                "enum" : [ "equals", "not-equals", "in", "not-in" ]
-              },
-              "value" : {
-                "type" : "string",
-                "minLength" : 1
-              },
-              "description" : {
-                "desc" : "This is the description for Condition"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -33460,7 +33345,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approval_criteria", "connector", "issue_key" ],
+              "required" : [ "approval_criteria", "connector", "key" ],
               "properties" : {
                 "approval_criteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
@@ -33471,10 +33356,10 @@
                 "delegates" : {
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 },
-                "issue_key" : {
+                "key" : {
                   "type" : "string"
                 },
-                "issue_type" : {
+                "type" : {
                   "type" : "string"
                 },
                 "project" : {
@@ -33482,6 +33367,10 @@
                 },
                 "rejection_criteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+                },
+                "retry" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
                 }
               }
             } ],
@@ -34457,7 +34346,7 @@
             "properties" : {
               "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for ShellScriptStepNode"
+                "description" : "This is the description for ShellScriptStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -35448,7 +35337,7 @@
             "properties" : {
               "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for ShellScriptStepNode"
+                "description" : "This is the description for ShellScriptStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
