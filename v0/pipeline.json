@@ -11242,7 +11242,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "image" ]
+                "enum" : [ "image", "repository" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomSource"
@@ -11261,6 +11261,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/ImageSbomSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "repository"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySbomSource"
                   }
                 }
               }
@@ -11296,6 +11311,39 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for SbomSourceSpec"
+              }
+            }
+          },
+          "RepositorySbomSource" : {
+            "title" : "RepositorySbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "url", "path", "variant_type", "variant" ],
+              "properties" : {
+                "url" : {
+                  "type" : "string"
+                },
+                "path" : {
+                  "type" : "string"
+                },
+                "variant_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "git_tag", "commit" ]
+                },
+                "variant" : {
+                  "type" : "string"
+                },
+                "cloned_codebase" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for RepositorySbomSource"
               }
             }
           },
@@ -11595,10 +11643,60 @@
             "properties" : {
               "base" : {
                 "type" : "string",
-                "enum" : [ "baseline", "last_generated_sbom" ]
+                "enum" : [ "baseline", "last_generated_sbom", "repository" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomOrchestrationTool"
+              }
+            },
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "base" : {
+                    "const" : "repository"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySbomDrift"
+                  }
+                }
+              }
+            } ]
+          },
+          "RepositorySbomDrift" : {
+            "title" : "RepositorySbomDrift",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomDriftSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "variant_type", "variant" ],
+              "properties" : {
+                "variant_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "git_tag", "commit" ]
+                },
+                "variant" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for RepositorySbomDrift"
+              }
+            }
+          },
+          "SbomDriftSpec" : {
+            "title" : "SbomDriftSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SbomSourceDriftSpec"
               }
             }
           },
