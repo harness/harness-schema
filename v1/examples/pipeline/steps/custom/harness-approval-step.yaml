@@ -1,0 +1,31 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: approval
+      name: approval
+      id: Approval
+      timeout: 10m
+      when: <+<+environment.name> != "QA">
+      spec: 
+        steps:
+          - type: harness-approval
+            spec: 
+              approvers: 
+                min_count: 1
+                user_groups: 
+                  - account._account_all_users
+                disallow_executor: false
+              exclude_history: true
+              reject_previous: false
+              inputs: 
+                - name: var1
+                  default: val1
+              auto_approval:
+                action: approve
+                deadline: 
+                  zone: Asia/Calcutta
+                  time: 2023-12-26 03:31 PM
+                comments: Auto approved by Harness via Harness Approval step
+
+

@@ -33032,11 +33032,10 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approvers", "include_execution_history" ],
+              "required" : [ "approvers" ],
               "properties" : {
-                "callbackId" : {
-                  "type" : "string",
-                  "pattern" : "^[a-zA-Z0-9_-]*(<\\+[^ ]+>)?[a-zA-Z0-9_.()-]*$"
+                "callback_id" : {
+                  "type" : "string"
                 },
                 "message" : {
                   "type" : "string",
@@ -33051,12 +33050,18 @@
                 "approvers" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
                 },
-                "include_execution_history" : {
+                "exclude_history" : [ {
+                  "type" : "boolean"
+                } ],
+                "reject_previous" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
                     "type" : "string"
                   } ]
+                },
+                "auto_approval" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/AutoApprovalParams"
                 }
               }
             } ],
@@ -33067,7 +33072,7 @@
             "title" : "ApproverInputInfo",
             "type" : "object",
             "properties" : {
-              "defaultValue" : {
+              "default" : {
                 "type" : "string"
               },
               "name" : {
@@ -33083,16 +33088,12 @@
           "Approvers" : {
             "title" : "Approvers",
             "type" : "object",
-            "required" : [ "disallowPipelineExecutor", "minimumCount", "userGroups" ],
+            "required" : [ "disallow_executor", "min_count", "user_groups" ],
             "properties" : {
-              "disallowPipelineExecutor" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "minimumCount" : {
+              "disallow_executor" : [ {
+                "type" : "boolean"
+              } ],
+              "min_count" : {
                 "oneOf" : [ {
                   "type" : "integer",
                   "format" : "int32"
@@ -33100,7 +33101,7 @@
                   "type" : "string"
                 } ]
               },
-              "userGroups" : {
+              "user_groups" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
@@ -33116,6 +33117,44 @@
               },
               "description" : {
                 "desc" : "This is the description for Approvers"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AutoApprovalParams" : {
+            "title" : "AutoApprovalParams",
+            "type" : "object",
+            "required" : [ "action", "deadline" ],
+            "properties" : {
+              "action" : {
+                "type" : "string",
+                "enum" : [ "approve" ]
+              },
+              "comments" : {
+                "type" : "string"
+              },
+              "deadline" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ScheduledDeadline"
+              },
+              "description" : {
+                "desc" : "This is the description for AutoApproval params used in Harness Approval"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ScheduledDeadline" : {
+            "title" : "ScheduledDeadline",
+            "type" : "object",
+            "required" : [ "time", "zone" ],
+            "properties" : {
+              "time" : {
+                "type" : "string"
+              },
+              "zone" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ScheduledDeadline used in Harness Approval's AutoApproval"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
