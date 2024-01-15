@@ -1,0 +1,42 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: custom
+      spec:
+        steps:
+          - type: plugin
+            spec:
+              uses: http
+              with:
+                url: <+ stages.nested.outputs.url>
+                method: GET
+  timeout: 10m
+  notification_rules:
+    n1:
+      pipeline_events:
+        - start
+        - end
+        - success
+        - fail
+      stage_events:
+        - type: start
+          ids:
+            - id1
+        - type: success
+          ids:
+            - id1
+        - type: fail
+          ids:
+            - id1
+      step_events:
+        - fail
+      method:
+        type: email
+        spec:
+          user_groups:
+            - user1
+          recipients:
+            - abc@gmail.com
+      enabled: true
+
