@@ -11,21 +11,11 @@ curl --location --request PUT 'http://localhost:12001/api/v1/orgs/default/projec
 --data '{
     "identifier":"trigger_v1",
     "name": "trigger_v1",
-    "inputs": "inputs:\n  timeout: 10m\n  url: https://www.google.com",
-    "source": {
-        "type": "Scheduled",
-        "spec": {
-            "type": "Cron",
-            "spec": {
-                "type": "UNIX",
-                "expression": "0/5 * * * *"
-            }
-        }
-    },
+    "yaml": "version: 1\nkind: trigger\nspec:\n  type: scheduled\n  spec:\n    type: cron\n    spec:\n      type: UNIX\n      expression: 0/5 * * * *\n  execute_stages:\n    - custom_1\n  inputs: |\n    inputs:\n      url: https://www.google.com\n      timeout: 1m\n"
     "enabled": true
 }'
 
 Sample Response -
 {
-    "identifier": "trigger_v1_1"
+    "identifier": "trigger_v1"
 }
