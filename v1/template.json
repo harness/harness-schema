@@ -34948,7 +34948,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Syft" ]
+                "enum" : [ "Syft", "cdxgen" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomOrchestrationTool"
@@ -34967,6 +34967,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cdxgen"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdxgenSbomOrchestration"
                   }
                 }
               }
@@ -34999,6 +35014,26 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for SbomOrchestrationSpec"
+              }
+            }
+          },
+          "CdxgenSbomOrchestration" : {
+            "title" : "CdxgenSbomOrchestration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "cyclonedx-json" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CdxgenSbomOrchestration"
               }
             }
           },
