@@ -139,6 +139,15 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "notification_rules" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/definitions/pipeline/NotificationRules"
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
           }
         }
       },
@@ -50717,6 +50726,270 @@
             "type" : "string"
           }
         }
+      },
+      "NotificationRules" : {
+        "title" : "NotificationRules",
+        "type" : "object",
+        "required" : [ "method", "enabled" ],
+        "properties" : {
+          "pipeline_events" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "start", "end", "success", "failed", "all" ]
+            }
+          },
+          "stage_events" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/StageEventNotification"
+            }
+          },
+          "step_events" : {
+            "type" : "string",
+            "enum" : [ "failed" ]
+          },
+          "method" : {
+            "$ref" : "#/definitions/pipeline/NotificationChannelWrapper"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "StageEventNotification" : {
+        "title" : "StageEventNotification",
+        "type" : "object",
+        "required" : [ "type" ],
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "start", "success", "failed", "all" ],
+            "refs" : {
+              "type" : "array",
+              "description" : "stage identifiers from the pipeline",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        }
+      },
+      "NotificationChannelWrapper" : {
+        "title" : "NotificationChannelWrapper",
+        "type" : "object",
+        "required" : [ "type", "spec" ],
+        "properties" : {
+          "type" : {
+            "type" : "string"
+          },
+          "desc" : {
+            "description" : "This is the description for NotificationChannelWrapper"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "email"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsEmailChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "ms-teams"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsMSTeamChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "pager-duty"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsPagerDutyChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "slack"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsSlackChannel"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "webhook"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/PmsWebhookChannel"
+              }
+            }
+          }
+        } ]
+      },
+      "PmsEmailChannel" : {
+        "title" : "PmsEmailChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "required" : [ "recipients" ],
+          "properties" : {
+            "recipients" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "user_groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "PmsNotificationChannel" : {
+        "title" : "PmsNotificationChannel",
+        "type" : "object",
+        "discriminator" : "type",
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "properties" : {
+          "desc" : {
+            "description" : "This is the description for PmsNotificationChannel"
+          }
+        }
+      },
+      "PmsMSTeamChannel" : {
+        "title" : "PmsMSTeamChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "required" : [ "keys" ],
+          "properties" : {
+            "keys" : {
+              "type" : "array",
+              "description" : "MS Teams Keys",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "user_groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "PmsPagerDutyChannel" : {
+        "title" : "PmsPagerDutyChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "required" : [ "key" ],
+          "properties" : {
+            "key" : {
+              "type" : "string",
+              "description" : "integration key"
+            },
+            "user_groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "PmsSlackChannel" : {
+        "title" : "PmsSlackChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "required" : [ "webhook" ],
+          "properties" : {
+            "user_groups" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "webhook" : {
+              "type" : "string",
+              "description" : "Slack webhook URL"
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "PmsWebhookChannel" : {
+        "title" : "PmsWebhookChannel",
+        "allOf" : [ {
+          "$ref" : "#/definitions/pipeline/PmsNotificationChannel"
+        }, {
+          "type" : "object",
+          "required" : [ "url" ],
+          "properties" : {
+            "url" : {
+              "type" : "string",
+              "description" : "Webhook URL"
+            },
+            "headers" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       }
     }
   }
