@@ -2755,22 +2755,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push", "IssueComment" ]
-              }
-            }
-          }, {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "IssueComment"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/trigger/webhook_trigger/harness_issue_comment_spec"
-                }
+                "enum" : [ "PullRequest", "Push" ]
               }
             }
           }, {
@@ -2806,8 +2791,8 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "harness_issue_comment_spec" : {
-          "title" : "harness_issue_comment_spec",
+        "harness_pr_spec" : {
+          "title" : "harness_pr_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
           }, {
@@ -2817,7 +2802,7 @@
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "Create", "Edit", "Delete" ]
+                  "enum" : [ "Create", "Update", "Reopen", "Merge", "Comment" ]
                 }
               },
               "autoAbortPreviousExecutions" : {
@@ -2849,45 +2834,6 @@
           "title" : "harness_event_spec",
           "type" : "object",
           "discriminator" : "type",
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "harness_pr_spec" : {
-          "title" : "harness_pr_spec",
-          "allOf" : [ {
-            "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
-          }, {
-            "type" : "object",
-            "properties" : {
-              "actions" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string",
-                  "enum" : [ "Close", "Edit", "Open", "Reopen", "Label", "Unlabel", "Synchronize" ]
-                }
-              },
-              "autoAbortPreviousExecutions" : {
-                "type" : "boolean"
-              },
-              "headerConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "jexlCondition" : {
-                "type" : "string"
-              },
-              "payloadConditions" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/trigger/trigger_event_data"
-                }
-              },
-              "repoName" : {
-                "type" : "string"
-              }
-            }
-          } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "harness_push_spec" : {

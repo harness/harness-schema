@@ -2417,22 +2417,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "pr", "push", "issue-comment" ]
-              }
-            }
-          }, {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "issue-comment"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/trigger/webhook_trigger/harness_issue_comment_spec"
-                }
+                "enum" : [ "pr", "push" ]
               }
             }
           }, {
@@ -2468,8 +2453,8 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "harness_issue_comment_spec" : {
-          "title" : "harness_issue_comment_spec",
+        "harness_pr_spec" : {
+          "title" : "harness_pr_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
           }, {
@@ -2480,7 +2465,7 @@
                 "type" : "array",
                 "items" : {
                   "type" : "string",
-                  "enum" : [ "create", "edit", "delete" ]
+                  "enum" : [ "create", "update", "reopen", "merge", "comment" ]
                 }
               },
               "abort_previous" : {
@@ -2501,35 +2486,6 @@
           "title" : "harness_event_spec",
           "type" : "object",
           "discriminator" : "type",
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "harness_pr_spec" : {
-          "title" : "harness_pr_spec",
-          "allOf" : [ {
-            "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
-          }, {
-            "type" : "object",
-            "required" : [ "actions" ],
-            "properties" : {
-              "actions" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string",
-                  "enum" : [ "close", "edit", "open", "reopen", "label", "unlabel", "sync" ]
-                }
-              },
-              "abort_previous" : {
-                "type" : "boolean"
-              },
-              "conditions" : {
-                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
-              },
-              "repo" : {
-                "description" : "repository name",
-                "type" : "string"
-              }
-            }
-          } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "harness_push_spec" : {
