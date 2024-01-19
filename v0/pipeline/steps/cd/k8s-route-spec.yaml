@@ -13,14 +13,22 @@ properties:
         enum:
           - http
       rules:
-        type: array
-        items:
-          type: object
-          required:
-            - rule
-          properties:
-            rule:
-              "$ref": "k8s-traffic-routing-rule.yaml"
-          $schema: http://json-schema.org/draft-07/schema#
+        oneOf:
+          - type: array
+            items:
+              oneOf:
+                - type: object
+                  required:
+                    - rule
+                  properties:
+                    rule:
+                      "$ref": "k8s-traffic-routing-rule.yaml"
+                  $schema: http://json-schema.org/draft-07/schema#
+                - type: string
+                  pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+                  minLength: 1
+          - type: string
+            pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+            minLength: 1
     $schema: http://json-schema.org/draft-07/schema#
 $schema: http://json-schema.org/draft-07/schema#
