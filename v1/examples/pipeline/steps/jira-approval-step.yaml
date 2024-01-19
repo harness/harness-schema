@@ -1,0 +1,41 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - name: custom2
+      id: Custom
+      type: custom
+      spec:
+        steps:
+          - type: jira-approval
+            name: jira-approval
+            id: jira_approval
+            spec: 
+              key: TJI-194303
+              connector: JiraConnectorForAutomation1
+              project: TJI
+              type: TASK
+              retry: 1m
+              approval_criteria: 
+                expression: <+issue.Priority> == "P2"
+                # key-values: 
+                #   match: true
+                #   conditions:
+                #     - key: Description
+                #       operator: equals
+                #       value: description
+                #     - key: Original Estimate
+                #       operator: in
+                #       value: 1d
+                #     - key: 1-line Update
+                #       operator: not-in
+                #       value: test
+                #     - key: Doc Update Required
+                #       operator: equals
+                #       value: "Yes"
+                #     - key: Engineering ETA
+                #       operator: equals
+                #       value: One sprint - two weeks
+              rejection_criteria:
+                  expression: <+issue.Priority> == "P0" || <+issue."FF Added"> =~ ["Yes","No"]
+      when: <+<+environment.name> != "QA">

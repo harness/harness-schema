@@ -2994,6 +2994,17 @@
           "$schema" : "http://json-schema.org/draft-07/schema#",
           "allOf" : [ ]
         },
+        "Inputs" : {
+          "title" : "Inputs",
+          "type" : "object",
+          "description" : "inputs to be used for entities",
+          "additionalProperties" : {
+            "anyOf" : [ "string", "array", "number", "object", "boolean" ]
+          },
+          "propertyNames" : {
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0, 127}$"
+          }
+        },
         "K8sDirectInfra" : {
           "title" : "K8sDirectInfra",
           "allOf" : [ {
@@ -14691,7 +14702,11 @@
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestinations"
             } ],
+            "required" : [ "name" ],
             "properties" : {
+              "name" : {
+                "type" : "string"
+              },
               "routes" : {
                 "type" : "array",
                 "items" : {
@@ -23320,6 +23335,15 @@
                   "items" : {
                     "type" : "string"
                   }
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -23378,6 +23402,15 @@
                 "items" : {
                   "type" : "string"
                 }
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for DownloadAwsS3StepInfo"
@@ -23499,6 +23532,15 @@
                   "items" : {
                     "type" : "string"
                   }
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
@@ -23548,6 +23590,15 @@
                 "items" : {
                   "type" : "string"
                 }
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for DownloadHarnessStoreStepInfo"
@@ -32385,7 +32436,7 @@
           "ContainerInfraYamlSpec" : {
             "title" : "ContainerInfraYamlSpec",
             "type" : "object",
-            "required" : [ "connectorRef", "namespace" ],
+            "required" : [ "connectorRef" ],
             "properties" : {
               "annotations" : {
                 "oneOf" : [ {
@@ -32768,128 +32819,13 @@
           "CriteriaSpecWrapper" : {
             "title" : "CriteriaSpecWrapper",
             "type" : "object",
-            "required" : [ "spec", "type" ],
+            "required" : [ "expression" ],
             "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "jexl", "key-values" ]
-              },
               "description" : {
                 "desc" : "This is the description for CriteriaSpecWrapper"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "jexl"
-                  }
-                }
               },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/JexlCriteriaSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "key-values"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/KeyValuesCriteriaSpec"
-                  }
-                }
-              }
-            } ]
-          },
-          "JexlCriteriaSpec" : {
-            "title" : "JexlCriteriaSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "expression" ],
-              "properties" : {
-                "expression" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for JexlCriteriaSpec"
-              }
-            }
-          },
-          "CriteriaSpec" : {
-            "title" : "CriteriaSpec",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CriteriaSpec"
-              }
-            }
-          },
-          "KeyValuesCriteriaSpec" : {
-            "title" : "KeyValuesCriteriaSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "conditions" ],
-              "properties" : {
-                "conditions" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/Condition"
-                  }
-                },
-                "matchAnyCondition" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for KeyValuesCriteriaSpec"
-              }
-            }
-          },
-          "Condition" : {
-            "title" : "Condition",
-            "type" : "object",
-            "required" : [ "key", "operator", "value" ],
-            "properties" : {
-              "key" : {
+              "expression" : {
                 "type" : "string"
-              },
-              "operator" : {
-                "type" : "string",
-                "enum" : [ "equals", "not-equals", "in", "not-in" ]
-              },
-              "value" : {
-                "type" : "string",
-                "minLength" : 1
-              },
-              "description" : {
-                "desc" : "This is the description for Condition"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -33136,9 +33072,9 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approvers", "include_execution_history" ],
+              "required" : [ "approvers", "message" ],
               "properties" : {
-                "callbackId" : {
+                "callback_id" : {
                   "type" : "string",
                   "pattern" : "^[a-zA-Z0-9_-]*(<\\+[^ ]+>)?[a-zA-Z0-9_.()-]*$"
                 },
@@ -33155,12 +33091,18 @@
                 "approvers" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/Approvers"
                 },
-                "include_execution_history" : {
+                "exclude_history" : [ {
+                  "type" : "boolean"
+                } ],
+                "reject_previous" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
                     "type" : "string"
                   } ]
+                },
+                "auto_approval" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/AutoApprovalParams"
                 }
               }
             } ],
@@ -33170,8 +33112,9 @@
           "ApproverInputInfo" : {
             "title" : "ApproverInputInfo",
             "type" : "object",
+            "required" : [ "name" ],
             "properties" : {
-              "defaultValue" : {
+              "default" : {
                 "type" : "string"
               },
               "name" : {
@@ -33187,16 +33130,12 @@
           "Approvers" : {
             "title" : "Approvers",
             "type" : "object",
-            "required" : [ "disallowPipelineExecutor", "minimumCount", "userGroups" ],
+            "required" : [ "disallow_executor", "min_count", "user_groups" ],
             "properties" : {
-              "disallowPipelineExecutor" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "minimumCount" : {
+              "disallow_executor" : [ {
+                "type" : "boolean"
+              } ],
+              "min_count" : {
                 "oneOf" : [ {
                   "type" : "integer",
                   "format" : "int32"
@@ -33204,7 +33143,7 @@
                   "type" : "string"
                 } ]
               },
-              "userGroups" : {
+              "user_groups" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
@@ -33220,6 +33159,44 @@
               },
               "description" : {
                 "desc" : "This is the description for Approvers"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AutoApprovalParams" : {
+            "title" : "AutoApprovalParams",
+            "type" : "object",
+            "required" : [ "action", "deadline" ],
+            "properties" : {
+              "action" : {
+                "type" : "string",
+                "enum" : [ "approve" ]
+              },
+              "comments" : {
+                "type" : "string"
+              },
+              "deadline" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ScheduledDeadline"
+              },
+              "description" : {
+                "desc" : "This is the description for AutoApproval params used in Harness Approval"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ScheduledDeadline" : {
+            "title" : "ScheduledDeadline",
+            "type" : "object",
+            "required" : [ "time", "zone" ],
+            "properties" : {
+              "time" : {
+                "type" : "string"
+              },
+              "zone" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ScheduledDeadline used in Harness Approval's AutoApproval"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -33449,7 +33426,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "approval_criteria", "connector", "issue_key" ],
+              "required" : [ "approval_criteria", "connector", "key" ],
               "properties" : {
                 "approval_criteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
@@ -33460,10 +33437,10 @@
                 "delegates" : {
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 },
-                "issue_key" : {
+                "key" : {
                   "type" : "string"
                 },
-                "issue_type" : {
+                "type" : {
                   "type" : "string"
                 },
                 "project" : {
@@ -33471,6 +33448,10 @@
                 },
                 "rejection_criteria" : {
                   "$ref" : "#/definitions/pipeline/steps/custom/CriteriaSpecWrapper"
+                },
+                "retry" : {
+                  "type" : "string",
+                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
                 }
               }
             } ],
@@ -34446,7 +34427,7 @@
             "properties" : {
               "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for ShellScriptStepNode"
+                "description" : "This is the description for ShellScriptStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -34969,7 +34950,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Syft" ]
+                "enum" : [ "Syft", "cdxgen" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomOrchestrationTool"
@@ -34988,6 +34969,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/SyftSbomOrchestration"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cdxgen"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CdxgenSbomOrchestration"
                   }
                 }
               }
@@ -35020,6 +35016,26 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for SbomOrchestrationSpec"
+              }
+            }
+          },
+          "CdxgenSbomOrchestration" : {
+            "title" : "CdxgenSbomOrchestration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomOrchestrationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "cyclonedx-json" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CdxgenSbomOrchestration"
               }
             }
           },
@@ -35437,7 +35453,7 @@
             "properties" : {
               "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for ShellScriptStepNode"
+                "description" : "This is the description for ShellScriptStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -37322,7 +37338,7 @@
           "STOYamlTarget" : {
             "title" : "STOYamlTarget",
             "type" : "object",
-            "required" : [ "name", "type", "variant" ],
+            "required" : [ "type" ],
             "properties" : {
               "name" : {
                 "type" : "string"
@@ -37339,6 +37355,16 @@
               },
               "variant" : {
                 "type" : "string"
+              },
+              "detection" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "workspace" : {
                 "type" : "string"
@@ -57666,7 +57692,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "repoType" ],
+              "required" : [ "connectorRef", "repoType", "connectorType" ],
               "properties" : {
                 "repoType" : {
                   "type" : "string"
@@ -57692,6 +57718,9 @@
                 "project" : {
                   "type" : "string"
                 },
+                "connectorType" : {
+                  "type" : "string"
+                },
                 "resources" : {
                   "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
@@ -57699,7 +57728,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "connectorRef", "repoType" ],
+            "required" : [ "connectorRef", "repoType", "connectorType" ],
             "properties" : {
               "repoType" : {
                 "type" : "string"
@@ -57723,6 +57752,9 @@
                 "type" : "string"
               },
               "project" : {
+                "type" : "string"
+              },
+              "connectorType" : {
                 "type" : "string"
               },
               "resources" : {
@@ -57813,7 +57845,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "filePath" ],
+              "required" : [ "connectorRef", "filePath", "connectorType" ],
               "properties" : {
                 "repository" : {
                   "type" : "string"
@@ -57836,6 +57868,9 @@
                 "filePath" : {
                   "type" : "string"
                 },
+                "connectorType" : {
+                  "type" : "string"
+                },
                 "resources" : {
                   "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
@@ -57843,7 +57878,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "connectorRef", "filePath" ],
+            "required" : [ "connectorRef", "filePath", "connectorType" ],
             "properties" : {
               "repository" : {
                 "type" : "string"
@@ -57864,6 +57899,9 @@
                 "type" : "string"
               },
               "filePath" : {
+                "type" : "string"
+              },
+              "connectorType" : {
                 "type" : "string"
               },
               "resources" : {
@@ -57954,7 +57992,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "codeDirectory", "branch", "connectorRef" ],
+              "required" : [ "codeDirectory", "branch", "connectorRef", "connectorType" ],
               "properties" : {
                 "codeDirectory" : {
                   "type" : "string"
@@ -57980,6 +58018,9 @@
                 "codeOutputDirectory" : {
                   "type" : "string"
                 },
+                "connectorType" : {
+                  "type" : "string"
+                },
                 "resources" : {
                   "$ref" : "#/definitions/pipeline/common/ContainerResource"
                 }
@@ -57987,7 +58028,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "codeDirectory", "branch", "connectorRef" ],
+            "required" : [ "codeDirectory", "branch", "connectorRef", "connectorType" ],
             "properties" : {
               "codeDirectory" : {
                 "type" : "string"
@@ -58011,6 +58052,9 @@
                 "type" : "string"
               },
               "codeOutputDirectory" : {
+                "type" : "string"
+              },
+              "connectorType" : {
                 "type" : "string"
               },
               "resources" : {
@@ -59156,9 +59200,6 @@
                 "maxItems" : 256,
                 "minItems" : 1
               },
-              "environment" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
-              },
               "environmentGroup" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupYaml"
               },
@@ -59167,9 +59208,6 @@
               },
               "gitops_enabled" : {
                 "type" : "boolean"
-              },
-              "service" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedServiceYaml"
               },
               "services" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/ServicesYaml"
@@ -59232,6 +59270,60 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "EnvironmentGroupYaml" : {
+            "title" : "EnvironmentGroupYaml",
+            "type" : "object",
+            "required" : [ "envGroupRef" ],
+            "properties" : {
+              "__uuid" : {
+                "type" : "string"
+              },
+              "deployToAll" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^(?=\\s*\\S).*$"
+              },
+              "environments" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "filters" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/EnvInfraFilterYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "metadata" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupMetadata"
+              },
+              "description" : {
+                "desc" : "This is the description for EnvironmentGroupYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "SimplifiedEnvironmentYaml" : {
             "title" : "SimplifiedEnvironmentYaml",
             "type" : "object",
@@ -59264,7 +59356,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/EnvInfraFilterYaml"
                   }
                 }, {
                   "type" : "string",
@@ -59288,7 +59380,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedInfraDefYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/InfraDefYaml"
                   }
                 }, {
                   "type" : "string",
@@ -59336,45 +59428,37 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FilterYaml" : {
-            "title" : "FilterYaml",
+          "EnvInfraFilterYaml" : {
+            "title" : "EnvInfraFilterYaml",
             "type" : "object",
-            "required" : [ "entities", "identifier", "spec", "type" ],
+            "required" : [ "envs", "infra_defs" ],
             "properties" : {
-              "entities" : {
-                "type" : "array",
-                "uniqueItems" : true,
-                "items" : {
-                  "type" : "string",
-                  "enum" : [ "infrastructures", "gitOpsClusters", "environments" ]
-                }
+              "envs" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/TagsTypeFilter"
               },
-              "identifier" : {
-                "type" : "string"
-              },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/FilterSpec"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "tags", "all" ]
-              },
-              "description" : {
-                "desc" : "This is the description for FilterYaml"
+              "infra_defs" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/TagsTypeFilter"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FilterSpec" : {
-            "title" : "FilterSpec",
+          "TagsTypeFilter" : {
+            "title" : "TagsTypeFilter",
             "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "required" : [ "tags" ],
             "properties" : {
-              "description" : {
-                "desc" : "This is the description for FilterSpec"
+              "tags" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "condition" : {
+                "type" : "string",
+                "enum" : [ "and", "or" ]
               }
-            }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ClusterYaml" : {
             "title" : "ClusterYaml",
@@ -59393,29 +59477,21 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "SimplifiedInfraDefYaml" : {
-            "title" : "SimplifiedInfraDefYaml",
+          "InfraDefYaml" : {
+            "title" : "InfraDefYaml",
             "type" : "object",
             "required" : [ "id" ],
             "properties" : {
               "id" : {
-                "type" : "string",
-                "pattern" : "^(?=\\s*\\S).*$"
+                "type" : "string"
               },
               "inputs" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                  "$ref" : "#/definitions/pipeline/common/Inputs"
                 }, {
                   "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
+                  "pattern" : "^<\\+inputs\\..*>$"
                 } ]
-              },
-              "metadata" : {
-                "type" : "string"
-              },
-              "desc" : {
-                "description" : "This is the description for SimplifiedInfraDefYaml"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -60422,60 +60498,6 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "EnvironmentGroupYaml" : {
-            "title" : "EnvironmentGroupYaml",
-            "type" : "object",
-            "required" : [ "envGroupRef" ],
-            "properties" : {
-              "__uuid" : {
-                "type" : "string"
-              },
-              "deployToAll" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^(?=\\s*\\S).*$"
-              },
-              "environments" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "filters" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "metadata" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentGroupMetadata"
-              },
-              "description" : {
-                "desc" : "This is the description for EnvironmentGroupYaml"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "EnvironmentGroupMetadata" : {
             "title" : "EnvironmentGroupMetadata",
             "type" : "object",
@@ -60493,92 +60515,93 @@
             "title" : "EnvironmentsYaml",
             "type" : "object",
             "properties" : {
-              "filters" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/FilterYaml"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "metadata" : {
-                "readOnly" : true,
-                "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentsMetadata"
-              },
               "values" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedEnvironmentYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYaml"
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
+                  "pattern" : "^<\\+inputs\\..*>$"
                 } ]
               },
-              "description" : {
-                "desc" : "This is the description for EnvironmentsYaml"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "EnvironmentsMetadata" : {
-            "title" : "EnvironmentsMetadata",
-            "type" : "object",
-            "properties" : {
-              "parallel" : {
-                "type" : "boolean"
+              "inherit" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/InheritEnvironment"
               },
-              "description" : {
-                "desc" : "This is the description for EnvironmentsMetadata"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "SimplifiedServiceYaml" : {
-            "title" : "SimplifiedServiceYaml",
-            "type" : "object",
-            "properties" : {
-              "inputs" : {
+              "filters" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/EnvInfraFilterYaml"
+                }
+              },
+              "sequential" : {
                 "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/JsonNode"
+                  "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "(^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$|^$)"
+                  "pattern" : "(<\\+.+>.*)"
                 } ]
-              },
+              }
+            },
+            "anyOf" : [ "values", "inherit", "filters" ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EnvironmentYaml" : {
+            "title" : "EnvironmentYaml",
+            "type" : "object",
+            "required" : [ "ref", "infra" ],
+            "properties" : {
               "ref" : {
-                "type" : "string",
-                "pattern" : "^(?=\\s*\\S).*$"
+                "type" : "string"
               },
-              "use-from-stage" : {
-                "$ref" : "#/definitions/pipeline/stages/cd/ServiceUseFromStageV2"
+              "inputs" : {
+                "$ref" : "#/definitions/pipeline/common/Inputs"
               },
-              "desc" : {
-                "description" : "This is the description for SimplifiedServiceYaml"
+              "infra" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/InfraDefYaml"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+inputs\\..*>$"
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "ServiceUseFromStageV2" : {
-            "title" : "ServiceUseFromStageV2",
+          "InheritEnvironment" : {
+            "title" : "InheritEnvironment",
             "type" : "object",
             "required" : [ "stage" ],
             "properties" : {
-              "metadata" : {
+              "stage" : {
                 "type" : "string"
               },
-              "stage" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              "with" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/InheritEnvironmentWithConfig"
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "InheritEnvironmentWithConfig" : {
+            "title" : "InheritEnvironmentWithConfig",
+            "type" : "object",
+            "required" : [ "env", "infra" ],
+            "properties" : {
+              "env" : {
+                "type" : "string"
               },
-              "description" : {
-                "desc" : "This is the description for ServiceUseFromStageV2"
+              "infra" : {
+                "type" : "string"
+              },
+              "inputs" : {
+                "$ref" : "#/definitions/pipeline/common/Inputs"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -60587,41 +60610,63 @@
             "title" : "ServicesYaml",
             "type" : "object",
             "properties" : {
-              "metadata" : {
-                "readOnly" : true,
-                "$ref" : "#/definitions/pipeline/stages/cd/ServicesMetadata"
-              },
               "values" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/SimplifiedServiceYaml"
+                    "$ref" : "#/definitions/pipeline/stages/cd/ServiceYaml"
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+inputs\\..*>$",
                   "minLength" : 1
                 } ]
               },
-              "description" : {
-                "desc" : "This is the description for ServicesYaml"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "ServicesMetadata" : {
-            "title" : "ServicesMetadata",
-            "type" : "object",
-            "properties" : {
-              "parallel" : {
+              "inherit" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/InheritService"
+              },
+              "sequential" : {
                 "oneOf" : [ {
                   "type" : "boolean"
                 }, {
                   "type" : "string"
                 } ]
               },
-              "description" : {
-                "desc" : "This is the description for ServicesMetadata"
+              "desc" : {
+                "description" : "This is the description for ServicesYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "anyOf" : [ "values", "inherit" ]
+          },
+          "ServiceYaml" : {
+            "title" : "ServiceYaml",
+            "type" : "object",
+            "required" : [ "ref" ],
+            "properties" : {
+              "inputs" : {
+                "$ref" : "#/definitions/pipeline/common/Inputs"
+              },
+              "ref" : {
+                "type" : "string"
+              },
+              "desc" : {
+                "description" : "This is the description for ServiceYaml"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "InheritService" : {
+            "title" : "InheritService",
+            "type" : "object",
+            "required" : [ "stage" ],
+            "properties" : {
+              "stage" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "desc" : {
+                "description" : "This is the description for InheritService"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"

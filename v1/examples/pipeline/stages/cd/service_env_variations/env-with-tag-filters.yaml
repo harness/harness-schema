@@ -1,0 +1,34 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: deployment
+      failure:
+        - errors:
+            - all
+          action:
+            type: fail
+      spec:
+        services:
+          inherit:
+            stage: pre-qa
+          sequential : true
+        environments:
+          filters:
+            envs:
+              - tags:
+                  a:b
+                  c:d
+                condition: or  # optional | Default value and
+            infra_defs:
+              - tags:
+                  a:b
+                  c:d
+                condition: and     # optional | Default value and
+          sequential: true    # optional
+        steps:
+          - type: helm-deploy
+            spec: {}
+        rollback_steps:
+          - type: helm-rollback
+            spec: {}

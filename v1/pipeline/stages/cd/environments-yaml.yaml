@@ -1,25 +1,26 @@
 title: EnvironmentsYaml
 type: object
 properties:
-  filters:
-    oneOf:
-    - type: array
-      items:
-        $ref: filter-yaml.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  metadata:
-    readOnly: true
-    $ref: environments-metadata.yaml
   values:
     oneOf:
-    - type: array
-      items:
-        $ref: environment-yaml-v2.yaml
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  description:
-    desc: This is the description for EnvironmentsYaml
+      - type: array
+        items:
+          $ref: environment-yaml.yaml
+      - type: string
+        pattern: ^<\+inputs\..*>$
+  inherit:
+    $ref: inherit-environment.yaml
+  filters:
+    type: array
+    items:
+      $ref: env-infra-filter-yaml.yaml
+  sequential:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+anyOf:
+  - values
+  - inherit
+  - filters
 $schema: http://json-schema.org/draft-07/schema#
