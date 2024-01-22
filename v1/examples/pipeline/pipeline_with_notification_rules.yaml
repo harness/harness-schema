@@ -1,0 +1,55 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: custom
+      spec:
+        steps:
+          - type: plugin
+            spec:
+              uses: http
+              with:
+                url: <+ stages.nested.outputs.url>
+                method: GET
+  timeout: 10m
+  notification_rules:
+    n1:
+      pipeline_events:
+        - start
+        - end
+        - success
+        - failed
+      stage_events:
+        - type: start
+          refs:
+            - all
+        - type: success
+          refs:
+            - ref1
+        - type: failed
+          refs:
+            - ref1
+      step_events:
+        - failed
+      method:
+        type: email
+        spec:
+          user_groups:
+            - user1
+          recipients:
+            - abc@gmail.com
+      enabled: true
+    n2:
+      pipeline_events:
+        - all
+      stage_events:
+        - type: all
+      step_events:
+        - failed
+      method:
+        type: slack
+        spec:
+          user_groups: []
+          webhook: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+      enabled: true
+
