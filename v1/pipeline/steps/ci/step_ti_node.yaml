@@ -1,0 +1,39 @@
+title: StepTestNode
+type: object
+required:
+  - spec
+  - type
+properties:
+  desc:
+    type: string
+    desc: This is the description for TestStepNode
+  enforce:
+    $ref: ../../common/policy-config.yaml
+  failure:
+    $ref: ../../common/failure_list.yaml
+  id:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  strategy:
+    $ref: ../../common/strategy.yaml
+    description: The stage execution strategy.
+  type:
+    type: string
+    enum:
+      - test
+  when:
+    description: The stage conditional logic.
+    type: string
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: test
+    then:
+      properties:
+        spec:
+          $ref: step_ti.yaml
