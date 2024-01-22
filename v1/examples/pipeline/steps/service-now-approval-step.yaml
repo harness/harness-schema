@@ -1,0 +1,24 @@
+version: 1
+kind: pipeline
+spec:
+  stages:
+    - type: approval
+      name: approval
+      id: Approval
+      timeout: 10m
+      when: <+<+environment.name> != "QA">
+      spec: 
+        steps:
+          - type: service-now-approval
+            name: serviceNow
+            id: serviceNow
+            spec: 
+              connector: SNOWConnector
+              ticket:
+                number: "123"
+                type: change_request
+              approval_criteria:
+                expression: <+ticket.state.value> == "Done"
+              window: 
+                start: review_date
+                end: end_date
