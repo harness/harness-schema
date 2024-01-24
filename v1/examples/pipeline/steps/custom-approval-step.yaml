@@ -1,28 +1,26 @@
 version: 1
 kind: pipeline
 spec:
-  stages: 
+  stages:
     - type: custom
       name: custom
       id: custom
       spec:
         steps:
           - type: custom-approval
+            name: custom
+            id: custom
             spec:
-              approval_criteria: 
+              approval_criteria:
                 expression: <+output.nameVal>=="123"
-              rejection_criteria: 
-                expression: <+output.nameVal1>=="123"
               timeout: 10m
               retry: 1m
               shell: bash
               source:
                 type: inline
                 spec:
-                  script: |
-                    name=123
-              env_vars: []
-              out_vars: 
-                - key: nameVal
+                  script: name=123
+              output_vars:
+                nameVal:
                   type: string
                   value: name

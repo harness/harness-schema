@@ -2647,18 +2647,6 @@
             "type" : "string"
           } ]
         },
-        "Timeout" : {
-          "title" : "Timeout",
-          "type" : "string",
-          "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$",
-          "metadata" : {
-            "inputProperties" : {
-              "type" : "string",
-              "internalType" : "duration"
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
         "StringVariable" : {
           "title" : "StringVariable",
           "allOf" : [ {
@@ -2936,6 +2924,18 @@
               }
             }
           } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Timeout" : {
+          "title" : "Timeout",
+          "type" : "string",
+          "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$",
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "duration"
+            }
+          },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "StepElementConfig" : {
@@ -32820,27 +32820,45 @@
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 },
                 "env_vars" : {
-                  "type" : "array",
-                  "items" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretVariable"
                     } ]
+                  },
+                  "propertyNames" : {
+                    "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
                   }
                 },
                 "output_vars" : {
-                  "type" : "array",
-                  "items" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretVariable"
                     } ]
+                  },
+                  "propertyNames" : {
+                    "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
                   }
                 },
                 "rejection_criteria" : {
