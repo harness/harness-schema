@@ -300,9 +300,9 @@ def my_function(module,prefix):
 
 
 
-moduleList = ['iacm']
+moduleList = ['','custom','cd','ci','iacm','security','cvng']
 
 for module in moduleList:
 	print()
-	my_function(module,'GitCloneStepNode')
+	my_function(module,'StepNode')
 f.close()
