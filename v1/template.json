@@ -50535,6 +50535,49 @@
               }
             } ]
           },
+          "TemplateStepNode" : {
+            "title" : "TemplateStepNode",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for TemplateStepNode"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "template" ]
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "template"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
+                  }
+                }
+              }
+            } ]
+          },
           "DockerInfraYaml" : {
             "title" : "DockerInfraYaml",
             "allOf" : [ {
@@ -51178,49 +51221,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/BackgroundStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "TemplateStepNode" : {
-            "title" : "TemplateStepNode",
-            "type" : "object",
-            "required" : [ "type", "spec" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for TemplateStepNode"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "template" ]
-              },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "template"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/TemplateLinkConfigSpec"
                   }
                 }
               }
@@ -62864,6 +62864,8 @@
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerraformPluginStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/TemplateStepNode"
                 } ]
               },
               "description" : {
