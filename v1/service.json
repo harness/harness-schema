@@ -1,0 +1,705 @@
+{
+  "title" : "ServiceEntity",
+  "type" : "object",
+  "required" : [ "spec", "version", "kind" ],
+  "properties" : {
+    "version" : {
+      "description" : "Version defines the schema version.",
+      "type" : "number",
+      "enum" : [ 1 ]
+    },
+    "kind" : {
+      "description" : "defines the kind of yaml (pipeline/template/service)",
+      "type" : "string",
+      "enum" : [ "service" ]
+    },
+    "spec" : {
+      "type" : "object",
+      "description" : "inputs to be used in the linked template",
+      "$ref" : "#/definitions/serviceEntity/ServiceSpec"
+    },
+    "desc" : {
+      "description" : "This is the description for Service Entity"
+    }
+  },
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "definitions" : {
+    "serviceEntity" : {
+      "ServiceSpec" : {
+        "title" : "ServiceSpec",
+        "type" : "object",
+        "required" : [ "spec", "type" ],
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "kubernetes" ]
+          }
+        },
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "kubernetes"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/serviceEntity/KubernetesServiceSpec"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "KubernetesServiceSpec" : {
+        "title" : "KubernetesServiceSpec",
+        "allOf" : [ {
+          "$ref" : "#/definitions/serviceEntity/BasicServiceSpec"
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "BasicServiceSpec" : {
+        "title" : "BasicServiceSpec",
+        "type" : "object",
+        "discriminator" : "type",
+        "properties" : {
+          "manifests" : {
+            "$ref" : "#/definitions/serviceEntity/ManifestsWrapper"
+          },
+          "artifacts" : {
+            "$ref" : "#/definitions/serviceEntity/ArtifactWrapper"
+          },
+          "config_files" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/serviceEntity/ConfigFile"
+            }
+          },
+          "variables" : {
+            "type" : "object",
+            "description" : "Variables defines for service",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/StringVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/NumberVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/SecretVariable"
+              } ]
+            }
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ManifestsWrapper" : {
+        "title" : "ManifestsWrapper",
+        "type" : "object",
+        "required" : [ "sources" ],
+        "properties" : {
+          "primary" : {
+            "type" : "string"
+          },
+          "sources" : {
+            "type" : "array",
+            "$ref" : "#/definitions/serviceEntity/ManifestConfig"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ManifestConfig" : {
+        "title" : "ManifestConfig",
+        "type" : "object",
+        "required" : [ "id", "spec", "type" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "k8s", "values" ]
+          }
+        },
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "k8s"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/serviceEntity/K8sManifest"
+              }
+            }
+          }
+        }, {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "values"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/serviceEntity/ValuesManifest"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "K8sManifest" : {
+        "title" : "K8sManifest",
+        "allOf" : [ {
+          "$ref" : "#/definitions/serviceEntity/BasicManifestConfig"
+        }, {
+          "type" : "object",
+          "required" : [ "spec", "type" ],
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum" : [ "github" ]
+            },
+            "values" : {
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }, {
+                "type" : "string",
+                "pattern" : "(<\\+.+>.*)",
+                "minLength" : 1
+              } ]
+            },
+            "skip_resource_versioning" : {
+              "oneOf" : [ {
+                "type" : "string"
+              }, {
+                "type" : "boolean"
+              } ]
+            },
+            "declarative_rollback" : {
+              "oneOf" : [ {
+                "type" : "string"
+              }, {
+                "type" : "boolean"
+              } ]
+            },
+            "spec" : {
+              "type" : "object",
+              "allOf" : [ {
+                "if" : {
+                  "properties" : {
+                    "type" : {
+                      "const" : "github"
+                    }
+                  }
+                },
+                "then" : {
+                  "properties" : {
+                    "spec" : {
+                      "$ref" : "#/definitions/serviceEntity/stores/GithubStoreConfig"
+                    }
+                  }
+                }
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "BasicManifestConfig" : {
+        "title" : "BasicManifestConfig",
+        "type" : "object",
+        "discriminator" : "type",
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "stores" : {
+        "GithubStoreConfig" : {
+          "title" : "GithubStoreConfig",
+          "allOf" : [ {
+            "$ref" : "#/definitions/serviceEntity/stores/BasicStoreConfig"
+          }, {
+            "type" : "object",
+            "required" : [ "connector", "location" ],
+            "properties" : {
+              "location" : {
+                "type" : "string"
+              },
+              "connector" : {
+                "type" : "string"
+              },
+              "repo" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BasicStoreConfig" : {
+          "title" : "BasicStoreConfig",
+          "type" : "object",
+          "discriminator" : "type",
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "DockerHubArtifactConfig" : {
+          "title" : "DockerHubArtifactConfig",
+          "allOf" : [ {
+            "$ref" : "#/definitions/serviceEntity/stores/BasicArtifactStoreConfig"
+          }, {
+            "type" : "object",
+            "required" : [ "connector", "location" ],
+            "properties" : {
+              "connector" : {
+                "type" : "string"
+              },
+              "location" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BasicArtifactStoreConfig" : {
+          "title" : "BasicArtifactStoreConfig",
+          "discriminator" : "type",
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "HarnessStore" : {
+          "title" : "HarnessStore",
+          "allOf" : [ {
+            "$ref" : "#/definitions/serviceEntity/stores/BasicArtifactStoreConfig"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "file" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for HarnessStore"
+            }
+          }
+        }
+      },
+      "ValuesManifest" : {
+        "title" : "ValuesManifest",
+        "allOf" : [ {
+          "$ref" : "#/definitions/serviceEntity/BasicManifestConfig"
+        }, {
+          "type" : "object",
+          "required" : [ "spec", "type" ],
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum" : [ "github" ]
+            },
+            "spec" : {
+              "type" : "object",
+              "allOf" : [ {
+                "if" : {
+                  "properties" : {
+                    "type" : {
+                      "const" : "github"
+                    }
+                  }
+                },
+                "then" : {
+                  "properties" : {
+                    "spec" : {
+                      "$ref" : "#/definitions/serviceEntity/stores/GithubStoreConfig"
+                    }
+                  }
+                }
+              } ]
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ArtifactWrapper" : {
+        "title" : "ArtifactWrapper",
+        "type" : "object",
+        "required" : [ "primary", "sources" ],
+        "properties" : {
+          "primary" : {
+            "type" : "string"
+          },
+          "sources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/serviceEntity/ArtifactConfig"
+            }
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ArtifactConfig" : {
+        "title" : "ArtifactConfig",
+        "type" : "object",
+        "required" : [ "id", "type", "spec" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "docker" ]
+          }
+        },
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "docker"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/serviceEntity/stores/DockerHubArtifactConfig"
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ConfigFile" : {
+        "title" : "ConfigFile",
+        "type" : "object",
+        "required" : [ "id", "type", "spec" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "harness" ]
+          }
+        },
+        "allOf" : [ {
+          "if" : {
+            "properties" : {
+              "type" : {
+                "const" : "harness",
+                "spec" : {
+                  "$ref" : "#/definitions/serviceEntity/stores/HarnessStore"
+                }
+              }
+            }
+          }
+        } ],
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    "pipeline" : {
+      "common" : {
+        "StringVariable" : {
+          "title" : "StringVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "string" ]
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Variable" : {
+          "title" : "Variable",
+          "type" : "object",
+          "discriminator" : "type",
+          "description" : "Variable defines a variable object",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the variable type.",
+              "type" : "string",
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+            },
+            "desc" : {
+              "type" : "string",
+              "description" : "Desc defines the variable description."
+            },
+            "required" : {
+              "type" : "boolean",
+              "description" : "Required indicates the variable is required."
+            },
+            "execution_input" : {
+              "description" : "a boolean that defines whether the value is an execution input",
+              "type" : "boolean",
+              "default" : false
+            }
+          }
+        },
+        "NumberVariable" : {
+          "title" : "NumberVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "number",
+                "format" : "double"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "number" ]
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "number",
+                  "format" : "double"
+                }, {
+                  "type" : "string",
+                  "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                } ]
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "type" : "number",
+                            "format" : "double"
+                          }, {
+                            "type" : "string",
+                            "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                          } ]
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ArrayVariable" : {
+          "title" : "ArrayVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "array"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "array" ]
+              },
+              "value" : {
+                "type" : "array"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "array"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BooleanVariable" : {
+          "title" : "BooleanVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "boolean"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "boolean" ]
+              },
+              "value" : {
+                "type" : "boolean"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ObjectVariable" : {
+          "title" : "ObjectVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "object"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "object" ]
+              },
+              "value" : {
+                "type" : "object"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for a variable",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for a variable value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "SecretVariable" : {
+          "title" : "SecretVariable",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type", "value" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "secret" ]
+              },
+              "value" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      }
+    }
+  }
+}
