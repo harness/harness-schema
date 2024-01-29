@@ -89,6 +89,7 @@ stofile=(
     "stoyaml-mend-tool-data.yaml"
     "stoyaml-veracode-tool-data.yaml"
     "stoyaml-zap-tool-data.yaml"
+    "stoyaml-wiz-tool-data.yaml"
 )
 
 file_list=(
@@ -126,6 +127,7 @@ file_list=(
   "fortify-on-demand-scan-node.yaml"
   "veracode-scan-node.yaml"
   "nmap-scan-node.yaml"
+  "wiz-scan-node.yaml"
   )
 
 newFileInfoList=(
@@ -162,6 +164,7 @@ newFileInfoList=(
   "security-step-info.yaml"
   "snyk-step-info.yaml"
   "veracode-step-info.yaml"
+  "wiz-step-info.yaml"
 )
 
 
