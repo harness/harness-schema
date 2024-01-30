@@ -14577,7 +14577,7 @@
                   } ]
                 },
                 "trafficRouting" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
+                  "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpec"
                 }
               }
             } ],
@@ -14632,31 +14632,31 @@
                 } ]
               },
               "trafficRouting" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpec"
               },
               "description" : {
                 "desc" : "This is the description for K8sBlueGreenStepInfo"
               }
             }
           },
-          "K8sTrafficRouting" : {
-            "title" : "K8sTrafficRouting",
+          "K8sTrafficRoutingSpec" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "title" : "K8sTrafficRoutingSpec",
             "type" : "object",
-            "required" : [ "spec", "provider" ],
+            "required" : [ "provider", "spec" ],
             "properties" : {
-              "spec" : {
-                "type" : "object"
-              },
               "provider" : {
                 "type" : "string",
                 "enum" : [ "smi", "istio" ]
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
               "if" : {
                 "properties" : {
-                  "type" : {
+                  "provider" : {
                     "const" : "smi"
                   }
                 }
@@ -14664,14 +14664,14 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/SMIProvider"
+                    "$ref" : "#/definitions/pipeline/steps/cd/SMIProviderSpec"
                   }
                 }
               }
             }, {
               "if" : {
                 "properties" : {
-                  "type" : {
+                  "provider" : {
                     "const" : "istio"
                   }
                 }
@@ -14685,23 +14685,24 @@
               }
             } ]
           },
-          "SMIProvider" : {
-            "title" : "SMIProvider",
-            "type" : "object",
+          "SMIProviderSpec" : {
+            "title" : "SMIProviderSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingProviderBaseSpec"
-            } ],
-            "properties" : {
-              "rootService" : {
-                "type" : "string"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "rootService" : {
+                  "type" : "string"
+                }
               }
-            },
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "K8sTrafficRoutingProviderBaseSpec" : {
             "title" : "K8sTrafficRoutingProviderBaseSpec",
             "type" : "object",
-            "required" : [ "name" ],
+            "required" : [ "name", "routes" ],
             "properties" : {
               "name" : {
                 "type" : "string"
@@ -14711,7 +14712,8 @@
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/RouteSpec"
-                  }
+                  },
+                  "minItems" : 1
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -14727,65 +14729,63 @@
             "required" : [ "route" ],
             "properties" : {
               "route" : {
-                "type" : "object",
                 "allOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/cd/RouteSpecBase"
-                } ],
-                "required" : [ "type" ],
-                "properties" : {
-                  "type" : {
-                    "type" : "string",
-                    "enum" : [ "http" ]
-                  },
-                  "rules" : {
-                    "oneOf" : [ {
-                      "type" : "array",
-                      "items" : {
-                        "oneOf" : [ {
-                          "type" : "object",
-                          "required" : [ "rule" ],
-                          "properties" : {
-                            "rule" : {
-                              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRule"
-                            }
-                          },
-                          "$schema" : "http://json-schema.org/draft-07/schema#"
-                        }, {
-                          "type" : "string",
-                          "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                          "minLength" : 1
-                        } ]
-                      }
-                    }, {
+                }, {
+                  "type" : "object",
+                  "required" : [ "type" ],
+                  "properties" : {
+                    "type" : {
                       "type" : "string",
-                      "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                      "minLength" : 1
-                    } ]
-                  }
-                },
-                "$schema" : "http://json-schema.org/draft-07/schema#"
+                      "enum" : [ "http" ]
+                    },
+                    "rules" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "type" : "object",
+                            "required" : [ "rule" ],
+                            "properties" : {
+                              "rule" : {
+                                "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRule"
+                              }
+                            },
+                            "$schema" : "http://json-schema.org/draft-07/schema#"
+                          }, {
+                            "type" : "string",
+                            "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                            "minLength" : 1
+                          } ]
+                        },
+                        "minItems" : 1
+                      }, {
+                        "type" : "string",
+                        "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                        "minLength" : 1
+                      } ]
+                    }
+                  },
+                  "$schema" : "http://json-schema.org/draft-07/schema#"
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "RouteSpecBase" : {
             "title" : "RouteSpecBase",
-            "type" : "object",
-            "properties" : {
-              "route" : {
-                "type" : "object",
-                "allOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestinations"
-                } ],
-                "required" : [ "name" ],
-                "properties" : {
-                  "name" : {
-                    "type" : "string"
-                  }
-                },
-                "$schema" : "http://json-schema.org/draft-07/schema#"
-              }
-            },
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestinations"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                }
+              },
+              "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "K8sTrafficRoutingDestinations" : {
@@ -14819,7 +14819,8 @@
                 "required" : [ "host" ],
                 "properties" : {
                   "host" : {
-                    "type" : "string"
+                    "type" : "string",
+                    "minLength" : 1
                   },
                   "weight" : {
                     "oneOf" : [ {
@@ -14843,7 +14844,10 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "uri", "method", "header", "port", "scheme", "authority" ]
+                "enum" : [ "uri", "method", "headers", "port", "scheme", "authority" ]
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -14858,22 +14862,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRuleURISpec",
-                    "type" : "object",
-                    "required" : [ "value" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "value" : {
-                        "type" : "string"
-                      },
-                      "matchType" : {
-                        "type" : "string",
-                        "enum" : [ "exact", "prefix", "regex" ]
-                      }
-                    },
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRuleURISpec"
                   }
                 }
               }
@@ -14888,67 +14877,22 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRuleMethodSpec",
-                    "type" : "object",
-                    "required" : [ "value" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "value" : {
-                        "type" : "string",
-                        "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
-                      },
-                      "matchType" : {
-                        "type" : "string",
-                        "enum" : [ "exact", "prefix", "regex" ]
-                      }
-                    }
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRuleMethodSpec"
                   }
-                },
-                "$schema" : "http://json-schema.org/draft-07/schema#"
+                }
               }
             }, {
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "header"
+                    "const" : "headers"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRuleHeaderSpec",
-                    "type" : "object",
-                    "required" : [ "values" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "values" : {
-                        "type" : "array",
-                        "items" : {
-                          "minLength" : 1,
-                          "type" : "object",
-                          "required" : [ "key", "value" ],
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            },
-                            "matchType" : {
-                              "type" : "string",
-                              "enum" : [ "exact", "prefix", "regex" ]
-                            },
-                            "$schema" : "http://json-schema.org/draft-07/schema#"
-                          }
-                        }
-                      }
-                    },
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRuleHeadersSpec"
                   }
                 }
               }
@@ -14963,26 +14907,9 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRulePortSpec",
-                    "type" : "object",
-                    "required" : [ "value" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "value" : {
-                        "oneOf" : [ {
-                          "type" : "number"
-                        }, {
-                          "type" : "string",
-                          "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                          "minLength" : 1
-                        } ]
-                      }
-                    }
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRulePortSpec"
                   }
-                },
-                "$schema" : "http://json-schema.org/draft-07/schema#"
+                }
               }
             }, {
               "if" : {
@@ -14995,22 +14922,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRuleSchemeSpec",
-                    "type" : "object",
-                    "required" : [ "value" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "value" : {
-                        "type" : "string"
-                      },
-                      "matchType" : {
-                        "type" : "string",
-                        "enum" : [ "exact", "prefix", "regex" ]
-                      }
-                    },
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRuleSchemeSpec"
                   }
                 }
               }
@@ -15025,54 +14937,103 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "title" : "K8sTrafficRoutingRuleAuthoritySpec",
-                    "type" : "object",
-                    "required" : [ "value" ],
-                    "properties" : {
-                      "name" : {
-                        "type" : "string"
-                      },
-                      "value" : {
-                        "type" : "string"
-                      },
-                      "matchType" : {
-                        "type" : "string",
-                        "enum" : [ "exact", "prefix", "regex" ]
-                      }
-                    },
-                    "$schema" : "http://json-schema.org/draft-07/schema#"
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRuleAuthoritySpec"
                   }
                 }
               }
             } ]
           },
-          "IstioProviderSpec" : {
-            "title" : "IstioProviderSpec",
-            "type" : "object",
+          "K8sTrafficRoutingRuleURISpec" : {
+            "title" : "K8sTrafficRoutingRuleURISpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingProviderBaseSpec"
-            } ],
-            "properties" : {
-              "gateways" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "minLength" : 1
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRuleMatchType"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                "value" : {
+                  "type" : "string"
+                }
               },
-              "hosts" : {
+              "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
+          },
+          "K8sTrafficRoutingRouteRuleMatchType" : {
+            "title" : "K8sTrafficRoutingRouteRuleMatchType",
+            "type" : "object",
+            "properties" : {
+              "matchType" : {
+                "type" : "string",
+                "enum" : [ "exact", "prefix", "regex" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sTrafficRoutingRuleMethodSpec" : {
+            "title" : "K8sTrafficRoutingRuleMethodSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRuleMatchType"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                "value" : {
+                  "type" : "string",
+                  "enum" : [ "GET", "POST", "PUT", "DELETE", "HEAD", "CONNECT", "OPTION", "TRACE", "PATCH" ]
+                }
+              },
+              "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
+          },
+          "K8sTrafficRoutingRuleHeadersSpec" : {
+            "title" : "K8sTrafficRoutingRuleHeadersSpec",
+            "type" : "object",
+            "required" : [ "values" ],
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "values" : {
+                "type" : "array",
+                "items" : {
+                  "allOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRuleMatchType"
+                  }, {
+                    "type" : "object",
+                    "required" : [ "key" ],
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "$schema" : "http://json-schema.org/draft-07/schema#"
+                    }
+                  } ]
+                },
+                "minItems" : 1
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sTrafficRoutingRulePortSpec" : {
+            "title" : "K8sTrafficRoutingRulePortSpec",
+            "type" : "object",
+            "required" : [ "value" ],
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "value" : {
                 "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "minLength" : 1
-                  }
+                  "type" : "number"
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
@@ -15080,6 +15041,81 @@
                 } ]
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sTrafficRoutingRuleSchemeSpec" : {
+            "title" : "K8sTrafficRoutingRuleSchemeSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRuleMatchType"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              },
+              "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
+          },
+          "K8sTrafficRoutingRuleAuthoritySpec" : {
+            "title" : "K8sTrafficRoutingRuleAuthoritySpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingRouteRuleMatchType"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              },
+              "$schema" : "http://json-schema.org/draft-07/schema#"
+            } ]
+          },
+          "IstioProviderSpec" : {
+            "title" : "IstioProviderSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingProviderBaseSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "gateways" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "minLength" : 1
+                    },
+                    "minItems" : 1
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "hosts" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "minLength" : 1
+                    },
+                    "minItems" : 1
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "K8sCanaryDeleteStepNode_template" : {
@@ -15284,7 +15320,7 @@
                   } ]
                 },
                 "trafficRouting" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
+                  "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpec"
                 }
               }
             } ],
@@ -15320,7 +15356,7 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
               },
               "trafficRouting" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
+                "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpec"
               },
               "skipDryRun" : {
                 "oneOf" : [ {
@@ -23175,7 +23211,8 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "type" ],
+              "required" : [ "type", "trafficRouting" ],
+              "minProperties" : 1,
               "properties" : {
                 "delegateSelectors" : {
                   "oneOf" : [ {
@@ -23195,120 +23232,76 @@
                 },
                 "trafficRouting" : {
                   "type" : "object"
+                }
+              },
+              "allOf" : [ {
+                "if" : {
+                  "properties" : {
+                    "type" : {
+                      "const" : "inherit"
+                    }
+                  }
                 },
-                "allOf" : [ {
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "inherit"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "properties" : {
-                      "trafficRouting" : {
-                        "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingInherit"
-                      }
+                "then" : {
+                  "properties" : {
+                    "trafficRouting" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpecInherit"
                     }
                   }
-                }, {
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "config"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "properties" : {
-                      "trafficRouting" : {
-                        "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
-                      }
+                }
+              }, {
+                "if" : {
+                  "properties" : {
+                    "type" : {
+                      "const" : "config"
                     }
                   }
-                } ]
-              }
+                },
+                "then" : {
+                  "properties" : {
+                    "trafficRouting" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingSpec"
+                    }
+                  }
+                }
+              } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "trafficRouting" : {
-                "type" : "object",
-                "allOf" : [ {
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "inherit"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "properties" : {
-                      "trafficRouting" : {
-                        "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingDestinations"
-                      }
-                    }
-                  }
-                }, {
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "config"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "properties" : {
-                      "trafficRouting" : {
-                        "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRouting"
-                      }
-                    }
-                  }
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for K8sTrafficRoutingStepInfo"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "K8sTrafficRoutingInherit" : {
-            "title" : "K8sTrafficRoutingInherit",
+          "K8sTrafficRoutingSpecInherit" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "title" : "K8sTrafficRoutingSpecInherit",
             "type" : "object",
             "required" : [ "routes" ],
+            "minProperties" : 1,
+            "additionalProperties" : false,
             "properties" : {
               "routes" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/RouteSpecInherit"
-                  }
+                  },
+                  "minItems" : 1
                 }, {
                   "type" : "string",
                   "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            }
           },
           "RouteSpecInherit" : {
             "title" : "RouteSpecInherit",
             "type" : "object",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/RouteSpecBase"
-            } ],
+            "required" : [ "route" ],
+            "properties" : {
+              "route" : {
+                "allOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/RouteSpecBase"
+                } ]
+              }
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "DownloadAwsS3StepNode_template" : {
