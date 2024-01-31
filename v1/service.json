@@ -237,7 +237,8 @@
             "required" : [ "connector", "location" ],
             "properties" : {
               "location" : {
-                "type" : "string"
+                "type" : "string",
+                "description" : "this is reference to files for given connector in following format refs/heads/main:/charts"
               },
               "connector" : {
                 "type" : "string"
@@ -267,7 +268,8 @@
                 "type" : "string"
               },
               "location" : {
-                "type" : "string"
+                "type" : "string",
+                "description" : "this is reference to artifact image in following format /library/nginx:alpine"
               }
             }
           } ],
@@ -285,7 +287,7 @@
           }, {
             "type" : "object",
             "properties" : {
-              "file" : {
+              "files" : {
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
@@ -295,7 +297,8 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
-                } ]
+                } ],
+                "description" : "this is list of path to file"
               }
             }
           } ],
@@ -407,10 +410,14 @@
           "if" : {
             "properties" : {
               "type" : {
-                "const" : "harness",
-                "spec" : {
-                  "$ref" : "#/definitions/serviceEntity/stores/HarnessStore"
-                }
+                "const" : "harness"
+              }
+            }
+          },
+          "then" : {
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/serviceEntity/stores/HarnessStore"
               }
             }
           }
