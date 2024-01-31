@@ -4,33 +4,34 @@ required:
   - route
 properties:
   route:
-    type: object
     allOf:
-      - "$ref": "k8s-route-spec-base.yaml"
-    required:
-      - type
-    properties:
-      type:
-        type: string
-        enum:
-          - http
-      rules:
-        oneOf:
-          - type: array
-            items:
-              oneOf:
-                - type: object
-                  required:
-                    - rule
-                  properties:
-                    rule:
-                      "$ref": "k8s-traffic-routing-rule.yaml"
-                  $schema: http://json-schema.org/draft-07/schema#
-                - type: string
-                  pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
-                  minLength: 1
-          - type: string
-            pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
-            minLength: 1
-    $schema: http://json-schema.org/draft-07/schema#
+      - $ref: k8s-route-spec-base.yaml
+      - type: object
+        required:
+          - type
+        properties:
+          type:
+            type: string
+            enum:
+              - http
+          rules:
+            oneOf:
+              - type: array
+                items:
+                  oneOf:
+                    - type: object
+                      required:
+                        - rule
+                      properties:
+                        rule:
+                          $ref: k8s-traffic-routing-rule.yaml
+                      $schema: http://json-schema.org/draft-07/schema#
+                    - type: string
+                      pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+                      minLength: 1
+                minItems: 1
+              - type: string
+                pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
+                minLength: 1
+        $schema: http://json-schema.org/draft-07/schema#
 $schema: http://json-schema.org/draft-07/schema#

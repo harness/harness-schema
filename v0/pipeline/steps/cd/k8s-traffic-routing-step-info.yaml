@@ -4,15 +4,17 @@ allOf:
 - type: object
   required:
     - type
+    - trafficRouting
+  minProperties: 1
   properties:
     delegateSelectors:
       oneOf:
-      - type: array
-        items:
-          type: string
-      - type: string
-        pattern: (<\+.+>.*)
-        minLength: 1
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
     type:
       type: string
       enum:
@@ -20,52 +22,21 @@ allOf:
         - config
     trafficRouting:
       type: object
-    allOf:
-      - if:
-          properties:
-            type:
-              const: inherit
-        then:
-          properties:
-            trafficRouting:
-              "$ref": "k8s-traffic-routing-destinations.yaml"
-      - if:
-          properties:
-            type:
-              const: config
-        then:
-          properties:
-            trafficRouting:
-              $ref: "k8s-traffic-routing-spec.yaml"
+  allOf:
+    - if:
+        properties:
+          type:
+            const: inherit
+      then:
+        properties:
+          trafficRouting:
+            $ref: k8s-traffic-routing-spec-inherit.yaml
+    - if:
+        properties:
+          type:
+            const: config
+      then:
+        properties:
+          trafficRouting:
+            $ref: k8s-traffic-routing-spec.yaml
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-properties:
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  trafficRouting:
-    type: object
-    allOf:
-      - if:
-          properties:
-            type:
-              const: inherit
-        then:
-          properties:
-            trafficRouting:
-              "$ref": "k8s-traffic-routing-spec-inherit.yaml"
-      - if:
-          properties:
-            type:
-              const: config
-        then:
-          properties:
-            trafficRouting:
-              $ref: "k8s-traffic-routing-spec.yaml"
-  description:
-    desc: This is the description for K8sTrafficRoutingStepInfo

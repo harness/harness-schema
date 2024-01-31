@@ -9,10 +9,12 @@ properties:
     enum:
       - uri
       - method
-      - header
+      - headers
       - port
       - scheme
       - authority
+  spec:
+    type: object
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
   - if:
@@ -22,22 +24,7 @@ allOf:
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRuleURISpec
-          type: object
-          required:
-            - value
-          properties:
-            name:
-              type: string
-            value:
-              type: string
-            matchType:
-              type: string
-              enum:
-                - exact
-                - prefix
-                - regex
-          $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-uri-spec.yaml
   - if:
       properties:
         type:
@@ -45,67 +32,15 @@ allOf:
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRuleMethodSpec
-          type: object
-          required:
-            - value
-          properties:
-            name:
-              type: string
-            value:
-              type: string
-              enum:
-                - GET
-                - POST
-                - PUT
-                - DELETE
-                - HEAD
-                - CONNECT
-                - OPTION
-                - TRACE
-                - PATCH
-            matchType:
-              type: string
-              enum:
-                - exact
-                - prefix
-                - regex
-      $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-method-spec.yaml
   - if:
       properties:
         type:
-          const: header
+          const: headers
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRuleHeaderSpec
-          type: object
-          required:
-            - values
-          properties:
-            name:
-              type: string
-            values:
-              type: array
-              items:
-                minLength: 1
-                type: object
-                required:
-                  - key
-                  - value
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
-                  matchType:
-                    type: string
-                    enum:
-                      - exact
-                      - prefix
-                      - regex
-                  $schema: http://json-schema.org/draft-07/schema#
-          $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-headers-spec.yaml
   - if:
       properties:
         type:
@@ -113,20 +48,7 @@ allOf:
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRulePortSpec
-          type: object
-          required:
-            - value
-          properties:
-            name:
-              type: string
-            value:
-              oneOf:
-                - type: number
-                - type: string
-                  pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$"
-                  minLength: 1
-      $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-port-spec.yaml
   - if:
       properties:
         type:
@@ -134,22 +56,7 @@ allOf:
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRuleSchemeSpec
-          type: object
-          required:
-            - value
-          properties:
-            name:
-              type: string
-            value:
-              type: string
-            matchType:
-              type: string
-              enum:
-                - exact
-                - prefix
-                - regex
-          $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-scheme-spec.yaml
   - if:
       properties:
         type:
@@ -157,19 +64,4 @@ allOf:
     then:
       properties:
         spec:
-          title: K8sTrafficRoutingRuleAuthoritySpec
-          type: object
-          required:
-            - value
-          properties:
-            name:
-              type: string
-            value:
-              type: string
-            matchType:
-              type: string
-              enum:
-                - exact
-                - prefix
-                - regex
-          $schema: http://json-schema.org/draft-07/schema#
+          $ref: k8s-traffic-routing-rule-authority-spec.yaml
