@@ -3,99 +3,45 @@ allOf:
 - $ref: ../../common/step-spec-type.yaml
 - oneOf:
   - required:
-    - filePaths
+      - paths
   - required:
-    - manifestSource
+      - manifest_source
 - type: object
   properties:
-    commandFlags:
+    flags:
+      description: command_flags
       oneOf:
-      - type: array
-        items:
-          $ref: k8s-step-command-flag.yaml
-      - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-        minLength: 1
-    delegateSelectors:
+        - type: array
+          items:
+            $ref: k8s-step-command-flag.yaml
+        - type: string
+    delegates:
+      $ref: ../../common/delegate.yaml
+    paths:
       oneOf:
-      - type: array
-        items:
-          type: string
-      - type: string
-        pattern: (<\+.+>.*)
-        minLength: 1
-    filePaths:
-      oneOf:
-      - type: array
-        items:
-          type: string
-        maxItems: 256
-        minItems: 1
-      - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-        minLength: 1
+        - type: array
+          items:
+            type: string
+          maxItems: 256
+          minItems: 1
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
     overrides:
       type: array
       items:
         $ref: manifest-config-wrapper.yaml
-    skipDryRun:
-      oneOf:
-      - type: boolean
-      - type: string
-    skipRendering:
-      oneOf:
-      - type: boolean
-      - type: string
-    skipSteadyStateCheck:
-      oneOf:
-      - type: boolean
-      - type: string
+    skip:
+      dry_run:
+        oneOf:
+          - type: boolean
+          - type: string
+      rendering:
+        oneOf:
+          - type: boolean
+          - type: string
+      steady_state_check:
+        oneOf:
+          - type: boolean
+          - type: string
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-properties:
-  commandFlags:
-    oneOf:
-    - type: array
-      items:
-        $ref: k8s-step-command-flag.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  filePaths:
-    oneOf:
-    - type: array
-      items:
-        type: string
-      maxItems: 256
-      minItems: 1
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  manifestSource:
-    $ref: manifest-source-wrapper.yaml
-  overrides:
-    type: array
-    items:
-      $ref: manifest-config-wrapper.yaml
-  skipDryRun:
-    oneOf:
-    - type: boolean
-    - type: string
-  skipRendering:
-    oneOf:
-    - type: boolean
-    - type: string
-  skipSteadyStateCheck:
-    oneOf:
-    - type: boolean
-    - type: string
-  description:
-    desc: This is the description for K8sApplyStepInfo
