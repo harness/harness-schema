@@ -30344,10 +30344,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "CustomRemote", "Git", "Github", "Bitbucket", "GitLab", "Http", "S3", "Gcs", "Inline", "Artifactory", "S3Url", "InheritFromManifest", "Harness", "OciHelmChart", "AzureRepo" ]
-              },
-              "description" : {
-                "desc" : "This is the description for StoreConfigWrapper"
+                "enum" : [ "custom-remote", "git", "github", "bitbucket", "gitLab", "http", "s3", "gcs", "inline", "artifactory", "s3-url", "inherit_from_manifest", "harness", "oci-helm-chart", "azure-repo" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -30355,7 +30352,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Artifactory"
+                    "const" : "artifactory"
                   }
                 }
               },
@@ -30370,7 +30367,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AzureRepo"
+                    "const" : "azure-repo"
                   }
                 }
               },
@@ -30385,7 +30382,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Bitbucket"
+                    "const" : "bitbucket"
                   }
                 }
               },
@@ -30400,7 +30397,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "CustomRemote"
+                    "const" : "custom-remote"
                   }
                 }
               },
@@ -30415,7 +30412,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Gcs"
+                    "const" : "gcs"
                   }
                 }
               },
@@ -30430,7 +30427,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Git"
+                    "const" : "git"
                   }
                 }
               },
@@ -30445,7 +30442,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "GitLab"
+                    "const" : "gitLab"
                   }
                 }
               },
@@ -30460,7 +30457,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Github"
+                    "const" : "github"
                   }
                 }
               },
@@ -30475,7 +30472,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Harness"
+                    "const" : "harness"
                   }
                 }
               },
@@ -30490,7 +30487,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Http"
+                    "const" : "http"
                   }
                 }
               },
@@ -30505,7 +30502,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "InheritFromManifest"
+                    "const" : "inherit-from-manifest"
                   }
                 }
               },
@@ -30520,7 +30517,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Inline"
+                    "const" : "inline"
                   }
                 }
               },
@@ -30535,7 +30532,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "OciHelmChart"
+                    "const" : "oci-helm-chart"
                   }
                 }
               },
@@ -30550,7 +30547,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "S3"
+                    "const" : "s3"
                   }
                 }
               },
@@ -30565,7 +30562,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "S3Url"
+                    "const" : "s3-url"
                   }
                 }
               },
@@ -30584,37 +30581,31 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "repositoryName" ],
+              "required" : [ "connector", "repo" ],
               "properties" : {
-                "artifactPaths" : {
+                "paths" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
                       "type" : "string"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
+                    "type" : "string"
                   } ]
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
                 "metadata" : {
                   "type" : "string"
                 },
-                "repositoryName" : {
-                  "type" : "string"
+                "repo" : {
+                  "type" : "string",
+                  "description" : "repository name"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for ArtifactoryStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "StoreConfig" : {
             "title" : "StoreConfig",
@@ -30633,23 +30624,24 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "gitFetchType" ],
+              "required" : [ "connector", "fetch_type" ],
               "properties" : {
                 "branch" : {
                   "type" : "string"
                 },
-                "commitId" : {
+                "commit_id" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
-                },
-                "gitFetchType" : {
+                "folder" : {
                   "type" : "string",
-                  "enum" : [ "Branch", "Commit" ]
+                  "description" : "folder path"
+                },
+                "fetch_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "commit" ]
                 },
                 "paths" : {
                   "oneOf" : [ {
@@ -30663,29 +30655,24 @@
                     "minLength" : 1
                   } ]
                 },
-                "repoName" : {
+                "repo" : {
                   "type" : "string"
                 }
               }
             }, {
               "oneOf" : [ {
-                "required" : [ "commitId" ]
+                "required" : [ "commit_id" ]
               }, {
                 "required" : [ "branch" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "folderPath" ]
+                "required" : [ "folder" ]
               }, {
                 "required" : [ "paths" ]
               } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AzureRepoStore"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "BitbucketStore" : {
             "title" : "BitbucketStore",
@@ -30693,23 +30680,24 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "gitFetchType" ],
+              "required" : [ "connector", "fetch_type" ],
               "properties" : {
                 "branch" : {
                   "type" : "string"
                 },
-                "commitId" : {
+                "commit_id" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
-                },
-                "gitFetchType" : {
+                "folder" : {
                   "type" : "string",
-                  "enum" : [ "Branch", "Commit" ]
+                  "description" : "folder path"
+                },
+                "fetch_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "commit" ]
                 },
                 "paths" : {
                   "oneOf" : [ {
@@ -30723,29 +30711,24 @@
                     "minLength" : 1
                   } ]
                 },
-                "repoName" : {
+                "repo" : {
                   "type" : "string"
                 }
               }
             }, {
               "oneOf" : [ {
-                "required" : [ "commitId" ]
+                "required" : [ "commit_id" ]
               }, {
                 "required" : [ "branch" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "folderPath" ]
+                "required" : [ "folder" ]
               }, {
                 "required" : [ "paths" ]
               } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for BitbucketStore"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "CustomRemoteStoreConfig" : {
             "title" : "CustomRemoteStoreConfig",
@@ -30753,34 +30736,21 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "extractionScript", "filePath" ],
+              "required" : [ "script", "path" ],
               "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
+                "delegates" : {
+                  "$ref" : "#/definitions/pipeline/common/Delegate"
                 },
-                "extractionScript" : {
+                "script" : {
                   "type" : "string"
                 },
-                "filePath" : {
-                  "type" : "string"
+                "path" : {
+                  "type" : "string",
+                  "description" : "file path"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CustomRemoteStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "GcsStoreConfig" : {
             "title" : "GcsStoreConfig",
@@ -30789,26 +30759,22 @@
             }, {
               "type" : "object",
               "properties" : {
-                "bucketName" : {
+                "bucket" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
+                "folder" : {
+                  "type" : "string",
+                  "description" : "folder path"
                 },
                 "metadata" : {
                   "type" : "string"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GcsStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "GitStore" : {
             "title" : "GitStore",
@@ -30816,23 +30782,24 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "gitFetchType" ],
+              "required" : [ "connector", "fetch_type" ],
               "properties" : {
                 "branch" : {
                   "type" : "string"
                 },
-                "commitId" : {
+                "commit_id" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
-                },
-                "gitFetchType" : {
+                "folder" : {
                   "type" : "string",
-                  "enum" : [ "Branch", "Commit" ]
+                  "description" : "folder path"
+                },
+                "fetch_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "commit" ]
                 },
                 "paths" : {
                   "oneOf" : [ {
@@ -30846,29 +30813,24 @@
                     "minLength" : 1
                   } ]
                 },
-                "repoName" : {
+                "repo" : {
                   "type" : "string"
                 }
               }
             }, {
               "oneOf" : [ {
-                "required" : [ "commitId" ]
+                "required" : [ "commit_id" ]
               }, {
                 "required" : [ "branch" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "folderPath" ]
+                "required" : [ "folder" ]
               }, {
                 "required" : [ "paths" ]
               } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GitStore"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "GitLabStore" : {
             "title" : "GitLabStore",
@@ -30876,23 +30838,24 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "gitFetchType" ],
+              "required" : [ "connector", "fetch_type" ],
               "properties" : {
                 "branch" : {
                   "type" : "string"
                 },
-                "commitId" : {
+                "commit_id" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
-                },
-                "gitFetchType" : {
+                "folder" : {
                   "type" : "string",
-                  "enum" : [ "Branch", "Commit" ]
+                  "description" : "folder path"
+                },
+                "fetch_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "commit" ]
                 },
                 "paths" : {
                   "oneOf" : [ {
@@ -30906,29 +30869,24 @@
                     "minLength" : 1
                   } ]
                 },
-                "repoName" : {
+                "repo" : {
                   "type" : "string"
                 }
               }
             }, {
               "oneOf" : [ {
-                "required" : [ "commitId" ]
+                "required" : [ "commit_id" ]
               }, {
                 "required" : [ "branch" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "folderPath" ]
+                "required" : [ "folder" ]
               }, {
                 "required" : [ "paths" ]
               } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GitLabStore"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "GithubStore" : {
             "title" : "GithubStore",
@@ -30936,23 +30894,24 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "gitFetchType" ],
+              "required" : [ "connector", "fetch_type" ],
               "properties" : {
                 "branch" : {
                   "type" : "string"
                 },
-                "commitId" : {
+                "commit_id" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
-                },
-                "gitFetchType" : {
+                "folder" : {
                   "type" : "string",
-                  "enum" : [ "Branch", "Commit" ]
+                  "description" : "folder path"
+                },
+                "fetch_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "commit" ]
                 },
                 "paths" : {
                   "oneOf" : [ {
@@ -30966,29 +30925,24 @@
                     "minLength" : 1
                   } ]
                 },
-                "repoName" : {
+                "repo" : {
                   "type" : "string"
                 }
               }
             }, {
               "oneOf" : [ {
-                "required" : [ "commitId" ]
+                "required" : [ "commit_id" ]
               }, {
                 "required" : [ "branch" ]
               } ]
             }, {
               "oneOf" : [ {
-                "required" : [ "folderPath" ]
+                "required" : [ "folder" ]
               }, {
                 "required" : [ "paths" ]
               } ]
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GithubStore"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "HttpStoreConfig" : {
             "title" : "HttpStoreConfig",
@@ -30997,7 +30951,7 @@
             }, {
               "type" : "object",
               "properties" : {
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
                 "metadata" : {
@@ -31005,12 +30959,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for HttpStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "InheritFromManifestStoreConfig" : {
             "title" : "InheritFromManifestStoreConfig",
@@ -31033,12 +30982,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for InheritFromManifestStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "InlineStoreConfig" : {
             "title" : "InlineStoreConfig",
@@ -31053,12 +30997,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for InlineStoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "OciHelmChartConfig" : {
             "title" : "OciHelmChartConfig",
@@ -31067,8 +31006,9 @@
             }, {
               "type" : "object",
               "properties" : {
-                "basePath" : {
-                  "type" : "string"
+                "path" : {
+                  "type" : "string",
+                  "description" : "base path"
                 },
                 "config" : {
                   "$ref" : "#/definitions/pipeline/steps/cd/OciHelmChartStoreConfigWrapper"
@@ -31078,12 +31018,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for OciHelmChartConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "OciHelmChartStoreConfigWrapper" : {
             "title" : "OciHelmChartStoreConfigWrapper",
@@ -31242,14 +31177,15 @@
             }, {
               "type" : "object",
               "properties" : {
-                "bucketName" : {
+                "bucket" : {
                   "type" : "string"
                 },
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
-                "folderPath" : {
-                  "type" : "string"
+                "folder" : {
+                  "type" : "string",
+                  "description" : "folder path"
                 },
                 "metadata" : {
                   "type" : "string"
@@ -31261,9 +31197,7 @@
                       "type" : "string"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
+                    "type" : "string"
                   } ]
                 },
                 "region" : {
@@ -31271,12 +31205,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for S3StoreConfig"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "S3UrlStoreConfig" : {
             "title" : "S3UrlStoreConfig",
@@ -31284,9 +31213,9 @@
               "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "region", "urls" ],
+              "required" : [ "connector", "region", "urls" ],
               "properties" : {
-                "connectorRef" : {
+                "connector" : {
                   "type" : "string"
                 },
                 "metadata" : {
@@ -31302,9 +31231,7 @@
                       "type" : "string"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
+                    "type" : "string"
                   } ]
                 }
               }
@@ -40888,14 +40815,14 @@
           "ManifestConfig" : {
             "title" : "ManifestConfig",
             "type" : "object",
-            "required" : [ "identifier", "spec", "type" ],
+            "required" : [ "id", "spec", "type" ],
             "properties" : {
-              "identifier" : {
+              "id" : {
                 "type" : "string"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition" ]
+                "enum" : [ "helm-chart", "helm-repo-override", "k8s-manifest", "kustomize", "kustomize-patches", "openshift-param", "openshift-template", "values", "serverless-aws-lambda", "release-repo", "deployment-repo", "ecs-task-definition", "ecs-service-definition", "ecs-scalable-target-definition", "ecs-scaling-policy-definition", "tas-manifest", "tas-vars", "tas-auto-scaler", "asg-launch-template", "asg-configuration", "asg-scaling-policy", "asg-scheduled-update-group-action", "google-cloud-function-definition", "aws-lambda-function-definition", "aws-lambda-function-alias-definition", "aws-sam-directory", "google-cloud-function-gen-one-definition" ]
               },
               "description" : {
                 "desc" : "This is the description for ManifestConfig"
@@ -40906,7 +40833,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AsgConfiguration"
+                    "const" : "asg-configuration"
                   }
                 }
               },
@@ -40921,7 +40848,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AsgLaunchTemplate"
+                    "const" : "asg-launch-template"
                   }
                 }
               },
@@ -40936,7 +40863,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AsgScalingPolicy"
+                    "const" : "asg-scaling-policy"
                   }
                 }
               },
@@ -40951,7 +40878,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AsgScheduledUpdateGroupAction"
+                    "const" : "asg-scheduled-update-group-action"
                   }
                 }
               },
@@ -40966,7 +40893,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AwsLambdaFunctionAliasDefinition"
+                    "const" : "aws-lambda-function-alias-definition"
                   }
                 }
               },
@@ -40981,7 +40908,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AwsLambdaFunctionDefinition"
+                    "const" : "aws-lambda-function-definition"
                   }
                 }
               },
@@ -40996,7 +40923,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "AwsSamDirectory"
+                    "const" : "aws-sam-directory"
                   }
                 }
               },
@@ -41011,7 +40938,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "DeploymentRepo"
+                    "const" : "deployment-repo"
                   }
                 }
               },
@@ -41026,7 +40953,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "EcsScalableTargetDefinition"
+                    "const" : "ecs-scalable-target-definition"
                   }
                 }
               },
@@ -41041,7 +40968,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "EcsScalingPolicyDefinition"
+                    "const" : "ecs-scaling-policy-definition"
                   }
                 }
               },
@@ -41056,7 +40983,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "EcsServiceDefinition"
+                    "const" : "ecs-service-definition"
                   }
                 }
               },
@@ -41071,7 +40998,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "EcsTaskDefinition"
+                    "const" : "ecs-task-definition"
                   }
                 }
               },
@@ -41086,7 +41013,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "GoogleCloudFunctionDefinition"
+                    "const" : "google-cloud-function-definition"
                   }
                 }
               },
@@ -41101,7 +41028,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "GoogleCloudFunctionGenOneDefinition"
+                    "const" : "google-cloud-function-gen-one-definition"
                   }
                 }
               },
@@ -41116,7 +41043,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "HelmChart"
+                    "const" : "helm-chart"
                   }
                 }
               },
@@ -41131,7 +41058,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "HelmRepoOverride"
+                    "const" : "helm-repo-override"
                   }
                 }
               },
@@ -41146,7 +41073,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "K8sManifest"
+                    "const" : "k8s-manifest"
                   }
                 }
               },
@@ -41161,7 +41088,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Kustomize"
+                    "const" : "kustomize"
                   }
                 }
               },
@@ -41176,7 +41103,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "KustomizePatches"
+                    "const" : "kustomize-patches"
                   }
                 }
               },
@@ -41191,7 +41118,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "OpenshiftParam"
+                    "const" : "openshift-param"
                   }
                 }
               },
@@ -41206,7 +41133,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "OpenshiftTemplate"
+                    "const" : "openshift-template"
                   }
                 }
               },
@@ -41221,7 +41148,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ReleaseRepo"
+                    "const" : "release-repo"
                   }
                 }
               },
@@ -41236,7 +41163,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ServerlessAwsLambda"
+                    "const" : "serverless-aws-lambda"
                   }
                 }
               },
@@ -41251,7 +41178,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "TasAutoScaler"
+                    "const" : "tas-auto-scaler"
                   }
                 }
               },
@@ -41266,7 +41193,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "TasManifest"
+                    "const" : "tas-manifest"
                   }
                 }
               },
@@ -41281,7 +41208,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "TasVars"
+                    "const" : "tas-vars"
                   }
                 }
               },
@@ -41296,7 +41223,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "Values"
+                    "const" : "values"
                   }
                 }
               },
@@ -41324,12 +41251,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AsgConfigurationManifest"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ManifestAttributes" : {
             "title" : "ManifestAttributes",
