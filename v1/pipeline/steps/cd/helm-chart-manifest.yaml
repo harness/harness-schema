@@ -3,20 +3,19 @@ allOf:
 - $ref: manifest-attributes.yaml
 - type: object
   properties:
-    chartName:
+    chart:
       type: string
-    chartVersion:
-      type: string
-    commandFlags:
+      description: chart details, format-> chart_name@version
+    flags:
       type: array
       items:
         $ref: helm-manifest-command-flag.yaml
-    enableDeclarativeRollback:
+    enable_rollback:
       oneOf:
       - $ref: parameter-field-boolean.yaml
       - type: string
       - type: boolean
-    helmVersion:
+    helm_version:
       type: string
       enum:
       - V2
@@ -24,15 +23,17 @@ allOf:
       - V380
     metadata:
       type: string
-    skipResourceVersioning:
-      oneOf:
-      - type: boolean
-      - type: string
+    skip:
+      resource_versioning:
+        oneOf:
+        - type: boolean
+        - type: string
     store:
       $ref: store-config-wrapper.yaml
-    subChartPath:
+    sub_chart:
       type: string
-    valuesPaths:
+      description: sub chart path
+    values:
       oneOf:
       - type: array
         items:
@@ -40,6 +41,7 @@ allOf:
       - type: string
         pattern: "(<\\+.+>.*)"
         minLength: 1
+      description: values paths
 $schema: http://json-schema.org/draft-07/schema#
 properties:
   description:
