@@ -1,0 +1,32 @@
+title: ManifestConfig
+type: object
+required:
+- id
+- spec
+- type
+properties:
+  id:
+    type: string
+  type:
+    type: string
+    enum:
+    - k8s
+    - values
+allOf:
+- if:
+    properties:
+      type:
+        const: k8s
+  then:
+    properties:
+      spec:
+        $ref: k8s-manifest.yaml
+- if:
+    properties:
+      type:
+        const: values
+  then:
+    properties:
+      spec:
+        $ref: values-manifest.yaml
+$schema: http://json-schema.org/draft-07/schema#

@@ -1,55 +1,40 @@
 title: K8sRollingStepNode
 type: object
 required:
-- identifier
-- name
-- spec
-- type
+  - spec
+  - type
 properties:
-  description:
+  desc:
     type: string
-    desc: This is the description for K8sRollingStepNode
+    desc: This is the description for k8s-rolling-step
   enforce:
     $ref: ../../common/policy-config.yaml
-  failureStrategies:
-    oneOf:
-    - type: array
-      items:
-        $ref: ../../common/failure-strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
-  identifier:
+  failure:
+    $ref: ../../common/failure_list.yaml
+  id:
     type: string
     pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
   name:
     type: string
     pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
   strategy:
-    oneOf:
-    - $ref: ../../common/strategy-config.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+    $ref: ../../common/strategy.yaml
+    description: The stage execution strategy.
   timeout:
-    type: string
-    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+    $ref: ../../common/timeout.yaml
   type:
     type: string
     enum:
-    - K8sRollingDeploy
+      - k8s-rolling-deploy
   when:
-    oneOf:
-    - $ref: ../../common/step-when-condition.yaml
-    - type: string
-      pattern: ^<\+input>$
-      minLength: 1
+    description: The stage conditional logic.
+    type: string
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
 - if:
     properties:
       type:
-        const: K8sRollingDeploy
+        const: k8s-rolling-deploy
   then:
     properties:
       spec:

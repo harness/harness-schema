@@ -33881,17 +33881,18 @@
           "K8sStepCommandFlag" : {
             "title" : "K8sStepCommandFlag",
             "type" : "object",
-            "required" : [ "commandType" ],
+            "required" : [ "type" ],
             "properties" : {
-              "commandType" : {
+              "type" : {
                 "type" : "string",
-                "enum" : [ "Apply" ]
+                "enum" : [ "apply" ]
               },
               "flag" : {
                 "type" : "string"
               },
-              "description" : {
-                "desc" : "This is the description for K8sStepCommandFlag"
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for K8sStepCommandFlag"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -43445,28 +43446,19 @@
           "K8sRollingStepNode" : {
             "title" : "K8sRollingStepNode",
             "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
+            "required" : [ "spec", "type" ],
             "properties" : {
-              "description" : {
+              "desc" : {
                 "type" : "string",
-                "desc" : "This is the description for K8sRollingStepNode"
+                "desc" : "This is the description for k8s-rolling-step"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
               },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
               },
-              "identifier" : {
+              "id" : {
                 "type" : "string",
                 "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
               },
@@ -43475,30 +43467,19 @@
                 "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
               },
               "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
               },
               "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "$ref" : "#/definitions/pipeline/common/Timeout"
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "K8sRollingDeploy" ]
+                "enum" : [ "k8s-rolling-deploy" ]
               },
               "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
+                "description" : "The stage conditional logic.",
+                "type" : "string"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -43506,7 +43487,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "K8sRollingDeploy"
+                    "const" : "k8s-rolling-deploy"
                   }
                 }
               },
@@ -43526,38 +43507,27 @@
             }, {
               "type" : "object",
               "properties" : {
-                "commandFlags" : {
+                "command_flags" : {
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
                       "$ref" : "#/definitions/pipeline/steps/cd/K8sStepCommandFlag"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
+                    "type" : "string"
                   } ]
                 },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
+                "delegates" : {
+                  "$ref" : "#/definitions/pipeline/common/Delegate"
                 },
-                "pruningEnabled" : {
+                "prune" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
                     "type" : "string"
                   } ]
                 },
-                "skipDryRun" : {
+                "skip_dry_run" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
@@ -43566,51 +43536,7 @@
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "commandFlags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/K8sStepCommandFlag"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "pruningEnabled" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "skipDryRun" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for K8sRollingStepInfo"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AsgBlueGreenSwapServiceStepNode" : {
             "title" : "AsgBlueGreenSwapServiceStepNode",
@@ -51258,11 +51184,51 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateCatalogPlanInfo"
+                    "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyPlanInfo"
                   }
                 }
               }
             } ]
+          },
+          "IDPSlackNotifyPlanInfo" : {
+            "title" : "IDPSlackNotifyPlanInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "email", "messageContent", "token" ],
+              "properties" : {
+                "email" : {
+                  "type" : "string"
+                },
+                "messageContent" : {
+                  "type" : "string"
+                },
+                "token" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "email", "messageContent", "token" ],
+            "properties" : {
+              "email" : {
+                "type" : "string"
+              },
+              "messageContent" : {
+                "type" : "string"
+              },
+              "token" : {
+                "type" : "string"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              }
+            }
           }
         }
       },

@@ -1,0 +1,40 @@
+title: K8sManifest
+allOf:
+- $ref: basic-manifest-config.yaml
+- type: object
+  required:
+  - spec
+  - type
+  properties:
+    type:
+      type: string
+      enum:
+      - github
+    values:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "(<\\+.+>.*)"
+        minLength: 1
+    skip_versioning:
+      oneOf:
+      - type: string
+      - type: boolean
+    declarative_rollback:
+      oneOf:
+      - type: string
+      - type: boolean
+    spec:
+      type: object
+      allOf:
+      - if:
+          properties:
+            type:
+              const: github
+        then:
+          properties:
+            spec:
+              $ref: ./stores/github-store-config.yaml
+$schema: http://json-schema.org/draft-07/schema#
