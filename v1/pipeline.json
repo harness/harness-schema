@@ -6367,7 +6367,12 @@
                 "enum" : [ "string" ]
               },
               "value" : {
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
               },
               "validator" : {
                 "type" : "object",
@@ -6449,7 +6454,12 @@
                 }, {
                   "type" : "string",
                   "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
-                } ]
+                } ],
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
               },
               "validator" : {
                 "type" : "object",
@@ -6624,7 +6634,12 @@
                 "enum" : [ "secret" ]
               },
               "value" : {
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
               }
             }
           } ],
@@ -6683,7 +6698,12 @@
             "type" : "object",
             "properties" : {
               "file" : {
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "/spec/source/type" ]
+                  }
+                }
               }
             }
           } ],
@@ -6719,8 +6739,7 @@
                 "type" : "string",
                 "metadata" : {
                   "inputProperties" : {
-                    "type" : "string",
-                    "internalType" : "shell_script"
+                    "dependsOn" : [ "/spec/source/type" ]
                   }
                 }
               }
@@ -8435,7 +8454,12 @@
                     "$ref" : "#/definitions/pipeline/steps/custom/ExecutionTarget"
                   }, {
                     "type" : "string"
-                  } ]
+                  } ],
+                  "metadata" : {
+                    "inputProperties" : {
+                      "dependsOn" : [ "/spec/shell" ]
+                    }
+                  }
                 },
                 "include_infra_selectors" : {
                   "oneOf" : [ {
@@ -8477,13 +8501,7 @@
                 },
                 "shell" : {
                   "type" : "string",
-                  "enum" : [ "bash", "power-shell" ],
-                  "metadata" : {
-                    "inputProperties" : {
-                      "type" : "string",
-                      "internalType" : "shell_type"
-                    }
-                  }
+                  "enum" : [ "bash", "power-shell" ]
                 },
                 "source" : {
                   "$ref" : "#/definitions/pipeline/common/ShellScriptSourceWrapper"
@@ -8500,7 +8518,12 @@
             "type" : "object",
             "properties" : {
               "connector" : {
-                "type" : "string"
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "/spec/shell" ]
+                  }
+                }
               },
               "host" : {
                 "type" : "string"
@@ -33887,7 +33910,7 @@
                 "type" : "string",
                 "enum" : [ "apply" ]
               },
-              "flag" : {
+              "value" : {
                 "type" : "string"
               },
               "desc" : {
@@ -34085,7 +34108,7 @@
                       "type" : "number"
                     }, {
                       "type" : "string",
-                      "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                      "pattern" : "(<\\+.+>.*)",
                       "minLength" : 1
                     } ]
                   }
@@ -34294,7 +34317,7 @@
                   "type" : "number"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               }
@@ -43507,7 +43530,8 @@
             }, {
               "type" : "object",
               "properties" : {
-                "command_flags" : {
+                "flags" : {
+                  "description" : "command_flags",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
