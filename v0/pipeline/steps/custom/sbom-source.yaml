@@ -8,6 +8,8 @@ properties:
     enum:
     - image
     - repository
+    - docker
+    - ecr
   description:
     desc: This is the description for SbomSource
 $schema: http://json-schema.org/draft-07/schema#
@@ -28,4 +30,20 @@ allOf:
     properties:
       spec:
         $ref: repository-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: docker
+  then:
+    properties:
+      spec:
+        $ref: image-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: ecr
+  then:
+    properties:
+      spec:
+        $ref: ecr-sbom-source.yaml
 
