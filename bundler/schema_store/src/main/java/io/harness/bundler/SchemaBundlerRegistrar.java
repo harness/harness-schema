@@ -36,5 +36,7 @@ public class SchemaBundlerRegistrar {
             YamlEntityType.TRIGGER_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TRIGGER_V1).build());
     registeredSchemaBundlers.put(
             YamlEntityType.SERVICE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.SERVICE_V1).build());
+    registeredSchemaBundlers.put(
+            YamlEntityType.INFRA_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.INFRA_V1).build());
   }
 }
