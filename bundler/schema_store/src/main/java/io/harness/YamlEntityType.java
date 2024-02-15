@@ -20,7 +20,8 @@ public enum YamlEntityType {
   OVERLAY_INPUT_SET_V1("overlayInputSet", SchemaVersion.V1,
                        "overlayInputSet/overlayInputSet.yaml"),
   TRIGGER_V1("trigger", SchemaVersion.V1, "trigger/trigger_root.yaml"),
-  SERVICE_V1("service", SchemaVersion.V1, "serviceEntity/service-entity.yaml");
+  SERVICE_V1("service", SchemaVersion.V1, "serviceEntity/service-entity.yaml"),
+  INFRA_V1("infra", SchemaVersion.V1, "infraStructureEntity/infra-def-entity.yaml");
 
   @Getter private final String entityName;
   @Getter private final String entityRootSchemaPath;
