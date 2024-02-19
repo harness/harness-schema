@@ -60,6 +60,28 @@
                 "$ref" : "#/definitions/pipeline/common/SecretVariable"
               } ]
             }
+          },
+          "inputs" : {
+            "type" : "object",
+            "description" : "Inputs defines the infrastructure input parameters.",
+            "additionalProperties" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/StringInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/NumberInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/ArrayInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/BooleanInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/ObjectInput"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/SecretInput"
+              } ]
+            },
+            "propertyNames" : {
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+            }
           }
         },
         "allOf" : [ {
@@ -406,6 +428,285 @@
                     "dependsOn" : [ "type" ]
                   }
                 }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StringInput" : {
+          "title" : "StringInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "string" ]
+              },
+              "value" : {
+                "type" : "string"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for an input",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an input value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Input" : {
+          "title" : "Input",
+          "type" : "object",
+          "discriminator" : "type",
+          "description" : "Input defines an input parameter.",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the input type.",
+              "type" : "string",
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+            },
+            "desc" : {
+              "type" : "string",
+              "description" : "Desc defines the input description."
+            },
+            "required" : {
+              "type" : "boolean",
+              "description" : "Required indicates the input is required."
+            },
+            "execution_input" : {
+              "description" : "a boolean that defines whether the value is an execution input",
+              "type" : "boolean",
+              "default" : false
+            }
+          }
+        },
+        "NumberInput" : {
+          "title" : "NumberInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "number",
+                "format" : "double"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "number" ]
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "number",
+                  "format" : "double"
+                }, {
+                  "type" : "string",
+                  "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                } ]
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for an input",
+                        "type" : "array",
+                        "items" : {
+                          "oneOf" : [ {
+                            "type" : "number",
+                            "format" : "double"
+                          }, {
+                            "type" : "string",
+                            "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                          } ]
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an input value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ArrayInput" : {
+          "title" : "ArrayInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "array"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "array" ]
+              },
+              "value" : {
+                "type" : "array"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for an input",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "array"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an input value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BooleanInput" : {
+          "title" : "BooleanInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "boolean"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "boolean" ]
+              },
+              "value" : {
+                "type" : "boolean"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ObjectInput" : {
+          "title" : "ObjectInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "object"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "object" ]
+              },
+              "value" : {
+                "type" : "object"
+              },
+              "validator" : {
+                "type" : "object",
+                "oneOf" : [ {
+                  "allOf" : [ {
+                    "properties" : {
+                      "allowed" : {
+                        "description" : "defines allowed values for an input",
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object"
+                        }
+                      }
+                    }
+                  } ],
+                  "required" : [ "allowed" ]
+                }, {
+                  "allOf" : [ {
+                    "properties" : {
+                      "regex" : {
+                        "description" : "defines regex pattern for an input value",
+                        "type" : "string"
+                      }
+                    }
+                  } ],
+                  "required" : [ "regex" ]
+                } ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "SecretInput" : {
+          "title" : "SecretInput",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Input"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "default" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "secret" ]
+              },
+              "value" : {
+                "type" : "string"
               }
             }
           } ],
