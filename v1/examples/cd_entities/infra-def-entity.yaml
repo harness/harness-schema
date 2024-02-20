@@ -1,13 +1,23 @@
 version: 1
 kind: infra-def
-type: kubernetes-gcp
 spec:
-  connector: account.k8s_gcp
-  cluster: prod2
-  namespace: default
-  release: release-<+INFRA_KEY_SHORT_ID>
-parallel: true
-variables:
-  tag:
-    type: String
-    value: 1.9.0
+  type: kubernetes-gcp
+  spec:
+    connector: account.k8s_gcp
+    cluster: prod2
+    namespace: <+inputs.input_1>
+    release: release-<+INFRA_KEY_SHORT_ID>
+  parallel: true
+  variables:
+    tag:
+      type: String
+      value: 1.9.0
+  inputs:
+    input_1:
+      type: string
+      default: abc
+      validator:
+        allowed:
+          - a
+          - b
+          - abc
