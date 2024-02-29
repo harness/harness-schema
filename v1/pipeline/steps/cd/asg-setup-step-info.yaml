@@ -2,6 +2,10 @@ title: AsgSetupStepInfo
 allOf:
   - $ref: ../../common/step-spec-type.yaml
   - type: object
+    required:
+      - asgName
+      - resizeStrategy
+      - instances
     properties:
       asgName:
         type: string
@@ -15,8 +19,21 @@ allOf:
             minLength: 1
       instances:
         $ref: asg-instances.yaml
+      resizeStrategy:
+        oneOf:
+          - type: string
+            enum:
+              - resize_new_first
+              - downsize_old_first
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 type: object
+required:
+  - asgName
+  - resizeStrategy
+  - instances
 properties:
   asgName:
     type: string
@@ -31,9 +48,13 @@ properties:
   instances:
     $ref: asg-instances.yaml
   resizeStrategy:
-    type: string
-    enum:
-      - resize_new_first
-      - downsize_old_first
+    oneOf:
+      - type: string
+        enum:
+          - resize_new_first
+          - downsize_old_first
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
   description:
     desc: This is the description for AsgSetupStepInfo
