@@ -4218,6 +4218,18 @@
                     "minLength" : 1
                   } ]
                 },
+                "maximumHealthyPercentage" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32",
+                    "minimum" : 100,
+                    "maximum" : 200
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
                 "skipMatching" : {
                   "oneOf" : [ {
                     "type" : "boolean"
@@ -4276,6 +4288,18 @@
                   "format" : "int32",
                   "minimum" : 0,
                   "maximum" : 100
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "maximumHealthyPercentage" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32",
+                  "minimum" : 100,
+                  "maximum" : 200
                 }, {
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
@@ -4482,6 +4506,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
+              "required" : [ "asgName", "resizeStrategy", "instances" ],
               "properties" : {
                 "asgName" : {
                   "type" : "string"
@@ -4500,11 +4525,22 @@
                 },
                 "instances" : {
                   "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
+                },
+                "resizeStrategy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "resize_new_first", "downsize_old_first" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "asgName", "resizeStrategy", "instances" ],
             "properties" : {
               "asgName" : {
                 "type" : "string"
@@ -4525,8 +4561,14 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/AsgInstances"
               },
               "resizeStrategy" : {
-                "type" : "string",
-                "enum" : [ "resize_new_first", "downsize_old_first" ]
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "resize_new_first", "downsize_old_first" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for AsgSetupStepInfo"
