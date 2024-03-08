@@ -18769,7 +18769,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Docker", "Gcr" ]
+                "enum" : [ "Docker", "Gcr", "Ecr" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSource"
@@ -18803,6 +18803,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SlsaGcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Ecr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaEcrSourceSpec"
                   }
                 }
               }
@@ -18873,6 +18888,35 @@
             "properties" : {
               "description" : {
                 "desc" : "Slsa Gcr source spec"
+              }
+            }
+          },
+          "SlsaEcrSourceSpec" : {
+            "title" : "SlsaEcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "account" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Slsa Ecr source spec"
               }
             }
           },
