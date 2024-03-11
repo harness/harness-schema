@@ -50552,7 +50552,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Docker" ]
+                "enum" : [ "Docker", "Gcr", "Ecr" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSource"
@@ -50571,6 +50571,36 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SlsaDockerSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Gcr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaGcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Ecr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaEcrSourceSpec"
                   }
                 }
               }
@@ -50609,6 +50639,70 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSourceSpec"
+              }
+            }
+          },
+          "SlsaGcrSourceSpec" : {
+            "title" : "SlsaGcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project_id", "image_name", "tag" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project_id" : {
+                  "type" : "string"
+                },
+                "image_name" : {
+                  "type" : "string"
+                },
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Slsa Gcr source spec"
+              }
+            }
+          },
+          "SlsaEcrSourceSpec" : {
+            "title" : "SlsaEcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "account" : {
+                  "type" : "string"
+                },
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Slsa Ecr source spec"
               }
             }
           },
