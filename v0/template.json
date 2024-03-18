@@ -30394,7 +30394,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "image", "repository", "docker", "ecr", "gcr" ]
+                "enum" : [ "image", "repository", "docker", "ecr", "gcr", "acr" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomSource"
@@ -30473,6 +30473,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/GcrSbomSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "acr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/AcrSbomSource"
                   }
                 }
               }
@@ -30599,6 +30614,32 @@
             "properties" : {
               "description" : {
                 "desc" : "Gcr sbom source spec"
+              }
+            }
+          },
+          "AcrSbomSource" : {
+            "title" : "AcrSbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "connector" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "subscription_id" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Acr sbom source spec"
               }
             }
           },
@@ -50811,7 +50852,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Docker", "Gcr", "Ecr" ]
+                "enum" : [ "Docker", "Gcr", "Ecr", "Acr" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSource"
@@ -50860,6 +50901,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SlsaEcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Acr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaAcrSourceSpec"
                   }
                 }
               }
@@ -50962,6 +51018,35 @@
             "properties" : {
               "description" : {
                 "desc" : "Slsa Ecr source spec"
+              }
+            }
+          },
+          "SlsaAcrSourceSpec" : {
+            "title" : "SlsaAcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "image_path", "tag" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image_path" : {
+                  "type" : "string"
+                },
+                "subscription_id" : {
+                  "type" : "string"
+                },
+                "tag" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Slsa Acr source spec"
               }
             }
           },
