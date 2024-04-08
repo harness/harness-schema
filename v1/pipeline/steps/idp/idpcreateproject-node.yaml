@@ -1,0 +1,56 @@
+title: IDPCreateProjectStepNode
+type: object
+required:
+  - identifier
+  - name
+  - spec
+  - type
+properties:
+  description:
+    type: string
+    desc: This is the description for IDPCreateProjectStepNode
+  enforce:
+    $ref: ../../common/policy-config.yaml
+  failureStrategies:
+    oneOf:
+      - type: array
+        items:
+          $ref: ../../common/failure-strategy-config.yaml
+      - type: string
+        pattern: ^<\+input>$
+        minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  strategy:
+    oneOf:
+      - $ref: ../../common/strategy-config.yaml
+      - type: string
+        pattern: ^<\+input>$
+        minLength: 1
+  timeout:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  type:
+    type: string
+    enum:
+      - CreateProject
+  when:
+    oneOf:
+      - $ref: ../../common/step-when-condition.yaml
+      - type: string
+        pattern: ^<\+input>$
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: CreateProject
+    then:
+      properties:
+        spec:
+          $ref: idpcreateproject-info.yaml
