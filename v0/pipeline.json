@@ -1778,6 +1778,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sPatchStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/K8sRolloutStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -59338,6 +59340,191 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "K8sRolloutStepNode" : {
+            "title" : "K8sRolloutStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for K8sRolloutStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "K8sRollout" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "K8sRollout"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRolloutStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "K8sRolloutStepInfo" : {
+            "title" : "K8sRolloutStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "resources" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesWrapper"
+                },
+                "commandFlags" : {
+                  "type" : "string"
+                },
+                "command" : {
+                  "type" : "string",
+                  "enum" : [ "restart", "resume", "status", "undo", "pause", "history" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "resources", "command" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesWrapper"
+              },
+              "commandFlags" : {
+                "type" : "string"
+              },
+              "command" : {
+                "type" : "string",
+                "enum" : [ "restart", "resume", "status", "undo", "pause", "history" ]
+              },
+              "description" : {
+                "desc" : "This is the description for K8sRolloutStepInfo"
+              }
+            }
+          },
+          "RolloutResourcesWrapper" : {
+            "title" : "RolloutResourcesWrapper",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ResourceName", "ReleaseName", "ManifestPath" ]
+              },
+              "description" : {
+                "desc" : "This is the description for RolloutResourcesWrapper"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ManifestPath"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DeleteManifestPathSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ReleaseName"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DeleteReleaseNameSpec"
+                  }
+                }
+              }
+            } ]
           }
         },
         "cvng" : {
