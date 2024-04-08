@@ -3800,7 +3800,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "CustomRemote", "Git", "Github", "Bitbucket", "GitLab", "Http", "S3", "Gcs", "Inline", "Artifactory", "S3Url", "InheritFromManifest", "Harness", "OciHelmChart", "AzureRepo" ]
+                "enum" : [ "CustomRemote", "Git", "Github", "Bitbucket", "GitLab", "Http", "S3", "Gcs", "Inline", "Artifactory", "S3Url", "InheritFromManifest", "Harness", "OciHelmChart", "AzureRepo", "HarnessCode" ]
               },
               "description" : {
                 "desc" : "This is the description for StoreConfigWrapper"
@@ -4029,6 +4029,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/S3UrlStoreConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HarnessCode"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HarnessCodeStore"
                   }
                 }
               }
@@ -4769,6 +4784,63 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for S3UrlStoreConfig"
+              }
+            }
+          },
+          "HarnessCodeStore" : {
+            "title" : "HarnessCodeStore",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "repoName", "gitFetchType" ],
+              "properties" : {
+                "branch" : {
+                  "type" : "string"
+                },
+                "commitId" : {
+                  "type" : "string"
+                },
+                "folderPath" : {
+                  "type" : "string"
+                },
+                "gitFetchType" : {
+                  "type" : "string",
+                  "enum" : [ "Branch", "Commit" ]
+                },
+                "paths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "repoName" : {
+                  "type" : "string"
+                }
+              }
+            }, {
+              "oneOf" : [ {
+                "required" : [ "commitId" ]
+              }, {
+                "required" : [ "branch" ]
+              } ]
+            }, {
+              "oneOf" : [ {
+                "required" : [ "folderPath" ]
+              }, {
+                "required" : [ "paths" ]
+              } ]
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HarnessCodeStore"
               }
             }
           },
@@ -71380,6 +71452,21 @@
                 "properties" : {
                   "store" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/S3UrlStoreConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HarnessCode"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HarnessCodeStore"
                   }
                 }
               }
