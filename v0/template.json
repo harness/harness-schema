@@ -30594,7 +30594,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/DeleteManifestPathSpec"
+                    "$ref" : "#/definitions/pipeline/steps/cd/RolloutManifestPathSpec"
                   }
                 }
               }
@@ -30609,11 +30609,83 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/DeleteResourceNameSpec"
+                    "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourceNameSpec"
                   }
                 }
               }
             } ]
+          },
+          "RolloutManifestPathSpec" : {
+            "title" : "RolloutManifestPathSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesBaseSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "allManifestPaths" : {
+                  "type" : "boolean"
+                },
+                "manifestPaths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for RolloutManifestPathSpec"
+              }
+            }
+          },
+          "RolloutResourcesBaseSpec" : {
+            "title" : "RolloutResourcesBaseSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for RolloutResourcesBaseSpec"
+              }
+            }
+          },
+          "RolloutResourceNameSpec" : {
+            "title" : "RolloutResourceNameSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesBaseSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "resourceNames" ],
+              "properties" : {
+                "resourceNames" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ],
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for RolloutesourceNameSpec"
+              }
+            }
           }
         },
         "custom" : {
