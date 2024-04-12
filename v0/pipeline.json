@@ -9961,6 +9961,10 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateCatalogStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateOrganisationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateProjectStepNode"
                 } ]
               },
               "description" : {
@@ -60521,6 +60525,307 @@
                 "$ref" : "#/definitions/pipeline/common/ContainerResource"
               }
             }
+          },
+          "IDPCreateOrganisationStepNode" : {
+            "title" : "IDPCreateOrganisationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IDPCreateOrganisationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CreateOrganisation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CreateOrganisation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateOrganisationPlanInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IDPCreateOrganisationPlanInfo" : {
+            "title": "IDPCreateOrganisationPlanInfo",
+            "allOf": [
+              {
+                "$ref": "#/definitions/pipeline/common/StepSpecType"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "orgIdentifier",
+                  "orgName",
+                  "xApiKey"
+                ],
+                "properties": {
+                  "orgIdentifier": {
+                    "type": "string"
+                  },
+                  "orgName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "xApiKey": {
+                    "type": "string"
+                  },
+                  "resources": {
+                    "$ref": "#/definitions/pipeline/common/ContainerResource"
+                  }
+                }
+              }
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "required": [
+              "orgIdentifier",
+              "orgName",
+              "xApiKey"
+            ],
+            "properties": {
+              "orgIdentifier": {
+                "type": "string"
+              },
+              "orgName": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "xApiKey": {
+                "type": "string"
+              },
+              "resources": {
+                "$ref": "#/definitions/pipeline/common/ContainerResource"
+              }
+            }
+          },
+          "IDPCreateProjectStepNode" : {
+            "title" : "IDPCreateProjectStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IDPCreateProjectStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CreateProject" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CreateProject"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateProjectPlanInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IDPCreateProjectPlanInfo" : {
+            "title": "IDPCreateProjectPlanInfo",
+            "allOf": [
+              {
+                "$ref": "#/definitions/pipeline/common/StepSpecType"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "projectIdentifier",
+                  "projectName",
+                  "orgIdentifier",
+                  "xApiKey"
+                ],
+                "properties": {
+                  "projectIdentifier": {
+                    "type": "string"
+                  },
+                  "projectName": {
+                    "type": "string"
+                  },
+                  "orgIdentifier": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "xApiKey": {
+                    "type": "string"
+                  },
+                  "resources": {
+                    "$ref": "#/definitions/pipeline/common/ContainerResource"
+                  }
+                }
+              }
+            ],
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "required": [
+              "projectIdentifier",
+              "projectName",
+              "orgIdentifier",
+              "xApiKey"
+            ],
+            "properties": {
+              "projectIdentifier": {
+                "type": "string"
+              },
+              "projectName": {
+                "type": "string"
+              },
+              "orgIdentifier": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "xApiKey": {
+                "type": "string"
+              },
+              "resources": {
+                "$ref": "#/definitions/pipeline/common/ContainerResource"
+              }
+            }
+          }
           }
         }
       }
