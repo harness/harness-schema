@@ -30531,7 +30531,16 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesWrapper"
                 },
                 "commandFlags" : {
-                  "type" : "string"
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/K8sRolloutStepCommandFlag"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
                 },
                 "command" : {
                   "type" : "string",
@@ -30559,7 +30568,16 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/RolloutResourcesWrapper"
               },
               "commandFlags" : {
-                "type" : "string"
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/K8sRolloutStepCommandFlag"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
               },
               "command" : {
                 "type" : "string",
@@ -30686,6 +30704,24 @@
                 "desc" : "This is the description for RolloutesourceNameSpec"
               }
             }
+          },
+          "K8sRolloutStepCommandFlag" : {
+            "title" : "K8sRolloutStepCommandFlag",
+            "type" : "object",
+            "required" : [ "commandType" ],
+            "properties" : {
+              "commandType" : {
+                "type" : "string",
+                "enum" : [ "Rollout" ]
+              },
+              "flag" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for K8sRolloutStepCommandFlag"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "custom" : {
