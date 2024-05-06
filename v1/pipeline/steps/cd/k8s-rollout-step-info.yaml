@@ -1,0 +1,69 @@
+title: K8sRolloutStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - resources
+  properties:
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    resources:
+      $ref: rollout-resources-wrapper.yaml
+    commandFlags:
+      oneOf:
+      - type: array
+        items:
+          $ref: k8s-rollout-step-command-flag.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    command: 
+      type: string
+      enum:
+      - restart
+      - resume
+      - status
+      - undo
+      - pause
+      - history
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- resources
+- command
+properties:
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  resources:
+    $ref: rollout-resources-wrapper.yaml
+  commandFlags:
+    oneOf:
+      - type: array
+        items:
+          $ref: k8s-rollout-step-command-flag.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+  command: 
+    type: string
+    enum:
+    - restart
+    - resume
+    - status
+    - undo
+    - pause
+    - history
+  description:
+    desc: This is the description for K8sRolloutStepInfo
