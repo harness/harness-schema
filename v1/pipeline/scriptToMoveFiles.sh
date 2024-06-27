@@ -145,6 +145,7 @@ newFileInfoList=(
   "aws-ecr-step-info.yaml"
   "burp-step-info.yaml"
   "checkmarx-step-info.yaml"
+  "checkov-step-info.yaml"
   "metasploit-step-info.yaml"
   "reapsaw-step-info.yaml"
   "black-duck-step-info.yaml"
