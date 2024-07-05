@@ -314,6 +314,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/common/CheckovScanNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ClairScanNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/CodeqlScanNode_template"
@@ -3102,6 +3104,9 @@
                 "samBuildDockerRegistryConnectorRef" : {
                   "type" : "string"
                 },
+                "preExecution" : {
+                  "type" : "string"
+                },
                 "samVersion" : {
                   "oneOf" : [ {
                     "type" : "string"
@@ -3177,6 +3182,9 @@
                 } ]
               },
               "samBuildDockerRegistryConnectorRef" : {
+                "type" : "string"
+              },
+              "preExecution" : {
                 "type" : "string"
               },
               "samVersion" : {
@@ -3326,6 +3334,9 @@
                     "type" : "string"
                   } ]
                 },
+                "preExecution" : {
+                  "type" : "string"
+                },
                 "samVersion" : {
                   "type" : "string"
                 },
@@ -3398,6 +3409,9 @@
                 }, {
                   "type" : "string"
                 } ]
+              },
+              "preExecution" : {
+                "type" : "string"
               },
               "samVersion" : {
                 "type" : "string"
@@ -15322,6 +15336,9 @@
                 },
                 "serverlessVersion" : {
                   "type" : "string"
+                },
+                "preExecution" : {
+                  "type" : "string"
                 }
               }
             } ],
@@ -15389,6 +15406,9 @@
                 } ]
               },
               "serverlessVersion" : {
+                "type" : "string"
+              },
+              "preExecution" : {
                 "type" : "string"
               },
               "description" : {
@@ -15530,6 +15550,9 @@
                 },
                 "serverlessVersion" : {
                   "type" : "string"
+                },
+                "preExecution" : {
+                  "type" : "string"
                 }
               }
             } ],
@@ -15597,6 +15620,9 @@
                 } ]
               },
               "serverlessVersion" : {
+                "type" : "string"
+              },
+              "preExecution" : {
                 "type" : "string"
               },
               "description" : {
@@ -15726,6 +15752,9 @@
                 },
                 "serverlessVersion" : {
                   "type" : "string"
+                },
+                "preExecution" : {
+                  "type" : "string"
                 }
               }
             } ],
@@ -15781,6 +15810,9 @@
                 } ]
               },
               "serverlessVersion" : {
+                "type" : "string"
+              },
+              "preExecution" : {
                 "type" : "string"
               },
               "description" : {
@@ -16016,6 +16048,9 @@
                 },
                 "serverlessVersion" : {
                   "type" : "string"
+                },
+                "preExecution" : {
+                  "type" : "string"
                 }
               }
             } ],
@@ -16071,6 +16106,9 @@
                 } ]
               },
               "serverlessVersion" : {
+                "type" : "string"
+              },
+              "preExecution" : {
                 "type" : "string"
               },
               "description" : {
@@ -40459,6 +40497,252 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "CheckovScanNode_template" : {
+            "title" : "CheckovScanNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Checkov" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Checkov"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckovStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "CheckovStepInfo" : {
+            "title" : "CheckovStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "config", "mode", "target" ],
+              "properties" : {
+                "advanced" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "config" : {
+                  "type" : "string",
+                  "enum" : [ "default" ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "imageTag" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+                },
+                "mode" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "ingestion", "orchestration" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "outputVariables" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "target" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "config", "mode", "target" ],
+            "properties" : {
+              "advanced" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "config" : {
+                "type" : "string",
+                "enum" : [ "default" ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "imageTag" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+              },
+              "mode" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "ingestion", "orchestration" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "outputVariables" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "target" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+              },
+              "description" : {
+                "desc" : "This is the description for BanditStepInfo"
+              }
+            }
+          },
           "ClairScanNode_template" : {
             "title" : "ClairScanNode_template",
             "type" : "object",
@@ -47753,187 +48037,6 @@
                 }
               }
             } ]
-          },
-          "CheckovStepInfo" : {
-            "title" : "CheckovStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "config", "mode", "target" ],
-              "properties" : {
-                "advanced" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-                },
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "config" : {
-                  "type" : "string",
-                  "enum" : [ "default" ]
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "imageTag" : {
-                  "type" : "string"
-                },
-                "imagePullPolicy" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "Always", "Never", "IfNotPresent" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "ingestion" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-                },
-                "mode" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "ingestion", "orchestration" ]
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "outputVariables" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "privileged" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "settings" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "target" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "config", "mode", "target" ],
-            "properties" : {
-              "advanced" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
-              },
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "config" : {
-                "type" : "string",
-                "enum" : [ "default" ]
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "imageTag" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "ingestion" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
-              },
-              "mode" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "ingestion", "orchestration" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "outputVariables" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "target" : {
-                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
-              },
-              "description" : {
-                "desc" : "This is the description for BanditStepInfo"
-              }
-            }
           },
           "SecurityStepInfo" : {
             "title" : "SecurityStepInfo",
