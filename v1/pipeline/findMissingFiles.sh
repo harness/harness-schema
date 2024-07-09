@@ -215,6 +215,7 @@ list2=(
   "update-git-ops-app-step-node.yaml"
   "k8s-traffic-routing-step-node.yaml"
   "wiz-scan-node.yaml"
+  "gitops-get-app-details-step-node.yaml"
 )
 
 
