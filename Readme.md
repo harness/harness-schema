@@ -78,7 +78,7 @@ Now, Sublime Text will provide auto-intellisense for the pipeline YAML schema, m
 
 We welcome contributions to enhance the pipeline YAML schema and make it even more robust. If you find any issues or have suggestions for improvement, please feel free to create an issue or submit a pull request. For major changes, please discuss your ideas with the maintainers first.
 
-### Release Process 
+### Release & Testing Process
 when we do branch cut for pipeline service, then we merge latest pipeline.json ( from schema repo ) into develop and release branch, you can verify your changes in release branch and develop once branch cut is done 
 Similarly we when we do branch cut for template service, then we merge latest template.json ( from schema repo ) into develop and release branch, we can verify our intended changes in release branch and develop once branch cut is done
 
