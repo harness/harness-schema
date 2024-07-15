@@ -78,5 +78,18 @@ Now, Sublime Text will provide auto-intellisense for the pipeline YAML schema, m
 
 We welcome contributions to enhance the pipeline YAML schema and make it even more robust. If you find any issues or have suggestions for improvement, please feel free to create an issue or submit a pull request. For major changes, please discuss your ideas with the maintainers first.
 
+### Release Process 
+when we do branch cut for pipeline service, then we merge latest pipeline.json ( from schema repo ) into develop and release branch, you can verify your changes in release branch and develop once branch cut is done 
+Similarly we when we do branch cut for template service, then we merge latest template.json ( from schema repo ) into develop and release branch, we can verify our intended changes in release branch and develop once branch cut is done
+
+Also currently in Devspace the schema changes reflect instantaneously, as in devspaces we fetch schema directly from the harness-schema repo ( without the need to deploy / bounce devspace )
+We have a flag USE_SCHEMA_FROM_HARNESS_SCHEMA_REPO whenever this flag is true we always fetch the schema from schema repo ( we do not take local pipeline.json into consideration here ) similarly whenever this flag is set to false we always use schema from local ( pipeline.json in pipeline src , template.json in template src )
+
+USE_SCHEMA_FROM_HARNESS_SCHEMA_REPO this flag is true for devspace by default ( if you wish to test out your changes in devspace you will need to set this config to false )
+For all other env this flag is false by default therefore local ( pipeline.json in pipeline src , template.json in template src ) are picked on PROD, QA and local env
+
+For testing schema changes in local we can paste the generated schema from schema repo in local ( v0/pipeline.json and v0/template.json ) and we will need to restart pipeline/template src for this schema changes to be reflected, then go to YAML editor in pipeline/template studio the changes should be reflected there!
+
+
 ---
 
