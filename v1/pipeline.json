@@ -7490,12 +7490,9 @@
             "title" : "Attestation",
             "type" : "object",
             "properties" : {
-              "privateKey" : {
-                "type" : "string"
-              },
-              "type" : {
+              "attestWith" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "cosignWithSecretManager" ]
               },
               "description" : {
                 "desc" : "This is the description for Attestation"
@@ -7505,7 +7502,7 @@
             "allOf" : [ {
               "if" : {
                 "properties" : {
-                  "type" : {
+                  "attestWith" : {
                     "const" : "cosign"
                   }
                 }
@@ -7514,6 +7511,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "attestWith" : {
+                    "const" : "cosignWithSecretManager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
                   }
                 }
               }
@@ -7526,11 +7538,25 @@
             }, {
               "type" : "object",
               "properties" : {
-                "password" : {
-                  "type" : "string"
-                },
                 "privateKey" : {
                   "type" : "string"
+                },
+                "privateKeyPassword" : {
+                  "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
                 }
               }
             } ],
@@ -7548,6 +7574,42 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AttestationSpec"
+              }
+            }
+          },
+          "CosignSecretManagerAttestation" : {
+            "title" : "CosignSecretManagerAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "keyName" : {
+                  "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for Cosign Attestation with Secret Manager"
               }
             }
           },
@@ -8060,9 +8122,9 @@
             "title" : "VerifyAttestation",
             "type" : "object",
             "properties" : {
-              "type" : {
+              "attestWith" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "cosignWithSecretManager" ]
               },
               "description" : {
                 "desc" : "This is the description for VerifyAttestation"
@@ -8072,7 +8134,7 @@
             "allOf" : [ {
               "if" : {
                 "properties" : {
-                  "type" : {
+                  "attestWith" : {
                     "const" : "cosign"
                   }
                 }
@@ -8081,6 +8143,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "attestWith" : {
+                    "const" : "cosignWithSecretManager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerVerifyAttestation"
                   }
                 }
               }
@@ -8095,6 +8172,20 @@
               "properties" : {
                 "publicKey" : {
                   "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
                 }
               }
             } ],
@@ -8112,6 +8203,42 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for VerifyAttestationSpec"
+              }
+            }
+          },
+          "CosignSecretManagerVerifyAttestation" : {
+            "title" : "CosignSecretManagerVerifyAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestationSpec"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "keyName" : {
+                  "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for Cosign Verify Attestation with Secret Manager"
               }
             }
           },

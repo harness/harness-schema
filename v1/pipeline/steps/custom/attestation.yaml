@@ -1,21 +1,28 @@
 title: Attestation
 type: object
 properties:
-  privateKey:
-    type: string
-  type:
+  attestWith:
     type: string
     enum:
-    - cosign
+      - cosign
+      - cosignWithSecretManager
   description:
     desc: This is the description for Attestation
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
-- if:
-    properties:
-      type:
-        const: cosign
-  then:
-    properties:
-      spec:
-        $ref: cosign-attestation.yaml
+  - if:
+      properties:
+        attestWith:
+          const: cosign
+    then:
+      properties:
+        spec:
+          $ref: cosign-attestation.yaml
+  - if:
+      properties:
+        attestWith:
+          const: cosignWithSecretManager
+    then:
+      properties:
+        spec:
+          $ref: cosign-secret-manager-attestation.yaml
