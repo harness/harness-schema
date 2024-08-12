@@ -8,6 +8,14 @@ properties:
   description:
     desc: This is the description for Attestation
 $schema: http://json-schema.org/draft-07/schema#
-oneOf:
-  - $ref: cosign-attestation.yaml
-  - $ref: cosign-secret-manager-attestation.yaml
+allOf:
+  - if:
+      properties:
+        type:
+          const: cosign
+    then:
+      properties:
+        spec:
+          oneOf:
+            - $ref: cosign-attestation.yaml
+            - $ref: cosign-secret-manager-attestation.yaml
