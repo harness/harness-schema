@@ -41,6 +41,8 @@
             "$ref" : "#/definitions/template/artifactsourcetemplate/ArtifactSourceTemplate"
           }, {
             "$ref" : "#/definitions/template/customdeployment/CustomDeploymentTemplate"
+          }, {
+            "$ref" : "#/definitions/template/workspace/template"
           } ]
         }
       }
@@ -1146,6 +1148,241 @@
               }
             }
           } ]
+        }
+      },
+      "workspace" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Workspace" ]
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,127}$"
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/template/workspace/workspaceNumberVariable"
+                }, {
+                  "$ref" : "#/definitions/template/workspace/workspaceSecretVariable"
+                }, {
+                  "$ref" : "#/definitions/template/workspace/workspaceStringVariable"
+                } ]
+              }
+            },
+            "terraform_variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/template/workspace/workspaceNumberVariable"
+                }, {
+                  "$ref" : "#/definitions/template/workspace/workspaceSecretVariable"
+                }, {
+                  "$ref" : "#/definitions/template/workspace/workspaceStringVariable"
+                } ]
+              }
+            },
+            "spec" : {
+              "type" : "object",
+              "properties" : {
+                "cost_estimation" : {
+                  "type" : "object",
+                  "properties" : {
+                    "enabled" : {
+                      "type" : "boolean"
+                    },
+                    "budget" : {
+                      "type" : "number"
+                    }
+                  }
+                },
+                "provisioner" : {
+                  "type" : "object",
+                  "properties" : {
+                    "type" : {
+                      "type" : "string"
+                    },
+                    "version" : {
+                      "type" : "string"
+                    },
+                    "connector" : {
+                      "type" : "string"
+                    }
+                  }
+                },
+                "repository" : {
+                  "type" : "object",
+                  "properties" : {
+                    "isHarnessCode" : {
+                      "type" : "boolean"
+                    },
+                    "connector" : {
+                      "type" : "string"
+                    },
+                    "name" : {
+                      "type" : "string"
+                    },
+                    "branch" : {
+                      "type" : "string"
+                    },
+                    "gitFetchType" : {
+                      "type" : "string"
+                    },
+                    "path" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "workspaceNumberVariable" : {
+          "title" : "workspaceNumberVariable",
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+            },
+            "default" : {
+              "type" : "number",
+              "format" : "double"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Number" ]
+            },
+            "value" : {
+              "oneOf" : [ {
+                "type" : "number",
+                "format" : "double"
+              }, {
+                "type" : "string",
+                "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+              } ]
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "required" : {
+              "type" : "boolean"
+            },
+            "metadata" : {
+              "type" : "string"
+            },
+            "updatedAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "createdAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "isLocked" : {
+              "type" : "boolean"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "workspaceSecretVariable" : {
+          "title" : "workspaceSecretVariable",
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+            },
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Secret" ]
+            },
+            "value" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "required" : {
+              "type" : "boolean"
+            },
+            "metadata" : {
+              "type" : "string"
+            },
+            "updatedAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "createdAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "isLocked" : {
+              "type" : "boolean"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "workspaceStringVariable" : {
+          "title" : "workspaceStringVariable",
+          "type" : "object",
+          "required" : [ "value" ],
+          "properties" : {
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+            },
+            "default" : {
+              "type" : "string"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "String" ]
+            },
+            "value" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "required" : {
+              "type" : "boolean"
+            },
+            "metadata" : {
+              "type" : "string"
+            },
+            "updatedAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "createdAt" : {
+              "type" : "number",
+              "description" : "Unix timestamp in seconds or milliseconds"
+            },
+            "isLocked" : {
+              "type" : "boolean"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       }
     },
