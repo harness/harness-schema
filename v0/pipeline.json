@@ -8429,6 +8429,9 @@
               },
               "description" : {
                 "desc" : "This is the description for AttestationV1"
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -8443,11 +8446,24 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/CosignAttestationV1"
+                    "oneOf" : [ {
+                      "allOf" : [ {
+                        "required" : [ "privateKey", "password" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/stages/ci/CosignAttestationV1"
+                      } ]
+                    }, {
+                      "allOf" : [ {
+                        "required" : [ "connector", "keyName" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/stages/ci/CosignSecretManagerAttestation"
+                      } ]
+                    } ]
                   }
                 }
               }
-            } ]
+            } ],
+            "additionalProperties" : false
           },
           "CosignAttestationV1" : {
             "title" : "CosignAttestationV1",
@@ -8455,12 +8471,27 @@
               "$ref" : "#/definitions/pipeline/stages/ci/AttestationSpecV1"
             }, {
               "type" : "object",
+              "required" : [ "private_key", "password" ],
               "properties" : {
                 "password" : {
                   "type" : "string"
                 },
                 "private_key" : {
                   "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
                 }
               }
             } ],
@@ -8478,6 +8509,43 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AttestationSpecV1"
+              }
+            }
+          },
+          "CosignSecretManagerAttestation" : {
+            "title" : "CosignSecretManagerAttestation",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/ci/AttestationSpecV1"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "keyName" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "keyName" : {
+                  "type" : "string"
+                },
+                "cosignVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "key" : {
+                        "type" : "string"
+                      },
+                      "value" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for Cosign Attestation with Secret Manager V1"
               }
             }
           }
@@ -11215,6 +11283,9 @@
               },
               "description" : {
                 "desc" : "This is the description for Attestation"
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -11230,9 +11301,17 @@
                 "properties" : {
                   "spec" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                      "allOf" : [ {
+                        "required" : [ "privateKey", "password" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
+                      "allOf" : [ {
+                        "required" : [ "connector", "keyName" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
+                      } ]
                     } ]
                   }
                 }
@@ -12076,6 +12155,9 @@
               },
               "description" : {
                 "desc" : "This is the description for VerifyAttestation"
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -12091,9 +12173,17 @@
                 "properties" : {
                   "spec" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
+                      "allOf" : [ {
+                        "required" : [ "publicKey" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerVerifyAttestation"
+                      "allOf" : [ {
+                        "required" : [ "connector", "keyName" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerVerifyAttestation"
+                      } ]
                     } ]
                   }
                 }
@@ -29520,6 +29610,9 @@
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerifyAttestation"
+              },
+              "spec" : {
+                "type" : "object"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -29535,9 +29628,17 @@
                 "properties" : {
                   "spec" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
+                      "allOf" : [ {
+                        "required" : [ "public_key" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
+                      "allOf" : [ {
+                        "required" : [ "connector", "keyName" ]
+                      }, {
+                        "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
+                      } ]
                     } ]
                   }
                 }

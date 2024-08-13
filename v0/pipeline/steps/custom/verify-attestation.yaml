@@ -7,6 +7,8 @@ properties:
       - cosign
   description:
     desc: This is the description for VerifyAttestation
+  spec:
+    type: object
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
   - if:
@@ -17,6 +19,10 @@ allOf:
       properties:
         spec:
           oneOf:
-            - $ref: cosign-verify-attestation.yaml
-            - $ref: cosign-secret-manager-verify-attestation.yaml
+            - allOf:
+                - required: [publicKey]
+                - $ref: cosign-verify-attestation.yaml
+            - allOf:
+                - required: [connector, keyName]
+                - $ref: cosign-secret-manager-verify-attestation.yaml
 additionalProperties: false

@@ -7,6 +7,8 @@ properties:
       - cosign
   description:
     desc: This is the description for Attestation
+  spec:
+    type: object
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
   - if:
@@ -17,6 +19,10 @@ allOf:
       properties:
         spec:
           oneOf:
-            - $ref: cosign-attestation.yaml
-            - $ref: cosign-secret-manager-attestation.yaml
+            - allOf:
+                - required: [privateKey, password]
+                - $ref: cosign-attestation.yaml
+            - allOf:
+                - required: [connector, keyName]
+                - $ref: cosign-secret-manager-attestation.yaml
 additionalProperties: false
