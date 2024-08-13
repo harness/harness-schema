@@ -4,9 +4,10 @@ properties:
   type:
     type: string
     enum:
-    - cosign
+      - cosign
   description:
-    desc: This is the description for AttestationV1
+    type: string  # Correcting 'desc' to 'type' for valid schema
+    description: This is the description for AttestationV1
   spec:
     type: object
 $schema: http://json-schema.org/draft-07/schema#
@@ -18,16 +19,18 @@ allOf:
     then:
       properties:
         spec:
+          type: object
           oneOf:
             - $ref: cosign-attestation-v1.yaml
             - $ref: cosign-secret-manager-attestation-v1.yaml
-          cosignVariables:
-            type: array
-            items:
-              type: object
-              properties:
-                key:
-                  type: string
-                value:
-                  type: string
+          properties:
+            cosignVariables:
+              type: array
+              items:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  value:
+                    type: string
 additionalProperties: false
