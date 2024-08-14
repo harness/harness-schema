@@ -2,10 +2,16 @@ title: DockerStepInfo
 allOf:
 - $ref: ../../steps/ci/ci-step-info.yaml
 - type: object
-  required:
-  - connectorRef
-  - repo
-  - tags
+  oneOf:
+   - required:
+      - connectorRef
+      - repo
+      - tags
+   - required:
+       - registryRef
+       - useHarnessRegistry
+       - repo
+       - tags
   properties:
     baseImageConnectorRefs:
       oneOf:
@@ -33,6 +39,10 @@ allOf:
       - type: string
     connectorRef:
       type: string
+    registryRef:
+      type: string
+    useHarnessRegistry:
+      type: boolean     
     context:
       type: string
     dockerfile:
