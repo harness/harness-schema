@@ -37144,7 +37144,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "scm" ]
+                "enum" : [ "scm", "github", "harness" ]
               },
               "description" : {
                 "desc" : "This is the description for SscaComplianceSource"
@@ -37163,6 +37163,36 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "github"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "harness"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessSscaComplianceSource"
                   }
                 }
               }
@@ -37188,6 +37218,36 @@
                   }, {
                     "type" : "string",
                     "pattern" : "^<\\+.*>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for RepositorySscaComplianceSource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "HarnessSscaComplianceSource" : {
+            "title" : "HarnessSscaComplianceSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "type", "pipelineIds" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "pipeline" ]
+                },
+                "pipelineIds" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
                     "minLength" : 1
                   } ]
                 },
