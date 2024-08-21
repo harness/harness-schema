@@ -71707,7 +71707,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "HarnessArtifactRegistry" ]
               },
               "description" : {
                 "desc" : "This is the description for PrimaryArtifact"
@@ -71969,6 +71969,21 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HarnessArtifactRegistry"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/HarnessArtifactRegistryConfig"
+                  }
+                }
+              }
             } ]
           },
           "ArtifactSource" : {
@@ -71992,7 +72007,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "HarnessArtifactRegistry" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSource"
@@ -73503,6 +73518,95 @@
               }
             }
           },
+          "HarnessArtifactRegistryConfig" : {
+            "title" : "HarnessArtifactRegistryConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "registryRef", "artifactPath", "registryType" ],
+              "properties" : {
+                "registryRef" : {
+                  "type" : "string"
+                },
+                "artifactPath" : {
+                  "type" : "string"
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "repository" : {
+                  "type" : "string"
+                },
+                "registryType" : {
+                  "type" : "string",
+                  "enum" : [ "docker" ]
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "registryType" : {
+                    "const" : "docker"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/HarnessRegistryDockerConfig"
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HarnessArtifactRegistryConfig"
+              }
+            }
+          },
+          "HarnessRegistryDockerConfig" : {
+            "title" : "HarnessRegistryDockerConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/HarnessRegistryConfigSpec"
+            }, {
+              "type" : "object"
+            }, {
+              "oneOf" : [ {
+                "required" : [ "tagRegex" ]
+              }, {
+                "required" : [ "tag" ]
+              } ],
+              "properties" : {
+                "tag" : {
+                  "type" : "string"
+                },
+                "tagRegex" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HarnessRegistryDockerConfig"
+              }
+            }
+          },
+          "HarnessRegistryConfigSpec" : {
+            "title" : "HarnessRegistryConfigSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HarnessRegistryConfigSpec"
+              }
+            }
+          },
           "SidecarArtifactWrapper" : {
             "title" : "SidecarArtifactWrapper",
             "type" : "object",
@@ -73533,7 +73637,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "HarnessArtifactRegistry" ]
               },
               "description" : {
                 "desc" : "This is the description for SidecarArtifact"
@@ -73792,6 +73896,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/NexusRegistryArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HarnessArtifactRegistry"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/HarnessArtifactRegistryConfig"
                   }
                 }
               }
@@ -75121,7 +75240,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "HarnessArtifactRegistry" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
