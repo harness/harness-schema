@@ -31232,7 +31232,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "image", "repository", "docker", "ecr", "gcr", "acr", "gar" ]
+                "enum" : [ "image", "repository", "docker", "ecr", "gcr", "acr", "gar", "har" ]
               },
               "description" : {
                 "desc" : "This is the description for SbomSource"
@@ -31341,6 +31341,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/GarSbomSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarSbomSource"
                   }
                 }
               }
@@ -31522,6 +31537,29 @@
             "properties" : {
               "description" : {
                 "desc" : "Gar sbom source spec"
+              }
+            }
+          },
+          "HarSbomSource" : {
+            "title" : "HarSbomSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "registry", "image" ],
+              "properties" : {
+                "registry" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Harness Artifact sbom source spec"
               }
             }
           },
@@ -38161,10 +38199,16 @@
               "tag" : {
                 "type" : "string"
               },
+              "registry" : {
+                "type" : "string"
+              },
+              "imagePath" : {
+                "type" : "string"
+              },
               "type" : {
                 "oneOf" : [ {
                   "type" : "string",
-                  "enum" : [ "aws_ecr", "docker_v2", "jfrog_artifactory", "local_image", "local_archive" ]
+                  "enum" : [ "aws_ecr", "docker_v2", "jfrog_artifactory", "local_image", "local_archive", "harness" ]
                 }, {
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
