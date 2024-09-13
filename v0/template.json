@@ -33331,21 +33331,47 @@
               "required" : {
                 "type" : "boolean"
               },
-              "regex" : {
+              "allowedValues" : {
                 "type" : "string"
               },
-              "allowedValues" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
+              "selectOneFrom" : {
+                "type" : "string"
+              },
+              "regex" : {
+                "type" : "string"
               },
               "description" : {
                 "type" : "string",
                 "desc" : "This is the description for ApproverInputInfo"
               }
             },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "oneOf" : [ {
+              "required" : [ "regex" ],
+              "not" : {
+                "required" : [ "allowedValues", "selectOneFrom" ]
+              }
+            }, {
+              "required" : [ "allowedValues" ],
+              "not" : {
+                "required" : [ "regex", "selectOneFrom" ]
+              }
+            }, {
+              "required" : [ "selectOneFrom" ],
+              "not" : {
+                "required" : [ "allowedValues", "regex" ]
+              }
+            }, {
+              "not" : {
+                "anyOf" : [ {
+                  "required" : [ "regex" ]
+                }, {
+                  "required" : [ "allowedValues" ]
+                }, {
+                  "required" : [ "selectOneFrom" ]
+                } ]
+              }
+            } ]
           },
           "Approvers" : {
             "title" : "Approvers",
