@@ -1,13 +1,35 @@
 title: ApproverInputInfo
 type: object
-required:
-  - name
 properties:
-  default:
+  defaultValue:
     type: string
   name:
     type: string
     minLength: 1
+  required:
+    type: boolean
+  allowedValues:
+    type: string
+  selectOneFrom:
+    type: string
+  regex:
+    type: string
   description:
+    type: string
     desc: This is the description for ApproverInputInfo
 $schema: http://json-schema.org/draft-07/schema#
+oneOf:
+  - required: [regex]
+    not:
+      required: [allowedValues, selectOneFrom]
+  - required: [allowedValues]
+    not:
+      required: [regex, selectOneFrom]
+  - required: [selectOneFrom]
+    not:
+      required: [allowedValues, regex]
+  - not:
+      anyOf:
+        - required: [regex]
+        - required: [allowedValues]
+        - required: [selectOneFrom]
