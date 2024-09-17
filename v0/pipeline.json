@@ -61859,35 +61859,70 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "agentId", "applicationName" ],
               "properties" : {
-                "agentId" : [ {
+                "agentId" : {
                   "type" : "string"
-                } ],
-                "applicationName" : [ {
+                },
+                "applicationName" : {
                   "type" : "string"
-                } ],
+                },
+                "applicationRegex" : {
+                  "type" : "string"
+                },
+                "applicationsList" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/AgentApplicationTargets"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
                 "hardRefresh" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
+                    "type" : "string"
                   } ]
                 }
-              }
+              },
+              "anyOf" : [ {
+                "oneOf" : [ {
+                  "required" : [ "applicationRegex" ]
+                }, {
+                  "required" : [ "applicationsList" ]
+                }, {
+                  "required" : [ "applicationName", "agentId" ]
+                } ]
+              } ]
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "agentId", "applicationName" ],
             "properties" : {
-              "agentId" : [ {
+              "agentId" : {
                 "type" : "string"
-              } ],
-              "applicationName" : [ {
+              },
+              "applicationName" : {
                 "type" : "string"
-              } ],
+              },
+              "applicationRegex" : {
+                "type" : "string"
+              },
+              "applicationsList" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AgentApplicationTargets"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
               "hardRefresh" : {
                 "oneOf" : [ {
                   "type" : "boolean"
@@ -61898,7 +61933,16 @@
               "description" : {
                 "desc" : "This is the description for GitOpsGetAppDetailsStepInfo"
               }
-            }
+            },
+            "anyOf" : [ {
+              "oneOf" : [ {
+                "required" : [ "applicationRegex" ]
+              }, {
+                "required" : [ "applicationsList" ]
+              }, {
+                "required" : [ "applicationName", "agentId" ]
+              } ]
+            } ]
           }
         },
         "cvng" : {
