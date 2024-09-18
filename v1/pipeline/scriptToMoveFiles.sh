@@ -90,6 +90,7 @@ stofile=(
     "stoyaml-veracode-tool-data.yaml"
     "stoyaml-zap-tool-data.yaml"
     "stoyaml-wiz-tool-data.yaml"
+    "stoyaml-traceable-tool-data.yaml"
 )
 
 file_list=(
@@ -128,6 +129,7 @@ file_list=(
   "veracode-scan-node.yaml"
   "nmap-scan-node.yaml"
   "wiz-scan-node.yaml"
+  "traceable-scan-node.yaml"
   )
 
 newFileInfoList=(
@@ -166,6 +168,7 @@ newFileInfoList=(
   "snyk-step-info.yaml"
   "veracode-step-info.yaml"
   "wiz-step-info.yaml"
+  "traceable-step-info.yaml"
 )
 
 
