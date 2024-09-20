@@ -555,7 +555,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "AzureRepo", "Github", "Gitlab", "Bitbucket", "Custom", "AwsCodeCommit", "Harness" ]
+                "enum" : [ "AzureRepo", "Github", "Gitlab", "Bitbucket", "Custom", "AwsCodeCommit", "Harness", "EventBridge" ]
               }
             }
           }, {
@@ -615,6 +615,21 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/custom_trigger_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "EventBridge"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/event_bridge_spec"
                 }
               }
             }
@@ -2312,6 +2327,38 @@
           }, {
             "type" : "object",
             "properties" : {
+              "headerConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "jexlCondition" : {
+                "type" : "string"
+              },
+              "payloadConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "event_bridge_spec" : {
+          "title" : "event_bridge_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "autoAbortPreviousExecutions" : {
+                "type" : "boolean"
+              },
+              "webhookIdentifier" : {
+                "type" : "string"
+              },
               "headerConditions" : {
                 "type" : "array",
                 "items" : {

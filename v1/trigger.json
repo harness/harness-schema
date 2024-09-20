@@ -499,7 +499,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "azure-repo", "github", "gitlab", "bitbucket", "custom", "aws-code-commit", "harness" ]
+                "enum" : [ "azure-repo", "github", "gitlab", "bitbucket", "custom", "aws-code-commit", "harness", "event-bridge" ]
               }
             }
           }, {
@@ -559,6 +559,21 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/custom_trigger_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "event-bridge"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/event_bridge_spec"
                 }
               }
             }
@@ -2053,6 +2068,26 @@
           }, {
             "type" : "object",
             "properties" : {
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "event_bridge_spec" : {
+          "title" : "event_bridge_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/webhook_trigger_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "abort_previous" : {
+                "type" : "boolean"
+              },
+              "webhookIdentifier" : {
+                "type" : "string"
+              },
               "conditions" : {
                 "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
               }
