@@ -3,8 +3,6 @@ allOf:
   - $ref: ../../common/step-spec-type.yaml
   - type: object
     required:
-      - email
-      - messageContent
       - token
     properties:
       email:
@@ -15,11 +13,31 @@ allOf:
         type: string
       resources:
         $ref: ../../common/container-resource.yaml
+      channel:
+        type: string
+      botUsername:
+        type: string
+      botIconUrl:
+        type: string
+      threadTs:
+        type: string
+      replyBroadcast:
+        oneOf:
+          - type: string
+          - type: boolean
+      blocks:
+        type: string
+    oneOf:
+      - allOf:
+          - oneOf:
+              - required: ["email"]
+              - required: ["channel"]
+          - oneOf:
+              - required: ["messageContent"]
+              - required: ["blocks"]
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
-  - email
-  - messageContent
   - token
 properties:
   email:
@@ -30,3 +48,25 @@ properties:
     type: string
   resources:
     $ref: ../../common/container-resource.yaml
+  channel:
+    type: string
+  botUsername:
+    type: string
+  botIconUrl:
+    type: string
+  threadTs:
+    type: string
+  replyBroadcast:
+    oneOf:
+      - type: string
+      - type: boolean
+  blocks:
+    type: string
+oneOf:
+  - allOf:
+      - oneOf:
+          - required: ["email"]
+          - required: ["channel"]
+      - oneOf:
+          - required: ["messageContent"]
+          - required: ["blocks"]
