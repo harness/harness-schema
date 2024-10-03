@@ -1,34 +1,64 @@
 title: GitOpsGetAppDetailsStepInfo
 allOf:
-  - $ref: ../../common/step-spec-type.yaml
-  - type: object
-    required:
-    - agentId
-    - applicationName
-    properties:
-      agentId:
-        - type: string
-      applicationName:
-        - type: string
-      hardRefresh:
-        oneOf:
-          - type: boolean
-          - type: string
-            pattern: (<\+.+>.*)
-            minLength: 1
-$schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-  - agentId
-  - applicationName
-properties:
-  agentId:
-    - type: string
-  applicationName:
-    - type: string
-  hardRefresh:
-    oneOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  properties:
+    agentId:
+      type: string
+    applicationName:
+      type: string
+    applicationRegex:
+      type: string
+    applicationsList:
+      oneOf:
+      - type: array
+        items:
+          $ref: agent-application-targets.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+    hardRefresh:
+      oneOf:
       - type: boolean
       - type: string
+  anyOf:
+  - oneOf:
+    - required:
+      - applicationRegex
+    - required:
+      - applicationsList
+    - required:
+      - applicationName
+      - agentId
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  agentId:
+    type: string
+  applicationName:
+    type: string
+  applicationRegex:
+    type: string
+  applicationsList:
+    oneOf:
+    - type: array
+      items:
+        $ref: agent-application-targets.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+      minLength: 1
+  hardRefresh:
+    oneOf:
+    - type: boolean
+    - type: string
   description:
     desc: This is the description for GitOpsGetAppDetailsStepInfo
+anyOf:
+- oneOf:
+  - required:
+    - applicationRegex
+  - required:
+    - applicationsList
+  - required:
+    - applicationName
+    - agentId
