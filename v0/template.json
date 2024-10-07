@@ -483,6 +483,8 @@
                 "$ref" : "#/definitions/pipeline/steps/iacm/IACMTFSecPluginStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GitOpsGetAppDetailsStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode_template"
               } ]
             },
             "tags" : {
@@ -54580,6 +54582,238 @@
               }
             } ]
           },
+          "LiquibaseCommandStepNode_template" : {
+            "title" : "LiquibaseCommandStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "LiquibaseCommand" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "LiquibaseCommand"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "LiquibaseCommandStepInfo" : {
+            "title" : "LiquibaseCommandStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "dbSchema", "dbInstance", "command" ],
+              "properties" : {
+                "dbInstance" : {
+                  "type" : "string"
+                },
+                "dbSchema" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "command" : {
+                  "type" : "string"
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "connectorRef", "dbSchema", "dbInstance", "command" ],
+            "properties" : {
+              "dbInstance" : {
+                "type" : "string"
+              },
+              "dbSchema" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "command" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "envVariables" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for LiquibaseCommandStepInfo"
+              }
+            }
+          },
           "BackgroundStepNode" : {
             "title" : "BackgroundStepNode",
             "type" : "object",
@@ -55422,6 +55656,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "LiquibaseCommandStepNode" : {
+            "title" : "LiquibaseCommandStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for LiquibaseCommandStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "LiquibaseCommand" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "LiquibaseCommand"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepInfo"
                   }
                 }
               }
@@ -71144,6 +71455,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeleteStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeployStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -77386,6 +77699,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -77959,6 +78274,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/DBApplySchemaStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 } ]
               },
               "stepGroup" : {
