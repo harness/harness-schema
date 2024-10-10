@@ -33971,7 +33971,7 @@
           "Approvers" : {
             "title" : "Approvers",
             "type" : "object",
-            "required" : [ "disallowPipelineExecutor", "minimumCount", "userGroups" ],
+            "required" : [ "disallowPipelineExecutor", "minimumCount" ],
             "properties" : {
               "disallowPipelineExecutor" : {
                 "oneOf" : [ {
@@ -34002,10 +34002,29 @@
                   "minLength" : 1
                 } ]
               },
+              "serviceAccounts" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  },
+                  "maxItems" : 2147483647,
+                  "minItems" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "description" : {
                 "desc" : "This is the description for Approvers"
               }
             },
+            "anyOf" : [ {
+              "required" : [ "userGroups" ]
+            }, {
+              "required" : [ "serviceAccounts" ]
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "AutoApprovalParams" : {
