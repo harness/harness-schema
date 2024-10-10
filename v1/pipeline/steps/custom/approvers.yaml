@@ -3,7 +3,6 @@ type: object
 required:
 - disallow_executor
 - min_count
-- user_groups
 properties:
   disallow_executor:
     - type: boolean
@@ -22,6 +21,19 @@ properties:
     - type: string
       pattern: (<\+.+>.*)
       minLength: 1
+  service_accounts:
+    oneOf:
+    - type: array
+      items:
+        type: string
+      maxItems: 256
+      minItems: 1
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
   description:
     desc: This is the description for Approvers
+anyOf:
+  - required: ["user_groups"]
+  - required: ["service_accounts"]
 $schema: http://json-schema.org/draft-07/schema#
