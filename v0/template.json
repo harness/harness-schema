@@ -11321,7 +11321,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition" ]
+                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgMiscConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition" ]
               },
               "description" : {
                 "desc" : "This is the description for ManifestConfig"
@@ -11340,6 +11340,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/AsgConfigurationManifest"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AsgMiscConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AsgMiscConfigurationManifest"
                   }
                 }
               }
@@ -11765,6 +11780,28 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for ManifestAttributes"
+              }
+            }
+          },
+          "AsgMiscConfigurationManifest" : {
+            "title" : "AsgMiscConfigurationManifest",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AsgMiscConfigurationManifest"
               }
             }
           },
@@ -12611,6 +12648,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/AsgConfigurationManifest"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AsgMiscConfiguration"
+                  }
+                },
+                "then" : {
+                  "properties" : {
+                    "spec" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/AsgMiscConfigurationManifest"
+                    }
                   }
                 }
               }
