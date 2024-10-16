@@ -1145,7 +1145,7 @@
                   }
                 }
               }
-            },  {
+            }, {
               "if" : {
                 "properties" : {
                   "deploymentType" : {
@@ -1160,7 +1160,7 @@
                   }
                 }
               }
-            },{
+            }, {
               "if" : {
                 "properties" : {
                   "deploymentType" : {
@@ -6678,22 +6678,6 @@
               }
             }
           },
-          "AzureFunctionServiceSpec" : {
-            "title" : "AzureFunctionServiceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AzureFunctionServiceSpec"
-              }
-            }
-          },
           "AzureWebAppServiceSpec" : {
             "title" : "AzureWebAppServiceSpec",
             "allOf" : [ {
@@ -6769,6 +6753,21 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AzureFunctionServiceSpec" : {
+            "title" : "AzureFunctionServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : null
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureFunctionServiceSpec"
+              }
+            }
           },
           "CustomDeploymentServiceSpec" : {
             "title" : "CustomDeploymentServiceSpec",
@@ -60447,17 +60446,11 @@
                     }
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
                 "image" : {
-                  "type" : "string"
-                },
-                "functionApp" : {
-                  "type" : "string"
-                },
-                "deploymentSlot" : {
                   "type" : "string"
                 },
                 "imagePullPolicy" : {
@@ -60475,7 +60468,7 @@
                     "type" : "boolean"
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
@@ -60490,6 +60483,12 @@
                     "type" : "string"
                   } ]
                 },
+                "deploymentSlot" : {
+                  "type" : "string"
+                },
+                "webApp" : {
+                  "type" : "string"
+                },
                 "preExecution" : {
                   "type" : "string"
                 }
@@ -60497,6 +60496,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "deploymentSlot", "webApp" ],
             "properties" : {
               "connectorRef" : {
                 "type" : "string"
@@ -60521,17 +60521,11 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
               "image" : {
-                "type" : "string"
-              },
-              "functionApp" : {
-                "type" : "string"
-              },
-              "deploymentSlot" : {
                 "type" : "string"
               },
               "imagePullPolicy" : {
@@ -60549,7 +60543,7 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
@@ -60563,6 +60557,14 @@
                 }, {
                   "type" : "string"
                 } ]
+              },
+              "deploymentSlot" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "webApp" : {
+                "type" : "string",
+                "minLength" : 1
               },
               "preExecution" : {
                 "type" : "string"
@@ -60689,7 +60691,7 @@
                     "type" : "boolean"
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
@@ -60745,7 +60747,7 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
@@ -60759,6 +60761,9 @@
                 }, {
                   "type" : "string"
                 } ]
+              },
+              "serverlessVersion" : {
+                "type" : "string"
               },
               "preExecution" : {
                 "type" : "string"
