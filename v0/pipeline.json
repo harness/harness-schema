@@ -1048,7 +1048,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -1145,22 +1145,7 @@
                   }
                 }
               }
-            },  {
-              "if" : {
-                "properties" : {
-                  "deploymentType" : {
-                    "const" : "AzureFunction"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "deploymentMetadata" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionDeploymentMetaData"
-                  }
-                }
-              }
-            },{
+            }, {
               "if" : {
                 "properties" : {
                   "deploymentType" : {
@@ -1898,6 +1883,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -2542,7 +2529,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -2606,21 +2593,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppInfrastructure"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "AzureFunction"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionInfrastructure"
                   }
                 }
               }
@@ -2960,38 +2932,6 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AzureWebAppInfrastructure"
-              }
-            }
-          },
-          "AzureFunctionInfrastructure" : {
-            "title" : "AzureFunctionInfrastructure",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "resourceGroup", "subscriptionId" ],
-              "properties" : {
-                "connectorRef" : {
-                  "type" : "string",
-                  "minLength" : 1
-                },
-                "provisioner" : {
-                  "type" : "string"
-                },
-                "resourceGroup" : {
-                  "type" : "string",
-                  "minLength" : 1
-                },
-                "subscriptionId" : {
-                  "type" : "string",
-                  "minLength" : 1
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AzureFunctionInfrastructure"
               }
             }
           },
@@ -4034,7 +3974,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -4098,21 +4038,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppServiceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "AzureFunction"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionServiceSpec"
                   }
                 }
               }
@@ -6678,22 +6603,6 @@
               }
             }
           },
-          "AzureFunctionServiceSpec" : {
-            "title" : "AzureFunctionServiceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
-            }, {
-              "type" : "object",
-              "properties" : {
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AzureFunctionServiceSpec"
-              }
-            }
-          },
           "AzureWebAppServiceSpec" : {
             "title" : "AzureWebAppServiceSpec",
             "allOf" : [ {
@@ -7636,20 +7545,6 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AzureWebAppDeploymentMetaData"
-              }
-            }
-          },
-          "AzureFunctionDeploymentMetaData" : {
-            "title" : "AzureFunctionDeploymentMetaData",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
-            }, {
-              "type" : "object"
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AzureFunctionDeploymentMetaData"
               }
             }
           },
@@ -9052,6 +8947,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -9641,6 +9538,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -31093,6 +30992,110 @@
                 "desc" : "This is the description for LiquibaseCommandStepInfo"
               }
             }
+          },
+          "FilesUploadStepNode" : {
+            "title" : "FilesUploadStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FilesUploadStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][-0-9a-zA-Z_\\s]{0,127}$"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FilesUpload" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FilesUpload"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FilesUploadStepInfo" : {
+            "title" : "FilesUploadStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "outputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object"
           },
           "AnchoreScanNode" : {
             "title" : "AnchoreScanNode",
@@ -60447,17 +60450,11 @@
                     }
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
                 "image" : {
-                  "type" : "string"
-                },
-                "functionApp" : {
-                  "type" : "string"
-                },
-                "deploymentSlot" : {
                   "type" : "string"
                 },
                 "imagePullPolicy" : {
@@ -60475,7 +60472,7 @@
                     "type" : "boolean"
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
@@ -60490,6 +60487,12 @@
                     "type" : "string"
                   } ]
                 },
+                "deploymentSlot" : {
+                  "type" : "string"
+                },
+                "webApp" : {
+                  "type" : "string"
+                },
                 "preExecution" : {
                   "type" : "string"
                 }
@@ -60497,6 +60500,7 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "required" : [ "deploymentSlot", "webApp" ],
             "properties" : {
               "connectorRef" : {
                 "type" : "string"
@@ -60521,17 +60525,11 @@
                   }
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
               "image" : {
-                "type" : "string"
-              },
-              "functionApp" : {
-                "type" : "string"
-              },
-              "deploymentSlot" : {
                 "type" : "string"
               },
               "imagePullPolicy" : {
@@ -60549,7 +60547,7 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
@@ -60563,6 +60561,14 @@
                 }, {
                   "type" : "string"
                 } ]
+              },
+              "deploymentSlot" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "webApp" : {
+                "type" : "string",
+                "minLength" : 1
               },
               "preExecution" : {
                 "type" : "string"
@@ -60689,7 +60695,7 @@
                     "type" : "boolean"
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                     "minLength" : 1
                   } ]
                 },
@@ -60745,7 +60751,7 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
                   "minLength" : 1
                 } ]
               },
@@ -60759,6 +60765,9 @@
                 }, {
                   "type" : "string"
                 } ]
+              },
+              "serverlessVersion" : {
+                "type" : "string"
               },
               "preExecution" : {
                 "type" : "string"
