@@ -36078,8 +36078,7 @@
                   "items" : {
                     "type" : "string"
                   },
-                  "maxItems" : 256,
-                  "minItems" : 1
+                  "maxItems" : 256
                 }, {
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
@@ -36092,8 +36091,7 @@
                   "items" : {
                     "type" : "string"
                   },
-                  "maxItems" : 256,
-                  "minItems" : 1
+                  "maxItems" : 256
                 }, {
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
@@ -36105,9 +36103,33 @@
               }
             },
             "anyOf" : [ {
-              "required" : [ "user_groups" ]
+              "properties" : {
+                "user_groups" : {
+                  "type" : "array",
+                  "minItems" : 1
+                }
+              }
             }, {
-              "required" : [ "service_accounts" ]
+              "properties" : {
+                "service_accounts" : {
+                  "type" : "array",
+                  "minItems" : 1
+                }
+              }
+            } ],
+            "allOf" : [ {
+              "not" : {
+                "properties" : {
+                  "user_groups" : {
+                    "type" : "array",
+                    "maxItems" : 0
+                  },
+                  "service_accounts" : {
+                    "type" : "array",
+                    "maxItems" : 0
+                  }
+                }
+              }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
