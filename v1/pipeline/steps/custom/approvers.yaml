@@ -17,7 +17,6 @@ properties:
       items:
         type: string
       maxItems: 256
-      minItems: 1
     - type: string
       pattern: (<\+.+>.*)
       minLength: 1
@@ -27,13 +26,29 @@ properties:
       items:
         type: string
       maxItems: 256
-      minItems: 1
     - type: string
       pattern: (<\+.+>.*)
       minLength: 1
   description:
     desc: This is the description for Approvers
 anyOf:
-  - required: ["user_groups"]
-  - required: ["service_accounts"]
+  # Ensures that either user_groups or service_accounts has a valid array
+  - properties:
+      user_groups:
+        type: array
+        minItems: 1
+  - properties:
+      service_accounts:
+        type: array
+        minItems: 1
+allOf:
+  # Disallow both user_groups and service_accounts from being empty arrays at the same time
+  - not:
+      properties:
+        user_groups:
+          type: array
+          maxItems: 0
+        service_accounts:
+          type: array
+          maxItems: 0
 $schema: http://json-schema.org/draft-07/schema#
