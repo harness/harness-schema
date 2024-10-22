@@ -71400,7 +71400,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -71494,6 +71494,21 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "AzureFunction"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionDeploymentMetaData"
                   }
                 }
               }
@@ -72647,7 +72662,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -72711,6 +72726,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureFunction"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionInfrastructure"
                   }
                 }
               }
@@ -73050,6 +73080,38 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AzureWebAppInfrastructure"
+              }
+            }
+          },
+          "AzureFunctionInfrastructure" : {
+            "title" : "AzureFunctionInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "resourceGroup", "subscriptionId" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "provisioner" : {
+                  "type" : "string"
+                },
+                "resourceGroup" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "subscriptionId" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureFunctionInfrastructure"
               }
             }
           },
@@ -74092,7 +74154,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -74156,6 +74218,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/AzureWebAppServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureFunction"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureFunctionServiceSpec"
                   }
                 }
               }
@@ -76797,6 +76874,21 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "AzureFunctionServiceSpec" : {
+            "title" : "AzureFunctionServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : null
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureFunctionServiceSpec"
+              }
+            }
+          },
           "CustomDeploymentServiceSpec" : {
             "title" : "CustomDeploymentServiceSpec",
             "allOf" : [ {
@@ -77663,6 +77755,20 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AzureWebAppDeploymentMetaData"
+              }
+            }
+          },
+          "AzureFunctionDeploymentMetaData" : {
+            "title" : "AzureFunctionDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureFunctionDeploymentMetaData"
               }
             }
           },
