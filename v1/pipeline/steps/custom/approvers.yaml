@@ -32,15 +32,23 @@ properties:
   description:
     desc: This is the description for Approvers
 anyOf:
-  # Ensures that either user_groups or service_accounts has a valid array
+  # Ensure at least one of userGroups or serviceAccounts is non-empty
   - properties:
       user_groups:
-        type: array
-        minItems: 1
+        oneOf:
+          - type: array
+            minItems: 1
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
   - properties:
       service_accounts:
-        type: array
-        minItems: 1
+        oneOf:
+          - type: array
+            minItems: 1
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
 allOf:
   # Disallow both user_groups and service_accounts from being empty arrays at the same time
   - not:
