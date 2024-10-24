@@ -489,6 +489,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/GitOpsGetAppDetailsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode_template"
               } ]
             },
             "tags" : {
@@ -55490,6 +55492,98 @@
               }
             }
           },
+          "FilesUploadStepNode_template" : {
+            "title" : "FilesUploadStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FilesUpload" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FilesUpload"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FilesUploadStepInfo" : {
+            "title" : "FilesUploadStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "outputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object"
+          },
           "BackgroundStepNode" : {
             "title" : "BackgroundStepNode",
             "type" : "object",
@@ -56481,42 +56575,6 @@
                 }
               }
             } ]
-          },
-          "FilesUploadStepInfo" : {
-            "title" : "FilesUploadStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "inputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                },
-                "outputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
           },
           "SscaEnforcementStepNode" : {
             "title" : "SscaEnforcementStepNode",
