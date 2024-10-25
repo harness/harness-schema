@@ -986,6 +986,9 @@
                     },
                     "budget" : {
                       "type" : "number"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1000,6 +1003,9 @@
                     },
                     "connector" : {
                       "type" : "string"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1023,6 +1029,9 @@
                     },
                     "path" : {
                       "type" : "string"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1030,11 +1039,38 @@
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/numberVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/stringVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/stringVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/numberVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/secretVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/secretVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     } ]
                   }
                 },
@@ -1042,19 +1078,73 @@
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/numberVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/stringVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/stringVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/numberVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/secretVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/secretVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     } ]
                   }
                 },
                 "terraform_variable_files" : {
                   "type" : "array",
                   "items" : {
-                    "type" : "string",
-                    "pattern" : "^.*\\.(tf|tofu)$"
+                    "type" : "object",
+                    "properties" : {
+                      "repository" : {
+                        "type" : "string"
+                      },
+                      "repository_branch" : {
+                        "type" : "string"
+                      },
+                      "repository_connector" : {
+                        "type" : "string"
+                      },
+                      "repository_path" : {
+                        "type" : "string"
+                      },
+                      "gitFetchType" : {
+                        "type" : "string",
+                        "enum" : [ "branch", "commitId", "sha" ]
+                      },
+                      "provider" : {
+                        "type" : "string",
+                        "enum" : [ "third-party", "harness" ]
+                      },
+                      "repoInputEnabled" : {
+                        "type" : "boolean"
+                      },
+                      "locked" : {
+                        "type" : "boolean"
+                      }
+                    }
                   }
                 }
               }

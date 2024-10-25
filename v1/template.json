@@ -1187,6 +1187,9 @@
                     },
                     "budget" : {
                       "type" : "number"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1201,6 +1204,9 @@
                     },
                     "connector" : {
                       "type" : "string"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1224,6 +1230,9 @@
                     },
                     "path" : {
                       "type" : "string"
+                    },
+                    "locked" : {
+                      "type" : "boolean"
                     }
                   }
                 },
@@ -1231,11 +1240,38 @@
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/numberVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/stringVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/stringVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/numberVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/secretVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/secretVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     } ]
                   }
                 },
@@ -1243,19 +1279,73 @@
                   "type" : "array",
                   "items" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/numberVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/stringVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/stringVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/numberVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     }, {
-                      "$ref" : "#/definitions/pipeline/secretVariable"
+                      "allOf" : [ {
+                        "$ref" : "#/definitions/pipeline/secretVariable"
+                      }, {
+                        "type" : "object",
+                        "properties" : {
+                          "locked" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      } ]
                     } ]
                   }
                 },
                 "terraform_variable_files" : {
                   "type" : "array",
                   "items" : {
-                    "type" : "string",
-                    "pattern" : "^.*\\.(tf|tofu)$"
+                    "type" : "object",
+                    "properties" : {
+                      "repository" : {
+                        "type" : "string"
+                      },
+                      "repository_branch" : {
+                        "type" : "string"
+                      },
+                      "repository_connector" : {
+                        "type" : "string"
+                      },
+                      "repository_path" : {
+                        "type" : "string"
+                      },
+                      "gitFetchType" : {
+                        "type" : "string",
+                        "enum" : [ "branch", "commitId", "sha" ]
+                      },
+                      "provider" : {
+                        "type" : "string",
+                        "enum" : [ "third-party", "harness" ]
+                      },
+                      "repoInputEnabled" : {
+                        "type" : "boolean"
+                      },
+                      "locked" : {
+                        "type" : "boolean"
+                      }
+                    }
                   }
                 }
               }
@@ -71828,6 +71918,37 @@
           }
         }
       },
+      "stringVariable" : {
+        "title" : "stringVariable",
+        "type" : "object",
+        "required" : [ "value" ],
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
+          },
+          "default" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "String" ]
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "metadata" : {
+            "type" : "string"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
       "numberVariable" : {
         "title" : "numberVariable",
         "type" : "object",
@@ -71853,37 +71974,6 @@
               "type" : "string",
               "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
             } ]
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "required" : {
-            "type" : "boolean"
-          },
-          "metadata" : {
-            "type" : "string"
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
-      },
-      "stringVariable" : {
-        "title" : "stringVariable",
-        "type" : "object",
-        "required" : [ "value" ],
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$]{0,63}$"
-          },
-          "default" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "String" ]
-          },
-          "value" : {
-            "type" : "string"
           },
           "description" : {
             "type" : "string"
