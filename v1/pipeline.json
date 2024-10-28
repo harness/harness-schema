@@ -4703,6 +4703,8 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateProjectStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPCreateResourceStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/idp/IDPUpdateCatalogPropertyStepNode"
                 } ]
               },
               "description" : {
@@ -57146,6 +57148,226 @@
                 "$ref" : "#/definitions/pipeline/common/ContainerResource"
               }
             }
+          },
+          "IDPUpdateCatalogPropertyStepNode" : {
+            "title" : "IDPUpdateCatalogPropertyStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IDPUpdateCatalogPropertyStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "UpdateCatalogProperty" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "UpdateCatalogProperty"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/idp/IDPUpdateCatalogPropertyStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IDPUpdateCatalogPropertyStepInfo" : {
+            "title" : "IDPUpdateCatalogPropertyStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "type" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string"
+                },
+                "entityRef" : {
+                  "type" : "string"
+                },
+                "properties" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/idp/PropertiesParameterField"
+                  }
+                },
+                "property" : {
+                  "type" : "string"
+                },
+                "entityRefs" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/idp/EntityRefsParameterField"
+                  }
+                },
+                "mode" : {
+                  "type" : "string"
+                },
+                "value" : {
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "number"
+                  }, {
+                    "type" : "object"
+                  }, {
+                    "type" : "array"
+                  } ]
+                },
+                "xApiKey" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string"
+              },
+              "entityRef" : {
+                "type" : "string"
+              },
+              "properties" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/idp/PropertiesParameterField"
+                }
+              },
+              "property" : {
+                "type" : "string"
+              },
+              "entityRefs" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/idp/EntityRefsParameterField"
+                }
+              },
+              "mode" : {
+                "type" : "string"
+              },
+              "value" : {
+                "type" : "object"
+              },
+              "xApiKey" : {
+                "type" : "string"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              }
+            }
+          },
+          "PropertiesParameterField" : {
+            "title" : "PropertiesParameterField",
+            "type" : "object",
+            "required" : [ "property", "value" ],
+            "properties" : {
+              "property" : {
+                "type" : "string"
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "number"
+                }, {
+                  "type" : "object"
+                }, {
+                  "type" : "array"
+                } ]
+              },
+              "mode" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for PropertiesParameterField"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EntityRefsParameterField" : {
+            "title" : "EntityRefsParameterField",
+            "type" : "object",
+            "required" : [ "entityRef" ],
+            "properties" : {
+              "entityRef" : {
+                "type" : "string"
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "number"
+                }, {
+                  "type" : "object"
+                }, {
+                  "type" : "array"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for EntityRefsParameterField"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         }
       },
