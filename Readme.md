@@ -15,7 +15,7 @@ Welcome to the GitHub repository of our Harness NextGen Pipeline YAML Schema! Th
 
 ## Introduction
 
-Our pipeline YAML schema allows users to define their pipelines, making it easier to specify the steps, dependencies, and configurations required for their projects. With this schema, users can seamlessly create and modify pipeline configurations, leading to more efficient and error-free deployments.
+Our pipeline YAML schema allows users to define their pipelines, making it easier to specify the steps, dependencies, and configurations required for their projects. With this schema, users can seamlessly create and modify pipeline configurations, resulting in more efficient and error-free deployments.
 
 ## Getting Started
 
