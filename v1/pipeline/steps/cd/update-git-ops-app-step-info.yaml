@@ -1,52 +1,32 @@
 title: UpdateGitOpsAppStepInfo
 allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  required:
-  - agentId
-  - applicationName
-  properties:
-    agentId:
-      - type: string
-    applicationName:
-      - type: string
-    helm:
-      oneOf:
-      - $ref: helm-values.yaml
-      - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-        minLength: 1
-    kustomize:
-      oneOf:
-      - $ref: kustomize-values.yaml
-      - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-        minLength: 1
-    targetRevision:
-      - type: string
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - agentId
+      - applicationName
+    properties:
+      agentId:
+        - type: string
+      applicationName:
+        - type: string
+      helm:
+        oneOf:
+          - $ref: helm-values.yaml
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      kustomize:
+        oneOf:
+          - $ref: kustomize-values.yaml
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      targetRevision:
+        - type: string
+      sources:
+        type: array
+        items:
+          type: object
+          $ref: git-ops-application-source.yaml
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-- agentId
-- applicationName
-properties:
-  agentId:
-    - type: string
-  applicationName:
-    - type: string
-  helm:
-    oneOf:
-    - $ref: helm-values.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  kustomize:
-    oneOf:
-    - $ref: kustomize-values.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  targetRevision:
-    - type: string
-  description:
-    desc: This is the description for UpdateGitOpsAppStepInfo
