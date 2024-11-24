@@ -1,126 +1,72 @@
 title: SyncStepInfo
-allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  required:
+$ref: ../../common/step-spec-type.yaml
+type: object
+required:
   - applyOnly
   - dryRun
   - forceApply
   - prune
   - syncOptions
-  properties:
-    applicationsList:
-      oneOf:
+properties:
+  applicationsList:
+    oneOf:
       - type: array
         items:
           $ref: agent-application-targets.yaml
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
         minLength: 1
-    applicationRegex:
-      type: string
-    applyOnly:
-      oneOf:
+  applicationRegex:
+    type: string
+  applyOnly:
+    oneOf:
       - type: boolean
       - type: string
-    delegateSelectors:
-      oneOf:
+  delegateSelectors:
+    oneOf:
       - type: array
         items:
           type: string
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
         minLength: 1
-    dryRun:
-      oneOf:
-      - type: boolean
-      - type: string
-    forceApply:
-      oneOf:
-      - type: boolean
-      - type: string
-    prune:
-      oneOf:
-      - type: boolean
-      - type: string
-    retryStrategy:
-      $ref: sync-retry-strategy.yaml
-    syncOptions:
-      $ref: sync-options.yaml
-    waitTillHealthy:
-      oneOf:
-        - type: boolean
-        - type: string
-  anyOf:
-  - oneOf:
-    - required:
-      - applicationRegex
-    - required:
-      - applicationsList
-  - not:
-      required:
-      - applicationRegex
-      - applicationsList
-$schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-- applyOnly
-- dryRun
-- forceApply
-- prune
-- syncOptions
-properties:
-  applicationsList:
-    oneOf:
-    - type: array
-      items:
-        $ref: agent-application-targets.yaml
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
-  applicationRegex:
-      type: string
-  applyOnly:
-    oneOf:
-    - type: boolean
-    - type: string
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
-      minLength: 1
   dryRun:
     oneOf:
-    - type: boolean
-    - type: string
+      - type: boolean
+      - type: string
   forceApply:
     oneOf:
-    - type: boolean
-    - type: string
+      - type: boolean
+      - type: string
   prune:
     oneOf:
-    - type: boolean
-    - type: string
+      - type: boolean
+      - type: string
   retryStrategy:
     $ref: sync-retry-strategy.yaml
   syncOptions:
     $ref: sync-options.yaml
   waitTillHealthy:
     oneOf:
-    - type: boolean
-    - type: string
-  description:
-    desc: This is the description for SyncStepInfo
-anyOf:
-- oneOf:
-  - required:
-    - applicationRegex
-  - required:
-    - applicationsList
-- not:
-    required:
-    - applicationRegex
-    - applicationsList
+      - type: boolean
+      - type: string
+  failOnTimeout:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - dependentRequired:
+      failOnTimeout: [ waitTillHealthy ]
+  - anyOf:
+      - oneOf:
+          - required:
+              - applicationRegex
+          - required:
+              - applicationsList
+      - not:
+          required:
+            - applicationRegex
+            - applicationsList

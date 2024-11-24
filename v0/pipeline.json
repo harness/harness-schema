@@ -46521,94 +46521,6 @@
           },
           "SyncStepInfo" : {
             "title" : "SyncStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "applyOnly", "dryRun", "forceApply", "prune", "syncOptions" ],
-              "properties" : {
-                "applicationsList" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/cd/AgentApplicationTargets"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "applicationRegex" : {
-                  "type" : "string"
-                },
-                "applyOnly" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "dryRun" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "forceApply" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "prune" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "retryStrategy" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/SyncRetryStrategy"
-                },
-                "syncOptions" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/SyncOptions"
-                },
-                "waitTillHealthy" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              },
-              "anyOf" : [ {
-                "oneOf" : [ {
-                  "required" : [ "applicationRegex" ]
-                }, {
-                  "required" : [ "applicationsList" ]
-                } ]
-              }, {
-                "not" : {
-                  "required" : [ "applicationRegex", "applicationsList" ]
-                }
-              } ]
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
             "required" : [ "applyOnly", "dryRun", "forceApply", "prune", "syncOptions" ],
             "properties" : {
@@ -46680,21 +46592,35 @@
                   "type" : "string"
                 } ]
               },
-              "description" : {
-                "desc" : "This is the description for SyncStepInfo"
+              "failOnTimeout" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               }
             },
-            "anyOf" : [ {
-              "oneOf" : [ {
-                "required" : [ "applicationRegex" ]
-              }, {
-                "required" : [ "applicationsList" ]
-              } ]
-            }, {
-              "not" : {
-                "required" : [ "applicationRegex", "applicationsList" ]
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "dependentRequired" : {
+                "failOnTimeout" : [ "waitTillHealthy" ]
               }
-            } ]
+            }, {
+              "anyOf" : [ {
+                "oneOf" : [ {
+                  "required" : [ "applicationRegex" ]
+                }, {
+                  "required" : [ "applicationsList" ]
+                } ]
+              }, {
+                "not" : {
+                  "required" : [ "applicationRegex", "applicationsList" ]
+                }
+              } ]
+            } ],
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
           },
           "AgentApplicationTargets" : {
             "title" : "AgentApplicationTargets",
