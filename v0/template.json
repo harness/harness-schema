@@ -55460,7 +55460,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -55678,7 +55678,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -56802,7 +56802,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -57675,7 +57675,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -57752,7 +57752,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -57983,7 +57983,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
                   }
                 }, {
                   "type" : "string",
@@ -73979,6 +73979,63 @@
             "inputProperties" : {
               "type" : "string",
               "internalType" : "duration"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "DBDevOpsFailureStrategyConfig" : {
+          "title" : "DBDevOpsFailureStrategyConfig",
+          "type" : "object",
+          "required" : [ "onFailure" ],
+          "properties" : {
+            "onFailure" : {
+              "$ref" : "#/definitions/pipeline/common/DBDevOpsOnFailureConfig"
+            },
+            "description" : {
+              "desc" : "This is the description for FailureStrategyConfig"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "failure_strategy"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "DBDevOpsOnFailureConfig" : {
+          "title" : "DBDevOpsOnFailureConfig",
+          "type" : "object",
+          "required" : [ "action", "errors" ],
+          "properties" : {
+            "action" : {
+              "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyActionConfig"
+            },
+            "errors" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "enum" : [ "Unknown", "AllErrors", "Authentication", "Connectivity", "Timeout", "Authorization", "Verification", "DelegateProvisioning", "PolicyEvaluationFailure", "InputTimeoutError", "ApprovalRejection", "DelegateRestart", "UserMarkedFailure" ]
+              }
+            },
+            "description" : {
+              "desc" : "This is the description for OnFailureConfig"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "DBDevOpsFailureStrategyActionConfig" : {
+          "title" : "DBDevOpsFailureStrategyActionConfig",
+          "type" : "object",
+          "required" : [ "type" ],
+          "discriminator" : "type",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum" : [ "StageRollback", "PipelineRollback" ]
+            },
+            "description" : {
+              "desc" : "This is the description for FailureStrategyActionConfig"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
