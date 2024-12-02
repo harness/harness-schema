@@ -8719,6 +8719,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ProvenanceStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
@@ -35433,6 +35435,479 @@
             "properties" : {
               "description" : {
                 "desc" : "Gar source spec"
+              }
+            }
+          },
+          "ArtifactSigningStepNode" : {
+            "title" : "ArtifactSigningStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ArtifactSigningStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ArtifactSigning" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ArtifactSigning"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ArtifactSigningStepInfo" : {
+            "title" : "ArtifactSigningStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "if" : {
+                "properties" : {
+                  "source" : {
+                    "properties" : {
+                      "type" : {
+                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr" ]
+                      }
+                    }
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "signing" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/Signing"
+                  }
+                }
+              }
+            } ],
+            "additonalProperties" : false,
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningStepInfo"
+              }
+            }
+          },
+          "Signing" : {
+            "title" : "Signing",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "cosign" ]
+              },
+              "description" : {
+                "desc" : "This is the description for Signing"
+              },
+              "spec" : {
+                "type" : "object"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "cosign"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/steps/common/CosignSigning"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerSigning"
+                    } ],
+                    "properties" : {
+                      "cosignVariables" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "key" : {
+                              "type" : "string"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "additionalProperties" : false
+          },
+          "CosignSigning" : {
+            "title" : "CosignSigning",
+            "type" : "object",
+            "required" : [ "privateKey", "password" ],
+            "properties" : {
+              "privateKey" : {
+                "type" : "string"
+              },
+              "password" : {
+                "type" : "string"
+              },
+              "description" : {
+                "type" : "string",
+                "description" : "This is the description for CosignSigning"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false,
+            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
+          },
+          "SigningSpec" : {
+            "title" : "SigningSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SigningSpec"
+              }
+            }
+          },
+          "CosignSecretManagerSigning" : {
+            "title" : "CosignSecretManagerSigning",
+            "type" : "object",
+            "required" : [ "connector", "key" ],
+            "properties" : {
+              "connector" : {
+                "type" : "string"
+              },
+              "key" : {
+                "type" : "string"
+              },
+              "description" : {
+                "type" : "string",
+                "description" : "This is the description for Cosign Signing with Secret Manager"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false,
+            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
+          },
+          "ArtifactSigningSource" : {
+            "title" : "ArtifactSigningSource",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar" ]
+              },
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "docker"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningDockerSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "gcr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningGcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ecr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSingingEcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "acr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningAcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "gar"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningGarSourceSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "ArtifactSigningDockerSourceSpec" : {
+            "title" : "ArtifactSigningDockerSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "digest", "connector" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningDockerSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningSourceSpec" : {
+            "title" : "ArtifactSigningSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningGcrSourceSpec" : {
+            "title" : "ArtifactSigningGcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project", "image", "digest" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningGcrSourceSpec"
+              }
+            }
+          },
+          "ArtifactSingingEcrSourceSpec" : {
+            "title" : "ArtifactSingingEcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "digest", "connector", "region", "account" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "account" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningEcrSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningAcrSourceSpec" : {
+            "title" : "ArtifactSigningAcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "image", "digest" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "subscriptionId" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningAcrSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningGarSourceSpec" : {
+            "title" : "ArtifactSigningGarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project", "image", "digest" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "digest" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningGarSourceSpec"
               }
             }
           }
