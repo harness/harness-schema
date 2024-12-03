@@ -8248,6 +8248,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepNode"
                 } ]
               },
               "description" : {
@@ -8722,6 +8724,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/ProvenanceStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
                 }, {
@@ -35293,6 +35297,21 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningHarSourceSpec"
+                  }
+                }
+              }
             } ]
           },
           "ArtifactSigningDockerSourceSpec" : {
@@ -35438,6 +35457,141 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for ArtifactSigningGarSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningHarSourceSpec" : {
+            "title" : "ArtifactSigningHarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "registry", "image" ],
+              "properties" : {
+                "registry" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningHarSourceSpec"
+              }
+            }
+          },
+          "ArtifactVerificationStepNode" : {
+            "title" : "ArtifactVerificationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ArtifactVerificationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ArtifactVerification" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ArtifactVerification"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ArtifactVerificationStepInfo" : {
+            "title" : "ArtifactVerificationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+                },
+                "verify_attestation" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
+              },
+              "verify_attestation" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for ArtifactVerificationStepInfo"
               }
             }
           },
