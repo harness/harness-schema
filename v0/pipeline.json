@@ -35075,7 +35075,7 @@
                   "source" : {
                     "properties" : {
                       "type" : {
-                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr" ]
+                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr", "har" ]
                       }
                     }
                   }
@@ -35084,7 +35084,7 @@
               "then" : {
                 "properties" : {
                   "signing" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/Signing"
+                    "$ref" : "#/definitions/pipeline/steps/common/AttestationV1"
                   }
                 }
               }
@@ -35104,8 +35104,8 @@
               }
             }
           },
-          "Signing" : {
-            "title" : "Signing",
+          "AttestationV1" : {
+            "title" : "AttestationV1",
             "type" : "object",
             "properties" : {
               "type" : {
@@ -35113,7 +35113,7 @@
                 "enum" : [ "cosign" ]
               },
               "description" : {
-                "desc" : "This is the description for Signing"
+                "desc" : "This is the description for ProvenanceAttestation"
               },
               "spec" : {
                 "type" : "object"
@@ -35133,9 +35133,9 @@
                   "spec" : {
                     "type" : "object",
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSigning"
+                      "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
                     }, {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerSigning"
+                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
                     } ],
                     "properties" : {
                       "cosignVariables" : {
@@ -35159,12 +35159,12 @@
             } ],
             "additionalProperties" : false
           },
-          "CosignSigning" : {
-            "title" : "CosignSigning",
+          "CosignAttestation" : {
+            "title" : "CosignAttestation",
             "type" : "object",
-            "required" : [ "privateKey", "password" ],
+            "required" : [ "private_key", "password" ],
             "properties" : {
-              "privateKey" : {
+              "private_key" : {
                 "type" : "string"
               },
               "password" : {
@@ -35172,25 +35172,25 @@
               },
               "description" : {
                 "type" : "string",
-                "description" : "This is the description for CosignSigning"
+                "description" : "This is the description for CosignAttestation"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
+            "$ref" : "#/definitions/pipeline/steps/common/AttestationSpecV1"
           },
-          "SigningSpec" : {
-            "title" : "SigningSpec",
+          "AttestationSpecV1" : {
+            "title" : "AttestationSpecV1",
             "type" : "object",
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
               "description" : {
-                "desc" : "This is the description for SigningSpec"
+                "desc" : "This is the description for ProvenanceAttestationSpec"
               }
             }
           },
-          "CosignSecretManagerSigning" : {
-            "title" : "CosignSecretManagerSigning",
+          "CosignSecretManagerProvenanceAttestation" : {
+            "title" : "CosignSecretManagerProvenanceAttestation",
             "type" : "object",
             "required" : [ "connector", "key" ],
             "properties" : {
@@ -35202,12 +35202,12 @@
               },
               "description" : {
                 "type" : "string",
-                "description" : "This is the description for Cosign Signing with Secret Manager"
+                "description" : "This is the description for Cosign Provenance Attestation with Secret Manager"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
+            "$ref" : "#/definitions/pipeline/steps/common/AttestationSpecV1"
           },
           "ArtifactSigningSource" : {
             "title" : "ArtifactSigningSource",
@@ -35215,7 +35215,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "docker", "gcr", "ecr", "acr", "gar" ]
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSigningSource"
@@ -35711,95 +35711,6 @@
                 "desc" : "This is the description for SlsaGenerationStepInfo"
               }
             }
-          },
-          "AttestationV1" : {
-            "title" : "AttestationV1",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "cosign" ]
-              },
-              "description" : {
-                "desc" : "This is the description for ProvenanceAttestation"
-              },
-              "spec" : {
-                "type" : "object"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "cosign"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "type" : "object",
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
-                    } ]
-                  }
-                }
-              }
-            } ],
-            "additionalProperties" : false
-          },
-          "CosignAttestation" : {
-            "title" : "CosignAttestation",
-            "type" : "object",
-            "required" : [ "private_key", "password" ],
-            "properties" : {
-              "private_key" : {
-                "type" : "string"
-              },
-              "password" : {
-                "type" : "string"
-              },
-              "description" : {
-                "type" : "string",
-                "description" : "This is the description for CosignAttestation"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/AttestationSpecV1"
-          },
-          "AttestationSpecV1" : {
-            "title" : "AttestationSpecV1",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for ProvenanceAttestationSpec"
-              }
-            }
-          },
-          "CosignSecretManagerProvenanceAttestation" : {
-            "title" : "CosignSecretManagerProvenanceAttestation",
-            "type" : "object",
-            "required" : [ "connector", "key" ],
-            "properties" : {
-              "connector" : {
-                "type" : "string"
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "description" : {
-                "type" : "string",
-                "description" : "This is the description for Cosign Provenance Attestation with Secret Manager"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/AttestationSpecV1"
           },
           "ProvenanceSource" : {
             "title" : "ProvenanceSource",

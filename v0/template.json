@@ -62801,7 +62801,23 @@
                       "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
-                    } ]
+                    } ],
+                    "properties" : {
+                      "cosignVariables" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "key" : {
+                              "type" : "string"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -63197,7 +63213,7 @@
                   "source" : {
                     "properties" : {
                       "type" : {
-                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr" ]
+                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr", "har" ]
                       }
                     }
                   }
@@ -63206,7 +63222,7 @@
               "then" : {
                 "properties" : {
                   "signing" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/Signing"
+                    "$ref" : "#/definitions/pipeline/steps/common/AttestationV1"
                   }
                 }
               }
@@ -63226,118 +63242,13 @@
               }
             }
           },
-          "Signing" : {
-            "title" : "Signing",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "cosign" ]
-              },
-              "description" : {
-                "desc" : "This is the description for Signing"
-              },
-              "spec" : {
-                "type" : "object"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "cosign"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "type" : "object",
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSigning"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerSigning"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            } ],
-            "additionalProperties" : false
-          },
-          "CosignSigning" : {
-            "title" : "CosignSigning",
-            "type" : "object",
-            "required" : [ "privateKey", "password" ],
-            "properties" : {
-              "privateKey" : {
-                "type" : "string"
-              },
-              "password" : {
-                "type" : "string"
-              },
-              "description" : {
-                "type" : "string",
-                "description" : "This is the description for CosignSigning"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
-          },
-          "SigningSpec" : {
-            "title" : "SigningSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for SigningSpec"
-              }
-            }
-          },
-          "CosignSecretManagerSigning" : {
-            "title" : "CosignSecretManagerSigning",
-            "type" : "object",
-            "required" : [ "connector", "key" ],
-            "properties" : {
-              "connector" : {
-                "type" : "string"
-              },
-              "key" : {
-                "type" : "string"
-              },
-              "description" : {
-                "type" : "string",
-                "description" : "This is the description for Cosign Signing with Secret Manager"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "additionalProperties" : false,
-            "$ref" : "#/definitions/pipeline/steps/common/SigningSpec"
-          },
           "ArtifactSigningSource" : {
             "title" : "ArtifactSigningSource",
             "type" : "object",
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "docker", "gcr", "ecr", "acr", "gar" ]
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSigningSource"
