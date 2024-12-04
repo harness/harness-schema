@@ -489,6 +489,8 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepNode_template"
                   }, {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMModuleTestPluginStepNode_template"
+                  }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode_template"
                   } ]
                 }
@@ -64640,6 +64642,132 @@
               }
             }
           },
+          "IACMModuleTestPluginStepNode_template" : {
+            "title" : "IACMModuleTestPluginStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMModuleTestPlugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMModuleTestPlugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMModuleTestPluginInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMModuleTestPluginInfo" : {
+            "title" : "IACMModuleTestPluginInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "command" ],
+              "properties" : {
+                "command" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "target" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "replace" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "command" ],
+            "properties" : {
+              "command" : {
+                "type" : "string"
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for IACMModuleTestPluginInfo"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "target" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "replace" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
           "IACMTerraformPluginStepNode" : {
             "title" : "IACMTerraformPluginStepNode",
             "type" : "object",
@@ -65174,6 +65302,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/iacm/IACMCheckovPluginInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IACMModuleTestPluginStepNode" : {
+            "title" : "IACMModuleTestPluginStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IACMModuleTestPluginStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IACMModuleTestPlugin" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IACMModuleTestPlugin"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/iacm/IACMModuleTestPluginInfo"
                   }
                 }
               }
@@ -70807,7 +71012,7 @@
           "IACMStageConfigImpl" : {
             "title" : "IACMStageConfigImpl",
             "type" : "object",
-            "required" : [ "workspace", "execution" ],
+            "required" : [ "execution" ],
             "properties" : {
               "cloneCodebase" : {
                 "oneOf" : [ {
@@ -70873,8 +71078,10 @@
                 } ]
               },
               "workspace" : {
-                "type" : "string",
-                "minLength" : 1
+                "type" : "string"
+              },
+              "moduleId" : {
+                "type" : "string"
               },
               "description" : {
                 "desc" : "This is the description for IACMStageConfigImpl"
@@ -70945,6 +71152,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/CheckovScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SnykScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/iacm/IACMModuleTestPluginStepNode"
                 } ]
               },
               "description" : {
