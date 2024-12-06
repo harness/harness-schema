@@ -30595,23 +30595,7 @@
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
                   }
                 }
               }
@@ -35052,7 +35036,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "ArtifactSigning" ]
+                "enum" : [ "SscaArtifactSigning" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -35069,7 +35053,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ArtifactSigning"
+                    "const" : "SscaArtifactSigning"
                   }
                 }
               },
@@ -35117,6 +35101,9 @@
               "resources" : {
                 "$ref" : "#/definitions/pipeline/common/ContainerResource"
               },
+              "uploadSignature" : {
+                "$ref" : "#/definitions/pipeline/steps/common/UploadSignature"
+              },
               "description" : {
                 "desc" : "This is the description for ArtifactSigningStepInfo"
               }
@@ -35154,23 +35141,7 @@
                       "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
                   }
                 }
               }
@@ -35478,6 +35449,16 @@
               }
             }
           },
+          "UploadSignature" : {
+            "title" : "UploadSignature",
+            "type" : "object",
+            "properties" : {
+              "uploadSignature" : {
+                "type" : "boolean",
+                "description" : "Enable or disable to upload signature to the registry"
+              }
+            }
+          },
           "ArtifactVerificationStepNode" : {
             "title" : "ArtifactVerificationStepNode",
             "type" : "object",
@@ -35525,7 +35506,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "ArtifactVerification" ]
+                "enum" : [ "SscaArtifactVerification" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -35542,7 +35523,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ArtifactVerification"
+                    "const" : "SscaArtifactVerification"
                   }
                 }
               },
@@ -35565,7 +35546,7 @@
                 "source" : {
                   "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
                 },
-                "verify_attestation" : {
+                "verifySign" : {
                   "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
                 },
                 "resources" : {
@@ -35579,7 +35560,7 @@
               "source" : {
                 "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
               },
-              "verify_signing" : {
+              "verifySign" : {
                 "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
               },
               "resources" : {
