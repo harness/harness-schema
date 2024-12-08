@@ -56696,23 +56696,7 @@
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
                   }
                 }
               }
@@ -62842,23 +62826,7 @@
                       "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
                   }
                 }
               }
@@ -62939,7 +62907,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/DockerSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceDockerSourceSpec"
                   }
                 }
               }
@@ -62954,7 +62922,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/GcrSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceGcrSourceSpec"
                   }
                 }
               }
@@ -62969,7 +62937,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/EcrSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceEcrSourceSpec"
                   }
                 }
               }
@@ -62984,7 +62952,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/AcrSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceAcrSourceSpec"
                   }
                 }
               }
@@ -62999,14 +62967,14 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/GarSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceGarSourceSpec"
                   }
                 }
               }
             } ]
           },
-          "DockerSourceSpec" : {
-            "title" : "DockerSourceSpec",
+          "ProvenanceDockerSourceSpec" : {
+            "title" : "ProvenanceDockerSourceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
             }, {
@@ -63041,8 +63009,8 @@
               }
             }
           },
-          "GcrSourceSpec" : {
-            "title" : "GcrSourceSpec",
+          "ProvenanceGcrSourceSpec" : {
+            "title" : "ProvenanceGcrSourceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
             }, {
@@ -63073,8 +63041,8 @@
               }
             }
           },
-          "EcrSourceSpec" : {
-            "title" : "EcrSourceSpec",
+          "ProvenanceEcrSourceSpec" : {
+            "title" : "ProvenanceEcrSourceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
             }, {
@@ -63105,8 +63073,8 @@
               }
             }
           },
-          "AcrSourceSpec" : {
-            "title" : "AcrSourceSpec",
+          "ProvenanceAcrSourceSpec" : {
+            "title" : "ProvenanceAcrSourceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
             }, {
@@ -63134,8 +63102,8 @@
               }
             }
           },
-          "GarSourceSpec" : {
-            "title" : "GarSourceSpec",
+          "ProvenanceGarSourceSpec" : {
+            "title" : "ProvenanceGarSourceSpec",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
             }, {
@@ -63213,7 +63181,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "ArtifactSigning" ]
+                "enum" : [ "SscaArtifactSigning" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -63230,7 +63198,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ArtifactSigning"
+                    "const" : "SscaArtifactSigning"
                   }
                 }
               },
@@ -63277,6 +63245,9 @@
               },
               "resources" : {
                 "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "uploadSignature" : {
+                "$ref" : "#/definitions/pipeline/steps/common/UploadSignature"
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSigningStepInfo"
@@ -63388,6 +63359,162 @@
               }
             } ]
           },
+          "DockerSourceSpec" : {
+            "title" : "DockerSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "connector" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DockerSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningSourceSpec" : {
+            "title" : "ArtifactSigningSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningSourceSpec"
+              }
+            }
+          },
+          "GcrSourceSpec" : {
+            "title" : "GcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project_id" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcrSourceSpec"
+              }
+            }
+          },
+          "EcrSourceSpec" : {
+            "title" : "EcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "connector", "region", "account" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "account" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for EcrSourceSpec"
+              }
+            }
+          },
+          "AcrSourceSpec" : {
+            "title" : "AcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "subscription_id" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AcrSourceSpec"
+              }
+            }
+          },
+          "GarSourceSpec" : {
+            "title" : "GarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project_id" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GarSourceSpec"
+              }
+            }
+          },
+          "UploadSignature" : {
+            "title" : "UploadSignature",
+            "type" : "object",
+            "properties" : {
+              "upload" : {
+                "type" : "boolean",
+                "description" : "Enable or disable to upload signature to the registry"
+              }
+            }
+          },
           "ArtifactVerificationStepNode" : {
             "title" : "ArtifactVerificationStepNode",
             "type" : "object",
@@ -63435,7 +63562,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "ArtifactVerification" ]
+                "enum" : [ "SscaArtifactVerification" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -63452,7 +63579,7 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "ArtifactVerification"
+                    "const" : "SscaArtifactVerification"
                   }
                 }
               },
@@ -63475,7 +63602,7 @@
                 "source" : {
                   "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
                 },
-                "verify_attestation" : {
+                "verifySign" : {
                   "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
                 },
                 "resources" : {
@@ -63489,7 +63616,7 @@
               "source" : {
                 "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
               },
-              "verify_signing" : {
+              "verifySign" : {
                 "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
               },
               "resources" : {
