@@ -56419,7 +56419,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Docker", "Gcr", "Ecr", "Acr", "Gar" ]
+                "enum" : [ "Docker", "Gcr", "Ecr", "Acr", "Gar", "Har" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSource"
@@ -56498,6 +56498,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SlsaGarSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaHarSourceSpec"
                   }
                 }
               }
@@ -56661,6 +56676,29 @@
             "properties" : {
               "description" : {
                 "desc" : "Slsa Gar source spec"
+              }
+            }
+          },
+          "SlsaHarSourceSpec" : {
+            "title" : "SlsaHarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "registry", "image" ],
+              "properties" : {
+                "registry" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SlsaHarSourceSpec"
               }
             }
           },
@@ -62781,7 +62819,7 @@
                   "source" : {
                     "properties" : {
                       "type" : {
-                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr" ]
+                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr", "har" ]
                       }
                     }
                   }
@@ -62921,7 +62959,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "docker", "gcr", "ecr", "acr", "gar" ]
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaGenerationSource"
@@ -63000,6 +63038,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/GarSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/HarSourceSpec"
                   }
                 }
               }
@@ -63163,6 +63216,29 @@
             "properties" : {
               "description" : {
                 "desc" : "Gar source spec"
+              }
+            }
+          },
+          "HarSourceSpec" : {
+            "title" : "HarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "registry", "image" ],
+              "properties" : {
+                "registry" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "Harness Artifact Registry source spec"
               }
             }
           },
