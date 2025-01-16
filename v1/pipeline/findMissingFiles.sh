@@ -61,6 +61,7 @@ list2=(
   "asg-canary-delete-step-node.yaml"
   "asg-canary-deploy-step-node.yaml"
   "asg-rolling-deploy-step-node.yaml"
+  "asg-steady-state-step-node.yaml"
   "asg-rolling-rollback-step-node.yaml"
   "aws-lambda-deploy-step-node.yaml"
   "aws-lambda-rollback-step-node.yaml"
