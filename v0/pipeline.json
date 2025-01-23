@@ -41489,54 +41489,6 @@
           },
           "MergePRStepInfo" : {
             "title" : "MergePRStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "deleteSourceBranch" ],
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "deleteSourceBranch" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "disableGitRestraint" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "variables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                }
-              }
-            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
             "required" : [ "deleteSourceBranch" ],
@@ -41584,7 +41536,8 @@
               "description" : {
                 "desc" : "This is the description for MergePRStepInfo"
               }
-            }
+            },
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
           },
           "HelmDeployStepNode" : {
             "title" : "HelmDeployStepNode",
@@ -61900,63 +61853,8 @@
           },
           "UpdateReleaseRepoStepInfo" : {
             "title" : "UpdateReleaseRepoStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "prTitle" : {
-                  "type" : "string"
-                },
-                "allowEmptyCommit" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "disableGitRestraint" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "stringMap" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                },
-                "variables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -61998,16 +61896,117 @@
                 "type" : "array",
                 "items" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStringNGVariable"
                   }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoNumberNGVariable"
                   }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoSecretNGVariable"
                   } ]
                 }
-              },
+              }
+            },
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
+          },
+          "UpdateReleaseRepoStringNGVariable" : {
+            "title" : "UpdateReleaseRepoStringNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "String" ]
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
               "description" : {
-                "desc" : "This is the description for UpdateReleaseRepoStepInfo"
+                "desc" : "This is the description for UpdateReleaseRepoStringNGVariable"
+              }
+            }
+          },
+          "UpdateReleaseRepoNumberNGVariable" : {
+            "title" : "UpdateReleaseRepoNumberNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "number",
+                  "format" : "double"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Number" ]
+                },
+                "value" : {
+                  "oneOf" : [ {
+                    "type" : "number",
+                    "format" : "double"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                  }, {
+                    "type" : "string",
+                    "maxLength" : 0
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UpdateReleaseRepoNumberNGVariable"
+              }
+            }
+          },
+          "UpdateReleaseRepoSecretNGVariable" : {
+            "title" : "UpdateReleaseRepoSecretNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Secret" ]
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UpdateReleaseRepoSecretNGVariable"
               }
             }
           },
