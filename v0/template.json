@@ -39886,6 +39886,164 @@
               }
             } ]
           },
+          "EventListenerStepNode" : {
+            "title" : "EventListenerStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for EventListenerStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EventListener" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "EventListener"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "EventListenerStepInfo" : {
+            "title" : "EventListenerStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "webhookIdentifier", "successCriteria" ],
+              "properties" : {
+                "webhookIdentifier" : {
+                  "type" : "string"
+                },
+                "successCriteria" : {
+                  "type" : "string"
+                },
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "outputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "failureCriteria" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "successCriteria", "webhookIdentifier" ],
+            "properties" : {
+              "webhookIdentifier" : {
+                "type" : "string"
+              },
+              "successCriteria" : {
+                "type" : "string"
+              },
+              "inputVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "outputVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "failureCriteria" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for EventListenerStepInfo"
+              }
+            }
+          },
           "CdSscaEnforcementStepNode" : {
             "title" : "CdSscaEnforcementStepNode",
             "type" : "object",
@@ -40131,164 +40289,6 @@
               },
               "description" : {
                 "desc" : "This is the description for CdSscaOrchestrationStepInfo"
-              }
-            }
-          },
-          "EventListenerStepNode" : {
-            "title" : "EventListenerStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "type", "spec" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for EventListenerStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EventListener" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "EventListener"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "EventListenerStepInfo" : {
-            "title" : "EventListenerStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "webhookIdentifier", "successCriteria" ],
-              "properties" : {
-                "webhookIdentifier" : {
-                  "type" : "string"
-                },
-                "successCriteria" : {
-                  "type" : "string"
-                },
-                "inputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                },
-                "outputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                },
-                "failureCriteria" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "successCriteria", "webhookIdentifier" ],
-            "properties" : {
-              "webhookIdentifier" : {
-                "type" : "string"
-              },
-              "successCriteria" : {
-                "type" : "string"
-              },
-              "inputVariables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "outputVariables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "failureCriteria" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for EventListenerStepInfo"
               }
             }
           },
@@ -82958,6 +82958,8 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -83568,6 +83570,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -84284,6 +84288,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -84983,6 +84989,8 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
