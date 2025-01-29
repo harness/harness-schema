@@ -342,6 +342,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneScanNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/CheckovScanNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ClairScanNode_template"
@@ -15494,54 +15496,6 @@
           },
           "MergePRStepInfo" : {
             "title" : "MergePRStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "deleteSourceBranch" ],
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "deleteSourceBranch" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "disableGitRestraint" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "variables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                }
-              }
-            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
             "required" : [ "deleteSourceBranch" ],
@@ -15589,7 +15543,8 @@
               "description" : {
                 "desc" : "This is the description for MergePRStepInfo"
               }
-            }
+            },
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
           },
           "RevertPRStepNode_template" : {
             "title" : "RevertPRStepNode_template",
@@ -21978,63 +21933,8 @@
           },
           "UpdateReleaseRepoStepInfo" : {
             "title" : "UpdateReleaseRepoStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "prTitle" : {
-                  "type" : "string"
-                },
-                "allowEmptyCommit" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "disableGitRestraint" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "stringMap" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/ParameterFieldMapStringString"
-                },
-                "variables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
             "properties" : {
               "delegateSelectors" : {
                 "oneOf" : [ {
@@ -22076,16 +21976,117 @@
                 "type" : "array",
                 "items" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStringNGVariable"
                   }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoNumberNGVariable"
                   }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoSecretNGVariable"
                   } ]
                 }
-              },
+              }
+            },
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
+          },
+          "UpdateReleaseRepoStringNGVariable" : {
+            "title" : "UpdateReleaseRepoStringNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "String" ]
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
               "description" : {
-                "desc" : "This is the description for UpdateReleaseRepoStepInfo"
+                "desc" : "This is the description for UpdateReleaseRepoStringNGVariable"
+              }
+            }
+          },
+          "UpdateReleaseRepoNumberNGVariable" : {
+            "title" : "UpdateReleaseRepoNumberNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "number",
+                  "format" : "double"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Number" ]
+                },
+                "value" : {
+                  "oneOf" : [ {
+                    "type" : "number",
+                    "format" : "double"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                  }, {
+                    "type" : "string",
+                    "maxLength" : 0
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UpdateReleaseRepoNumberNGVariable"
+              }
+            }
+          },
+          "UpdateReleaseRepoSecretNGVariable" : {
+            "title" : "UpdateReleaseRepoSecretNGVariable",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/NGVariable"
+            }, {
+              "type" : "object",
+              "required" : [ "value" ],
+              "properties" : {
+                "default" : {
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "Secret" ]
+                },
+                "value" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for UpdateReleaseRepoSecretNGVariable"
               }
             }
           },
@@ -39887,6 +39888,164 @@
               }
             } ]
           },
+          "EventListenerStepNode" : {
+            "title" : "EventListenerStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for EventListenerStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EventListener" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "EventListener"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "EventListenerStepInfo" : {
+            "title" : "EventListenerStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "webhookIdentifier", "successCriteria" ],
+              "properties" : {
+                "webhookIdentifier" : {
+                  "type" : "string"
+                },
+                "successCriteria" : {
+                  "type" : "string"
+                },
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "outputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                },
+                "failureCriteria" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "successCriteria", "webhookIdentifier" ],
+            "properties" : {
+              "webhookIdentifier" : {
+                "type" : "string"
+              },
+              "successCriteria" : {
+                "type" : "string"
+              },
+              "inputVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "outputVariables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "failureCriteria" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for EventListenerStepInfo"
+              }
+            }
+          },
           "CdSscaEnforcementStepNode" : {
             "title" : "CdSscaEnforcementStepNode",
             "type" : "object",
@@ -40132,164 +40291,6 @@
               },
               "description" : {
                 "desc" : "This is the description for CdSscaOrchestrationStepInfo"
-              }
-            }
-          },
-          "EventListenerStepNode" : {
-            "title" : "EventListenerStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "type", "spec" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for EventListenerStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EventListener" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "EventListener"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "EventListenerStepInfo" : {
-            "title" : "EventListenerStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "webhookIdentifier", "successCriteria" ],
-              "properties" : {
-                "webhookIdentifier" : {
-                  "type" : "string"
-                },
-                "successCriteria" : {
-                  "type" : "string"
-                },
-                "inputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                },
-                "outputVariables" : {
-                  "type" : "array",
-                  "items" : {
-                    "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                    } ]
-                  }
-                },
-                "failureCriteria" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "successCriteria", "webhookIdentifier" ],
-            "properties" : {
-              "webhookIdentifier" : {
-                "type" : "string"
-              },
-              "successCriteria" : {
-                "type" : "string"
-              },
-              "inputVariables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "outputVariables" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
-                  } ]
-                }
-              },
-              "failureCriteria" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for EventListenerStepInfo"
               }
             }
           },
@@ -44124,6 +44125,270 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CheckmarxOneScanNode_template" : {
+            "title" : "CheckmarxOneScanNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CheckmarxOne" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CheckmarxOne"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "CheckmarxOneStepInfo" : {
+            "title" : "CheckmarxOneStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "config", "mode", "target" ],
+              "properties" : {
+                "advanced" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+                },
+                "auth" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAuth"
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "config" : {
+                  "type" : "string",
+                  "enum" : [ "default" ]
+                },
+                "image" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlImage"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "imageTag" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+                },
+                "mode" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "ingestion", "orchestration", "extraction" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "outputVariables" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "target" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlCheckmarxToolData"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "config", "mode", "target" ],
+            "properties" : {
+              "advanced" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+              },
+              "auth" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAuth"
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "config" : {
+                "type" : "string",
+                "enum" : [ "default" ]
+              },
+              "image" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlImage"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "imageTag" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+              },
+              "mode" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "ingestion", "orchestration", "extraction" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "outputVariables" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "target" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlCheckmarxToolData"
+              },
+              "description" : {
+                "desc" : "This is the description for CheckmarxOneStepInfo"
+              }
+            }
           },
           "CheckovScanNode_template" : {
             "title" : "CheckovScanNode_template",
@@ -51148,6 +51413,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/CheckmarxStepInfo"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CheckmarxOne"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneStepInfo"
                   }
                 }
               }
@@ -59532,6 +59812,83 @@
               }
             } ]
           },
+          "CheckmarxOneScanNode" : {
+            "title" : "CheckmarxOneScanNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for CheckmarxOneScanNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "CheckmarxOne" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CheckmarxOne"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "CheckovScanNode" : {
             "title" : "CheckovScanNode",
             "type" : "object",
@@ -61664,6 +62021,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/CheckmarxStepInfo"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "CheckmarxOne"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneStepInfo"
                   }
                 }
               }
@@ -73147,22 +73519,6 @@
               }
             }
           },
-          "ImportCommandParameterField" : {
-            "title" : "ImportCommandParameterField",
-            "type" : "object",
-            "required" : [ "id", "address" ],
-            "properties" : {
-              "id" : {
-                "type" : "string",
-                "desc" : "This is the id for ImportCommandParameterField"
-              },
-              "address" : {
-                "type" : "string",
-                "desc" : "This is the address for ImportCommandParameterField"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "IACMOpenTofuPluginStepNode_template" : {
             "title" : "IACMOpenTofuPluginStepNode_template",
             "type" : "object",
@@ -82982,6 +83338,8 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -83592,6 +83950,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -84215,6 +84575,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneScanNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CheckovScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ClairScanNode"
@@ -84308,6 +84670,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -85007,6 +85371,8 @@
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -85496,6 +85862,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/BurpScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CheckmarxScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/CheckmarxOneScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CheckovScanNode"
                 }, {
