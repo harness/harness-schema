@@ -91,5 +91,8 @@ For all other env this flag is false by default therefore local ( pipeline.json 
 For testing schema changes in local we can paste the generated schema from schema repo in local ( v0/pipeline.json and v0/template.json ) and we will need to restart pipeline/template src for this schema changes to be reflected, then go to YAML editor in pipeline/template studio the changes should be reflected there!
 
 
----
+## Command to generate schema
+```
+bazel run bundler/schema_store:module
+```
 
