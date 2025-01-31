@@ -58944,6 +58944,369 @@
               }
             } ]
           },
+          "ArtifactVerificationStepNode" : {
+            "title" : "ArtifactVerificationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ArtifactVerificationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaArtifactVerification" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaArtifactVerification"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ArtifactVerificationStepInfo" : {
+            "title" : "ArtifactVerificationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
+                },
+                "verifySign" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
+              },
+              "verifySign" : {
+                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for ArtifactVerificationStepInfo"
+              }
+            }
+          },
+          "ArtifactSigningSource" : {
+            "title" : "ArtifactSigningSource",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
+              },
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "docker"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/DockerSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "gcr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/GcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ecr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/EcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "acr"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AcrSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "gar"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/GarSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarSbomSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "DockerSourceSpec" : {
+            "title" : "DockerSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "connector" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for DockerSourceSpec"
+              }
+            }
+          },
+          "ArtifactSigningSourceSpec" : {
+            "title" : "ArtifactSigningSourceSpec",
+            "type" : "object",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ArtifactSigningSourceSpec"
+              }
+            }
+          },
+          "GcrSourceSpec" : {
+            "title" : "GcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project_id", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project_id" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcrSourceSpec"
+              }
+            }
+          },
+          "EcrSourceSpec" : {
+            "title" : "EcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "image", "connector", "region", "account" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "account" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for EcrSourceSpec"
+              }
+            }
+          },
+          "AcrSourceSpec" : {
+            "title" : "AcrSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "subscription_id" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AcrSourceSpec"
+              }
+            }
+          },
+          "GarSourceSpec" : {
+            "title" : "GarSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connector", "host", "project_id", "image" ],
+              "properties" : {
+                "connector" : {
+                  "type" : "string"
+                },
+                "host" : {
+                  "type" : "string"
+                },
+                "project_id" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GarSourceSpec"
+              }
+            }
+          },
           "SlsaVerificationStepNode" : {
             "title" : "SlsaVerificationStepNode",
             "type" : "object",
@@ -64040,257 +64403,6 @@
               }
             }
           },
-          "ArtifactSigningSource" : {
-            "title" : "ArtifactSigningSource",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
-              },
-              "description" : {
-                "desc" : "This is the description for ArtifactSigningSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "docker"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/DockerSourceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "gcr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/GcrSourceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "ecr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/EcrSourceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "acr"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/AcrSourceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "gar"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/GarSourceSpec"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "har"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/HarSbomSource"
-                  }
-                }
-              }
-            } ]
-          },
-          "DockerSourceSpec" : {
-            "title" : "DockerSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "image", "connector" ],
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for DockerSourceSpec"
-              }
-            }
-          },
-          "ArtifactSigningSourceSpec" : {
-            "title" : "ArtifactSigningSourceSpec",
-            "type" : "object",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for ArtifactSigningSourceSpec"
-              }
-            }
-          },
-          "GcrSourceSpec" : {
-            "title" : "GcrSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "connector", "host", "project_id", "image" ],
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "host" : {
-                  "type" : "string"
-                },
-                "project_id" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GcrSourceSpec"
-              }
-            }
-          },
-          "EcrSourceSpec" : {
-            "title" : "EcrSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "image", "connector", "region", "account" ],
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "account" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for EcrSourceSpec"
-              }
-            }
-          },
-          "AcrSourceSpec" : {
-            "title" : "AcrSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "connector", "image" ],
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                },
-                "subscription_id" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for AcrSourceSpec"
-              }
-            }
-          },
-          "GarSourceSpec" : {
-            "title" : "GarSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "connector", "host", "project_id", "image" ],
-              "properties" : {
-                "connector" : {
-                  "type" : "string"
-                },
-                "host" : {
-                  "type" : "string"
-                },
-                "project_id" : {
-                  "type" : "string"
-                },
-                "image" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for GarSourceSpec"
-              }
-            }
-          },
           "UploadSignature" : {
             "title" : "UploadSignature",
             "type" : "object",
@@ -64298,118 +64410,6 @@
               "upload" : {
                 "type" : "boolean",
                 "description" : "Enable or disable to upload signature to the registry"
-              }
-            }
-          },
-          "ArtifactVerificationStepNode" : {
-            "title" : "ArtifactVerificationStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for ArtifactVerificationStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SscaArtifactVerification" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "SscaArtifactVerification"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ArtifactVerificationStepInfo" : {
-            "title" : "ArtifactVerificationStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "source" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
-                },
-                "verifySign" : {
-                  "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "source" : {
-                "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSource"
-              },
-              "verifySign" : {
-                "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestation"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "description" : {
-                "desc" : "This is the description for ArtifactVerificationStepInfo"
               }
             }
           },
@@ -76828,6 +76828,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
                 }, {
