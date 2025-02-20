@@ -1,0 +1,64 @@
+title: HelmDeleteStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    properties:
+      releaseName:
+        type: string
+      delegateSelectors:
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1          
+      commandFlags:
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+      dryRun:
+        oneOf:
+        - $ref: parameter-field-boolean.yaml
+        - type: boolean
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  releaseName:
+    type: string
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  commandFlags:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  dryRun:
+    oneOf:
+    - $ref: parameter-field-boolean.yaml
+    - type: boolean
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  environmentVariables:
+    oneOf:
+    - $ref: ../common/parameter-field-map-string-string.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+      minLength: 1
