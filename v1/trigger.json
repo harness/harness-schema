@@ -2070,7 +2070,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "pr", "push", "issue-comment", "release", "delete" ]
+                "enum" : [ "pr", "push", "issue-comment", "release", "delete", "create" ]
               }
             }
           }, {
@@ -2145,6 +2145,21 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/github_delete_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "create"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/github_create_spec"
                 }
               }
             }
@@ -2280,6 +2295,28 @@
         },
         "github_delete_spec" : {
           "title" : "github_delete_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
+          }, {
+            "type" : "object",
+            "required" : [ "connector" ],
+            "properties" : {
+              "connector" : {
+                "type" : "string"
+              },
+              "conditions" : {
+                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
+              },
+              "repo" : {
+                "description" : "repository name",
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "github_create_spec" : {
+          "title" : "github_create_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
           }, {
