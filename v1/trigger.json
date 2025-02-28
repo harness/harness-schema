@@ -2070,7 +2070,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "pr", "push", "issue-comment", "release", "delete", "create" ]
+                "enum" : [ "pr", "push", "issue-comment", "release", "delete" ]
               }
             }
           }, {
@@ -2145,21 +2145,6 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/github_delete_spec"
-                }
-              }
-            }
-          }, {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "create"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/trigger/webhook_trigger/github_create_spec"
                 }
               }
             }
@@ -2315,28 +2300,6 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "github_create_spec" : {
-          "title" : "github_create_spec",
-          "allOf" : [ {
-            "$ref" : "#/definitions/trigger/webhook_trigger/github_event_spec"
-          }, {
-            "type" : "object",
-            "required" : [ "connector" ],
-            "properties" : {
-              "connector" : {
-                "type" : "string"
-              },
-              "conditions" : {
-                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
-              },
-              "repo" : {
-                "description" : "repository name",
-                "type" : "string"
-              }
-            }
-          } ],
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
         "gitlab_spec" : {
           "title" : "gitlab_spec",
           "allOf" : [ {
@@ -2347,7 +2310,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "mr", "push", "mr-comment", "tag" ]
+                "enum" : [ "mr", "push", "mr-comment" ]
               }
             }
           }, {
@@ -2392,21 +2355,6 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_push_spec"
-                }
-              }
-            }
-          }, {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "tag"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_tag_spec"
                 }
               }
             }
@@ -2485,31 +2433,6 @@
         },
         "gitlab_push_spec" : {
           "title" : "gitlab_push_spec",
-          "allOf" : [ {
-            "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
-          }, {
-            "type" : "object",
-            "required" : [ "connector" ],
-            "properties" : {
-              "abort_previous" : {
-                "type" : "boolean"
-              },
-              "connector" : {
-                "type" : "string"
-              },
-              "conditions" : {
-                "$ref" : "#/definitions/trigger/webhook_trigger/conditions"
-              },
-              "repo" : {
-                "description" : "repository name",
-                "type" : "string"
-              }
-            }
-          } ],
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "gitlab_tag_spec" : {
-          "title" : "gitlab_tag_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
           }, {
