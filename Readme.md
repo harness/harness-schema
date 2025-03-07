@@ -69,7 +69,6 @@ Now, when you work on a pipeline YAML file, Visual Studio Code will provide auto
 }
 ```
 
-
 5. **Restart Sublime Text**: After adding the schema association, restart Sublime Text for the changes to take effect.
 
 Now, Sublime Text will provide auto-intellisense for the pipeline YAML schema, making it easier for you to write correct pipeline configurations.
@@ -79,6 +78,7 @@ Now, Sublime Text will provide auto-intellisense for the pipeline YAML schema, m
 We welcome contributions to enhance the pipeline YAML schema and make it even more robust. If you find any issues or have suggestions for improvement, please feel free to create an issue or submit a pull request. For major changes, please discuss your ideas with the maintainers first.
 
 ### Release & Testing Process
+
 when we do branch cut for pipeline service, then we merge latest pipeline.json ( from schema repo ) into develop and release branch, you can verify your changes in release branch and develop once branch cut is done 
 Similarly we when we do branch cut for template service, then we merge latest template.json ( from schema repo ) into develop and release branch, we can verify our intended changes in release branch and develop once branch cut is done
 
@@ -90,9 +90,8 @@ For all other env this flag is false by default therefore local ( pipeline.json 
 
 For testing schema changes in local we can paste the generated schema from schema repo in local ( v0/pipeline.json and v0/template.json ) and we will need to restart pipeline/template src for this schema changes to be reflected, then go to YAML editor in pipeline/template studio the changes should be reflected there!
 
-
 ## Command to generate schema
-```
+
+```bash
 bazel run bundler/schema_store:module
 ```
-
