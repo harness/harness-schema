@@ -1,0 +1,31 @@
+title: StandAloneEcsTrafficShiftSpec
+allOf:
+  - $ref: ecs-traffic-shift-spec.yaml
+  - type: object
+    required:
+      - loadBalancer
+      - listener
+      - listenerRuleArn
+      - forwardConfig
+    properties:
+      loadBalancer:
+        type: string
+        pattern: ^(?=\s*\S).*$
+      listener:
+        type: string
+        pattern: ^(?=\s*\S).*$
+      listenerRuleArn:
+        type: string
+        pattern: ^(?=\s*\S).*$
+      forwardConfig:
+        oneOf:
+          - type: array
+            items:
+              $ref: alb-target-group-tuple.yaml
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for StandAloneEcsTrafficShiftSpec
