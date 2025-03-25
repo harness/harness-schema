@@ -58978,16 +58978,42 @@
               "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
             }, {
               "type" : "object",
-              "required" : [ "workspace" ],
+              "required" : [ "workspace", "type" ],
               "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                },
                 "workspace" : {
                   "type" : "string"
                 },
                 "artifact_name" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
                 },
                 "version" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
                 }
               }
             } ],
