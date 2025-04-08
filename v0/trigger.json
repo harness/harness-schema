@@ -2941,7 +2941,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "PullRequest", "Push" ]
+                "enum" : [ "PullRequest", "Push", "Branch", "Tag" ]
               }
             }
           }, {
@@ -2971,6 +2971,36 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/harness_push_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "Branch"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/harness_branch_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "Tag"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/harness_tag_spec"
                 }
               }
             }
@@ -3031,6 +3061,78 @@
             "properties" : {
               "autoAbortPreviousExecutions" : {
                 "type" : "boolean"
+              },
+              "headerConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "jexlCondition" : {
+                "type" : "string"
+              },
+              "payloadConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "repoName" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "harness_branch_spec" : {
+          "title" : "harness_branch_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "actions" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string",
+                  "enum" : [ "Create", "Delete" ]
+                }
+              },
+              "headerConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "jexlCondition" : {
+                "type" : "string"
+              },
+              "payloadConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "repoName" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "harness_tag_spec" : {
+          "title" : "harness_tag_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/harness_event_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "actions" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string",
+                  "enum" : [ "Create", "Delete" ]
+                }
               },
               "headerConditions" : {
                 "type" : "array",
