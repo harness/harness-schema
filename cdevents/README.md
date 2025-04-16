@@ -84,11 +84,11 @@ All templates follow the [CDEvents JSON schema](https://github.com/cdevents/spec
 
 ### Implementation Steps for webhook notification
 
-1. **Configure a Webhook Notification**
+1. **Configure a Webhook Notification Channel**
    - Navigate to your Harness account settings
-   - Go to **Account Settings** > **Connectors** > **Webhooks**
-   - Create a new webhook connector or select an existing one
-   - Configure the webhook URL where the harness notifications will be sent
+   - Go to **Account Settings** > **Notification Management** > **Channels**
+   - Create a new webhook channel
+   - Configure the webhook URL where the Harness notifications will be sent
 
 2. **Create a Custom Notification Template**
    - Go to **Account Settings** > **Account Resources** > **Templates**
@@ -112,7 +112,7 @@ All templates follow the [CDEvents JSON schema](https://github.com/cdevents/spec
 
 The templates use Harness built-in variables to populate the event data. For a comprehensive list of available variables and expressions, refer to the [Harness Variables and Expressions documentation](https://developer.harness.io/docs/platform/variables-and-expressions/harness-variables/#expression-paths).
 
-Some key variables used in these templates include:
+Exhaustive variables can be found in documentation, some example variables are listed below.
 
 | Variable | Description |
 |----------|-------------|
@@ -132,7 +132,7 @@ Also expression combinations like `<+pipeline.triggeredBy.email>/<+pipeline.trig
 
 ### Custom Variables
 
-You can add custom variables to your templates using Harness custom variables. Refer to [Harness custom variable documentation](https://developer.harness.io/docs/platform/variables-and-expressions/add-a-variable/). This is useful for customer-specific constants like:
+You can add custom variables to your templates using Harness custom variables. This is useful for customer-specific constants like:
 
 - `context.version`: Specifies the CDEvents version being used
 - `context.type`: Defines the specific event type
@@ -140,19 +140,3 @@ You can add custom variables to your templates using Harness custom variables. R
 These constants can then be referenced in your notification templates to customize the CDEvents output according to your specific requirements.
 
 For examples of how these variables are populated with actual values, refer to the [examples](./conformance/) directory.
-
-## Validation and Troubleshooting
-
-To validate that your CDEvents notifications are correctly formatted:
-
-1. Trigger a pipeline execution that will generate a notification
-2. Check the webhook receiver logs to verify the JSON payload
-3. Use a JSON validator to validate the payload against the CDEvents schema
-   - CDEvents schemas are available at: [https://github.com/cdevents/spec/tree/main/schemas](https://github.com/cdevents/spec/tree/main/schemas)
-
-## References
-
-- [CDEvents Specification](https://cdevents.dev/)
-- [CDEvents GitHub Repository](https://github.com/cdevents/spec)
-- [Harness Custom Notification Templates](https://developer.harness.io/docs/platform/templates/customized-notification-template/)
-- [CDEvents Schemas](https://github.com/cdevents/spec/tree/main/schemas)
