@@ -128,7 +128,7 @@ Exhaustive variables can be found in documentation, some example variables are l
 | `<+org.identifier>` | Harness organization identifier |
 | `<+project.identifier>` | Harness project identifier |
 
-Also expression combinations like `<+pipeline.triggeredBy.email>/<+pipeline.triggeredBy.name>` can also be used which will result in `navneet.khandelwal@harness.io/Navneet` output. This can be helpful when pipeline is triggered by a cron expression where email is empty.
+Also expression combinations like `<+pipeline.triggeredBy.email>/<+pipeline.triggeredBy.name>` can also be used which will result in `harness@harness.io/harness` output. This can be helpful when pipeline is triggered by a cron expression where email is empty.
 
 ### Custom Variables
 
