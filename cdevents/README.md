@@ -52,35 +52,7 @@ Note that these are non-exhaustive examples of CDEvents that can be implemented 
 
 ### Template Structure
 
-All templates follow the [CDEvents JSON schema](https://github.com/cdevents/spec/tree/main/schemas) structure, Harness custom notification template can be modified to support CDEvents, example:
-
-```json
-{
-  "context": {
-    "version": "0.5.0-draft",
-    "id": "<+pipeline.executionId>",
-    "source": "<+pipeline.execution.url>",
-    "type": "dev.cdevents.pipelinerun.started.0.3.0-draft",
-    "timestamp": "<+pipeline.startTs>"
-  },
-  "subject": {
-    "id": "<+pipeline.identifier>",
-    "source": "<+pipeline.execution.url>",
-    "type": "pipelineRun",
-    "content": {
-      "pipelineName": "<+pipeline.name>",
-      "uri": "<+pipeline.execution.url>"
-    }
-  },
-  "customData": {
-    "accountId": "<+account.identifier>",
-    "orgId": "<+org.identifier>",
-    "projectId": "<+project.identifier>",
-    "triggeredBy": "<+pipeline.triggeredBy.name>",
-    "executionId": "<+pipeline.executionId>"
-  }
-}
-```
+All templates follow the [CDEvents JSON schema](https://github.com/cdevents/spec/tree/main/schemas) structure, Harness custom notification template can be modified to support CDEvents.
 
 ### Implementation Steps for webhook notification
 
