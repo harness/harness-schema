@@ -2706,7 +2706,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "MergeRequest", "Push", "MRComment", "Tag" ]
+                "enum" : [ "MergeRequest", "Push", "MRComment", "Tag", "PipelineHook" ]
               }
             }
           }, {
@@ -2766,6 +2766,21 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_tag_spec"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "PipelineHook"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_pipeline_hook_spec"
                 }
               }
             }
@@ -2899,6 +2914,41 @@
         },
         "gitlab_tag_spec" : {
           "title" : "gitlab_tag_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "autoAbortPreviousExecutions" : {
+                "type" : "boolean"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "headerConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "jexlCondition" : {
+                "type" : "string"
+              },
+              "payloadConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "repoName" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "gitlab_pipeline_hook_spec" : {
+          "title" : "gitlab_pipeline_hook_spec",
           "allOf" : [ {
             "$ref" : "#/definitions/trigger/webhook_trigger/gitlab_event_spec"
           }, {
