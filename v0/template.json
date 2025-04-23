@@ -176,6 +176,14 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/HelmDeployStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeployStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeleteStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmBlueGreenStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/HelmBlueGreenSwapStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/HelmRollbackStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/HelmDeleteStepNode_template"
@@ -11348,6 +11356,788 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "HelmCanaryDeployStepNode_template" : {
+            "title" : "HelmCanaryDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "HelmCanaryDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HelmCanaryDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HelmCanaryDeployStepInfo" : {
+            "title" : "HelmCanaryDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "instanceSelection" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "instanceSelection" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
+                },
+                "ignoreReleaseHistFailStatus" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "skipSteadyStateCheck" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "useUpgradeInstall" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "runChartTests" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "commandFlags" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "instanceSelection" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "instanceSelection" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
+              },
+              "ignoreReleaseHistFailStatus" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "skipSteadyStateCheck" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "useUpgradeInstall" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "runChartTests" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "commandFlags" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HelmCanaryDeployStepInfo"
+              }
+            }
+          },
+          "InstanceSelectionWrapper" : {
+            "title" : "InstanceSelectionWrapper",
+            "type" : "object",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Count", "Percentage" ]
+              },
+              "description" : {
+                "desc" : "This is the description for InstanceSelectionWrapper"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Count"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/CountInstanceSelection"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Percentage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/PercentageInstanceSelection"
+                  }
+                }
+              }
+            } ]
+          },
+          "CountInstanceSelection" : {
+            "title" : "CountInstanceSelection",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionBase"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "count" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldString"
+                  }, {
+                    "type" : "string"
+                  }, {
+                    "type" : "integer"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CountInstanceSelection"
+              }
+            }
+          },
+          "InstanceSelectionBase" : {
+            "title" : "InstanceSelectionBase",
+            "type" : "object",
+            "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for InstanceSelectionBase"
+              }
+            }
+          },
+          "PercentageInstanceSelection" : {
+            "title" : "PercentageInstanceSelection",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionBase"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "percentage" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldString"
+                  }, {
+                    "type" : "string"
+                  }, {
+                    "type" : "number"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for PercentageInstanceSelection"
+              }
+            }
+          },
+          "HelmCanaryDeleteStepNode_template" : {
+            "title" : "HelmCanaryDeleteStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "HelmCanaryDelete" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HelmCanaryDelete"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmCanaryDeleteStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HelmCanaryDeleteStepInfo" : {
+            "title" : "HelmCanaryDeleteStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "commandFlags" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "commandFlags" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HelmCanaryDeleteStepInfo"
+              }
+            }
+          },
+          "HelmBlueGreenStepNode_template" : {
+            "title" : "HelmBlueGreenStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "HelmBGDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HelmBGDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmBlueGreenStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HelmBlueGreenStepInfo" : {
+            "title" : "HelmBlueGreenStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ignoreReleaseHistFailStatus" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "skipSteadyStateCheck" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "useUpgradeInstall" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "runChartTests" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "commandFlags" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ignoreReleaseHistFailStatus" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "skipSteadyStateCheck" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "useUpgradeInstall" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "runChartTests" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "commandFlags" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HelmBlueGreenStepInfo"
+              }
+            }
+          },
+          "HelmBlueGreenSwapStepNode_template" : {
+            "title" : "HelmBlueGreenSwapStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "HelmBlueGreenSwapStep" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "HelmBlueGreenSwapStep"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmBlueGreenSwapStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HelmBlueGreenSwapStepInfo" : {
+            "title" : "HelmBlueGreenSwapStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "commandFlags" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "commandFlags" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for HelmBlueGreenSwapStepInfo"
+              }
+            }
+          },
           "HelmRollbackStepNode_template" : {
             "title" : "HelmRollbackStepNode_template",
             "type" : "object",
@@ -14976,112 +15766,6 @@
               },
               "description" : {
                 "desc" : "This is the description for K8sCanaryStepInfo"
-              }
-            }
-          },
-          "InstanceSelectionWrapper" : {
-            "title" : "InstanceSelectionWrapper",
-            "type" : "object",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Count", "Percentage" ]
-              },
-              "description" : {
-                "desc" : "This is the description for InstanceSelectionWrapper"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Count"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/CountInstanceSelection"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Percentage"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/PercentageInstanceSelection"
-                  }
-                }
-              }
-            } ]
-          },
-          "CountInstanceSelection" : {
-            "title" : "CountInstanceSelection",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionBase"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "count" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldString"
-                  }, {
-                    "type" : "string"
-                  }, {
-                    "type" : "integer"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CountInstanceSelection"
-              }
-            }
-          },
-          "InstanceSelectionBase" : {
-            "title" : "InstanceSelectionBase",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for InstanceSelectionBase"
-              }
-            }
-          },
-          "PercentageInstanceSelection" : {
-            "title" : "PercentageInstanceSelection",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionBase"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "percentage" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldString"
-                  }, {
-                    "type" : "string"
-                  }, {
-                    "type" : "number"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for PercentageInstanceSelection"
               }
             }
           },
@@ -34047,71 +34731,6 @@
               }
             } ]
           },
-          "HelmBlueGreenSwapStepInfo" : {
-            "title" : "HelmBlueGreenSwapStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "commandFlags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "commandFlags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for HelmBlueGreenSwapStepInfo"
-              }
-            }
-          },
           "HelmBlueGreenStepNode" : {
             "title" : "HelmBlueGreenStepNode",
             "type" : "object",
@@ -34188,151 +34807,6 @@
                 }
               }
             } ]
-          },
-          "HelmBlueGreenStepInfo" : {
-            "title" : "HelmBlueGreenStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "ignoreReleaseHistFailStatus" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "skipSteadyStateCheck" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "useUpgradeInstall" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "runChartTests" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "commandFlags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "ignoreReleaseHistFailStatus" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "skipSteadyStateCheck" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "useUpgradeInstall" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "runChartTests" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "commandFlags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for HelmBlueGreenStepInfo"
-              }
-            }
           },
           "HelmCanaryDeleteStepNode" : {
             "title" : "HelmCanaryDeleteStepNode",
@@ -34411,59 +34885,6 @@
               }
             } ]
           },
-          "HelmCanaryDeleteStepInfo" : {
-            "title" : "HelmCanaryDeleteStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "properties" : {
-                "delegateSelectors" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                },
-                "commandFlags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "properties" : {
-              "delegateSelectors" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              },
-              "commandFlags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for HelmCanaryDeleteStepInfo"
-              }
-            }
-          },
           "HelmCanaryDeployStepNode" : {
             "title" : "HelmCanaryDeployStepNode",
             "type" : "object",
@@ -34540,159 +34961,6 @@
                 }
               }
             } ]
-          },
-          "HelmCanaryDeployStepInfo" : {
-            "title" : "HelmCanaryDeployStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "instanceSelection" ],
-              "properties" : {
-                "delegateSelectors" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "instanceSelection" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
-                },
-                "ignoreReleaseHistFailStatus" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "skipSteadyStateCheck" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "useUpgradeInstall" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "runChartTests" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                  }, {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "commandFlags" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "instanceSelection" ],
-            "properties" : {
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "instanceSelection" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/InstanceSelectionWrapper"
-              },
-              "ignoreReleaseHistFailStatus" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "skipSteadyStateCheck" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "useUpgradeInstall" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "runChartTests" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/cd/ParameterFieldBoolean"
-                }, {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "commandFlags" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/HelmManifestCommandFlag"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for HelmCanaryDeployStepInfo"
-              }
-            }
           },
           "GoogleCloudRunPrepareRollbackDataStepNode" : {
             "title" : "GoogleCloudRunPrepareRollbackDataStepNode",
@@ -78928,6 +79196,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -85432,6 +85703,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -86044,6 +86318,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -86764,6 +87041,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -87467,6 +87747,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -88051,6 +88334,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -88487,6 +88773,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -88867,6 +89156,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
@@ -89049,6 +89341,9 @@
                   "type" : "string",
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "^[\\s]*$"
                 } ]
               }
             },
