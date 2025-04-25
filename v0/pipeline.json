@@ -57261,6 +57261,259 @@
                 "desc" : "This is the description for StandAloneTrafficShiftRollbackStepInfo"
               }
             }
+          },
+          "ElastigroupBlueGreenTrafficShiftStepNode" : {
+            "title" : "ElastigroupBlueGreenTrafficShiftStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ElastigroupBlueGreenTrafficShiftStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ElastigroupBlueGreenTrafficShift" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ElastigroupBlueGreenTrafficShift"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBlueGreenTrafficShiftStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ElastigroupBlueGreenTrafficShiftStepInfo" : {
+            "title" : "ElastigroupBlueGreenTrafficShiftStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "elastigroupTrafficShiftWrapper" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "elastigroupTrafficShiftWrapper" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupTrafficShiftWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "elastigroupTrafficShiftWrapper" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "elastigroupTrafficShiftWrapper" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupTrafficShiftWrapper"
+              },
+              "description" : {
+                "desc" : "This is the description for ElastigroupBlueGreenTrafficShiftStepInfo"
+              }
+            }
+          },
+          "ElastigroupTrafficShiftWrapper" : {
+            "title" : "ElastigroupTrafficShiftWrapper",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Standalone", "Inherit" ]
+              },
+              "description" : {
+                "desc" : "This is the description for ElastigroupTrafficShiftWrapper"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Standalone"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/StandAloneElastigroupTrafficShiftSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Inherit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/InheritElastigroupTrafficShiftSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "StandAloneElastigroupTrafficShiftSpec" : {
+            "title" : "StandAloneElastigroupTrafficShiftSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupTrafficShiftSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "loadBalancer", "listenerArn", "listenerRuleArn", "forwardTrafficConfig" ],
+              "properties" : {
+                "loadBalancer" : {
+                  "type" : "string",
+                  "pattern" : "^(?=\\s*\\S).*$"
+                },
+                "listenerArn" : {
+                  "type" : "string",
+                  "pattern" : "^(?=\\s*\\S).*$"
+                },
+                "listenerRuleArn" : {
+                  "type" : "string",
+                  "pattern" : "^(?=\\s*\\S).*$"
+                },
+                "forwardTrafficConfig" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/ALBTargetGroupTuple"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for StandAloneElastigroupTrafficShiftSpec"
+              }
+            }
+          },
+          "ElastigroupTrafficShiftSpec" : {
+            "title" : "ElastigroupTrafficShiftSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ElastigroupTrafficShiftSpec"
+              }
+            }
+          },
+          "InheritElastigroupTrafficShiftSpec" : {
+            "title" : "InheritElastigroupTrafficShiftSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupTrafficShiftSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "weightPercentage" ],
+              "properties" : {
+                "weightPercentage" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32",
+                    "minimum" : 0,
+                    "maximum" : 100
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for InheritElastigroupTrafficShiftSpec"
+              }
+            }
           }
         },
         "cvng" : {
@@ -62221,6 +62474,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenTrafficShiftStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/StandAloneTrafficShiftRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBlueGreenTrafficShiftStepNode"
                 } ]
               },
               "stepGroup" : {
