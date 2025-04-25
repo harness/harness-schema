@@ -77,6 +77,7 @@ list2=(
   "azure-web-app-traffic-shift-step-node.yaml"
   "bamboo-build-step-node.yaml"
   "chaos-step-node.yaml"
+  "ai-test-automation-step-node.yaml"
   "checkov-scan-node.yaml"
   "cloudformation-create-stack-step-node.yaml"
   "cloudformation-delete-stack-step-node.yaml"

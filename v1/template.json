@@ -155,6 +155,8 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode_template"
                   }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode_template"
+                  }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode_template"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode_template"
@@ -869,6 +871,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                 }, {
@@ -8478,6 +8482,111 @@
               },
               "description" : {
                 "desc" : "This is the description for ChaosStepInfo"
+              }
+            }
+          },
+          "AiTestAutomationStepNode_template" : {
+            "title" : "AiTestAutomationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AiTestAutomation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AiTestAutomation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AiTestAutomationStepInfo" : {
+            "title" : "AiTestAutomationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "applicationName", "testSuiteName", "environmentName" ],
+              "properties" : {
+                "applicationName" : {
+                  "type" : "string",
+                  "description" : "Name of the application to test"
+                },
+                "environmentName" : {
+                  "type" : "string",
+                  "description" : "Name of the environment where test will be executed"
+                },
+                "testSuiteName" : {
+                  "type" : "string",
+                  "description" : "Name of the test suite to execute"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "applicationName", "testSuiteName", "environmentName" ],
+            "properties" : {
+              "applicationName" : {
+                "type" : "string",
+                "description" : "Name of the application to test"
+              },
+              "environmentName" : {
+                "type" : "string",
+                "description" : "Name of the environment where test will be executed"
+              },
+              "testSuiteName" : {
+                "type" : "string",
+                "description" : "Name of the test suite to execute"
               }
             }
           },
@@ -33652,6 +33761,83 @@
               }
             } ]
           },
+          "AiTestAutomationStepNode" : {
+            "title" : "AiTestAutomationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AiTestAutomationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AiTestAutomation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AiTestAutomation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "TerragruntDestroyStepNode" : {
             "title" : "TerragruntDestroyStepNode",
             "type" : "object",
@@ -34429,6 +34615,8 @@
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
                           }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
+                          }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
@@ -34757,6 +34945,8 @@
                             "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                           }, {
@@ -42609,6 +42799,8 @@
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
                           }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
+                          }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
@@ -42803,6 +42995,8 @@
                             "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                           }, {
                             "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                           }, {
@@ -69215,6 +69409,8 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
                   }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
+                  }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
@@ -69500,6 +69696,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                   }, {
@@ -70129,6 +70327,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/stages/cd/CustomDeploymentConfig"
@@ -70451,6 +70651,8 @@
                 "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
               }, {
@@ -70795,6 +70997,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
                   }, {
@@ -73766,6 +73970,8 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
                   }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
+                  }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntApplyStepNode"
@@ -73915,6 +74121,8 @@
                     "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                   }, {
@@ -74214,6 +74422,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/ShellScriptProvisionStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ChaosStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerragruntPlanStepNode"
                 }, {
