@@ -95,3 +95,5 @@ For testing schema changes in local we can paste the generated schema from schem
 ```bash
 bazel run bundler/schema_store:module
 ```
+
+test
