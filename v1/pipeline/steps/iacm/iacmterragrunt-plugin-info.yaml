@@ -12,17 +12,29 @@ allOf:
       resources:
         $ref: ../../common/container-resource.yaml
       target:
-        type: array
-        items:
-          type: string
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
       replace:
-        type: array
-        items:
-          type: string
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
       import:
-        type: array
-        items:
-          $ref: ./iacm-import-command-parameter.yaml
+        oneOf:
+        - type: array
+          items:
+            $ref: ./iacm-import-command-parameter.yaml
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
