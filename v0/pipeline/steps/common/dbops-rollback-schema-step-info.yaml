@@ -6,7 +6,13 @@ allOf:
       - connectorRef
       - dbInstance
       - dbSchema
-      - tag
+    oneOf:
+      - required: [tag]
+        not:
+          required: [changeSetCount]
+      - required: [changeSetCount]
+        not:
+          required: [tag]
     properties:
       dbInstance:
         type: string
@@ -20,6 +26,10 @@ allOf:
           type: string
       tag:
         type: string
+        minLength: 1
+      changeSetCount:
+        type: integer
+        minimum: 1
       delegateSelectors:
         oneOf:
           - type: array
@@ -65,7 +75,13 @@ required:
   - connectorRef
   - dbInstance
   - dbSchema
-  - tag
+oneOf:
+  - required: [tag]
+    not:
+      required: [changeSetCount]
+  - required: [changeSetCount]
+    not:
+      required: [tag]
 properties:
   dbInstance:
     type: string
@@ -75,6 +91,10 @@ properties:
     type: string
   tag:
     type: string
+    minLength: 1
+  changeSetCount:
+    type: integer
+    minimum: 1
   delegateSelectors:
     oneOf:
       - type: array
