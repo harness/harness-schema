@@ -58530,7 +58530,18 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "connectorRef", "dbInstance", "dbSchema", "tag" ],
+              "required" : [ "connectorRef", "dbInstance", "dbSchema" ],
+              "oneOf" : [ {
+                "required" : [ "tag" ],
+                "not" : {
+                  "required" : [ "changeSetCount" ]
+                }
+              }, {
+                "required" : [ "changeSetCount" ],
+                "not" : {
+                  "required" : [ "tag" ]
+                }
+              } ],
               "properties" : {
                 "dbInstance" : {
                   "type" : "string"
@@ -58548,7 +58559,12 @@
                   }
                 },
                 "tag" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "changeSetCount" : {
+                  "type" : "integer",
+                  "minimum" : 1
                 },
                 "delegateSelectors" : {
                   "oneOf" : [ {
@@ -58609,7 +58625,18 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "connectorRef", "dbInstance", "dbSchema", "tag" ],
+            "required" : [ "connectorRef", "dbInstance", "dbSchema" ],
+            "oneOf" : [ {
+              "required" : [ "tag" ],
+              "not" : {
+                "required" : [ "changeSetCount" ]
+              }
+            }, {
+              "required" : [ "changeSetCount" ],
+              "not" : {
+                "required" : [ "tag" ]
+              }
+            } ],
             "properties" : {
               "dbInstance" : {
                 "type" : "string"
@@ -58621,7 +58648,12 @@
                 "type" : "string"
               },
               "tag" : {
-                "type" : "string"
+                "type" : "string",
+                "minLength" : 1
+              },
+              "changeSetCount" : {
+                "type" : "integer",
+                "minimum" : 1
               },
               "delegateSelectors" : {
                 "oneOf" : [ {
