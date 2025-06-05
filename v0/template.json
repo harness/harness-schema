@@ -23,6 +23,8 @@
         "$ref" : "#/definitions/template/workspace/template"
       }, {
         "$ref" : "#/definitions/template/notification/template"
+      }, {
+        "$ref" : "#/definitions/template/aiworkflow/template"
       } ]
     }
   },
@@ -1344,6 +1346,92 @@
               "enum" : [ "JSON", "YAML", "STRING", "HTML" ]
             },
             "content" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "aiworkflow" : {
+        "template" : {
+          "type" : "object",
+          "title" : "template",
+          "required" : [ "identifier", "name", "type", "versionLabel", "spec" ],
+          "properties" : {
+            "identifier" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+            },
+            "name" : {
+              "type" : "string",
+              "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+            },
+            "type" : {
+              "type" : "string",
+              "enum" : [ "AIWorkflow" ]
+            },
+            "versionLabel" : {
+              "type" : "string",
+              "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,127}$"
+            },
+            "spec" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/template/aiworkflow/notificationSpec"
+              } ]
+            },
+            "tags" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "notificationSpec" : {
+          "title" : "notificationSpec",
+          "type" : "object",
+          "required" : [ "model", "serverUrl", "registryAuthServer", "clientIdRef", "clientSecretRef", "appSlug" ],
+          "properties" : {
+            "model" : {
+              "type" : "string"
+            },
+            "serverUrl" : {
+              "type" : "string"
+            },
+            "registryAuthServer" : {
+              "type" : "string"
+            },
+            "clientIdRef" : {
+              "type" : "string"
+            },
+            "clientSecretRef" : {
+              "type" : "string"
+            },
+            "appSlug" : {
+              "type" : "string"
+            },
+            "body" : {
+              "$ref" : "#/definitions/template/aiworkflow/aiWorkflowBody"
+            },
+            "variables" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                } ]
+              }
+            }
+          }
+        },
+        "aiWorkflowBody" : {
+          "title" : "aiWorkflowBody",
+          "type" : "object",
+          "required" : [ "history" ],
+          "properties" : {
+            "history" : {
               "type" : "string"
             }
           }
