@@ -18,6 +18,14 @@ properties:
         minLength: 1
   applicationRegex:
     type: string
+  applicationLabels:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
   applyOnly:
     oneOf:
     - type: boolean
@@ -67,12 +75,18 @@ allOf:
   - dependencies:
       failOnTimeout: [ waitTillHealthy ]
   - anyOf:
-    - oneOf:
-      - required:
-        - applicationRegex
-      - required:
-        - applicationsList
-    - not:
-        required:
-        - applicationRegex
-        - applicationsList
+      - oneOf:
+          - required:
+              - applicationsList
+          - required:
+              - applicationRegex
+          - required:
+              - applicationLabels
+      - not:
+          anyOf:
+            - required:
+                - applicationsList
+            - required:
+                - applicationRegex
+            - required:
+                - applicationLabels

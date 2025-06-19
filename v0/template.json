@@ -90,6 +90,12 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryDeployStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryRollbackStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaTrafficShiftStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AwsSamBuildStepNode_template"
@@ -1063,6 +1069,15 @@
             "versionLabel" : {
               "type" : "string",
               "pattern" : "^[0-9a-zA-Z][^\\s/&]{0,127}$"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "tags" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
             },
             "spec" : {
               "type" : "object",
@@ -3411,6 +3426,334 @@
               },
               "description" : {
                 "desc" : "This is the description for AwsLambdaDeployStepInfo"
+              }
+            }
+          },
+          "AwsLambdaCanaryDeployStepNode_template" : {
+            "title" : "AwsLambdaCanaryDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaCanaryDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaCanaryDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsLambdaCanaryDeployStepInfo" : {
+            "title" : "AwsLambdaCanaryDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AwsLambdaCanaryDeployStepInfo"
+              }
+            }
+          },
+          "AwsLambdaCanaryRollbackStepNode_template" : {
+            "title" : "AwsLambdaCanaryRollbackStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaCanaryRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaCanaryRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsLambdaCanaryRollbackStepInfo" : {
+            "title" : "AwsLambdaCanaryRollbackStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AwsLambdaCanaryRollbackStepInfo"
+              }
+            }
+          },
+          "AwsLambdaTrafficShiftStepNode_template" : {
+            "title" : "AwsLambdaTrafficShiftStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaTrafficShift" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaTrafficShift"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaTrafficShiftStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsLambdaTrafficShiftStepInfo" : {
+            "title" : "AwsLambdaTrafficShiftStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "trafficPercentage" : {
+                  "type" : "number",
+                  "exclusiveMinimum" : 0,
+                  "maximum" : 100
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "trafficPercentage" : {
+                "type" : "number",
+                "exclusiveMinimum" : 0,
+                "maximum" : 100
+              },
+              "description" : {
+                "desc" : "This is the description for AwsLambdaTrafficShiftStepInfo"
               }
             }
           },
@@ -18525,6 +18868,18 @@
               "applicationRegex" : {
                 "type" : "string"
               },
+              "applicationLabels" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "applyOnly" : {
                 "oneOf" : [ {
                   "type" : "boolean"
@@ -18605,13 +18960,21 @@
             }, {
               "anyOf" : [ {
                 "oneOf" : [ {
+                  "required" : [ "applicationsList" ]
+                }, {
                   "required" : [ "applicationRegex" ]
                 }, {
-                  "required" : [ "applicationsList" ]
+                  "required" : [ "applicationLabels" ]
                 } ]
               }, {
                 "not" : {
-                  "required" : [ "applicationRegex", "applicationsList" ]
+                  "anyOf" : [ {
+                    "required" : [ "applicationsList" ]
+                  }, {
+                    "required" : [ "applicationRegex" ]
+                  }, {
+                    "required" : [ "applicationLabels" ]
+                  } ]
                 }
               } ]
             } ],
@@ -32284,6 +32647,237 @@
               }
             } ]
           },
+          "AwsLambdaCanaryDeployStepNode" : {
+            "title" : "AwsLambdaCanaryDeployStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsLambdaCanaryDeployStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaCanaryDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaCanaryDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsLambdaCanaryRollbackStepNode" : {
+            "title" : "AwsLambdaCanaryRollbackStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsLambdaCanaryRollbackStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaCanaryRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaCanaryRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsLambdaTrafficShiftStepNode" : {
+            "title" : "AwsLambdaTrafficShiftStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AwsLambdaTrafficShiftStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsLambdaTrafficShift" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsLambdaTrafficShift"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaTrafficShiftStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "ServerlessAwsLambdaDeployStepNode" : {
             "title" : "ServerlessAwsLambdaDeployStepNode",
             "type" : "object",
@@ -43974,7 +44568,7 @@
                 },
                 "config" : {
                   "type" : "string",
-                  "enum" : [ "default", "fs" ]
+                  "enum" : [ "default", "fs", "sbom" ]
                 },
                 "image" : {
                   "$ref" : "#/definitions/pipeline/steps/common/STOYamlImage"
@@ -44067,7 +44661,7 @@
               },
               "config" : {
                 "type" : "string",
-                "enum" : [ "default", "fs" ]
+                "enum" : [ "default", "fs", "sbom" ]
               },
               "image" : {
                 "$ref" : "#/definitions/pipeline/steps/common/STOYamlImage"
@@ -79816,6 +80410,12 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaDeployStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryDeployStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaCanaryRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaTrafficShiftStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/CloudformationRollbackStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ServerlessAwsLambdaDeployStepNode"
@@ -90288,7 +90888,7 @@
               "format" : "int32"
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
@@ -90298,7 +90898,7 @@
               "enum" : [ "MergeCommit", "SourceBranch" ]
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
@@ -90331,7 +90931,7 @@
               "type" : "boolean"
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
@@ -90340,7 +90940,7 @@
               "type" : "boolean"
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
@@ -90358,7 +90958,7 @@
               "type" : "boolean"
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
@@ -90380,7 +90980,7 @@
               "enum" : [ "true", "false", "recursive" ]
             }, {
               "type" : "string",
-              "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+              "pattern" : "(<\\+.+>.*)",
               "minLength" : 1
             } ]
           },
