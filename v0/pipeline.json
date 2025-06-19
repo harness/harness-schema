@@ -37294,6 +37294,18 @@
               "applicationRegex" : {
                 "type" : "string"
               },
+              "applicationLabels" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "applyOnly" : {
                 "oneOf" : [ {
                   "type" : "boolean"
@@ -37374,13 +37386,21 @@
             }, {
               "anyOf" : [ {
                 "oneOf" : [ {
+                  "required" : [ "applicationsList" ]
+                }, {
                   "required" : [ "applicationRegex" ]
                 }, {
-                  "required" : [ "applicationsList" ]
+                  "required" : [ "applicationLabels" ]
                 } ]
               }, {
                 "not" : {
-                  "required" : [ "applicationRegex", "applicationsList" ]
+                  "anyOf" : [ {
+                    "required" : [ "applicationsList" ]
+                  }, {
+                    "required" : [ "applicationRegex" ]
+                  }, {
+                    "required" : [ "applicationLabels" ]
+                  } ]
                 }
               } ]
             } ],
