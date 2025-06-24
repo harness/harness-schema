@@ -1,0 +1,62 @@
+title: IACMAnsiblePluginInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - command
+    properties:
+      command:
+        type: string
+      image:
+        type: string
+      resources:
+        $ref: ../../common/container-resource.yaml
+      target:
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
+      replace:
+        oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
+      import:
+        oneOf:
+        - type: array
+          items:
+            $ref: ./iacm-import-command-parameter.yaml
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+  - command
+properties:
+  command:
+    type: string
+  image:
+    type: string
+  description:
+    desc: This is the description for IACMAnsiblePluginInfo
+  resources:
+    $ref: ../../common/container-resource.yaml
+  target:
+    type: array
+    items:
+      type: string
+  replace:
+    type: array
+    items:
+      type: string
+  import:
+    type: array
+    items:
+      $ref: ./iacm-import-command-parameter.yaml
