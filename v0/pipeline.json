@@ -25986,6 +25986,172 @@
               }
             }
           },
+          "S3UploadNode" : {
+            "title" : "S3UploadNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for S3UploadNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "S3Upload" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "S3Upload"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/UploadToS3StepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "UploadToS3StepInfo" : {
+            "title" : "UploadToS3StepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
+              "properties" : {
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "bucket" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "endpoint" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "sourcePath" : {
+                  "type" : "string"
+                },
+                "stripPrefix" : {
+                  "type" : "string"
+                },
+                "target" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
+            "properties" : {
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "bucket" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "endpoint" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "sourcePath" : {
+                "type" : "string"
+              },
+              "stripPrefix" : {
+                "type" : "string"
+              },
+              "target" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for UploadToS3StepInfo"
+              }
+            }
+          },
           "ArtifactoryUploadNode" : {
             "title" : "ArtifactoryUploadNode",
             "type" : "object",
@@ -29088,172 +29254,6 @@
               },
               "description" : {
                 "desc" : "This is the description for RunTestStepV2Info"
-              }
-            }
-          },
-          "S3UploadNode" : {
-            "title" : "S3UploadNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for S3UploadNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "S3Upload" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "S3Upload"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/UploadToS3StepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "UploadToS3StepInfo" : {
-            "title" : "UploadToS3StepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
-            }, {
-              "type" : "object",
-              "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
-              "properties" : {
-                "baseImageConnectorRefs" : {
-                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-                },
-                "bucket" : {
-                  "type" : "string"
-                },
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "endpoint" : {
-                  "type" : "string"
-                },
-                "region" : {
-                  "type" : "string"
-                },
-                "resources" : {
-                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
-                },
-                "runAsUser" : {
-                  "oneOf" : [ {
-                    "type" : "integer",
-                    "format" : "int32"
-                  }, {
-                    "type" : "string"
-                  } ]
-                },
-                "sourcePath" : {
-                  "type" : "string"
-                },
-                "stripPrefix" : {
-                  "type" : "string"
-                },
-                "target" : {
-                  "type" : "string"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "bucket", "connectorRef", "region", "sourcePath" ],
-            "properties" : {
-              "baseImageConnectorRefs" : {
-                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
-              },
-              "bucket" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "endpoint" : {
-                "type" : "string"
-              },
-              "region" : {
-                "type" : "string"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "sourcePath" : {
-                "type" : "string"
-              },
-              "stripPrefix" : {
-                "type" : "string"
-              },
-              "target" : {
-                "type" : "string"
-              },
-              "description" : {
-                "desc" : "This is the description for UploadToS3StepInfo"
               }
             }
           },
@@ -63561,6 +63561,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/StandAloneTrafficShiftRollbackStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/ElastigroupBlueGreenTrafficShiftStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/S3UploadNode"
                 } ]
               },
               "stepGroup" : {
