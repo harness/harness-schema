@@ -81222,7 +81222,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshWinRmGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -81511,6 +81511,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/SshWinRmAzureInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SshWinRmGcp"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SshWinRmGcpInfrastructure"
                   }
                 }
               }
@@ -82566,6 +82581,79 @@
                 "desc" : "This is the description for SshWinRmAzureInfrastructure"
               }
             }
+          },
+          "SshWinRmGcpInfrastructure" : {
+            "title" : "SshWinRmGcpInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "credentialsRef", "hostConnectionType", "project", "zone" ],
+              "properties" : {
+                "gcpInstanceFilter" : {
+                  "$ref" : "#/definitions/pipeline/stages/cd/GcpInstanceFilter"
+                },
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "credentialsRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "hostConnectionType" : {
+                  "type" : "string",
+                  "enum" : [ "PublicIP", "PrivateIP" ],
+                  "minLength" : 1
+                },
+                "project" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "zone" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SshWinRmGcpInfrastructure"
+              }
+            }
+          },
+          "GcpInstanceFilter" : {
+            "title" : "GcpInstanceFilter",
+            "type" : "object",
+            "properties" : {
+              "labels" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "vpcs" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for GcpInstanceFilter"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TanzuApplicationServiceInfrastructure" : {
             "title" : "TanzuApplicationServiceInfrastructure",
