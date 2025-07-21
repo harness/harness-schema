@@ -82,6 +82,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
               }, {
+                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
+              }, {
                 "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
@@ -92,11 +94,7 @@
               }, {
                 "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
               }, {
-                "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-              }, {
                 "$ref" : "#/definitions/pipeline/stages/idp/IDPStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
               } ]
             },
             "maxItems" : 256,
@@ -3257,6 +3255,594 @@
             }
           }
         },
+        "ci" : {
+          "IntegrationStageNode" : {
+            "title" : "IntegrationStageNode",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "desc" : {
+                "description" : "The stage description.",
+                "type" : "string"
+              },
+              "id" : {
+                "description" : "The unique stage identifier.",
+                "pattern" : "^[a-zA-Z0-9_-]+$",
+                "type" : "string"
+              },
+              "name" : {
+                "description" : "The stage name.",
+                "type" : "string"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "delegates" : {
+                "description" : "Configures the delegate matching logic.",
+                "$ref" : "#/definitions/pipeline/common/Delegate"
+              },
+              "type" : {
+                "description" : "The stage type.",
+                "enum" : [ "ci" ],
+                "type" : "string"
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "variables" : {
+                "type" : "object",
+                "description" : "Variables defines the pipeline variable parameters.",
+                "additionalProperties" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/NumberVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretVariable"
+                  } ]
+                },
+                "propertyNames" : {
+                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
+                }
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "labels" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/stages/ci/CIStageSpecElementConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ci"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/CIStageSpecElementConfig"
+                  }
+                }
+              }
+            } ]
+          },
+          "CIStageSpecElementConfig" : {
+            "title" : "CIStageSpecElementConfig",
+            "type" : "object",
+            "required" : [ "steps" ],
+            "properties" : {
+              "rollbackSteps" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepActionNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepBackgroundNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepBitriseNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepTestNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepPluginNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepGroupNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/StepRunNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/TemplateStepNode"
+                  } ]
+                }
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepActionNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepBackgroundNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepBitriseNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepTestNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepPluginNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/ParallelNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/ci/StepGroupNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/StepRunNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/TemplateStepNode"
+                  } ]
+                },
+                "maxItems" : 256,
+                "minItems" : 1
+              },
+              "cache" : {
+                "description" : "Configures the cache behavior.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Cache"
+              },
+              "buildIntelligence" : {
+                "description" : "Configures the build intelligence.",
+                "$ref" : "#/definitions/pipeline/stages/ci/BuildIntelligence"
+              },
+              "clone" : {
+                "description" : "Overrides the clone behavior.",
+                "$ref" : "#/definitions/pipeline/stages/ci/CloneStage"
+              },
+              "platform" : {
+                "description" : "Configures the target execution platform.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Platform"
+              },
+              "runtime" : {
+                "description" : "Configures the target runtime engine.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Runtime"
+              },
+              "envs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "The stage environment variables."
+              },
+              "volumes" : {
+                "description" : "Configures a container volumes.",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/ci/Volume"
+                },
+                "type" : "array"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "Cache" : {
+            "title" : "Cache",
+            "type" : "object",
+            "description" : "Cache defines pipeline caching behavior.",
+            "properties" : {
+              "enabled" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "paths" : {
+                "description" : "Paths provides a list of paths to cache.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "key" : {
+                "description" : "Key provides a caching key.",
+                "type" : "string"
+              },
+              "override" : {
+                "description" : "Override will overwrite the cache even if the key already exists.",
+                "type" : "boolean"
+              },
+              "policy" : {
+                "type" : "string",
+                "description" : "Policy configures the pull and push behavior of the cache.\nBy default, the stage pulls the cache when the stage starts\nand pushes changes to the cache when the stage ends.\n",
+                "default" : "pull-push",
+                "enum" : [ "pull", "push", "pull-push" ]
+              }
+            }
+          },
+          "BuildIntelligence" : {
+            "title" : "BuildIntelligence",
+            "type" : "object",
+            "properties" : {
+              "enabled" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for BuildIntelligence"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "CloneStage" : {
+            "title" : "CloneStage",
+            "type" : "object",
+            "description" : "Clone defines the stage clone behavior.",
+            "properties" : {
+              "depth" : {
+                "description" : "Depth defines the clone depth.",
+                "type" : "number"
+              },
+              "disabled" : {
+                "description" : "Disabled disables the default clone step.",
+                "type" : "boolean"
+              },
+              "insecure" : {
+                "description" : "Insecure disables ssl verification.",
+                "type" : "boolean"
+              },
+              "strategy" : {
+                "description" : "Strategy configures the clone strategy.",
+                "type" : "string",
+                "enum" : [ "source-branch", "merge" ]
+              },
+              "trace" : {
+                "description" : "Trace enables trace logging.",
+                "type" : "boolean"
+              }
+            }
+          },
+          "Platform" : {
+            "title" : "Platform",
+            "description" : "Platform defines the target execution environment.",
+            "type" : "object",
+            "properties" : {
+              "arch" : {
+                "description" : "Arch defines the target cpu architecture.",
+                "$ref" : "#/definitions/pipeline/stages/ci/Arch"
+              },
+              "features" : {
+                "description" : "Features defines the target platform features.",
+                "items" : {
+                  "type" : "string"
+                },
+                "type" : "array"
+              },
+              "os" : {
+                "description" : "OS defines the target operating system.",
+                "$ref" : "#/definitions/pipeline/stages/ci/OS"
+              },
+              "variant" : {
+                "description" : "Variant defines the target cpu architecture variant.",
+                "type" : "string"
+              },
+              "version" : {
+                "description" : "Version defines the target operating system version.",
+                "type" : "string"
+              }
+            }
+          },
+          "Arch" : {
+            "title" : "Arch",
+            "type" : "string",
+            "description" : "List of cpu architectures.",
+            "enum" : [ "amd64", "arm", "arm64" ]
+          },
+          "OS" : {
+            "title" : "OS",
+            "type" : "string",
+            "description" : "List of operating systems.",
+            "enum" : [ "linux", "windows", "macos" ]
+          },
+          "Runtime" : {
+            "title" : "Runtime",
+            "description" : "Defines the runtime execution engine.",
+            "properties" : {
+              "type" : {
+                "description" : "The runtime type.",
+                "enum" : [ "cloud", "machine", "kubernetes", "vm" ],
+                "type" : "string"
+              }
+            },
+            "type" : "object",
+            "oneOf" : [ {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "cloud"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeCloud"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "machine"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeMachine"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "kubernetes"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeKube"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "vm"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeVM"
+                  }
+                }
+              } ]
+            } ]
+          },
+          "RuntimeCloud" : {
+            "title" : "RuntimeCloud",
+            "type" : "object",
+            "properties" : {
+              "size" : {
+                "type" : "string"
+              }
+            }
+          },
+          "RuntimeMachine" : {
+            "title" : "RuntimeMachine",
+            "type" : "object",
+            "properties" : { }
+          },
+          "RuntimeKube" : {
+            "title" : "RuntimeKube",
+            "type" : "object",
+            "properties" : {
+              "connector" : {
+                "type" : "string"
+              },
+              "namespace" : {
+                "type" : "string"
+              },
+              "annotations" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "labels" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/Resources"
+              },
+              "mount_service_token" : {
+                "type" : "boolean"
+              },
+              "service_account" : {
+                "type" : "string"
+              },
+              "security_context" : {
+                "type" : "string"
+              },
+              "priority_class" : {
+                "type" : "string"
+              },
+              "init_timeout" : {
+                "format" : "duration",
+                "type" : "string"
+              },
+              "user" : {
+                "type" : "string"
+              },
+              "image_pull_secrets" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "node" : {
+                "type" : "string"
+              },
+              "node_selector" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "tolerations" : {
+                "type" : "object"
+              }
+            }
+          },
+          "RuntimeVM" : {
+            "title" : "RuntimeVM",
+            "type" : "object",
+            "properties" : {
+              "pool" : {
+                "type" : "string"
+              }
+            }
+          },
+          "Volume" : {
+            "title" : "Volume",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "claim", "config-map", "temp", "host" ]
+              }
+            },
+            "required" : [ "name", "type" ],
+            "oneOf" : [ {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "host"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeHost"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "claim"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeClaim"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "temp"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeTemp"
+                  }
+                }
+              } ]
+            }, {
+              "allOf" : [ {
+                "properties" : {
+                  "type" : {
+                    "const" : "config-map"
+                  }
+                }
+              }, {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeConfigMap"
+                  }
+                }
+              } ]
+            } ]
+          },
+          "VolumeHost" : {
+            "title" : "VolumeHost",
+            "type" : "object",
+            "properties" : {
+              "path" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "path" ]
+          },
+          "VolumeClaim" : {
+            "title" : "VolumeClaim",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "name" ]
+          },
+          "VolumeTemp" : {
+            "title" : "VolumeTemp",
+            "type" : "object",
+            "properties" : {
+              "medium" : {
+                "type" : "string",
+                "enum" : [ "memory" ]
+              },
+              "limit" : {
+                "type" : [ "string", "number" ]
+              }
+            }
+          },
+          "VolumeConfigMap" : {
+            "title" : "VolumeConfigMap",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "mode" : {
+                "type" : "string"
+              },
+              "optional" : {
+                "type" : "boolean"
+              }
+            },
+            "required" : [ "name" ]
+          }
+        },
         "approval" : {
           "ApprovalStageNode" : {
             "title" : "ApprovalStageNode",
@@ -4467,82 +5053,6 @@
             } ]
           }
         },
-        "ParallelStageElementConfig" : {
-          "type" : "object",
-          "title" : "ParallelStageElementConfig",
-          "required" : [ "type" ],
-          "properties" : {
-            "id" : {
-              "type" : "string",
-              "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-            },
-            "name" : {
-              "type" : "string",
-              "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-            },
-            "description" : {
-              "desc" : "This is the description for ParallelStageElementConfig"
-            },
-            "type" : {
-              "type" : "string",
-              "enum" : [ "parallel" ]
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#",
-          "allOf" : [ {
-            "if" : {
-              "properties" : {
-                "type" : {
-                  "const" : "parallel"
-                }
-              }
-            },
-            "then" : {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/stages/ParallelStageElementNodeConfig"
-                }
-              }
-            }
-          } ]
-        },
-        "ParallelStageElementNodeConfig" : {
-          "type" : "object",
-          "title" : "ParallelStageElementNodeConfig",
-          "properties" : {
-            "stages" : {
-              "type" : "array",
-              "items" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/stages/iacm/IACMStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/cd/DeploymentStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/security/SecurityStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/cf/FeatureFlagStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/template/TemplateStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ParallelStageElementConfig"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/idp/IDPStageNode"
-                }, {
-                  "$ref" : "#/definitions/pipeline/stages/ci/IntegrationStageNode"
-                } ]
-              },
-              "maxItems" : 256,
-              "minItems" : 1
-            }
-          },
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
         "idp" : {
           "IDPStageNode" : {
             "title" : "IDPStageNode",
@@ -4799,594 +5309,6 @@
                 "desc" : "This is the description for ParallelStepElementConfig"
               }
             }
-          }
-        },
-        "ci" : {
-          "IntegrationStageNode" : {
-            "title" : "IntegrationStageNode",
-            "type" : "object",
-            "required" : [ "type", "spec" ],
-            "properties" : {
-              "desc" : {
-                "description" : "The stage description.",
-                "type" : "string"
-              },
-              "id" : {
-                "description" : "The unique stage identifier.",
-                "pattern" : "^[a-zA-Z0-9_-]+$",
-                "type" : "string"
-              },
-              "name" : {
-                "description" : "The stage name.",
-                "type" : "string"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "delegates" : {
-                "description" : "Configures the delegate matching logic.",
-                "$ref" : "#/definitions/pipeline/common/Delegate"
-              },
-              "type" : {
-                "description" : "The stage type.",
-                "enum" : [ "ci" ],
-                "type" : "string"
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "variables" : {
-                "type" : "object",
-                "description" : "Variables defines the pipeline variable parameters.",
-                "additionalProperties" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/StringVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/NumberVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/ArrayVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/BooleanVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/ObjectVariable"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/SecretVariable"
-                  } ]
-                },
-                "propertyNames" : {
-                  "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.$-]{0,127}$"
-                }
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "labels" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "spec" : {
-                "$ref" : "#/definitions/pipeline/stages/ci/CIStageSpecElementConfig"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "ci"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/CIStageSpecElementConfig"
-                  }
-                }
-              }
-            } ]
-          },
-          "CIStageSpecElementConfig" : {
-            "title" : "CIStageSpecElementConfig",
-            "type" : "object",
-            "required" : [ "steps" ],
-            "properties" : {
-              "rollbackSteps" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepActionNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepBackgroundNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepBitriseNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepTestNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepPluginNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParallelNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepGroupNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/StepRunNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/TemplateStepNode"
-                  } ]
-                }
-              },
-              "steps" : {
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepActionNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepBackgroundNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepBitriseNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepTestNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepPluginNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/ParallelNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/ci/StepGroupNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/StepRunNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/TemplateStepNode"
-                  } ]
-                },
-                "maxItems" : 256,
-                "minItems" : 1
-              },
-              "cache" : {
-                "description" : "Configures the cache behavior.",
-                "$ref" : "#/definitions/pipeline/stages/ci/Cache"
-              },
-              "buildIntelligence" : {
-                "description" : "Configures the build intelligence.",
-                "$ref" : "#/definitions/pipeline/stages/ci/BuildIntelligence"
-              },
-              "clone" : {
-                "description" : "Overrides the clone behavior.",
-                "$ref" : "#/definitions/pipeline/stages/ci/CloneStage"
-              },
-              "platform" : {
-                "description" : "Configures the target execution platform.",
-                "$ref" : "#/definitions/pipeline/stages/ci/Platform"
-              },
-              "runtime" : {
-                "description" : "Configures the target runtime engine.",
-                "$ref" : "#/definitions/pipeline/stages/ci/Runtime"
-              },
-              "envs" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                },
-                "description" : "The stage environment variables."
-              },
-              "volumes" : {
-                "description" : "Configures a container volumes.",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/ci/Volume"
-                },
-                "type" : "array"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "Cache" : {
-            "title" : "Cache",
-            "type" : "object",
-            "description" : "Cache defines pipeline caching behavior.",
-            "properties" : {
-              "enabled" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "paths" : {
-                "description" : "Paths provides a list of paths to cache.",
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              },
-              "key" : {
-                "description" : "Key provides a caching key.",
-                "type" : "string"
-              },
-              "override" : {
-                "description" : "Override will overwrite the cache even if the key already exists.",
-                "type" : "boolean"
-              },
-              "policy" : {
-                "type" : "string",
-                "description" : "Policy configures the pull and push behavior of the cache.\nBy default, the stage pulls the cache when the stage starts\nand pushes changes to the cache when the stage ends.\n",
-                "default" : "pull-push",
-                "enum" : [ "pull", "push", "pull-push" ]
-              }
-            }
-          },
-          "BuildIntelligence" : {
-            "title" : "BuildIntelligence",
-            "type" : "object",
-            "properties" : {
-              "enabled" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for BuildIntelligence"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CloneStage" : {
-            "title" : "CloneStage",
-            "type" : "object",
-            "description" : "Clone defines the stage clone behavior.",
-            "properties" : {
-              "depth" : {
-                "description" : "Depth defines the clone depth.",
-                "type" : "number"
-              },
-              "disabled" : {
-                "description" : "Disabled disables the default clone step.",
-                "type" : "boolean"
-              },
-              "insecure" : {
-                "description" : "Insecure disables ssl verification.",
-                "type" : "boolean"
-              },
-              "strategy" : {
-                "description" : "Strategy configures the clone strategy.",
-                "type" : "string",
-                "enum" : [ "source-branch", "merge" ]
-              },
-              "trace" : {
-                "description" : "Trace enables trace logging.",
-                "type" : "boolean"
-              }
-            }
-          },
-          "Platform" : {
-            "title" : "Platform",
-            "description" : "Platform defines the target execution environment.",
-            "type" : "object",
-            "properties" : {
-              "arch" : {
-                "description" : "Arch defines the target cpu architecture.",
-                "$ref" : "#/definitions/pipeline/stages/ci/Arch"
-              },
-              "features" : {
-                "description" : "Features defines the target platform features.",
-                "items" : {
-                  "type" : "string"
-                },
-                "type" : "array"
-              },
-              "os" : {
-                "description" : "OS defines the target operating system.",
-                "$ref" : "#/definitions/pipeline/stages/ci/OS"
-              },
-              "variant" : {
-                "description" : "Variant defines the target cpu architecture variant.",
-                "type" : "string"
-              },
-              "version" : {
-                "description" : "Version defines the target operating system version.",
-                "type" : "string"
-              }
-            }
-          },
-          "Arch" : {
-            "title" : "Arch",
-            "type" : "string",
-            "description" : "List of cpu architectures.",
-            "enum" : [ "amd64", "arm", "arm64" ]
-          },
-          "OS" : {
-            "title" : "OS",
-            "type" : "string",
-            "description" : "List of operating systems.",
-            "enum" : [ "linux", "windows", "macos" ]
-          },
-          "Runtime" : {
-            "title" : "Runtime",
-            "description" : "Defines the runtime execution engine.",
-            "properties" : {
-              "type" : {
-                "description" : "The runtime type.",
-                "enum" : [ "cloud", "machine", "kubernetes", "vm" ],
-                "type" : "string"
-              }
-            },
-            "type" : "object",
-            "oneOf" : [ {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "cloud"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeCloud"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "machine"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeMachine"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "kubernetes"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeKube"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "vm"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/RuntimeVM"
-                  }
-                }
-              } ]
-            } ]
-          },
-          "RuntimeCloud" : {
-            "title" : "RuntimeCloud",
-            "type" : "object",
-            "properties" : {
-              "size" : {
-                "type" : "string"
-              }
-            }
-          },
-          "RuntimeMachine" : {
-            "title" : "RuntimeMachine",
-            "type" : "object",
-            "properties" : { }
-          },
-          "RuntimeKube" : {
-            "title" : "RuntimeKube",
-            "type" : "object",
-            "properties" : {
-              "connector" : {
-                "type" : "string"
-              },
-              "namespace" : {
-                "type" : "string"
-              },
-              "annotations" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "labels" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/Resources"
-              },
-              "mount_service_token" : {
-                "type" : "boolean"
-              },
-              "service_account" : {
-                "type" : "string"
-              },
-              "security_context" : {
-                "type" : "string"
-              },
-              "priority_class" : {
-                "type" : "string"
-              },
-              "init_timeout" : {
-                "format" : "duration",
-                "type" : "string"
-              },
-              "user" : {
-                "type" : "string"
-              },
-              "image_pull_secrets" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              },
-              "node" : {
-                "type" : "string"
-              },
-              "node_selector" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "tolerations" : {
-                "type" : "object"
-              }
-            }
-          },
-          "RuntimeVM" : {
-            "title" : "RuntimeVM",
-            "type" : "object",
-            "properties" : {
-              "pool" : {
-                "type" : "string"
-              }
-            }
-          },
-          "Volume" : {
-            "title" : "Volume",
-            "type" : "object",
-            "properties" : {
-              "name" : {
-                "type" : "string"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "claim", "config-map", "temp", "host" ]
-              }
-            },
-            "required" : [ "name", "type" ],
-            "oneOf" : [ {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "host"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeHost"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "claim"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeClaim"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "temp"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeTemp"
-                  }
-                }
-              } ]
-            }, {
-              "allOf" : [ {
-                "properties" : {
-                  "type" : {
-                    "const" : "config-map"
-                  }
-                }
-              }, {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/stages/ci/VolumeConfigMap"
-                  }
-                }
-              } ]
-            } ]
-          },
-          "VolumeHost" : {
-            "title" : "VolumeHost",
-            "type" : "object",
-            "properties" : {
-              "path" : {
-                "type" : "string"
-              }
-            },
-            "required" : [ "path" ]
-          },
-          "VolumeClaim" : {
-            "title" : "VolumeClaim",
-            "type" : "object",
-            "properties" : {
-              "name" : {
-                "type" : "string"
-              }
-            },
-            "required" : [ "name" ]
-          },
-          "VolumeTemp" : {
-            "title" : "VolumeTemp",
-            "type" : "object",
-            "properties" : {
-              "medium" : {
-                "type" : "string",
-                "enum" : [ "memory" ]
-              },
-              "limit" : {
-                "type" : [ "string", "number" ]
-              }
-            }
-          },
-          "VolumeConfigMap" : {
-            "title" : "VolumeConfigMap",
-            "type" : "object",
-            "properties" : {
-              "name" : {
-                "type" : "string"
-              },
-              "mode" : {
-                "type" : "string"
-              },
-              "optional" : {
-                "type" : "boolean"
-              }
-            },
-            "required" : [ "name" ]
           }
         }
       },
