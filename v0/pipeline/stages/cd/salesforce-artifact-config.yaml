@@ -1,0 +1,41 @@
+title: SalesforceArtifactConfig
+allOf:
+  - $ref: artifact-config.yaml
+  - type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        enum:
+          - version_control
+          - org
+          - package
+  - if:
+      properties:
+        type:
+          const: version_control
+    then:
+      properties:
+        spec:
+          $ref: salesforce-version-control-artifact-config.yaml
+  - if:
+      properties:
+        type:
+          const: org
+    then:
+      properties:
+        spec:
+          $ref: salesforce-org-artifact-config.yaml
+  - if:
+      properties:
+        type:
+          const: package
+    then:
+      properties:
+        spec:
+          $ref: salesforce-package-artifact-config.yaml
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  description:
+    desc: This is the description for SalesforceArtifactConfig
