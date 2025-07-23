@@ -13480,7 +13480,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition" ]
+                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition", "SalesforceDeployment" ]
               },
               "description" : {
                 "desc" : "This is the description for ManifestConfig"
@@ -13514,6 +13514,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/AsgAdditionalConfigurationManifest"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDeployment"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SalesforceManifest"
                   }
                 }
               }
@@ -13961,6 +13976,28 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for AsgAdditionalConfigurationManifest"
+              }
+            }
+          },
+          "SalesforceManifest" : {
+            "title" : "SalesforceManifest",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceManifest"
               }
             }
           },
@@ -14835,6 +14872,21 @@
                   "properties" : {
                     "spec" : {
                       "$ref" : "#/definitions/pipeline/steps/cd/AsgAdditionalConfigurationManifest"
+                    }
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDeployment"
+                  }
+                },
+                "then" : {
+                  "properties" : {
+                    "spec" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/SalesforceManifest"
                     }
                   }
                 }
@@ -80183,7 +80235,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -80247,6 +80299,21 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDeploymentMetaData"
                   }
                 }
               }
@@ -81537,7 +81604,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -81571,6 +81638,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceInfrastructure"
                   }
                 }
               }
@@ -81906,6 +81988,27 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunInfrastructure"
+              }
+            }
+          },
+          "SalesforceInfrastructure" : {
+            "title" : "SalesforceInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceInfrastructure"
               }
             }
           },
@@ -83079,7 +83182,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -83113,6 +83216,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceServiceSpec"
                   }
                 }
               }
@@ -85702,6 +85820,21 @@
               }
             }
           },
+          "SalesforceServiceSpec" : {
+            "title" : "SalesforceServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceServiceSpec"
+              }
+            }
+          },
           "AsgServiceSpec" : {
             "title" : "AsgServiceSpec",
             "allOf" : [ {
@@ -86742,6 +86875,20 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunDeploymentMetaData"
+              }
+            }
+          },
+          "SalesforceDeploymentMetaData" : {
+            "title" : "SalesforceDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceDeploymentMetaData"
               }
             }
           },
