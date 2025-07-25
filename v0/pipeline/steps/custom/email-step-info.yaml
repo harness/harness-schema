@@ -4,9 +4,17 @@ allOf:
 - type: object
   required:
   - subject
-  anyOf:
-    - required: [ to ]
-    - required: [ toUserGroups ]
+  allOf:
+    - if:
+        not:
+          required: [ to ]
+      then:
+        required: [ toUserGroups ]
+    - if:
+        not:
+          required: [ toUserGroups ]
+      then:
+        required: [ to ]
   properties:
     body:
       type: string
