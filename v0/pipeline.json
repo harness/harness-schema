@@ -63178,7 +63178,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -63242,6 +63242,21 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDeploymentMetaData"
                   }
                 }
               }
@@ -64766,7 +64781,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -64800,6 +64815,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceInfrastructure"
                   }
                 }
               }
@@ -65150,6 +65180,27 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunInfrastructure"
+              }
+            }
+          },
+          "SalesforceInfrastructure" : {
+            "title" : "SalesforceInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceInfrastructure"
               }
             }
           },
@@ -66384,7 +66435,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -66418,6 +66469,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceServiceSpec"
                   }
                 }
               }
@@ -66714,7 +66780,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for PrimaryArtifact"
@@ -66991,6 +67057,21 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceArtifactConfig"
+                  }
+                }
+              }
             } ]
           },
           "ArtifactSource" : {
@@ -67014,7 +67095,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSource"
@@ -67273,6 +67354,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/NexusRegistryArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceArtifactConfig"
                   }
                 }
               }
@@ -68525,6 +68621,35 @@
               }
             }
           },
+          "SalesforceArtifactConfig" : {
+            "title" : "SalesforceArtifactConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "packageId" : {
+                  "type" : "string"
+                },
+                "installationKeyRef" : {
+                  "type" : "string"
+                },
+                "packageVersionId" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceArtifactConfig"
+              }
+            }
+          },
           "HarnessArtifactRegistryConfig" : {
             "title" : "HarnessArtifactRegistryConfig",
             "allOf" : [ {
@@ -68631,7 +68756,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for SidecarArtifact"
@@ -68909,6 +69034,21 @@
                 }
               }
             }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceArtifactConfig"
+                  }
+                }
+              }
+            }, {
               "oneOf" : [ {
                 "required" : [ "template" ]
               }, {
@@ -69004,6 +69144,21 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunServiceSpec"
+              }
+            }
+          },
+          "SalesforceServiceSpec" : {
+            "title" : "SalesforceServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceServiceSpec"
               }
             }
           },
@@ -70047,6 +70202,20 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunDeploymentMetaData"
+              }
+            }
+          },
+          "SalesforceDeploymentMetaData" : {
+            "title" : "SalesforceDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceDeploymentMetaData"
               }
             }
           },
