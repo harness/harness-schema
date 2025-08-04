@@ -1,0 +1,136 @@
+title: AiVerifyStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - command
+  properties:
+    command:
+      type: string
+    connectorRef:
+      type: string
+    envVariables:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    image:
+      type: string
+    imagePullPolicy:
+      oneOf:
+      - type: string
+        enum:
+        - Always
+        - Never
+        - IfNotPresent
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    outputVariables:
+      type: array
+      items:
+        anyOf:
+          - $ref: ../../common/number-ng-variable.yaml
+          - $ref: ../../common/secret-ng-variable.yaml
+          - $ref: ../../common/string-ng-variable.yaml
+          - $ref: ../../common/output-ng-variable.yaml
+    privileged:
+      oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    reports:
+      oneOf:
+      - $ref: ../common/unit-test-report.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+        minLength: 1
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+    shell:
+      oneOf:
+      - type: string
+        enum:
+        - Sh
+        - Bash
+        - Powershell
+        - Pwsh
+        - Python
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- command
+properties:
+  command:
+    type: string
+  connectorRef:
+    type: string
+  envVariables:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  image:
+    type: string
+  imagePullPolicy:
+    oneOf:
+    - type: string
+      enum:
+      - Always
+      - Never
+      - IfNotPresent
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  outputVariables:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/output-ng-variable.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  privileged:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  reports:
+    oneOf:
+    - $ref: ../common/unit-test-report.yaml
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  shell:
+    oneOf:
+    - type: string
+      enum:
+      - Sh
+      - Bash
+      - Powershell
+      - Pwsh
+      - Python
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  description:
+    desc: This is the description for AiVerifyStepInfo
