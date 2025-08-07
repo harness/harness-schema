@@ -21794,6 +21794,230 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object"
           },
+          "AIExperimentStepNode" : {
+            "title" : "AIExperimentStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AIExperimentStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/AIAgentMLOpsFailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AIExperiment" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AIExperiment"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AIExperimentStepInfo" : {
+            "title" : "AIExperimentStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "experimentRef", "image", "command" ],
+              "properties" : {
+                "experimentRef" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "command" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "connectorRef", "experimentRef", "image", "command" ],
+            "properties" : {
+              "experimentRef" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "command" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "envVariables" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AIExperimentStepInfo"
+              }
+            }
+          },
           "AnchoreScanNode" : {
             "title" : "AnchoreScanNode",
             "type" : "object",
@@ -62385,6 +62609,63 @@
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "AIAgentMLOpsFailureStrategyConfig" : {
+          "title" : "AIAgentMLOpsFailureStrategyConfig",
+          "type" : "object",
+          "required" : [ "onFailure" ],
+          "properties" : {
+            "onFailure" : {
+              "$ref" : "#/definitions/pipeline/common/AIAgentMLOpsOnFailureConfig"
+            },
+            "description" : {
+              "desc" : "This is the description for FailureStrategyConfig"
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "string",
+              "internalType" : "failure_strategy"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "AIAgentMLOpsOnFailureConfig" : {
+          "title" : "AIAgentMLOpsOnFailureConfig",
+          "type" : "object",
+          "required" : [ "action", "errors" ],
+          "properties" : {
+            "action" : {
+              "$ref" : "#/definitions/pipeline/common/AIAgentMLOpsFailureStrategyActionConfig"
+            },
+            "errors" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "enum" : [ "Unknown", "AllErrors", "Authentication", "Connectivity", "Timeout", "Authorization", "Verification", "DelegateProvisioning", "PolicyEvaluationFailure", "InputTimeoutError", "ApprovalRejection", "DelegateRestart", "UserMarkedFailure" ]
+              }
+            },
+            "description" : {
+              "desc" : "This is the description for OnFailureConfig"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "AIAgentMLOpsFailureStrategyActionConfig" : {
+          "title" : "AIAgentMLOpsFailureStrategyActionConfig",
+          "type" : "object",
+          "required" : [ "type" ],
+          "discriminator" : "type",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "enum" : [ "Ignore", "MarkAsSuccess", "Abort", "Retry" ]
+            },
+            "description" : {
+              "desc" : "This is the description for FailureStrategyActionConfig"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "K8sDirectInfra" : {
           "title" : "K8sDirectInfra",
           "allOf" : [ {
@@ -64432,6 +64713,8 @@
                   "$ref" : "#/definitions/pipeline/steps/ci/S3UploadNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CustomIngestScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -71985,6 +72268,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -72606,6 +72891,8 @@
                   "$ref" : "#/definitions/pipeline/steps/ci/S3UploadNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/CustomIngestScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
                 } ]
               },
               "stepGroup" : {
