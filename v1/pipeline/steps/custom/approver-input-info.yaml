@@ -12,6 +12,8 @@ properties:
     type: string
   selectOneFrom:
     type: string
+  selectManyFrom:
+    type: string
   regex:
     type: string
   description:
@@ -21,15 +23,19 @@ $schema: http://json-schema.org/draft-07/schema#
 oneOf:
   - required: [regex]
     not:
-      required: [allowedValues, selectOneFrom]
+      required: [allowedValues, selectOneFrom, selectManyFrom]
   - required: [allowedValues]
     not:
-      required: [regex, selectOneFrom]
+      required: [regex, selectOneFrom, selectManyFrom]
   - required: [selectOneFrom]
     not:
-      required: [allowedValues, regex]
+      required: [allowedValues, regex, selectManyFrom]
+  - required: [selectManyFrom]
+    not:
+      required: [allowedValues, regex, selectOneFrom]
   - not:
       anyOf:
         - required: [regex]
         - required: [allowedValues]
         - required: [selectOneFrom]
+        - required: [selectManyFrom]
