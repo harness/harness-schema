@@ -36702,7 +36702,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Aws" ]
+                "enum" : [ "Aws", "Azure" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -36718,6 +36718,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/AWSIAMRoleCredentialSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Azure"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerrafromAzureProviderCredentialSpec"
                   }
                 }
               }
@@ -36749,6 +36764,25 @@
             "title" : "TerraformProviderCredentialSpec",
             "type" : "object",
             "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerrafromAzureProviderCredentialSpec" : {
+            "title" : "TerrafromAzureProviderCredentialSpec",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredentialSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "subscriptionId" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "subscriptionId" : {
+                  "type" : "string"
+                }
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "JenkinsBuildStepNode" : {
