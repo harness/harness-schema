@@ -1,0 +1,51 @@
+title: DynamicStageNode
+type: object
+required:
+- identifier
+- name
+- type
+properties:
+  description:
+    type: string
+    desc: This is the description for DynamicStageNode
+  failureStrategies:
+    oneOf:
+    - type: array
+      items:
+        $ref: ../../common/failure-strategy-config.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+  identifier:
+    type: string
+    pattern: ^[a-zA-Z_][0-9a-zA-Z_]{0,127}$
+  name:
+    type: string
+    pattern: ^[a-zA-Z_0-9-.][-0-9a-zA-Z_\s.]{0,127}$
+  type:
+    type: string
+    enum:
+    - Dynamic
+  variables:
+    type: array
+    items:
+      oneOf:
+      - $ref: ../../common/number-ng-variable.yaml
+      - $ref: ../../common/secret-ng-variable.yaml
+      - $ref: ../../common/string-ng-variable.yaml
+  when:
+    oneOf:
+    - $ref: ../../steps/custom/stage-when-condition.yaml
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: Dynamic
+  then:
+    properties:
+      spec:
+        $ref: dynamic-stage-config.yaml
