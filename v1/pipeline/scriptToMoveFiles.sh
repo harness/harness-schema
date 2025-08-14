@@ -129,6 +129,7 @@ file_list=(
   "veracode-scan-node.yaml"
   "nmap-scan-node.yaml"
   "wiz-scan-node.yaml"
+  "modelscan-scan-node.yaml"
   "traceable-scan-node.yaml"
   )
 
@@ -169,6 +170,7 @@ newFileInfoList=(
   "snyk-step-info.yaml"
   "veracode-step-info.yaml"
   "wiz-step-info.yaml"
+  "modelscan-step-info.yaml"
   "traceable-step-info.yaml"
 )
 
