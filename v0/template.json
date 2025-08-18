@@ -89625,6 +89625,96 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "DynamicStageNode" : {
+            "title" : "DynamicStageNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for DynamicStageNode"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Dynamic" ]
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/StageWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Dynamic"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/custom/DynamicStageConfig"
+                  }
+                }
+              }
+            } ]
+          },
+          "DynamicStageConfig" : {
+            "title" : "DynamicStageConfig",
+            "type" : "object",
+            "required" : [ "source" ],
+            "properties" : {
+              "source" : {
+                "type" : "string",
+                "not" : {
+                  "const" : "<+input>"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for DynamicStageConfig"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "CustomStageNode" : {
             "title" : "CustomStageNode",
             "type" : "object",
@@ -93112,6 +93202,8 @@
                 "$ref" : "#/definitions/pipeline/stages/approval/ApprovalStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/custom/PipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/custom/DynamicStageNode"
               }, {
                 "$ref" : "#/definitions/pipeline/stages/custom/CustomStageNode"
               }, {
