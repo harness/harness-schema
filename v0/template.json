@@ -38044,7 +38044,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect" ]
+                  "enum" : [ "KubernetesDirect", "VM" ]
                 }
               }
             } ],
@@ -38062,7 +38062,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect" ]
+                "enum" : [ "KubernetesDirect", "VM" ]
               },
               "description" : {
                 "desc" : "This is the description for ContainerStepInfra"
@@ -43225,6 +43225,21 @@
                 }
               }
             } ]
+          },
+          "VmInfraSpec" : {
+            "title" : "VmInfraSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Pool" ]
+              },
+              "description" : {
+                "desc" : "This is the description for VmInfraSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "CdSscaEnforcementStepNode" : {
             "title" : "CdSscaEnforcementStepNode",
@@ -82097,13 +82112,37 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "enum" : [ "KubernetesDirect", "Delegate", "Noop" ]
+              "enum" : [ "KubernetesDirect", "Delegate", "Noop", "VM" ]
             },
             "description" : {
               "desc" : "This is the description for StepGroupInfra"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "VMInfra" : {
+          "title" : "VMInfra",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/StepGroupInfra"
+          }, {
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/VmInfraSpec"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "VM" ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for VMInfra"
+            }
+          }
         }
       },
       "stages" : {
@@ -83532,6 +83571,8 @@
               "stepGroupInfra" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/VMInfra"
                 } ]
               },
               "steps" : {
@@ -90130,6 +90171,8 @@
               "stepGroupInfra" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/VMInfra"
                 } ]
               },
               "steps" : {
