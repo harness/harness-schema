@@ -30540,6 +30540,212 @@
               }
             }
           },
+          "RestoreCacheNode" : {
+            "title" : "RestoreCacheNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for RestoreCacheNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "RestoreCache" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "RestoreCache"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "RestoreCacheStepInfo" : {
+            "title" : "RestoreCacheStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "providerType", "key" ],
+              "if" : {
+                "properties" : {
+                  "providerType" : {
+                    "enum" : [ "Gcs", "S3" ]
+                  }
+                }
+              },
+              "then" : {
+                "required" : [ "bucket", "connectorRef" ]
+              },
+              "properties" : {
+                "providerType" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Gcs", "S3", "Harness" ]
+                  } ]
+                },
+                "archiveFormat" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Tar", "Gzip" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "bucket" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "failIfKeyNotFound" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "key" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "key", "providerType" ],
+            "if" : {
+              "properties" : {
+                "providerType" : {
+                  "enum" : [ "Gcs", "S3" ]
+                }
+              }
+            },
+            "then" : {
+              "required" : [ "bucket", "connectorRef" ]
+            },
+            "properties" : {
+              "archiveFormat" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Tar", "Gzip" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "bucket" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "failIfKeyNotFound" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "key" : {
+                "type" : "string"
+              },
+              "providerType" : {
+                "type" : "string",
+                "enum" : [ "Gcs", "S3", "Harness" ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for RestoreCacheStepInfo"
+              }
+            }
+          },
           "RunTestStepNode" : {
             "title" : "RunTestStepNode",
             "type" : "object",
@@ -31651,6 +31857,254 @@
               },
               "description" : {
                 "desc" : "This is the description for SaveCacheS3StepInfo"
+              }
+            }
+          },
+          "SaveCacheNode" : {
+            "title" : "SaveCacheNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SaveCacheNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SaveCache" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SaveCache"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SaveCacheStepInfo" : {
+            "title" : "SaveCacheStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "providerType", "key", "sourcePaths" ],
+              "if" : {
+                "properties" : {
+                  "providerType" : {
+                    "enum" : [ "Gcs", "S3" ]
+                  }
+                }
+              },
+              "then" : {
+                "required" : [ "bucket", "connectorRef" ]
+              },
+              "properties" : {
+                "providerType" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Gcs", "S3", "Harness" ]
+                  } ]
+                },
+                "archiveFormat" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Tar", "Gzip", "Zstd" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "bucket" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "endpoint" : {
+                  "type" : "string"
+                },
+                "key" : {
+                  "type" : "string"
+                },
+                "override" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "pathStyle" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "sourcePaths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "key", "sourcePaths" ],
+            "if" : {
+              "properties" : {
+                "providerType" : {
+                  "enum" : [ "Gcs", "S3" ]
+                }
+              }
+            },
+            "then" : {
+              "required" : [ "bucket", "connectorRef" ]
+            },
+            "properties" : {
+              "archiveFormat" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Tar", "Gzip", "Zstd" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "bucket" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "endpoint" : {
+                "type" : "string"
+              },
+              "key" : {
+                "type" : "string"
+              },
+              "override" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "pathStyle" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "sourcePaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for SaveCacheStepInfo"
               }
             }
           }
@@ -72801,6 +73255,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheS3Node"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepV2Node"
@@ -72810,6 +73266,8 @@
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheGCSNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3Node"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode"
                 }, {

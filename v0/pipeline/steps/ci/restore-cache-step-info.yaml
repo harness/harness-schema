@@ -1,0 +1,101 @@
+title: RestoreCacheStepInfo
+allOf:
+- $ref: ../../steps/ci/ci-step-info.yaml
+- type: object
+  required:
+  - providerType
+  - key
+  if:
+    properties:
+      providerType:
+        enum: [Gcs, S3]
+  then:
+    required:
+    - bucket
+    - connectorRef
+  properties:
+    providerType:
+      oneOf:
+        - type: string
+          enum:
+            - Gcs
+            - S3
+            - Harness
+    archiveFormat:
+      oneOf:
+      - type: string
+        enum:
+        - Tar
+        - Gzip
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+    baseImageConnectorRefs:
+      $ref: ../../steps/ci/parameter-field-list-string.yaml
+    bucket:
+      type: string
+    connectorRef:
+      type: string
+    failIfKeyNotFound:
+      oneOf:
+      - type: boolean
+      - type: string
+    key:
+      type: string
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- key
+- providerType
+if:
+  properties:
+    providerType:
+      enum: [Gcs, S3]
+then:
+  required:
+  - bucket
+  - connectorRef
+properties:
+  archiveFormat:
+    oneOf:
+    - type: string
+      enum:
+      - Tar
+      - Gzip
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+      minLength: 1
+  baseImageConnectorRefs:
+    $ref: ../../steps/ci/parameter-field-list-string.yaml
+  bucket:
+    type: string
+  connectorRef:
+    type: string
+  failIfKeyNotFound:
+    oneOf:
+    - type: boolean
+    - type: string
+  key:
+    type: string
+  providerType:
+    type: string
+    enum:
+    - Gcs
+    - S3
+    - Harness
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  description:
+    desc: This is the description for RestoreCacheStepInfo
