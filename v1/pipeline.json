@@ -431,6 +431,8 @@
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMTerragruntPluginStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMAnsiblePluginStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
                 } ]
               },
               "description" : {
@@ -6008,150 +6010,6 @@
             }
           }
         },
-        "Strategy" : {
-          "title" : "Strategy",
-          "type" : "object",
-          "description" : "Strategy defines an optional execution strategy.",
-          "properties" : {
-            "type" : {
-              "description" : "Type defines the execution strategy type.",
-              "type" : "string",
-              "enum" : [ "for", "matrix", "while" ]
-            }
-          },
-          "metadata" : {
-            "inputProperties" : {
-              "type" : "object",
-              "internalType" : "looping_strategy"
-            }
-          },
-          "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "for"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/For"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "matrix"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Matrix"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "while"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/While"
-                }
-              }
-            } ]
-          } ]
-        },
-        "For" : {
-          "title" : "For",
-          "description" : "Defines a for loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "concurrency" : {
-              "description" : "Defines the for loop concurrency.",
-              "type" : "number"
-            },
-            "iterations" : {
-              "type" : "number"
-            }
-          }
-        },
-        "Matrix" : {
-          "title" : "Matrix",
-          "type" : "object",
-          "description" : "Defines a matrix execution strategy.",
-          "properties" : {
-            "axis" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "concurrency" : {
-              "description" : "Defines the matrix concurrency.",
-              "type" : "number"
-            },
-            "node_name" : {
-              "description" : "Defines the naming for matrix nodes.",
-              "type" : "string"
-            },
-            "include" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
-            },
-            "exclude" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "While" : {
-          "title" : "While",
-          "description" : "Defines a while loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "condition" : {
-              "type" : "string",
-              "description" : "Defines the while condition."
-            },
-            "iterations" : {
-              "type" : "number",
-              "description" : "Defines the maximum number of iterations."
-            }
-          }
-        },
-        "Delegate" : {
-          "title" : "Delegate",
-          "description" : "Delegate defines the delegate matching logic.",
-          "oneOf" : [ {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }, {
-            "type" : "string"
-          } ]
-        },
         "FailureList" : {
           "title" : "FailureList",
           "oneOf" : [ {
@@ -6597,6 +6455,150 @@
                 }
               }
             } ]
+          } ]
+        },
+        "Strategy" : {
+          "title" : "Strategy",
+          "type" : "object",
+          "description" : "Strategy defines an optional execution strategy.",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the execution strategy type.",
+              "type" : "string",
+              "enum" : [ "for", "matrix", "while" ]
+            }
+          },
+          "metadata" : {
+            "inputProperties" : {
+              "type" : "object",
+              "internalType" : "looping_strategy"
+            }
+          },
+          "oneOf" : [ {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "for"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/For"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "matrix"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/Matrix"
+                }
+              }
+            } ]
+          }, {
+            "allOf" : [ {
+              "properties" : {
+                "type" : {
+                  "const" : "while"
+                }
+              }
+            }, {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/common/While"
+                }
+              }
+            } ]
+          } ]
+        },
+        "For" : {
+          "title" : "For",
+          "description" : "Defines a for loop execution strategy.",
+          "type" : "object",
+          "properties" : {
+            "concurrency" : {
+              "description" : "Defines the for loop concurrency.",
+              "type" : "number"
+            },
+            "iterations" : {
+              "type" : "number"
+            }
+          }
+        },
+        "Matrix" : {
+          "title" : "Matrix",
+          "type" : "object",
+          "description" : "Defines a matrix execution strategy.",
+          "properties" : {
+            "axis" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "concurrency" : {
+              "description" : "Defines the matrix concurrency.",
+              "type" : "number"
+            },
+            "node_name" : {
+              "description" : "Defines the naming for matrix nodes.",
+              "type" : "string"
+            },
+            "include" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "exclude" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "While" : {
+          "title" : "While",
+          "description" : "Defines a while loop execution strategy.",
+          "type" : "object",
+          "properties" : {
+            "condition" : {
+              "type" : "string",
+              "description" : "Defines the while condition."
+            },
+            "iterations" : {
+              "type" : "number",
+              "description" : "Defines the maximum number of iterations."
+            }
+          }
+        },
+        "Delegate" : {
+          "title" : "Delegate",
+          "description" : "Delegate defines the delegate matching logic.",
+          "oneOf" : [ {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }, {
+            "type" : "string"
           } ]
         },
         "StringVariable" : {
@@ -7421,6 +7423,84 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "QueueStepNode" : {
+            "title" : "QueueStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for QueueStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "queue" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "queue"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "QueueStepInfo" : {
+            "title" : "QueueStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "key", "scope" ],
+              "properties" : {
+                "key" : {
+                  "type" : "string"
+                },
+                "scope" : {
+                  "type" : "string",
+                  "enum" : [ "pipeline", "stage" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object"
           },
           "SecurityContext" : {
             "title" : "SecurityContext",
@@ -8678,84 +8758,6 @@
                       "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                     } ]
                   }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object"
-          },
-          "QueueStepNode" : {
-            "title" : "QueueStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "description" : "This is the description for QueueStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "queue" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "queue"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/QueueStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "QueueStepInfo" : {
-            "title" : "QueueStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "key", "scope" ],
-              "properties" : {
-                "key" : {
-                  "type" : "string"
-                },
-                "scope" : {
-                  "type" : "string",
-                  "enum" : [ "pipeline", "stage" ]
                 }
               }
             } ],
