@@ -1,0 +1,31 @@
+title: ManualInterventionFailureActionConfig
+type: object
+required:
+  - type
+properties:
+  type:
+    type: string
+    enum:
+      - ManualIntervention
+  spec:
+    type: object
+    required:
+     - timeout
+     - onTimeout
+    properties:
+      timeout:
+        type: string
+        pattern: "^[0-9]+(s|m|h|d)$"
+        description: "Duration string e.g. '10s', '30m', '2h'"
+      onTimeout:
+        type: object
+        required:
+          - action
+        properties:
+          action:
+            oneOf:
+              - $ref: abort-failure-action-config.yaml
+              - $ref: ignore-failure-action-config.yaml
+              - $ref: mark-as-success-failure-action-config.yaml
+              - $ref: mark-as-failure-action-config.yaml
+$schema: http://json-schema.org/draft-07/schema#

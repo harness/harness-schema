@@ -1,0 +1,22 @@
+failureStrategies:
+  - onFailure:
+      errors:
+        - AllErrors
+      action:
+        type: Retry
+        spec:
+          retryCount:
+            expression:
+              isExpression: true
+              expressionValue: "<+input.retryCount>"
+          retryIntervals:
+            expression:
+              isExpression: true
+              expressionValue: "<+input.retryIntervals>"
+          onRetryFailure:
+            action:
+              type: MarkAsFailure
+          condition:
+            expression:
+              isExpression: true
+              expressionValue: "<+step.exitCode> == 137 && <+trigger.branch> == \"main\""

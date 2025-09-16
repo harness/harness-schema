@@ -1,0 +1,39 @@
+title: RetryStepGroupFailureActionConfig
+type: object
+required:
+  - type
+properties:
+  type:
+    type: string
+    enum:
+      - RetryStepGroup
+  spec:
+    type: object
+    required:
+      - retryCount
+      - retryIntervals
+      - onRetryFailure
+    properties:
+      retryCount:
+        type: object
+      retryIntervals:
+        type: object
+      onRetryFailure:
+        type: object
+        required:
+          - action
+        properties:
+          action:
+            $ref: failure-strategy-action-config.yaml
+      condition:
+        type: object
+        required:
+          - value
+          - expression
+        properties:
+          value:
+            type: string
+            description: "Expression that evaluates to determine if retry should be performed, e.g. '<+step.exitCode> == 137'"
+          expression:
+            type: object
+$schema: http://json-schema.org/draft-07/schema#
