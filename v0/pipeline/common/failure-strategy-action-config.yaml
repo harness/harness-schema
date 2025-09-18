@@ -1,19 +1,5 @@
 title: FailureStrategyActionConfig
 type: object
-required:
-- type
-oneOf:
-  - $ref: ignore-failure-action-config.yaml
-  - $ref: retry-failure-action-config.yaml
-  - $ref: mark-as-success-failure-action-config.yaml
-  - $ref: abort-failure-action-config.yaml
-  - $ref: stage-rollback-failure-action-config.yaml
-  - $ref: step-group-rollback-failure-action-config.yaml
-  - $ref: pipeline-rollback-failure-action-config.yaml
-  - $ref: manual-intervention-failure-action-config.yaml
-  - $ref: proceed-with-default-values-failure-action-config.yaml
-  - $ref: mark-as-failure-action-config.yaml
-  - $ref: retry-step-group-failure-action-config.yaml
 properties:
   type:
     type: string
@@ -32,3 +18,70 @@ properties:
   description:
     desc: This is the description for FailureStrategyActionConfig
 $schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - if:
+      properties:
+        type:
+          const: Ignore
+    then:
+      $ref: ignore-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: Retry
+    then:
+      $ref: retry-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: MarkAsSuccess
+    then:
+      $ref: mark-as-success-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: Abort
+    then:
+      $ref: abort-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: StageRollback
+    then:
+      $ref: stage-rollback-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: StepGroupRollback
+    then:
+      $ref: step-group-rollback-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: PipelineRollback
+    then:
+      $ref: pipeline-rollback-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: ManualIntervention
+    then:
+      $ref: manual-intervention-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: ProceedWithDefaultValues
+    then:
+      $ref: proceed-with-default-values-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: MarkAsFailure
+    then:
+      $ref: mark-as-failure-action-config.yaml
+  - if:
+      properties:
+        type:
+          const: RetryStepGroup
+    then:
+      $ref: retry-step-group-failure-action-config.yaml

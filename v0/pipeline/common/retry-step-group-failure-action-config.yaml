@@ -9,9 +9,20 @@ properties:
     type: object
     properties:
       retryCount:
-        type: object
+        oneOf:
+          - type: object
+          - type: integer
+            minimum: 1
+            description: "Number of retries to attempt"
       retryIntervals:
-        type: object
+        oneOf:
+          - type: object
+          - type: array
+            items:
+              type: string
+              pattern: "^[0-9]+(s|m|h|d)$"
+              description: "Duration string e.g. '10s', '1m', '2h'"
+            description: "List of interval durations between retries"
       onRetryFailure:
         type: object
         properties:
