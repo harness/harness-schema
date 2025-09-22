@@ -48385,7 +48385,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition" ]
+                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition", "GcpMigInstanceTemplate", "GcpMigConfiguration", "GcpMigAutoscalerConfiguration", "GcpMigHealthCheckConfiguration" ]
               },
               "description" : {
                 "desc" : "This is the description for ManifestConfig"
@@ -48809,6 +48809,66 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/ValuesManifest"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GcpMigInstanceTemplate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GcpMigInstanceTemplate"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GcpMigConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GcpMigConfiguration"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GcpMigAutoscalerConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GcpMigAutoscalerConfiguration"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GcpMigHealthCheckConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GcpMigHealthCheckConfiguration"
                   }
                 }
               }
@@ -49697,6 +49757,94 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for ValuesManifest"
+              }
+            }
+          },
+          "GcpMigInstanceTemplate" : {
+            "title" : "GcpMigInstanceTemplate",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigInstanceTemplate"
+              }
+            }
+          },
+          "GcpMigConfiguration" : {
+            "title" : "GcpMigConfiguration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigConfiguration"
+              }
+            }
+          },
+          "GcpMigAutoscalerConfiguration" : {
+            "title" : "GcpMigAutoscalerConfiguration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigAutoscalerConfiguration"
+              }
+            }
+          },
+          "GcpMigHealthCheckConfiguration" : {
+            "title" : "GcpMigHealthCheckConfiguration",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigHealthCheckConfiguration"
               }
             }
           },
