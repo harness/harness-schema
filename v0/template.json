@@ -83585,7 +83585,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "GCP_MIG" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -83859,6 +83859,21 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/WinrmDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "GCP_MIG"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GcpMigDeploymentMetaData"
                   }
                 }
               }
@@ -84957,7 +84972,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "GCP_MIG" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -85276,6 +85291,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/TanzuApplicationServiceInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GCP_MIG"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GcpMigInfrastructure"
                   }
                 }
               }
@@ -86410,6 +86440,38 @@
               }
             }
           },
+          "GcpMigInfrastructure" : {
+            "title" : "GcpMigInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "project", "region" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "project" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "region" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigInfrastructure"
+              }
+            }
+          },
           "InfraUseFromStage" : {
             "title" : "InfraUseFromStage",
             "type" : "object",
@@ -86575,7 +86637,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "GCP_MIG" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -86819,6 +86881,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/WinRmServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GCP_MIG"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GcpMigServiceSpec"
                   }
                 }
               }
@@ -90045,6 +90122,21 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "GcpMigServiceSpec" : {
+            "title" : "GcpMigServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigServiceSpec"
+              }
+            }
+          },
           "StageOverridesConfig" : {
             "title" : "StageOverridesConfig",
             "type" : "object",
@@ -90442,6 +90534,20 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for WinrmDeploymentMetaData"
+              }
+            }
+          },
+          "GcpMigDeploymentMetaData" : {
+            "title" : "GcpMigDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GcpMigDeploymentMetaData"
               }
             }
           },

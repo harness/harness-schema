@@ -24,6 +24,7 @@ properties:
     - AwsLambda
     - AWS_SAM
     - GoogleCloudRun
+    - GCP_MIG
   environment:
     $ref: environment-yaml-v2.yaml
   environmentGroup:
@@ -176,6 +177,14 @@ allOf:
     properties:
       deploymentMetadata:
         $ref: winrm-deployment-meta-data.yaml
+- if:
+    properties:
+      deploymentType:
+        const: GCP_MIG
+  then:
+    properties:
+      deploymentMetadata:
+        $ref: gcp-mig-deployment-meta-data.yaml
 - oneOf:
   - required:
     - serviceConfig
