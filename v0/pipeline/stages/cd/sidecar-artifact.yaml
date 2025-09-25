@@ -31,6 +31,9 @@ properties:
     - GoogleCloudStorage
     - GoogleCloudSource
     - Har
+    - SalesforcePackage
+    - SalesforceOrg
+    - SalesforceDxProject
   description:
     desc: This is the description for SidecarArtifact
 $schema: http://json-schema.org/draft-07/schema#
@@ -179,6 +182,30 @@ allOf:
     properties:
       spec:
         $ref: harness-artifact-registry-config.yaml
+- if:
+    properties:
+      type:
+        const: SalesforcePackage
+  then:
+    properties:
+      spec:
+        $ref: salesforce-package-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: SalesforceOrg
+  then:
+    properties:
+      spec:
+        $ref: salesforce-org-artifact-config.yaml
+- if:
+    properties:
+      type:
+        const: SalesforceDxProject
+  then:
+    properties:
+      spec:
+        $ref: salesforce-dx-project-artifact-config.yaml
 - oneOf:
   - required:
     - template

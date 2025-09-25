@@ -556,6 +556,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepNode_template"
@@ -26170,6 +26172,195 @@
               }
             }
           },
+          "SalesforceDeployStepNode_template" : {
+            "title" : "SalesforceDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SalesforceDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SalesforceDeployStepInfo" : {
+            "title" : "SalesforceDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "commandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "commandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for SalesforceDeployStepInfo"
+              }
+            }
+          },
           "TerraformApplyStepNode" : {
             "title" : "TerraformApplyStepNode",
             "type" : "object",
@@ -36197,6 +36388,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SalesforceDeployStepNode" : {
+            "title" : "SalesforceDeployStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SalesforceDeployStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SalesforceDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepInfo"
                   }
                 }
               }
@@ -83585,7 +83853,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -83649,6 +83917,21 @@
                 "properties" : {
                   "deploymentMetadata" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunDeploymentMetaData"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "deploymentType" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "deploymentMetadata" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDeploymentMetaData"
                   }
                 }
               }
@@ -84483,6 +84766,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
@@ -84957,7 +85242,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -84991,6 +85276,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceInfrastructure"
                   }
                 }
               }
@@ -85341,6 +85641,27 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunInfrastructure"
+              }
+            }
+          },
+          "SalesforceInfrastructure" : {
+            "title" : "SalesforceInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceInfrastructure"
               }
             }
           },
@@ -86575,7 +86896,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -86609,6 +86930,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Salesforce"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceServiceSpec"
                   }
                 }
               }
@@ -86905,7 +87241,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for PrimaryArtifact"
@@ -87182,6 +87518,51 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforcePackage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforcePackageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceOrg"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceOrgArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDxProject"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDxProjectArtifactConfig"
+                  }
+                }
+              }
             } ]
           },
           "ArtifactSource" : {
@@ -87205,7 +87586,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSource"
@@ -87464,6 +87845,51 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/NexusRegistryArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforcePackage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforcePackageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceOrg"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceOrgArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDxProject"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDxProjectArtifactConfig"
                   }
                 }
               }
@@ -88716,6 +89142,111 @@
               }
             }
           },
+          "SalesforcePackageArtifactConfig" : {
+            "title" : "SalesforcePackageArtifactConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "packageId" : {
+                  "type" : "string"
+                },
+                "installationKeyRef" : {
+                  "type" : "string"
+                },
+                "packageVersionId" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforcePackageArtifactConfig"
+              }
+            }
+          },
+          "SalesforceOrgArtifactConfig" : {
+            "title" : "SalesforceOrgArtifactConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "fetchType" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "fetchType" : {
+                  "type" : "string"
+                },
+                "metadatas" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "sourcePaths" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "manifestStore" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceOrgArtifactConfig"
+              }
+            }
+          },
+          "SalesforceDxProjectArtifactConfig" : {
+            "title" : "SalesforceDxProjectArtifactConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "metadataStore", "fetchType" ],
+              "properties" : {
+                "metadataStore" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                },
+                "fetchType" : {
+                  "type" : "string"
+                },
+                "metadatas" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "sourcePaths" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "manifestStore" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceDxProjectArtifactConfig"
+              }
+            }
+          },
           "HarnessArtifactRegistryConfig" : {
             "title" : "HarnessArtifactRegistryConfig",
             "allOf" : [ {
@@ -88822,7 +89353,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for SidecarArtifact"
@@ -89100,6 +89631,51 @@
                 }
               }
             }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforcePackage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforcePackageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceOrg"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceOrgArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDxProject"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDxProjectArtifactConfig"
+                  }
+                }
+              }
+            }, {
               "oneOf" : [ {
                 "required" : [ "template" ]
               }, {
@@ -89195,6 +89771,21 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunServiceSpec"
+              }
+            }
+          },
+          "SalesforceServiceSpec" : {
+            "title" : "SalesforceServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceServiceSpec"
               }
             }
           },
@@ -90241,6 +90832,20 @@
               }
             }
           },
+          "SalesforceDeploymentMetaData" : {
+            "title" : "SalesforceDeploymentMetaData",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/DeploymentMetaData"
+            }, {
+              "type" : "object"
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SalesforceDeploymentMetaData"
+              }
+            }
+          },
           "AsgDeploymentMetaData" : {
             "title" : "AsgDeploymentMetaData",
             "allOf" : [ {
@@ -90575,7 +91180,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -90831,6 +91436,51 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/NexusRegistryArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforcePackage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforcePackageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceOrg"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceOrgArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SalesforceDxProject"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/SalesforceDxProjectArtifactConfig"
                   }
                 }
               }
@@ -93339,6 +93989,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunTrafficShiftStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPSlackNotifyStepNode"
                 }, {
