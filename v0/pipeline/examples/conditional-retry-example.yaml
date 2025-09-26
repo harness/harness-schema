@@ -1,0 +1,19 @@
+failureStrategies:
+  - onFailure:
+      errors:
+        - AllErrors
+      action:
+        type: Retry
+        spec:
+          retryCount:
+            value: 3
+          retryIntervals:
+            value:
+              - timeoutString: "2s"
+              - timeoutString: "5s"
+              - timeoutString: "10s"
+          onRetryFailure:
+            action:
+              type: Abort
+          condition:
+            value: "<+step.exitCode> == 137"
