@@ -25,6 +25,7 @@ properties:
     - AWS_SAM
     - GoogleCloudRun
     - Salesforce
+    - GoogleManagedInstanceGroup
   environment:
     $ref: environment-yaml-v2.yaml
   environmentGroup:
@@ -185,6 +186,14 @@ allOf:
     properties:
       deploymentMetadata:
         $ref: winrm-deployment-meta-data.yaml
+- if:
+    properties:
+      deploymentType:
+        const: GoogleManagedInstanceGroup
+  then:
+    properties:
+      deploymentMetadata:
+        $ref: google-mig-deployment-meta-data.yaml
 - oneOf:
   - required:
     - serviceConfig
