@@ -38,6 +38,10 @@ properties:
     - AwsLambdaFunctionAliasDefinition
     - AwsSamDirectory
     - GoogleCloudFunctionGenOneDefinition
+    - GoogleMigInstanceTemplate
+    - GoogleMigConfiguration
+    - GoogleMigAutoscalerConfiguration
+    - GoogleMigHealthCheckConfiguration
   description:
     desc: This is the description for ManifestConfig
 $schema: http://json-schema.org/draft-07/schema#
@@ -266,3 +270,35 @@ allOf:
     properties:
       spec:
         $ref: values-manifest.yaml
+- if:
+    properties:
+      type:
+        const: GoogleMigInstanceTemplate
+  then:
+    properties:
+      spec:
+        $ref: google-mig-instance-template-manifest.yaml
+- if:
+    properties:
+      type:
+        const: GoogleMigConfiguration
+  then:
+    properties:
+      spec:
+        $ref: google-mig-configuration-manifest.yaml
+- if:
+    properties:
+      type:
+        const: GoogleMigAutoscalerConfiguration
+  then:
+    properties:
+      spec:
+        $ref: google-mig-autoscaler-configuration-manifest.yaml
+- if:
+    properties:
+      type:
+        const: GoogleMigHealthCheckConfiguration
+  then:
+    properties:
+      spec:
+        $ref: google-mig-health-check-configuration-manifest.yaml
