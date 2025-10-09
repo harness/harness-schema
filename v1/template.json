@@ -41020,6 +41020,953 @@
               }
             } ]
           },
+          "ShellScriptStepNode" : {
+            "title" : "ShellScriptStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for ShellScriptStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "$ref" : "#/definitions/pipeline/common/Timeout"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "shell-script" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "shell-script"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ContainerStepNode" : {
+            "title" : "ContainerStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ContainerStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Container" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Container"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HttpStepNode" : {
+            "title" : "HttpStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for HttpStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "$ref" : "#/definitions/pipeline/common/Timeout"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "http" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "type" : "string",
+                    "internalType" : "conditional_execution"
+                  }
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "http"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "EmailStepNode" : {
+            "title" : "EmailStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for EmailStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "email" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "email"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "WaitStepNode" : {
+            "title" : "WaitStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for WaitStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "wait" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "wait"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "HarnessApprovalStepNode" : {
+            "title" : "HarnessApprovalStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for HarnessApprovalStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "harness-approval" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "harness-approval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "CustomApprovalStepNode" : {
+            "title" : "CustomApprovalStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for CustomApprovalStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "custom-approval" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "custom-approval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "JiraApprovalStepNode" : {
+            "title" : "JiraApprovalStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for JiraApprovalStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "jira-approval" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "jira-approval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ServiceNowApprovalStepNode" : {
+            "title" : "ServiceNowApprovalStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for ServiceNowApprovalStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "service-now-approval" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "service-now-approval"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "JiraCreateStepNode" : {
+            "title" : "JiraCreateStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for JiraCreateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "jira-create" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "jira-create"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "JiraUpdateStepNode" : {
+            "title" : "JiraUpdateStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for JiraUpdateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "jira-update" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "jira-update"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "BarrierStepNode" : {
+            "title" : "BarrierStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "description" : "This is the description for BarrierStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "barrier" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "barrier"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "PolicyStepNode" : {
+            "title" : "PolicyStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for PolicyStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "policy" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "policy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ServiceNowCreateStepNode" : {
+            "title" : "ServiceNowCreateStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for ServiceNowCreateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "service-now-create" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "service-now-create"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ServiceNowUpdateStepNode" : {
+            "title" : "ServiceNowUpdateStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for ServiceNowUpdateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "service-now-update" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "service-now-update"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ServiceNowImportSetStepNode" : {
+            "title" : "ServiceNowImportSetStepNode",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "desc" : {
+                "type" : "string",
+                "desc" : "This is the description for ServiceNowImportSetStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failure" : {
+                "$ref" : "#/definitions/pipeline/common/FailureList"
+              },
+              "id" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "description" : "The stage execution strategy.",
+                "$ref" : "#/definitions/pipeline/common/Strategy"
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "service-now-import-set" ]
+              },
+              "when" : {
+                "description" : "The stage conditional logic.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "service-now-import-set"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "CdSscaOrchestrationStepNode" : {
             "title" : "CdSscaOrchestrationStepNode",
             "type" : "object",
@@ -41678,953 +42625,6 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestationSpec"
-          },
-          "HttpStepNode" : {
-            "title" : "HttpStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for HttpStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "$ref" : "#/definitions/pipeline/common/Timeout"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "http" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string",
-                "metadata" : {
-                  "inputProperties" : {
-                    "type" : "string",
-                    "internalType" : "conditional_execution"
-                  }
-                }
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "http"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/HttpStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "EmailStepNode" : {
-            "title" : "EmailStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "description" : "This is the description for EmailStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "email" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "email"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/EmailStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ShellScriptStepNode" : {
-            "title" : "ShellScriptStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "description" : "This is the description for ShellScriptStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "$ref" : "#/definitions/pipeline/common/Timeout"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "shell-script" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "shell-script"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "CustomApprovalStepNode" : {
-            "title" : "CustomApprovalStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for CustomApprovalStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "custom-approval" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "custom-approval"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "JiraCreateStepNode" : {
-            "title" : "JiraCreateStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for JiraCreateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "jira-create" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "jira-create"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "JiraUpdateStepNode" : {
-            "title" : "JiraUpdateStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for JiraUpdateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "jira-update" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "jira-update"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ServiceNowApprovalStepNode" : {
-            "title" : "ServiceNowApprovalStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for ServiceNowApprovalStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "service-now-approval" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "service-now-approval"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "JiraApprovalStepNode" : {
-            "title" : "JiraApprovalStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for JiraApprovalStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "jira-approval" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "jira-approval"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "HarnessApprovalStepNode" : {
-            "title" : "HarnessApprovalStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for HarnessApprovalStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "harness-approval" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "harness-approval"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "BarrierStepNode" : {
-            "title" : "BarrierStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "description" : "This is the description for BarrierStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "barrier" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "barrier"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ServiceNowCreateStepNode" : {
-            "title" : "ServiceNowCreateStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for ServiceNowCreateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "service-now-create" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "service-now-create"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ServiceNowUpdateStepNode" : {
-            "title" : "ServiceNowUpdateStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for ServiceNowUpdateStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "service-now-update" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "service-now-update"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ServiceNowImportSetStepNode" : {
-            "title" : "ServiceNowImportSetStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for ServiceNowImportSetStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "service-now-import-set" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "service-now-import-set"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "PolicyStepNode" : {
-            "title" : "PolicyStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for PolicyStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+.+>.*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "policy" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "policy"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "WaitStepNode" : {
-            "title" : "WaitStepNode",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "desc" : {
-                "type" : "string",
-                "desc" : "This is the description for WaitStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failure" : {
-                "$ref" : "#/definitions/pipeline/common/FailureList"
-              },
-              "id" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "wait" ]
-              },
-              "when" : {
-                "description" : "The stage conditional logic.",
-                "type" : "string"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "wait"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/WaitStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "ContainerStepNode" : {
-            "title" : "ContainerStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for ContainerStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Container" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Container"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepInfo"
-                  }
-                }
-              }
-            } ]
           },
           "TemplateLinkConfig" : {
             "title" : "TemplateLinkConfig",
@@ -74595,6 +74595,38 @@
                   "$ref" : "#/definitions/pipeline/steps/iacm/IACMAnsiblePluginStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/QueueStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/HttpStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/EmailStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/CustomApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowApprovalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/JiraUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/BarrierStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
                 } ]
               },
               "description" : {
