@@ -21461,6 +21461,9 @@
                 "tag" : {
                   "type" : "string"
                 },
+                "migrationType" : {
+                  "type" : "string"
+                },
                 "delegateSelectors" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -21485,6 +21488,12 @@
                 },
                 "image" : {
                   "type" : "string"
+                },
+                "globalSettings" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
                 },
                 "imagePullPolicy" : {
                   "oneOf" : [ {
@@ -21518,93 +21527,13 @@
                   }, {
                     "type" : "string"
                   } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for DBApplySchemaStepInfo"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "connectorRef", "dbSchema", "dbInstance" ],
-            "properties" : {
-              "dbInstance" : {
-                "type" : "string"
-              },
-              "dbSchema" : {
-                "type" : "string"
-              },
-              "globalSettings" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "tag" : {
-                "type" : "string"
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "envVariables" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "markNextChangeSetRun" : {
-                "type" : "boolean"
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for DBApplySchemaStepInfo"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "DBRollbackSchemaStepNode" : {
             "title" : "DBRollbackSchemaStepNode",
@@ -21690,22 +21619,14 @@
             }, {
               "type" : "object",
               "required" : [ "connectorRef", "dbInstance", "dbSchema" ],
-              "oneOf" : [ {
-                "required" : [ "tag" ],
-                "not" : {
-                  "required" : [ "changeSetCount" ]
-                }
-              }, {
-                "required" : [ "changeSetCount" ],
-                "not" : {
-                  "required" : [ "tag" ]
-                }
-              } ],
               "properties" : {
                 "dbInstance" : {
                   "type" : "string"
                 },
                 "dbSchema" : {
+                  "type" : "string"
+                },
+                "migrationType" : {
                   "type" : "string"
                 },
                 "connectorRef" : {
@@ -21789,107 +21710,13 @@
                   }, {
                     "type" : "string"
                   } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for DBRollbackSchemaStepInfo"
                 }
               }
             } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "connectorRef", "dbInstance", "dbSchema" ],
-            "oneOf" : [ {
-              "required" : [ "tag" ],
-              "not" : {
-                "required" : [ "changeSetCount" ]
-              }
-            }, {
-              "required" : [ "changeSetCount" ],
-              "not" : {
-                "required" : [ "tag" ]
-              }
-            } ],
-            "properties" : {
-              "dbInstance" : {
-                "type" : "string"
-              },
-              "dbSchema" : {
-                "type" : "string"
-              },
-              "connectorRef" : {
-                "type" : "string"
-              },
-              "tag" : {
-                "type" : "string",
-                "minLength" : 1
-              },
-              "changeSetCount" : {
-                "type" : "integer",
-                "minimum" : 1
-              },
-              "settings" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "delegateSelectors" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "envVariables" : {
-                "oneOf" : [ {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "image" : {
-                "type" : "string"
-              },
-              "imagePullPolicy" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Always", "Never", "IfNotPresent" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "privileged" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "resources" : {
-                "$ref" : "#/definitions/pipeline/common/ContainerResource"
-              },
-              "runAsUser" : {
-                "oneOf" : [ {
-                  "type" : "integer",
-                  "format" : "int32"
-                }, {
-                  "type" : "string"
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for DBRollbackSchemaStepInfo"
-              }
-            }
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "LiquibaseCommandStepNode" : {
             "title" : "LiquibaseCommandStepNode",

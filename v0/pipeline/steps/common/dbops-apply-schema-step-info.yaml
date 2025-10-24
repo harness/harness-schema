@@ -15,6 +15,8 @@ allOf:
       type: string
     tag:
       type: string
+    migrationType:
+      type: string
     delegateSelectors:
       oneOf:
       - type: array
@@ -31,6 +33,10 @@ allOf:
       - type: string
     image:
       type: string
+    globalSettings:
+      type: object
+      additionalProperties:
+        type: string
     imagePullPolicy:
       oneOf:
       - type: string
@@ -56,65 +62,6 @@ allOf:
       - type: integer
         format: int32
       - type: string
+    description:
+      desc: This is the description for DBApplySchemaStepInfo
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-- connectorRef
-- dbSchema
-- dbInstance
-properties:
-  dbInstance:
-      type: string
-  dbSchema:
-    type: string
-  globalSettings:
-    type: object
-    additionalProperties:
-      type: string
-  connectorRef:
-    type: string
-  tag:
-    type: string
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  envVariables:
-    oneOf:
-    - type: object
-      additionalProperties:
-        type: string
-    - type: string
-  image:
-    type: string
-  imagePullPolicy:
-    oneOf:
-    - type: string
-      enum:
-      - Always
-      - Never
-      - IfNotPresent
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  privileged:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      minLength: 1
-  markNextChangeSetRun:
-      type: boolean
-  resources:
-    $ref: ../../common/container-resource.yaml
-  runAsUser:
-    oneOf:
-    - type: integer
-      format: int32
-    - type: string
-  description:
-    desc: This is the description for DBApplySchemaStepInfo
