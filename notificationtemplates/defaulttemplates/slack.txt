@@ -1,0 +1,32 @@
+{
+    "text" : "*Pipeline <<+pipeline.execution.url>|<+pipeline.identifier>> <<+pipeline.execution.url>|${NODE_STATUS}>*\n",
+    "attachments" : [
+        {
+          "color" : "<+notification.themeColor>",
+          "blocks" : [
+            {
+              "type" : "section",
+              "text" : {
+                "type" : "mrkdwn",
+                "text": "*Pipeline:* <<+pipeline.execution.url>|<+pipeline.identifier>>\n*Triggered by:* <+pipeline.triggeredBy.email>\n _Started<!date^<+pipeline.startTs>^ {date_short_pretty} at {time}| <+notification.startDate>> and <+notification.eventType> at <!date^<+pipeline.endTs>^{time}|<+notification.endDate>>_. Took <+notification.duration>."
+              }
+            },
+            {
+              "type" : "context",
+              "elements" : [
+                {
+                  "type" : "image",
+                  "image_url" :
+                      "https://s3.amazonaws.com/wings-assets/slackicons/<+notification.imageStatus>.png",
+                  "alt_text" : "${NODE_STATUS}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*<<+pipeline.execution.url>|Open Execution>*"
+                },
+              ]
+            }
+          ]
+        }
+    ]
+}
