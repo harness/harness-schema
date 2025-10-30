@@ -240,6 +240,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GitOpsRolloutStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/TasAppResizeStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/TasBGAppSetupStepNode_template"
@@ -19145,6 +19147,16 @@
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
+              },
+              "autoPromoteRolloutBehavior" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "promote-full", "resume" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -19275,6 +19287,95 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "GitOpsRolloutStepNode_template" : {
+            "title" : "GitOpsRolloutStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GitOpsRollout" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GitOpsRollout"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GitOpsRolloutStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GitOpsRolloutStepInfo" : {
+            "title" : "GitOpsRolloutStepInfo",
+            "type" : "object",
+            "required" : [ "agentIdentifier", "appName", "namespace", "rolloutName" ],
+            "properties" : {
+              "agentIdentifier" : {
+                "type" : "string"
+              },
+              "appName" : {
+                "type" : "string"
+              },
+              "namespace" : {
+                "type" : "string"
+              },
+              "rolloutName" : {
+                "type" : "string"
+              },
+              "autoPromoteRolloutBehavior" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "$ref" : "#/definitions/pipeline/common/StepSpecType"
           },
           "TasAppResizeStepNode_template" : {
             "title" : "TasAppResizeStepNode_template",
@@ -30338,6 +30439,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/SyncStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GitOpsRolloutStepNode" : {
+            "title" : "GitOpsRolloutStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for GitOpsRolloutStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GitOpsRollout" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GitOpsRollout"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GitOpsRolloutStepInfo"
                   }
                 }
               }
@@ -85074,6 +85252,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/AsgCanaryDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SyncStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GitOpsRolloutStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/RevertPRStepNode"
                 }, {
