@@ -1,0 +1,44 @@
+title: FmeFlagCreateStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - trafficType
+  - name
+  properties:
+    trafficType:
+      type: string
+      pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      description: "FME Traffic Type name (case-sensitive)"
+    name:
+      type: string
+      pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      minLength: 1
+      maxLength: 100
+      description: "Feature flag name"
+    description:
+      type: string
+      pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      desc: "Feature flag description"
+    owners:
+      oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      description: "Feature flag owners"
+    tags:
+      oneOf:
+        - type: array
+          items:
+            type: string
+            pattern: ^([a-zA-Z0-9-_]+)$
+            maxItems: 20
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      description: "Feature flag tags"
+    addDefaultRolloutPlans:
+      type: boolean
+      description: "Creates all feature flag definitions in default state (\"off\")"
+$schema: http://json-schema.org/draft-07/schema#
