@@ -1,0 +1,43 @@
+title: FmeFlagUpdateStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    minProperties: 2
+    required:
+      - trafficType
+      - name
+    properties:
+      name:
+        desc: "Feature flag name"
+        type: string
+        oneOf:
+          - pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
+            minLength: 1
+            maxLength: 100
+          - pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      description:
+        desc: "Feature flag description"
+        type: string
+        minLength: 1
+      rolloutStatus:
+        desc: "Feature flag rollout status"
+        type: string
+      owners:
+        desc: "Feature flag owners"
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      tags:
+        desc: "Feature flag tags"
+        oneOf:
+          - type: array
+            maxItems: 20
+            items:
+              type: string
+              pattern: ^([a-zA-Z0-9-_]+)$
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+$schema: http://json-schema.org/draft-07/schema#
