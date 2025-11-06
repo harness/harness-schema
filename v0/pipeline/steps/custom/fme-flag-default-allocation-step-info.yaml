@@ -1,0 +1,38 @@
+title: FmeFlagDefaultAllocationStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    minProperties: 2
+    required:
+      - name
+      - environmentId
+      - allocations
+    properties:
+      name:
+        desc: "Feature flag name"
+        type: string
+        oneOf:
+          - pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
+            minLength: 1
+            maxLength: 100
+          - pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      environmentId:
+        desc: "Environment ID"
+        type: string
+        minLength: 1
+      allocations:
+        desc: "Feature flag allocations"
+        type: array
+        items:
+          type: object
+          required:
+            - treatment
+            - amount
+          properties:
+            treatment:
+              type: string
+            amount:
+              type: integer
+              maximum: 100
+              minimum: 0
+$schema: http://json-schema.org/draft-07/schema#
