@@ -1,0 +1,42 @@
+title: FmeFlagAddTargetsInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    minProperties: 2
+    required:
+      - name
+      - environment
+      - treatments
+    properties:
+      name:
+        desc: "Feature flag name"
+        type: string
+        oneOf:
+          - pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
+            minLength: 1
+            maxLength: 100
+          - pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      environment:
+        desc: "FME Environment name"
+        type: string
+        minLength: 1
+      treatments:
+        desc: "List of treatments to add individual targets to"
+        type: array
+        items:
+          type: object
+          required:
+            - treatment
+          properties:
+            treatment:
+              type: string
+            ids:
+              type: array
+              items: string
+            groups:
+              type: array
+              items: string
+      replace:
+        desc: "Whether to replace the list of individual targets (true) or append (false). Default is false (append)."
+        type: boolean
+$schema: http://json-schema.org/draft-07/schema#
