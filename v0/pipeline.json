@@ -5544,6 +5544,524 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagCreateStepNode" : {
+            "title" : "FmeFlagCreateStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagCreateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagCreate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagCreate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagCreateStepInfo" : {
+            "title" : "FmeFlagCreateStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "trafficType", "name" ],
+              "properties" : {
+                "trafficType" : {
+                  "type" : "string",
+                  "pattern" : "^(.+?)$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "description" : "FME Traffic Type name (case-sensitive)"
+                },
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1,
+                  "maxLength" : 100,
+                  "description" : "Feature flag name"
+                },
+                "description" : {
+                  "type" : "string",
+                  "pattern" : "^(.+?)$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "desc" : "Feature flag description"
+                },
+                "owners" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ],
+                  "description" : "Feature flag owners"
+                },
+                "tags" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "pattern" : "^([a-zA-Z0-9-_]+)$",
+                      "maxItems" : 20
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ],
+                  "description" : "Feature flag tags"
+                },
+                "addDefaultRolloutPlans" : {
+                  "type" : "boolean",
+                  "description" : "Creates all feature flag definitions in default state (\"off\")"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagRemoveTargetsStepNode" : {
+            "title" : "FmeFlagRemoveTargetsStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagRemoveTargetsStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagRemoveTargets" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFeatureFlagRemoveTargets"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagRemoveTargetsStepInfo" : {
+            "title" : "FmeFlagRemoveTargetsStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "environmentId", "name" ],
+              "properties" : {
+                "name" : {
+                  "type" : "string",
+                  "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1,
+                  "maxLength" : 100,
+                  "description" : "Feature flag name"
+                },
+                "environmentId" : {
+                  "desc" : "Environment ID",
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "targets" : {
+                  "desc" : "Targets to remove",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "required" : [ "treatment" ],
+                    "properties" : {
+                      "treatment" : {
+                        "type" : "string"
+                      },
+                      "ids" : {
+                        "type" : "array",
+                        "items" : "string"
+                      },
+                      "groups" : {
+                        "type" : "array",
+                        "items" : "string"
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagUpdateStepNode" : {
+            "title" : "FmeFlagUpdateStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagUpdateStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagUpdate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagUpdate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagUpdateStepInfo" : {
+            "title" : "FmeFlagUpdateStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "minProperties" : 2,
+              "required" : [ "trafficType", "name" ],
+              "properties" : {
+                "name" : {
+                  "desc" : "Feature flag name",
+                  "type" : "string",
+                  "oneOf" : [ {
+                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+                    "minLength" : 1,
+                    "maxLength" : 100
+                  }, {
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ]
+                },
+                "description" : {
+                  "desc" : "Feature flag description",
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "rolloutStatus" : {
+                  "desc" : "Feature flag rollout status",
+                  "type" : "string"
+                },
+                "owners" : {
+                  "desc" : "Feature flag owners",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ]
+                },
+                "tags" : {
+                  "desc" : "Feature flag tags",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "maxItems" : 20,
+                    "items" : {
+                      "type" : "string",
+                      "pattern" : "^([a-zA-Z0-9-_]+)$"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagDefaultAllocationStepNode" : {
+            "title" : "FmeFlagDefaultAllocationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagDefaultAllocationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFfDefaultAllocation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFeatureFlagDefaultAllocation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagDefaultAllocationStepInfo" : {
+            "title" : "FmeFlagDefaultAllocationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "minProperties" : 2,
+              "required" : [ "name", "environmentId", "allocations" ],
+              "properties" : {
+                "name" : {
+                  "desc" : "Feature flag name",
+                  "type" : "string",
+                  "oneOf" : [ {
+                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+                    "minLength" : 1,
+                    "maxLength" : 100
+                  }, {
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                  } ]
+                },
+                "environmentId" : {
+                  "desc" : "Environment ID",
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "allocations" : {
+                  "desc" : "Feature flag allocations",
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "required" : [ "treatment", "amount" ],
+                    "properties" : {
+                      "treatment" : {
+                        "type" : "string"
+                      },
+                      "amount" : {
+                        "type" : "integer",
+                        "maximum" : 100,
+                        "minimum" : 0
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
         "common" : {
@@ -15370,6 +15888,9 @@
                 },
                 "target" : {
                   "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
                 }
               }
             } ],
@@ -15460,8 +15981,28 @@
               },
               "description" : {
                 "desc" : "This is the description for ShiftLeftStepInfo"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
               }
             }
+          },
+          "STOYamlShiftLeftToolData" : {
+            "title" : "STOYamlShiftLeftToolData",
+            "type" : "object",
+            "required" : [ "target_language" ],
+            "properties" : {
+              "target_language" : {
+                "type" : "string"
+              },
+              "app_name" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for STOYamlShiftLeftToolData"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "SniperStepInfo" : {
             "title" : "SniperStepInfo",
@@ -76278,6 +76819,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
@@ -76337,6 +76880,12 @@
                   "$ref" : "#/definitions/pipeline/steps/common/FlywayCommandStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
                 } ]
               },
               "stepGroup" : {
