@@ -9,13 +9,16 @@ allOf:
     trafficType:
       type: string
       pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      description: "FME Traffic Type name (case-sensitive)"
+      desc: "FME Traffic Type name (case-sensitive)"
     name:
-      type: string
-      pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      minLength: 1
-      maxLength: 100
-      description: "Feature flag name"
+      desc: "Feature flag name"
+      oneOf:
+        - type: string
+          pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
+          minLength: 1
+          maxLength: 100
+        - type: string
+          pattern: (<\+.+>.*)
     description:
       type: string
       pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
@@ -27,7 +30,7 @@ allOf:
             type: string
         - type: string
           pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      description: "Feature flag owners"
+      desc: "Feature flag owners"
     tags:
       oneOf:
         - type: array
@@ -37,7 +40,7 @@ allOf:
             maxItems: 20
         - type: string
           pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      description: "Feature flag tags"
+      desc: "Feature flag tags"
     addDefaultRolloutPlans:
       type: boolean
       description: "Creates all feature flag definitions in default state (\"off\")"
