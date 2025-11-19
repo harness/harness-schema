@@ -1,0 +1,150 @@
+title: GoogleMigBlueGreenDeployStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - backendServiceV1
+    properties:
+      connectorRef:
+        type: string
+      delegateSelectors:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      backendServiceV1:
+        type: object
+        properties:
+          backendServiceName:
+            type: string
+          migName:
+            type: string
+        required:
+          - backendServiceName
+          - migName
+      backendServiceV2:
+        type: object
+        description: "Optional backend service V2 configuration. If not provided, will be created during deployment."
+        properties:
+          backendServiceName:
+            type: string
+          migName:
+            type: string
+        required:
+          - backendServiceName
+          - migName
+      trafficConfig:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - CSM
+        required:
+          - type
+        allOf:
+          - if:
+              properties:
+                type:
+                  const: CSM
+            then:
+              properties:
+                spec:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - GRPCRoute
+                    route:
+                      type: string
+                  required:
+                    - type
+                    - route
+              required:
+                - spec
+      targetSize:
+        oneOf:
+          - type: integer
+            format: int32
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  connectorRef:
+    type: string
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  backendServiceV1:
+    type: object
+    properties:
+      backendServiceName:
+        type: string
+      migName:
+        type: string
+    required:
+      - backendServiceName
+      - migName
+  backendServiceV2:
+    type: object
+    properties:
+      backendServiceName:
+        type: string
+      migName:
+        type: string
+    required:
+      - backendServiceName
+      - migName
+  trafficConfig:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - CSM
+    required:
+      - type
+    allOf:
+      - if:
+          properties:
+            type:
+              const: CSM
+        then:
+          properties:
+            spec:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - GRPCRoute
+                    - HTTPRoute
+                    - TCPRoute
+                    - TLSRoute
+                route:
+                  type: string
+              required:
+                - type
+                - route
+          required:
+            - spec
+  targetSize:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  description:
+    desc: This is the description for GoogleMigBlueGreenDeployStepInfo
