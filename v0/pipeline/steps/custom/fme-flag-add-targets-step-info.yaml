@@ -9,35 +9,34 @@ allOf:
       - treatments
     properties:
       name:
-        desc: "Feature flag name"
         oneOf:
-          - type: string
-            pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
-            minLength: 1
-            maxLength: 100
-          - type: string
-            pattern: (<\+.+>.*)
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
       environment:
-        desc: "FME Environment name"
-        type: string
-        minLength: 1
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
       treatments:
-        desc: "List of treatments to add individual targets to"
-        type: array
-        items:
-          type: object
-          required:
-            - treatment
-          properties:
-            treatment:
-              type: string
-            ids:
-              type: array
-              items: string
-            groups:
-              type: array
-              items: string
+        description: "List of treatments to add individual targets to"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+              properties:
+                treatment:
+                  type: string
+                ids:
+                  type: array
+                  items: string
+                groups:
+                  type: array
+                  items: string
+          - $ref: ../common/common-jexl.yaml
       replace:
-        desc: "Whether to replace the list of individual targets (true) or append (false). Default is false (append)."
-        type: boolean
+        description: "Whether to replace the list of individual targets (true) or append (false). Default is false (append)."
+        oneOf:
+          - type: boolean
+          - $ref: ../common/common-jexl.yaml
 $schema: http://json-schema.org/draft-07/schema#

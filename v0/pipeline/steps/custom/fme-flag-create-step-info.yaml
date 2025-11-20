@@ -1,50 +1,44 @@
 title: FmeFlagCreateStepInfo
 allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  required:
-  - trafficType
-  - name
-  properties:
-    trafficType:
-      type: string
-      pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      desc: "FME Traffic Type name (case-sensitive)"
-    name:
-      desc: "Feature flag name"
-      oneOf:
-        - type: string
-          pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
-          minLength: 1
-          maxLength: 100
-        - type: string
-          pattern: (<\+.+>.*)
-    description:
-      type: string
-      pattern: ^(.+?)$|^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      desc: "Feature flag description"
-    owners:
-      oneOf:
-        - type: array
-          items:
-            type: string
-        - type: string
-          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      desc: "Feature flag owners"
-    tags:
-      oneOf:
-        - type: array
-          items:
-            type: string
-            pattern: ^([a-zA-Z0-9-_]+)$
-            maxItems: 20
-        - type: string
-          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      desc: "Feature flag tags"
-    addDefaultRolloutPlans:
-      oneOf:
-        - type: boolean
-        - type: string
-          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      description: "Creates all feature flag definitions in default state (\"off\")"
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+    - trafficType
+    - name
+    properties:
+      trafficType:
+        oneOf:
+          - type: string
+            description: "FME Traffic Type name (case-sensitive)"
+          - $ref: ../common/common-jexl.yaml
+      name:
+          oneOf:
+            - $ref: ../common/fme-flag-common-flag-name.yaml
+            - $ref: ../common/common-jexl.yaml
+      description:
+        oneOf:
+          - type: string
+            description: "Feature flag description"
+          - $ref: ../common/common-jexl.yaml
+      owners:
+        description: "Feature flag owners"
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - $ref: ../common/common-jexl.yaml
+      tags:
+        description: "Feature flag tags"
+        oneOf:
+          - type: array
+            items:
+              type: string
+              pattern: ^([a-zA-Z0-9-_]+)$
+              maxItems: 20
+          - $ref: ../common/common-jexl.yaml
+      addDefaultRolloutPlans:
+        oneOf:
+          - type: boolean
+          - $ref: ../common/common-jexl.yaml
+        description: "Creates all feature flag definitions in default state (\"off\")"
 $schema: http://json-schema.org/draft-07/schema#

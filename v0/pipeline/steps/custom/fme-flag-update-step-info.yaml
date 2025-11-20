@@ -6,37 +6,33 @@ allOf:
       - name
     properties:
       name:
-        desc: "Feature flag name"
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      description:
         oneOf:
           - type: string
-            pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
-            minLength: 1
-            maxLength: 100
-          - type: string
-            pattern: (<\+.+>.*)
-      description:
-        desc: "Feature flag description"
-        type: string
-        minLength: 1
+            description: "Feature flag description"
+          - $ref: ../common/common-jexl.yaml
       rolloutStatus:
-        desc: "Feature flag rollout status"
-        type: string
+        description: "Feature flag rollout status"
+        oneOf:
+          - type: string
+          - $ref: ../common/common-jexl.yaml
       owners:
-        desc: "Feature flag owners"
+        description: "Feature flag owners"
         oneOf:
           - type: array
             items:
               type: string
-          - type: string
-            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          - $ref: ../common/common-jexl.yaml
       tags:
-        desc: "Feature flag tags"
+        description: "Feature flag tags"
         oneOf:
           - type: array
-            maxItems: 20
             items:
               type: string
               pattern: ^([a-zA-Z0-9-_]+)$
-          - type: string
-            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+              maxItems: 20
+          - $ref: ../common/common-jexl.yaml
 $schema: http://json-schema.org/draft-07/schema#

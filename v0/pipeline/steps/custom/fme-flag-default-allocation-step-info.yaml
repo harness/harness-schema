@@ -9,31 +9,28 @@ allOf:
       - allocation
     properties:
       name:
-        desc: "Feature flag name"
         oneOf:
-          - type: string
-            pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
-            minLength: 1
-            maxLength: 100
-          - type: string
-            pattern: (<\+.+>.*)
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
       environment:
-        desc: "Environment"
-        type: string
-        minLength: 1
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
       allocation:
-        desc: "Feature flag allocation"
-        type: array
-        items:
-          type: object
-          required:
-            - treatment
-            - amount
-          properties:
-            treatment:
-              type: string
-            amount:
-              type: integer
-              maximum: 100
-              minimum: 0
+        description: "Feature flag allocation"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+                - amount
+              properties:
+                treatment:
+                  type: string
+                amount:
+                  type: integer
+                  maximum: 100
+                  minimum: 0
+          - $ref: ../common/common-jexl.yaml
 $schema: http://json-schema.org/draft-07/schema#

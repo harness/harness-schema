@@ -1,38 +1,35 @@
 title: FmeFlagRemoveTargetsStepInfo
 allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  required:
-  - environment
-  - name
-  properties:
-    name:
-      desc: "Feature flag name"
-      oneOf:
-          - type: string
-            pattern: ^[a-zA-Z][-_a-zA-Z0-9]*$
-            minLength: 1
-            maxLength: 100
-          - type: string
-            pattern: (<\+.+>.*)
-    environment:
-        desc: "Environment"
-        type: string
-        minLength: 1
-    treatments:
-        desc: "Treatments to remove"
-        type: array
-        items:
-          type: object
-          required:
-            - treatment
-          properties:
-            treatment:
-              type: string
-            ids:
-              type: array
-              items: string
-            groups:
-              type: array
-              items: string
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+    - environment
+    - name
+    properties:
+      name:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "Treatments to remove"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+              properties:
+                treatment:
+                  type: string
+                ids:
+                  type: array
+                  items: string
+                groups:
+                  type: array
+                  items: string
+          - $ref: ../common/common-jexl.yaml
 $schema: http://json-schema.org/draft-07/schema#
