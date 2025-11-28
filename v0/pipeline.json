@@ -5631,40 +5631,41 @@
               "required" : [ "trafficType", "name" ],
               "properties" : {
                 "trafficType" : {
-                  "type" : "string",
-                  "pattern" : "^(.+?)$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                  "desc" : "FME Traffic Type name (case-sensitive)"
-                },
-                "name" : {
-                  "desc" : "Feature flag name",
                   "oneOf" : [ {
                     "type" : "string",
-                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-                    "minLength" : 1,
-                    "maxLength" : 100
+                    "description" : "FME Traffic Type name (case-sensitive)"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "description" : {
-                  "type" : "string",
-                  "pattern" : "^(.+?)$|^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                  "desc" : "Feature flag description"
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "description" : "Feature flag description"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "owners" : {
+                  "description" : "Feature flag owners",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
                       "type" : "string"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
-                  } ],
-                  "desc" : "Feature flag owners"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "tags" : {
+                  "description" : "Feature flag tags",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -5673,17 +5674,14 @@
                       "maxItems" : 20
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
-                  } ],
-                  "desc" : "Feature flag tags"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "addDefaultRolloutPlans" : {
                   "oneOf" : [ {
                     "type" : "boolean"
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ],
                   "description" : "Creates all feature flag definitions in default state (\"off\")"
                 }
@@ -5777,42 +5775,43 @@
               "required" : [ "environment", "name" ],
               "properties" : {
                 "name" : {
-                  "desc" : "Feature flag name",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-                    "minLength" : 1,
-                    "maxLength" : 100
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "environment" : {
-                  "desc" : "Environment",
-                  "type" : "string",
-                  "minLength" : 1
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "treatments" : {
-                  "desc" : "Treatments to remove",
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "required" : [ "treatment" ],
-                    "properties" : {
-                      "treatment" : {
-                        "type" : "string"
-                      },
-                      "ids" : {
-                        "type" : "array",
-                        "items" : "string"
-                      },
-                      "groups" : {
-                        "type" : "array",
-                        "items" : "string"
+                  "description" : "Treatments to remove",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "ids" : {
+                          "type" : "array",
+                          "items" : "string"
+                        },
+                        "groups" : {
+                          "type" : "array",
+                          "items" : "string"
+                        }
                       }
                     }
-                  }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -5904,50 +5903,50 @@
               "required" : [ "name" ],
               "properties" : {
                 "name" : {
-                  "desc" : "Feature flag name",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-                    "minLength" : 1,
-                    "maxLength" : 100
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "description" : {
-                  "desc" : "Feature flag description",
-                  "type" : "string",
-                  "minLength" : 1
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "description" : "Feature flag description"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "rolloutStatus" : {
-                  "desc" : "Feature flag rollout status",
-                  "type" : "string"
+                  "description" : "Feature flag rollout status",
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "owners" : {
-                  "desc" : "Feature flag owners",
+                  "description" : "Feature flag owners",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
                       "type" : "string"
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "tags" : {
-                  "desc" : "Feature flag tags",
+                  "description" : "Feature flag tags",
                   "oneOf" : [ {
                     "type" : "array",
-                    "maxItems" : 20,
                     "items" : {
                       "type" : "string",
-                      "pattern" : "^([a-zA-Z0-9-_]+)$"
+                      "pattern" : "^([a-zA-Z0-9-_]+)$",
+                      "maxItems" : 20
                     }
                   }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 }
               }
@@ -6041,39 +6040,40 @@
               "required" : [ "name", "environment", "allocation" ],
               "properties" : {
                 "name" : {
-                  "desc" : "Feature flag name",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-                    "minLength" : 1,
-                    "maxLength" : 100
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "environment" : {
-                  "desc" : "Environment",
-                  "type" : "string",
-                  "minLength" : 1
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "allocation" : {
-                  "desc" : "Feature flag allocation",
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "required" : [ "treatment", "amount" ],
-                    "properties" : {
-                      "treatment" : {
-                        "type" : "string"
-                      },
-                      "amount" : {
-                        "type" : "integer",
-                        "maximum" : 100,
-                        "minimum" : 0
+                  "description" : "Feature flag allocation",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment", "amount" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "amount" : {
+                          "type" : "integer",
+                          "maximum" : 100,
+                          "minimum" : 0
+                        }
                       }
                     }
-                  }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -6166,46 +6166,154 @@
               "required" : [ "name", "environment", "treatments" ],
               "properties" : {
                 "name" : {
-                  "desc" : "Feature flag name",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-                    "minLength" : 1,
-                    "maxLength" : 100
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
                   }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)"
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
                 "environment" : {
-                  "desc" : "FME Environment name",
-                  "type" : "string",
-                  "minLength" : 1
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "treatments" : {
-                  "desc" : "List of treatments to add individual targets to",
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "required" : [ "treatment" ],
-                    "properties" : {
-                      "treatment" : {
-                        "type" : "string"
-                      },
-                      "ids" : {
-                        "type" : "array",
-                        "items" : "string"
-                      },
-                      "groups" : {
-                        "type" : "array",
-                        "items" : "string"
+                  "description" : "List of treatments to add individual targets to",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "ids" : {
+                          "type" : "array",
+                          "items" : "string"
+                        },
+                        "groups" : {
+                          "type" : "array",
+                          "items" : "string"
+                        }
                       }
                     }
-                  }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 },
                 "replace" : {
-                  "desc" : "Whether to replace the list of individual targets (true) or append (false). Default is false (append).",
-                  "type" : "boolean"
+                  "description" : "Whether to replace the list of individual targets (true) or append (false). Default is false (append).",
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagKillStepNode" : {
+            "title" : "FmeFlagKillStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagKillStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagKill" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagKill"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagKillStepInfo" : {
+            "title" : "FmeFlagKillStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -16141,7 +16249,6 @@
           "STOYamlShiftLeftToolData" : {
             "title" : "STOYamlShiftLeftToolData",
             "type" : "object",
-            "required" : [ "target_language" ],
             "properties" : {
               "target_language" : {
                 "type" : "string"
@@ -28067,6 +28174,534 @@
               }
             }
           },
+          "SastScanNode" : {
+            "title" : "SastScanNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SastScanNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SASTSecret" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SASTSecret"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SastStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SastStepInfo" : {
+            "title" : "SastStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "config", "mode", "target" ],
+              "properties" : {
+                "advanced" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "config" : {
+                  "type" : "string",
+                  "enum" : [ "default" ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "imageTag" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+                },
+                "mode" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "ingestion", "orchestration", "extraction" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "outputVariables" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "target" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "config", "mode", "target" ],
+            "properties" : {
+              "advanced" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "config" : {
+                "type" : "string",
+                "enum" : [ "default" ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "imageTag" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+              },
+              "mode" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "ingestion", "orchestration", "extraction" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "outputVariables" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "target" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+              },
+              "description" : {
+                "desc" : "This is the description for SastStepInfo"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
+              }
+            }
+          },
+          "ScaScanNode" : {
+            "title" : "ScaScanNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ScaScanNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SCA" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SCA"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ScaStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ScaStepInfo" : {
+            "title" : "ScaStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "config", "mode", "target" ],
+              "properties" : {
+                "advanced" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "config" : {
+                  "type" : "string",
+                  "enum" : [ "default" ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "imageTag" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "ingestion" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+                },
+                "mode" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "ingestion", "orchestration", "extraction" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "outputVariables" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "target" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+                },
+                "tool" : {
+                  "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "config", "mode", "target" ],
+            "properties" : {
+              "advanced" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlAdvancedSettings"
+              },
+              "baseImageConnectorRefs" : {
+                "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+              },
+              "config" : {
+                "type" : "string",
+                "enum" : [ "default" ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "imageTag" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "ingestion" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlIngestion"
+              },
+              "mode" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "ingestion", "orchestration", "extraction" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "outputVariables" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "settings" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "target" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlTarget"
+              },
+              "description" : {
+                "desc" : "This is the description for ScaStepInfo"
+              },
+              "tool" : {
+                "$ref" : "#/definitions/pipeline/steps/common/STOYamlShiftLeftToolData"
+              }
+            }
+          },
           "ProvenanceStepNode" : {
             "title" : "ProvenanceStepNode",
             "type" : "object",
@@ -28491,6 +29126,27 @@
                 "desc" : "Harness Artifact Registry source spec"
               }
             }
+          },
+          "common-jexl" : {
+            "title" : "common-jexl",
+            "type" : "string",
+            "pattern" : "(<\\+.+>.*)"
+          },
+          "fme-flag-common-flag-name" : {
+            "title" : "fme-flag-common-flag-name",
+            "type" : "string",
+            "description" : "Feature flag name",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
+          },
+          "fme-flag-common-environment" : {
+            "title" : "fme-flag-common-environment",
+            "type" : "string",
+            "description" : "FME Environment Name or ID",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
           }
         },
         "ci" : {
@@ -33336,6 +33992,9 @@
               "command" : {
                 "type" : "string"
               },
+              "commandMode" : {
+                "type" : "string"
+              },
               "image" : {
                 "type" : "string"
               },
@@ -33633,6 +34292,9 @@
             "required" : [ "command" ],
             "properties" : {
               "command" : {
+                "type" : "string"
+              },
+              "commandMode" : {
                 "type" : "string"
               },
               "image" : {
@@ -76732,6 +77394,10 @@
                   "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SastScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ScaScanNode"
                 } ]
               },
               "description" : {
@@ -77272,6 +77938,10 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SastScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/ScaScanNode"
                 } ]
               },
               "stepGroup" : {
@@ -78514,6 +79184,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode"
                 } ]
               },
               "stepGroup" : {

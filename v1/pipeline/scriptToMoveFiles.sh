@@ -131,6 +131,8 @@ file_list=(
   "wiz-scan-node.yaml"
   "modelscan-scan-node.yaml"
   "traceable-scan-node.yaml"
+  "sast-scan-node.yaml"
+  "sca-scan-node.yaml"
   )
 
 newFileInfoList=(
@@ -172,6 +174,8 @@ newFileInfoList=(
   "wiz-step-info.yaml"
   "modelscan-step-info.yaml"
   "traceable-step-info.yaml"
+  "sast-step-info.yaml"
+  "sca-step-info.yaml"
 )
 
 

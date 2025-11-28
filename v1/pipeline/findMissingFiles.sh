@@ -53,6 +53,8 @@ list1=(
   "wiz-scan-node.yaml"
   "modelscan-scan-node.yaml"
   "traceable-scan-node.yaml"
+  "sast-scan-node.yaml"
+  "sca-scan-node.yaml"
 )
 
 
@@ -225,6 +227,8 @@ list2=(
   "modelscan-scan-node.yaml"
   "gitops-get-app-details-step-node.yaml"
   "traceable-scan-node.yaml"
+  "sast-scan-node.yaml"
+  "sca-scan-node.yaml"
 )
 
 
