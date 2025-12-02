@@ -43814,9 +43814,9 @@
               "required" : [ "trafficType", "name" ],
               "properties" : {
                 "trafficType" : {
+                  "description" : "FME Traffic Type name (case-sensitive)",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "FME Traffic Type name (case-sensitive)"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -43829,9 +43829,9 @@
                   } ]
                 },
                 "description" : {
+                  "description" : "Feature flag description",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "Feature flag description"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -43953,9 +43953,9 @@
                   } ]
                 },
                 "description" : {
+                  "description" : "Feature flag description",
                   "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "Feature flag description"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -43963,7 +43963,7 @@
                 "rolloutStatus" : {
                   "description" : "Feature flag rollout status",
                   "oneOf" : [ {
-                    "type" : "string"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -63059,6 +63059,14 @@
                 }
               }
             } ]
+          },
+          "string-without-jexl" : {
+            "title" : "string-without-jexl",
+            "description" : "A plain string type that explicitly excludes JEXL expressions (e.g., <+input>, <+variable>).\n\nThis is used in oneOf schemas alongside common-jexl to prevent validation conflicts.\nWithout the 'not' constraint, both schemas would match JEXL expressions since both are \ntype: string, causing oneOf validation to fail (oneOf requires exactly one match).\n\nThe 'not' pattern ensures mutual exclusivity:\n- This schema matches: plain strings that don't start with <+\n- common-jexl matches: JEXL expressions like <+input>, <+variable>, etc.\n\nUse this when you need a field that accepts either a literal string OR a JEXL expression.\n",
+            "type" : "string",
+            "not" : {
+              "pattern" : "^<\\+.*>.*$"
+            }
           },
           "common-jexl" : {
             "title" : "common-jexl",

@@ -1,0 +1,16 @@
+title: string-without-jexl
+description: |
+  A plain string type that explicitly excludes JEXL expressions (e.g., <+input>, <+variable>).
+  
+  This is used in oneOf schemas alongside common-jexl to prevent validation conflicts.
+  Without the 'not' constraint, both schemas would match JEXL expressions since both are 
+  type: string, causing oneOf validation to fail (oneOf requires exactly one match).
+  
+  The 'not' pattern ensures mutual exclusivity:
+  - This schema matches: plain strings that don't start with <+
+  - common-jexl matches: JEXL expressions like <+input>, <+variable>, etc.
+  
+  Use this when you need a field that accepts either a literal string OR a JEXL expression.
+type: string
+not:
+  pattern: "^<\\+.*>.*$"
