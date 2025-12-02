@@ -490,6 +490,18 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode_template"
@@ -43728,6 +43740,708 @@
               }
             }
           },
+          "FmeFlagCreateStepNode_template" : {
+            "title" : "FmeFlagCreateStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagCreate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagCreate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagCreateStepInfo" : {
+            "title" : "FmeFlagCreateStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "trafficType", "name" ],
+              "properties" : {
+                "trafficType" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "description" : "FME Traffic Type name (case-sensitive)"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "description" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "description" : "Feature flag description"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "owners" : {
+                  "description" : "Feature flag owners",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "tags" : {
+                  "description" : "Feature flag tags",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "pattern" : "^([a-zA-Z0-9-_]+)$",
+                      "maxItems" : 20
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "addDefaultRolloutPlans" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ],
+                  "description" : "Creates all feature flag definitions in default state (\"off\")"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagUpdateStepNode_template" : {
+            "title" : "FmeFlagUpdateStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagUpdate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagUpdate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagUpdateStepInfo" : {
+            "title" : "FmeFlagUpdateStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "description" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "description" : "Feature flag description"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "rolloutStatus" : {
+                  "description" : "Feature flag rollout status",
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "owners" : {
+                  "description" : "Feature flag owners",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "tags" : {
+                  "description" : "Feature flag tags",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "pattern" : "^([a-zA-Z0-9-_]+)$",
+                      "maxItems" : 20
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagAddTargetsNode_template" : {
+            "title" : "FmeFlagAddTargetsNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagAddTargets" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagAddTargets"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagAddTargetsInfo" : {
+            "title" : "FmeFlagAddTargetsInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "minProperties" : 2,
+              "required" : [ "name", "environment", "treatments" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "treatments" : {
+                  "description" : "List of treatments to add individual targets to",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "ids" : {
+                          "type" : "array",
+                          "items" : "string"
+                        },
+                        "groups" : {
+                          "type" : "array",
+                          "items" : "string"
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "replace" : {
+                  "description" : "Whether to replace the list of individual targets (true) or append (false). Default is false (append).",
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagDefaultAllocationStepNode_template" : {
+            "title" : "FmeFlagDefaultAllocationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagDefaultAllocation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagDefaultAllocation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagDefaultAllocationStepInfo" : {
+            "title" : "FmeFlagDefaultAllocationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "minProperties" : 2,
+              "required" : [ "name", "environment", "allocation" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "allocation" : {
+                  "description" : "Feature flag allocation",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment", "amount" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "amount" : {
+                          "type" : "integer",
+                          "maximum" : 100,
+                          "minimum" : 0
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagRemoveTargetsStepNode_template" : {
+            "title" : "FmeFlagRemoveTargetsStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagRemoveTargets" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagRemoveTargets"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagRemoveTargetsStepInfo" : {
+            "title" : "FmeFlagRemoveTargetsStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "environment", "name" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "treatments" : {
+                  "description" : "Treatments to remove",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment" ],
+                      "properties" : {
+                        "treatment" : {
+                          "type" : "string"
+                        },
+                        "ids" : {
+                          "type" : "array",
+                          "items" : "string"
+                        },
+                        "groups" : {
+                          "type" : "array",
+                          "items" : "string"
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagKillStepNode_template" : {
+            "title" : "FmeFlagKillStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagKill" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagKill"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagKillStepInfo" : {
+            "title" : "FmeFlagKillStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "EventListenerStepNode_template" : {
             "title" : "EventListenerStepNode_template",
             "type" : "object",
@@ -45571,73 +46285,6 @@
               }
             } ]
           },
-          "FmeFlagCreateStepInfo" : {
-            "title" : "FmeFlagCreateStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "trafficType", "name" ],
-              "properties" : {
-                "trafficType" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "FME Traffic Type name (case-sensitive)"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "description" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "Feature flag description"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "owners" : {
-                  "description" : "Feature flag owners",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "tags" : {
-                  "description" : "Feature flag tags",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string",
-                      "pattern" : "^([a-zA-Z0-9-_]+)$",
-                      "maxItems" : 20
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "addDefaultRolloutPlans" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ],
-                  "description" : "Creates all feature flag definitions in default state (\"off\")"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagRemoveTargetsStepNode" : {
             "title" : "FmeFlagRemoveTargetsStepNode",
             "type" : "object",
@@ -45714,57 +46361,6 @@
                 }
               }
             } ]
-          },
-          "FmeFlagRemoveTargetsStepInfo" : {
-            "title" : "FmeFlagRemoveTargetsStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "environment", "name" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "environment" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "treatments" : {
-                  "description" : "Treatments to remove",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "object",
-                      "required" : [ "treatment" ],
-                      "properties" : {
-                        "treatment" : {
-                          "type" : "string"
-                        },
-                        "ids" : {
-                          "type" : "array",
-                          "items" : "string"
-                        },
-                        "groups" : {
-                          "type" : "array",
-                          "items" : "string"
-                        }
-                      }
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "FmeFlagUpdateStepNode" : {
             "title" : "FmeFlagUpdateStepNode",
@@ -45843,65 +46439,6 @@
               }
             } ]
           },
-          "FmeFlagUpdateStepInfo" : {
-            "title" : "FmeFlagUpdateStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "name" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "description" : {
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "description" : "Feature flag description"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "rolloutStatus" : {
-                  "description" : "Feature flag rollout status",
-                  "oneOf" : [ {
-                    "type" : "string"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "owners" : {
-                  "description" : "Feature flag owners",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "tags" : {
-                  "description" : "Feature flag tags",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string",
-                      "pattern" : "^([a-zA-Z0-9-_]+)$",
-                      "maxItems" : 20
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagDefaultAllocationStepNode" : {
             "title" : "FmeFlagDefaultAllocationStepNode",
             "type" : "object",
@@ -45978,55 +46515,6 @@
                 }
               }
             } ]
-          },
-          "FmeFlagDefaultAllocationStepInfo" : {
-            "title" : "FmeFlagDefaultAllocationStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "minProperties" : 2,
-              "required" : [ "name", "environment", "allocation" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "environment" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "allocation" : {
-                  "description" : "Feature flag allocation",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "object",
-                      "required" : [ "treatment", "amount" ],
-                      "properties" : {
-                        "treatment" : {
-                          "type" : "string"
-                        },
-                        "amount" : {
-                          "type" : "integer",
-                          "maximum" : 100,
-                          "minimum" : 0
-                        }
-                      }
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "FmeFlagAddTargetsNode" : {
             "title" : "FmeFlagAddTargetsNode",
@@ -46105,66 +46593,6 @@
               }
             } ]
           },
-          "FmeFlagAddTargetsInfo" : {
-            "title" : "FmeFlagAddTargetsInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "minProperties" : 2,
-              "required" : [ "name", "environment", "treatments" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "environment" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "treatments" : {
-                  "description" : "List of treatments to add individual targets to",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "object",
-                      "required" : [ "treatment" ],
-                      "properties" : {
-                        "treatment" : {
-                          "type" : "string"
-                        },
-                        "ids" : {
-                          "type" : "array",
-                          "items" : "string"
-                        },
-                        "groups" : {
-                          "type" : "array",
-                          "items" : "string"
-                        }
-                      }
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "replace" : {
-                  "description" : "Whether to replace the list of individual targets (true) or append (false). Default is false (append).",
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagKillStepNode" : {
             "title" : "FmeFlagKillStepNode",
             "type" : "object",
@@ -46241,32 +46669,6 @@
                 }
               }
             } ]
-          },
-          "FmeFlagKillStepInfo" : {
-            "title" : "FmeFlagKillStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "name", "environment" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "environment" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "VmInfraSpec" : {
             "title" : "VmInfraSpec",
@@ -62658,6 +63060,27 @@
               }
             } ]
           },
+          "common-jexl" : {
+            "title" : "common-jexl",
+            "type" : "string",
+            "pattern" : "(<\\+.+>.*)"
+          },
+          "fme-flag-common-flag-name" : {
+            "title" : "fme-flag-common-flag-name",
+            "type" : "string",
+            "description" : "Feature flag name",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
+          },
+          "fme-flag-common-environment" : {
+            "title" : "fme-flag-common-environment",
+            "type" : "string",
+            "description" : "FME Environment Name or ID",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
+          },
           "AwsCdkBootstrapStepNode_template" : {
             "title" : "AwsCdkBootstrapStepNode_template",
             "type" : "object",
@@ -69192,27 +69615,6 @@
                 }
               }
             } ]
-          },
-          "common-jexl" : {
-            "title" : "common-jexl",
-            "type" : "string",
-            "pattern" : "(<\\+.+>.*)"
-          },
-          "fme-flag-common-flag-name" : {
-            "title" : "fme-flag-common-flag-name",
-            "type" : "string",
-            "description" : "Feature flag name",
-            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-            "minLength" : 1,
-            "maxLength" : 100
-          },
-          "fme-flag-common-environment" : {
-            "title" : "fme-flag-common-environment",
-            "type" : "string",
-            "description" : "FME Environment Name or ID",
-            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-            "minLength" : 1,
-            "maxLength" : 100
           },
           "SscaEnforcementStepNode" : {
             "title" : "SscaEnforcementStepNode",
