@@ -1,0 +1,59 @@
+title: FmeFlagAddRemoveTargetsInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    minProperties: 2
+    required:
+      - name
+      - environment
+      - treatments
+    properties:
+      name:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "List of treatments with targets and segments to add or remove"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+              properties:
+                treatment:
+                  type: string
+                addTargets:
+                  description: "Individual targets to add"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+                removeTargets:
+                  description: "Individual targets to remove"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+                addSegments:
+                  description: "Segments to add"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+                removeSegments:
+                  description: "Segments to remove"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#

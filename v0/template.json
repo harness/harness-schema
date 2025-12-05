@@ -494,11 +494,9 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsNode_template"
-              }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveTargetsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode_template"
               }, {
@@ -43998,131 +43996,6 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeFlagAddTargetsNode_template" : {
-            "title" : "FmeFlagAddTargetsNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FmeFlagAddTargets" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FmeFlagAddTargets"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "FmeFlagAddTargetsInfo" : {
-            "title" : "FmeFlagAddTargetsInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "minProperties" : 2,
-              "required" : [ "name", "environment", "treatments" ],
-              "properties" : {
-                "name" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "environment" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "treatments" : {
-                  "description" : "List of treatments to add individual targets to",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "object",
-                      "required" : [ "treatment" ],
-                      "properties" : {
-                        "treatment" : {
-                          "type" : "string"
-                        },
-                        "ids" : {
-                          "type" : "array",
-                          "items" : "string"
-                        },
-                        "groups" : {
-                          "type" : "array",
-                          "items" : "string"
-                        }
-                      }
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "replace" : {
-                  "description" : "Whether to replace the list of individual targets (true) or append (false). Default is false (append).",
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagDefaultAllocationStepNode_template" : {
             "title" : "FmeFlagDefaultAllocationStepNode_template",
             "type" : "object",
@@ -44237,8 +44110,8 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeFlagRemoveTargetsStepNode_template" : {
-            "title" : "FmeFlagRemoveTargetsStepNode_template",
+          "FmeFlagAddRemoveTargetsStepNode_template" : {
+            "title" : "FmeFlagAddRemoveTargetsStepNode_template",
             "type" : "object",
             "required" : [ "spec", "type" ],
             "properties" : {
@@ -44272,7 +44145,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeFlagRemoveTargets" ]
+                "enum" : [ "FmeFlagAddRemoveTargets" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -44289,26 +44162,27 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeFlagRemoveTargets"
+                    "const" : "FmeFlagAddRemoveTargets"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveTargetsInfo"
                   }
                 }
               }
             } ]
           },
-          "FmeFlagRemoveTargetsStepInfo" : {
-            "title" : "FmeFlagRemoveTargetsStepInfo",
+          "FmeFlagAddRemoveTargetsInfo" : {
+            "title" : "FmeFlagAddRemoveTargetsInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "environment", "name" ],
+              "minProperties" : 2,
+              "required" : [ "name", "environment", "treatments" ],
               "properties" : {
                 "name" : {
                   "oneOf" : [ {
@@ -44325,7 +44199,7 @@
                   } ]
                 },
                 "treatments" : {
-                  "description" : "Treatments to remove",
+                  "description" : "List of treatments with targets and segments to add or remove",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -44335,13 +44209,49 @@
                         "treatment" : {
                           "type" : "string"
                         },
-                        "ids" : {
-                          "type" : "array",
-                          "items" : "string"
+                        "addTargets" : {
+                          "description" : "Individual targets to add",
+                          "oneOf" : [ {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
                         },
-                        "groups" : {
-                          "type" : "array",
-                          "items" : "string"
+                        "removeTargets" : {
+                          "description" : "Individual targets to remove",
+                          "oneOf" : [ {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        },
+                        "addSegments" : {
+                          "description" : "Segments to add",
+                          "oneOf" : [ {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        },
+                        "removeSegments" : {
+                          "description" : "Segments to remove",
+                          "oneOf" : [ {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
                         }
                       }
                     }
@@ -46378,83 +46288,6 @@
               }
             } ]
           },
-          "FmeFlagRemoveTargetsStepNode" : {
-            "title" : "FmeFlagRemoveTargetsStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for FmeFlagRemoveTargetsStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FmeFlagRemoveTargets" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FmeFlagRemoveTargets"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
           "FmeFlagUpdateStepNode" : {
             "title" : "FmeFlagUpdateStepNode",
             "type" : "object",
@@ -46609,14 +46442,14 @@
               }
             } ]
           },
-          "FmeFlagAddTargetsNode" : {
-            "title" : "FmeFlagAddTargetsNode",
+          "FmeFlagAddRemoveTargetsStepNode" : {
+            "title" : "FmeFlagAddRemoveTargetsStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for FmeFlagAddTargetsNode"
+                "desc" : "This is the description for FmeFlagAddRemoveTargetsStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -46656,7 +46489,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeFlagAddTargets" ]
+                "enum" : [ "FmeFlagAddRemoveTargets" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -46673,14 +46506,14 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeFlagAddTargets"
+                    "const" : "FmeFlagAddRemoveTargets"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveTargetsInfo"
                   }
                 }
               }
@@ -96392,13 +96225,11 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveTargetsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode"
                 }, {
@@ -98633,13 +98464,11 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRemoveTargetsStepNode"
-                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddTargetsNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveTargetsStepNode"
                 } ]
               },
               "stepGroup" : {
