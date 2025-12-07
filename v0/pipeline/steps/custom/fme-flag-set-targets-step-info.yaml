@@ -1,0 +1,45 @@
+title: FmeFlagSetTargetsInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    minProperties: 2
+    required:
+      - name
+      - environment
+      - treatments
+    properties:
+      name:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "List of treatments with targets and segments to set"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+              properties:
+                treatment:
+                  type: string
+                targets:
+                  description: "Individual targets to set for this treatment"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+                segments:
+                  description: "Segments to set for this treatment"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
