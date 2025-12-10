@@ -1,0 +1,123 @@
+title: stage
+type: object
+properties:
+  id:
+    type: string
+    description: "Stage identifier"
+  name:
+    type: string
+    description: "Stage name"
+  inputs:
+    type: object
+    description: "Stage input variables"
+    additionalProperties:
+      $ref: "./common/input.yaml"
+  concurrency:
+    $ref: "./common/concurrency.yaml"
+  clone:
+    $ref: "./common/clone.yaml"
+  status:
+    $ref: "./common/status.yaml"
+  strategy:
+    $ref: "./common/strategy.yaml"
+  service:
+    $ref: "./common/service.yaml"
+  environment:
+    $ref: "./common/environment.yaml"
+  runtime:
+    $ref: "./common/runtime.yaml"
+  platform:
+    $ref: "./common/platform.yaml"
+  workspace:
+    $ref: "./common/workspace.yaml"
+  cache:
+    $ref: "./common/cache.yaml"
+  delegate:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    description: "Delegate that should handle stage execution"
+  approval:
+    type: object
+    properties:
+      uses:
+        type: string
+      with:
+        type: object
+    description: "Approval stage configuration"
+  group:
+    type: object
+    properties:
+      parallel:
+        type: number
+      stages:
+        type: array
+        items:
+          $ref: "./stage.yaml"
+    description: "Stage group"
+  parallel:
+    type: object
+    properties:
+      parallel:
+        type: number
+      stages:
+        type: array
+        items:
+          $ref: "./stage.yaml"
+    description: "Parallel stages"
+  template:
+    type: object
+    properties:
+      uses:
+        type: string
+      with:
+        type: object
+    description: "Stage template"
+  steps:
+    type: array
+    items:
+      $ref: "./step.yaml"
+    description: "Stage steps"
+  rollback:
+    $ref: "./step.yaml"
+  if:
+    type: string
+    description: "Conditional execution"
+  disabled:
+    type: boolean
+    description: "Disable this stage"
+  on-failure:
+    $ref: "./common/failure.yaml"
+  volumes:
+    type: array
+    items:
+      $ref: "./common/volume.yaml"
+  env:
+    type: object
+    additionalProperties:
+      type: string
+    description: "Stage environment variables"
+  outputs:
+    type: object
+    description: "Stage outputs"
+  # GitHub compatibility
+  needs:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    description: "Stages that must complete before this stage"
+  runs-on:
+    type: string
+    description: "GitHub Actions runner type"
+  services:
+    type: object
+    description: "Background service containers"
+    additionalProperties:
+      $ref: "./common/container.yaml"
+  permissions:
+    $ref: "./common/permissions.yaml"
+"$schema": http://json-schema.org/draft-07/schema#

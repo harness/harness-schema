@@ -1,0 +1,84 @@
+title: step
+oneOf:
+  # Shortest syntax: just a command string
+  - type: string
+    description: "Shorthand for run step - just the command"
+  # Full step object
+  - type: object
+    properties:
+      id:
+        type: string
+        description: "Step identifier"
+      name:
+        type: string
+        description: "Step name"
+      if:
+        type: string
+        description: "Conditional execution"
+      disabled:
+        type: boolean
+        description: "Disable this step"
+      # Step types - only one should be present
+      run:
+        oneOf:
+          - type: string
+            description: "Short syntax for run step"
+          - $ref: "./steps/step_run.yaml"
+        description: "Run a command or script"
+      action:
+        $ref: "./steps/step_action.yaml"
+      approval:
+        $ref: "./steps/step_approval.yaml"
+      background:
+        $ref: "./steps/step_run.yaml"
+      barrier:
+        $ref: "./steps/step_barrier.yaml"
+      clone:
+        $ref: "./steps/step_clone.yaml"
+      group:
+        $ref: "./steps/step_group.yaml"
+      parallel:
+        $ref: "./steps/step_group.yaml"
+      queue:
+        $ref: "./steps/step_queue.yaml"
+      template:
+        $ref: "./steps/step_template.yaml"
+      run-test:
+        $ref: "./steps/step_test.yaml"
+      # Control flow
+      timeout:
+        type: string
+        pattern: "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(<\\+input>.*)|(.*<\\+.*>.*)|(^$))$"
+        description: "Step timeout duration"
+      needs:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+        description: "Steps that must complete before this step"
+      strategy:
+        $ref: "./common/strategy.yaml"
+      status:
+        $ref: "./common/status.yaml"
+      on-failure:
+        $ref: "./common/failure.yaml"
+      delegate:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      # GitHub compatibility
+      env:
+        type: object
+        additionalProperties:
+          type: string
+        description: "Step environment variables"
+      uses:
+        type: string
+        description: "GitHub action"
+      with:
+        type: object
+        description: "GitHub action parameters"
+"$schema": http://json-schema.org/draft-07/schema#

@@ -1,0 +1,26 @@
+# Multi-stage pipeline with dependencies
+pipeline:
+  stages:
+  - id: build
+    name: Build
+    steps:
+    - run: go build -o app
+    outputs:
+      app_version: ${{ steps.build.outputs.version }}
+  
+  - id: test
+    name: Test
+    needs: build
+    steps:
+    - run: go test ./...
+  
+  - id: deploy
+    name: Deploy
+    needs: [build, test]
+    if: ${{ branch == "main" }}
+    service: myapp
+    environment: production
+    steps:
+    - run: |
+        echo "Deploying version ${{ stages.build.outputs.app_version }}"
+        kubectl apply -f deployment.yaml

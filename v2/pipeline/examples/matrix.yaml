@@ -1,0 +1,13 @@
+# Pipeline with matrix strategy
+pipeline:
+  stages:
+  - id: test
+    name: Test
+    strategy:
+      matrix:
+        go-version: ["1.19", "1.20", "1.21"]
+        os: [linux, windows]
+    steps:
+    - run:
+        script: go test
+        container: golang:${{ matrix.go-version }}

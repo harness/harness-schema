@@ -1,0 +1,41 @@
+title: StepRun
+type: object
+properties:
+  shell:
+    type: string
+    enum: [sh, bash, powershell, pwsh, python]
+    description: "Shell to use for script execution"
+  script:
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    description: "Command line scripts to execute"
+  container:
+    $ref: "../common/container.yaml"
+  env:
+    type: object
+    additionalProperties:
+      type: string
+    description: "Environment variables for this step"
+  report:
+    $ref: "../common/report.yaml"
+  output:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            mask:
+              type: boolean
+            scope:
+              type: string
+              enum: [pipeline, stage, step]
+    description: "Output variables"
+"$schema": http://json-schema.org/draft-07/schema#

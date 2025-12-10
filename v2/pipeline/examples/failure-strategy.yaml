@@ -1,0 +1,24 @@
+# Pipeline with failure strategies
+pipeline:
+  stages:
+  - steps:
+    - run: flaky-test.sh
+      on-failure:
+        errors: any
+        action:
+          retry:
+            attempts: 3
+            backoff: 5s
+    
+    - run: optional-task.sh
+      on-failure:
+        errors: all
+        action: ignore
+    
+    - run: critical-task.sh
+      on-failure:
+        errors: any
+        action:
+          manual:
+            timeout: 1h
+            approvers: ["admin@company.com"]

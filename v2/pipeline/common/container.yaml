@@ -1,0 +1,102 @@
+title: container
+oneOf:
+  # Simple: just image name
+  - type: string
+    description: "Container image name"
+  # Advanced configuration
+  - type: object
+    properties:
+      image:
+        type: string
+        description: "Container image"
+      connector:
+        type: string
+        description: "Connector for registry authentication"
+      credentials:
+        type: object
+        properties:
+          username:
+            type: string
+          password:
+            type: string
+          aws:
+            type: object
+            properties:
+              access-key:
+                type: string
+              secret-key:
+                type: string
+      pull:
+        type: string
+        enum: [always, never, if-not-exists]
+        description: "Pull policy"
+      entrypoint:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      args:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      dns:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      env:
+        type: object
+        additionalProperties:
+          type: string
+        description: "Container environment variables"
+      extra-hosts:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      network:
+        type: string
+      network-mode:
+        type: string
+      privileged:
+        type: boolean
+      workdir:
+        type: string
+        description: "Working directory"
+      ports:
+        type: array
+        items:
+          type: string
+      volumes:
+        type: array
+        items:
+          $ref: "./mount.yaml"
+      user:
+        oneOf:
+          - type: string
+          - type: number
+      group:
+        oneOf:
+          - type: string
+          - type: number
+      cpu:
+        oneOf:
+          - type: string
+          - type: number
+        description: "CPU limit"
+      memory:
+        oneOf:
+          - type: string
+          - type: number
+        description: "Memory limit"
+      shm-size:
+        oneOf:
+          - type: string
+          - type: number
+        description: "Shared memory size"
+"$schema": http://json-schema.org/draft-07/schema#

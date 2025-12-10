@@ -1,0 +1,18 @@
+# Basic pipeline with multiple steps
+pipeline:
+  env:
+    GOOS: linux
+    GOARCH: amd64
+  stages:
+  - id: build
+    name: Build
+    steps:
+    - id: build_app
+      name: Build Application
+      run:
+        script:
+        - go build
+        - go test
+    - id: package
+      name: Package
+      run: docker build -t myapp:latest .
