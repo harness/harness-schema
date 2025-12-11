@@ -73358,7 +73358,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "GceImage", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for PrimaryArtifact"
@@ -73579,6 +73579,21 @@
               "if" : {
                 "properties" : {
                   "type" : {
+                    "const" : "GceImage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GCEImageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
                     "const" : "Jenkins"
                   }
                 }
@@ -73703,7 +73718,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "GceImage", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for ArtifactSource"
@@ -73917,6 +73932,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudStorageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GceImage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GCEImageArtifactConfig"
                   }
                 }
               }
@@ -74845,6 +74875,93 @@
               }
             }
           },
+          "GCEImageArtifactConfig" : {
+            "title" : "GCEImageArtifactConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ArtifactConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "project" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "filters" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/stages/cd/GCEImageFilter"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "labels" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/stages/cd/GCEImageLabel"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "project" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "version" : {
+                  "type" : "string"
+                },
+                "versionRegex" : {
+                  "type" : "string"
+                }
+              }
+            }, {
+              "oneOf" : [ {
+                "required" : [ "versionRegex" ]
+              }, {
+                "required" : [ "version" ]
+              } ]
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for GCEImageArtifactConfig"
+              }
+            }
+          },
+          "GCEImageFilter" : {
+            "title" : "GCEImageFilter",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "value" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "GCEImageLabel" : {
+            "title" : "GCEImageLabel",
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "string"
+              },
+              "value" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "JenkinsArtifactConfig" : {
             "title" : "JenkinsArtifactConfig",
             "allOf" : [ {
@@ -75473,7 +75590,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
+                "enum" : [ "DockerRegistry", "Gcr", "Ecr", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "CustomArtifact", "Acr", "Jenkins", "AmazonS3", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "Bamboo", "GoogleCloudStorage", "GoogleCloudSource", "GceImage", "Har", "SalesforcePackage", "SalesforceOrg", "SalesforceDxProject" ]
               },
               "description" : {
                 "desc" : "This is the description for SidecarArtifact"
@@ -75687,6 +75804,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudStorageArtifactConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GceImage"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GCEImageArtifactConfig"
                   }
                 }
               }
