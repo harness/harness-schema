@@ -19397,11 +19397,73 @@
                 "type" : "string"
               },
               "autoPromoteRolloutBehavior" : {
-                "type" : "string"
+                "description" : "Deprecated: Use autoRolloutAction instead.",
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "promote-full", "resume", "retry", "abort", "restart" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "autoRolloutAction" : {
+                "description" : "The rollout action to perform automatically after the wait phase is over (if specified).",
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "promote-full", "resume", "retry", "abort", "restart" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "waitUntilHealthStatus" : {
+                "description" : "Configuration for waiting until a specific health status is reached.",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/WaitUntilHealthStatusConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "failOnTimeout" : {
+                "description" : "Whether to fail the step if timeout is reached.",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "$ref" : "#/definitions/pipeline/common/StepSpecType"
+          },
+          "WaitUntilHealthStatusConfig" : {
+            "title" : "WaitUntilHealthStatusConfig",
+            "description" : "Configuration for waitUntilHealthStatus feature in GitOps Rollout step. Allows waiting for a specific rollout health state with optional health message matching (supports regex).",
+            "type" : "object",
+            "properties" : {
+              "healthStatus" : {
+                "description" : "The health status to wait for.",
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Healthy", "Progressing", "Degraded", "Suspended", "Missing", "Unknown" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "healthMessage" : {
+                "description" : "Optional health message pattern to match (supports regex). If specified, will wait until both healthStatus matches AND healthMessage matches this pattern.",
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "TasAppResizeStepNode_template" : {
             "title" : "TasAppResizeStepNode_template",

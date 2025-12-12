@@ -16,5 +16,43 @@ properties:
   rolloutName:
     type: string
   autoPromoteRolloutBehavior:
-    type: string
+    description: "Deprecated: Use autoRolloutAction instead."
+    oneOf:
+      - type: string
+        enum:
+          - promote-full
+          - resume
+          - retry
+          - abort
+          - restart
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  autoRolloutAction:
+    description: The rollout action to perform automatically after the wait phase is over (if specified).
+    oneOf:
+      - type: string
+        enum:
+          - promote-full
+          - resume
+          - retry
+          - abort
+          - restart
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  waitUntilHealthStatus:
+    description: Configuration for waiting until a specific health status is reached.
+    oneOf:
+      - $ref: wait-until-health-status-config.yaml
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  failOnTimeout:
+    description: Whether to fail the step if timeout is reached.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
