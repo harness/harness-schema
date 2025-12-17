@@ -580,6 +580,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigDeployStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigBlueGreenDeployStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigTrafficShiftStepNode_template"
@@ -26533,6 +26535,165 @@
               }
             }
           },
+          "GoogleMigDeployStepNode_template" : {
+            "title" : "GoogleMigDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+[\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$)$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GoogleMigDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GoogleMigDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GoogleMigDeployStepInfo" : {
+            "title" : "GoogleMigDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "migName" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "migName" : {
+                  "type" : "string"
+                },
+                "targetSize" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "triggerRollingDeploy" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ],
+                  "default" : true
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "migName" : {
+                "type" : "string"
+              },
+              "targetSize" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "triggerRollingDeploy" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ],
+                "default" : true
+              },
+              "description" : {
+                "desc" : "This is the description for GoogleMigDeployStepInfo"
+              }
+            }
+          },
           "GoogleMigBlueGreenDeployStepNode_template" : {
             "title" : "GoogleMigBlueGreenDeployStepNode_template",
             "type" : "object",
@@ -37620,6 +37781,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GoogleMigDeployStepNode" : {
+            "title" : "GoogleMigDeployStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for Google MigDeployStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+[\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$)$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GoogleMigDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GoogleMigDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigDeployStepInfo"
                   }
                 }
               }
@@ -89568,6 +89806,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigDeployStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigBlueGreenDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigTrafficShiftStepNode"
@@ -99064,6 +99304,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunTrafficShiftStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunRollbackStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigBlueGreenDeployStepNode"
                 }, {
