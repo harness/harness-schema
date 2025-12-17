@@ -5689,6 +5689,119 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "FmeFlagLimitExposureStepNode" : {
+            "title" : "FmeFlagLimitExposureStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagLimitExposureStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagLimitExposure" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagLimitExposure"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagLimitExposureStepInfo" : {
+            "title" : "FmeFlagLimitExposureStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment", "limit" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "limit" : {
+                  "description" : "Exposure limit",
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "minimum" : 0,
+                    "maximum" : 100
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "FmeFlagUpdateStepNode" : {
             "title" : "FmeFlagUpdateStepNode",
             "type" : "object",
@@ -6441,6 +6554,109 @@
           },
           "FmeFlagRestoreStepInfo" : {
             "title" : "FmeFlagRestoreStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagReallocateTrafficStepNode" : {
+            "title" : "FmeFlagReallocateTrafficStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagReallocateTrafficStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagReallocateTraffic" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagReallocateTraffic"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagReallocateTrafficStepInfo" : {
+            "title" : "FmeFlagReallocateTrafficStepInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
@@ -79660,6 +79876,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
@@ -79671,6 +79889,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRestoreStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -80176,6 +80396,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
@@ -80183,6 +80405,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveIndividualTargetsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetIndividualTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
                 } ]
               },
               "stepGroup" : {
