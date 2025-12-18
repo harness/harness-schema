@@ -1,0 +1,119 @@
+title: GoogleMigSteadyStateStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - mig
+      - instanceTemplate
+    properties:
+      connectorRef:
+        type: string
+      delegateSelectors:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      image:
+        type: string
+      imagePullPolicy:
+        oneOf:
+          - type: string
+            enum:
+              - Always
+              - Never
+              - IfNotPresent
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      privileged:
+        oneOf:
+          - type: boolean
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      resources:
+        $ref: ../../common/container-resource.yaml
+      runAsUser:
+        oneOf:
+          - type: integer
+            format: int32
+          - type: string
+      commandOptions:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      preExecution:
+        type: string
+      mig:
+        type: string
+      instanceTemplate:
+        type: string
+      pollingInterval:
+        type: string
+        pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+        default: "10s"
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  connectorRef:
+    type: string
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  image:
+    type: string
+  imagePullPolicy:
+    oneOf:
+      - type: string
+        enum:
+          - Always
+          - Never
+          - IfNotPresent
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  privileged:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+  commandOptions:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  preExecution:
+    type: string
+  mig:
+    type: string
+  instanceTemplate:
+    type: string
+  pollingInterval:
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+    default: "10s"
+  description:
+    desc: This is the description for GoogleMigSteadyStateStepInfo
