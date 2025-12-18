@@ -1,0 +1,42 @@
+title: GroupSteps
+description: Defines a group of steps.
+type: object
+required:
+  - group
+properties:
+  group:
+    type: object
+    required:
+      - steps
+    properties:
+      id:
+        type: string
+        description: Unique identifier for the step group.
+        pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+      name:
+        type: string
+        description: Display name of the step group.
+      desc:
+        type: string
+        description: Description of the step group.
+      if:
+        type: string
+        description: Conditional execution expression. Group is skipped if condition resolves to false.
+      strategy:
+        description: Execution strategy (matrix, for, while, repeat). Supports expressions.
+        oneOf:
+          - $ref: ../../common/strategy.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+      on-failure:
+        $ref: ../../common/on-failure.yaml
+      timeout:
+        type: string
+        description: Step group timeout duration.
+        pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+      steps:
+        type: array
+        items:
+          $ref: ./step-items.yaml
+$schema: http://json-schema.org/draft-07/schema#
+

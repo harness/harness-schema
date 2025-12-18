@@ -1,0 +1,129 @@
+title: Container
+description: Container configuration for step execution.
+type: object
+properties:
+  image:
+    description: Container image to use. Supports expressions.
+    type: string
+  connector:
+    description: Image registry connector. Supports expressions.
+    type: string
+  credentials:
+    description: Container registry credentials.
+    type: object
+    properties:
+      username:
+        description: Registry username.
+        type: string
+      password:
+        description: Registry password.
+        type: string
+      aws:
+        description: AWS ECR credentials.
+        type: object
+        properties:
+          access-key:
+            description: AWS access key.
+            type: string
+          secret-key:
+            description: AWS secret key.
+            type: string
+  pull:
+    description: Image pull policy. Supports expressions.
+    oneOf:
+      - type: string
+        enum:
+          - always
+          - never
+          - if-not-exists
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  entrypoint:
+    description: Container entrypoint.
+    type: array
+    items:
+      type: string
+  args:
+    description: Container arguments.
+    type: array
+    items:
+      type: string
+  dns:
+    description: Custom DNS servers.
+    type: array
+    items:
+      type: string
+  env:
+    description: Environment variables.
+    type: object
+    additionalProperties:
+      type: string
+  extra-hosts:
+    description: Extra hosts to add to /etc/hosts.
+    type: array
+    items:
+      type: string
+  network:
+    description: Docker network name.
+    type: string
+  network-mode:
+    description: Docker network mode.
+    type: string
+  privileged:
+    description: Run in privileged mode. Supports expressions.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  workdir:
+    description: Working directory.
+    type: string
+  ports:
+    description: Ports to expose.
+    type: array
+    items:
+      type: string
+  port-bindings:
+    description: Port bindings. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  volumes:
+    description: Volume mounts.
+    type: array
+    items:
+      type: object
+      properties:
+        source:
+          description: Source path.
+          type: string
+        target:
+          description: Target path in container.
+          type: string
+  user:
+    description: User ID to run as. Supports expressions.
+    oneOf:
+      - type: integer
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  group:
+    description: Group to run as.
+    type: string
+  cpu:
+    description: CPU limit.
+    type: string
+  memory:
+    description: Memory limit.
+    type: string
+  shm-size:
+    description: Shared memory size.
+    type: string
+  files:
+    description: Files to inject into container.
+    type: object
+    additionalProperties:
+      type: string
+$schema: http://json-schema.org/draft-07/schema#

@@ -1,0 +1,38 @@
+title: RuntimeV1
+description: Defines the runtime execution engine. Can be a string shorthand or object with configuration.
+$schema: http://json-schema.org/draft-07/schema#
+oneOf:
+  # String shorthand format (matches RuntimeV1Deserializer)
+  - type: string
+    enum:
+      - cloud
+      - shell
+      - vm
+      - k8
+  # Object format with full configuration
+  - type: object
+    oneOf:
+      - properties:
+          shell:
+            $ref: ./runtime_shell.yaml
+        required:
+          - shell
+        additionalProperties: false
+      - properties:
+          cloud:
+            $ref: ./runtime_cloud.yaml
+        required:
+          - cloud
+        additionalProperties: false
+      - properties:
+          vm:
+            $ref: ./runtime_vm.yaml
+        required:
+          - vm
+        additionalProperties: false
+      - properties:
+          kubernetes:
+            $ref: ./runtime_kubernetes.yaml
+        required:
+          - kubernetes
+        additionalProperties: false

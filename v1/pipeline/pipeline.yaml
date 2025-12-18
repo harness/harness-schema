@@ -1,38 +1,79 @@
-type: object
 title: pipeline
-required:
-  - spec
-  - version
-  - kind
-properties:
-  version:
-    description: Version defines the schema version.
-    type: number
-    enum:
-      - 1
-  kind:
-    description: defines the kind of yaml (pipeline/template/trigger)
-    type: string
-    enum:
-      - pipeline
-  type:
-    description: defines the type of yaml (add only when pipeline uses a template)
-    type: string
-    enum:
+oneOf:
+  # Pipeline using template
+  - type: object
+    required:
       - template
-
-if:
-  properties:
-    type:
-      const: template
-  required:
-    - type
-then:
-  properties:
-    spec:
-      $ref: ./template-link-config-spec.yaml
-else:
-  properties:
-    spec:
-      $ref: ./pipeline_spec.yaml
+    properties:
+      template:
+        description: Pipeline template reference.
+        $ref: ./common/unified-template.yaml
+      inputs:
+        $ref: ./common/ng-variable-v1-wrapper.yaml
+    additionalProperties: false
+  # Full pipeline definition
+  - type: object
+    properties:
+      id:
+        type: string
+        pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+      name:
+        type: string
+        pattern: "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+      clone:
+        $ref: ./clone.yaml
+      inputs:
+        $ref: ./common/ng-variable-v1-wrapper.yaml
+      timeout:
+        type: string
+        description: Defines pipeline timeout
+        pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+      allow-stage-executions:
+        type: boolean
+        description: Allows stage executions.
+      fixed-inputs-on-rerun:
+        type: boolean
+        description: Fixed inputs on rerun.
+      delegate:
+        $ref: ./common/delegate.yaml
+      env:
+        type: object
+        additionalProperties:
+          type: string
+        description: Provides the default environment variables.
+      repo:
+        $ref: ./repository.yaml
+        description: Configures the default repository.
+      barriers:
+        type: array
+        description: Barriers provides optional pipeline barriers.
+        items:
+          type: string
+      if:
+        type: string
+        description: If provides conditional pipeline execution logic. If the condition resolves to false, the pipeline is skipped.
+      on:
+        $ref: ./on.yaml
+      notifications:
+        type: array
+        description: Notifications provides optional pipeline notifications.
+        items:
+          $ref: ./notification_rules.yaml
+      tags:
+        type: object
+        description: Tags for the pipeline.
+        additionalProperties:
+          type: string
+      stages:
+        type: array
+        description: Pipeline stages - can contain stages, groups, or parallel executions.
+        items:
+          oneOf:
+            - $ref: ./stages/unified/unified-stage.yaml
+            - $ref: ./stages/unified/pipeline-chain.yaml
+            - $ref: ./stages/unified/parallel-stages.yaml
+            - $ref: ./stages/unified/group-stages.yaml
+            - $ref: ./common/unified-template.yaml
+        maxItems: 256
+        minItems: 1
 "$schema": http://json-schema.org/draft-07/schema#

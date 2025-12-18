@@ -1,39 +1,30 @@
-title: StringVariable
+title: StringNGVariableV1
+description: String variable definition.
 allOf:
   - $ref: ./variable.yaml
   - type: object
     required:
       - type
-      - value
     properties:
-      default:
-        type: string
       type:
+        description: Variable type.
         type: string
         enum:
           - string
       value:
+        description: Variable value. Supports expressions.
         type: string
-        metadata:
-          inputProperties:
-            dependsOn: [ type ]
-      validator:
-        type: object
-        oneOf:
-          - allOf:
-              - properties:
-                  allowed:
-                    description: defines allowed values for a variable
-                    type: array
-                    items:
-                      type: string
-            required:
-              - allowed
-          - allOf:
-              - properties:
-                  regex:
-                    description: defines regex pattern for a variable value
-                    type: string
-            required:
-              - regex
+      default:
+        description: Default value for the variable.
+        type: string
+      enum:
+        description: Defines a list of accepted input values.
+        type: array
+        items:
+          type: string
+      options:
+        description: Defines a list of accepted input values. Alias for enum (GitHub compatibility).
+        type: array
+        items:
+          type: string
 $schema: http://json-schema.org/draft-07/schema#

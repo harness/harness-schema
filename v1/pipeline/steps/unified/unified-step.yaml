@@ -1,0 +1,62 @@
+title: StepNodeV1
+description: Unified step node for CI/CD pipelines.
+type: object
+properties:
+  id:
+    description: Unique identifier for the step.
+    type: string
+  name:
+    description: Display name of the step.
+    type: string
+  desc:
+    description: Description of the step.
+    type: string
+  if:
+    description: Conditional execution expression. Step is skipped if condition resolves to false. Supports expressions.
+    type: string
+  strategy:
+    description: Execution strategy (matrix, for, while, repeat). Supports expressions.
+    oneOf:
+      - $ref: ../../common/strategy.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  enforce:
+    description: Policy enforcement configuration.
+    $ref: ./policy-config.yaml
+  needs:
+    description: Step dependencies (steps that must complete before this one).
+    type: array
+    items:
+      type: string
+  on-failure:
+    $ref: ../../common/on-failure.yaml
+  timeout:
+    description: Step timeout duration. Supports expressions.
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  run:
+    description: Run step configuration. Supports expressions.
+    oneOf:
+      - $ref: ./run-step-info.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  run-test:
+    description: Run tests step configuration. Supports expressions.
+    oneOf:
+      - $ref: ./run-tests-step-info.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  clone:
+    description: Git clone step configuration.
+    $ref: ../../clone.yaml
+  action:
+    description: Action step configuration.
+    $ref: ./action-step-info.yaml
+  background:
+    description: Background service step configuration. Supports expressions.
+    oneOf:
+      - $ref: ./run-step-info.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+$schema: http://json-schema.org/draft-07/schema#
+

@@ -1,0 +1,40 @@
+title: UnifiedPipelineStageNode
+description: Pipeline chain stage node for chaining pipelines.
+allOf:
+  - $ref: ../../steps/unified/abstract-step-node.yaml
+  - type: object
+    required:
+      - chain
+    properties:
+      chain:
+        description: Pipeline chain configuration.
+        type: object
+        required:
+          - uses
+        properties:
+          uses:
+            description: Reference to the pipeline to be chained.
+            type: string
+          with:
+            description: Parameters for the chained pipeline.
+            type: object
+            properties:
+              inputs:
+                description: Input parameters for the chained pipeline. Supports expressions.
+                oneOf:
+                  - type: object
+                    additionalProperties: true
+                  - type: string
+                    pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              outputs:
+                description: Output mappings from the chained pipeline.
+                type: array
+                items:
+                  $ref: ./pipeline-stage-outputs.yaml
+              input-sets:
+                description: Input set references to apply.
+                type: array
+                items:
+                  type: string
+$schema: http://json-schema.org/draft-07/schema#
+

@@ -1,0 +1,67 @@
+title: RunStepInfoV1
+description: Run step configuration for executing scripts.
+type: object
+properties:
+  shell:
+    description: Shell type to use. Supports expressions.
+    type: string
+  script:
+    description: Script to execute. Supports expressions.
+    type: string
+  container:
+    description: Container configuration for the step.
+    $ref: ./container.yaml
+  output:
+    description: Output variables to capture.
+    type: array
+    items:
+      $ref: ../../common/output-ng-variable.yaml
+  report:
+    description: Test report configuration. Supports expressions.
+    $ref: ./report.yaml
+  delegate:
+    description: Delegate selectors.
+    $ref: ../../common/delegate.yaml
+  env:
+    description: Environment variables. Supports expressions.
+    $ref: ../../common/object-or-expression.yaml
+  with:
+    description: Additional parameters. Supports expressions.
+    $ref: ../../common/object-or-expression.yaml
+  download:
+    description: Download configuration. Supports expressions.
+    oneOf:
+      - type: object
+        properties:
+          source:
+            description: Source URL to download from.
+            type: string
+          target:
+            description: Target path to save the file.
+            type: string
+          checksum:
+            description: Checksum to verify the downloaded file.
+            type: string
+          fallback:
+            description: Fallback URL if primary source fails.
+            type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  output-alias:
+    description: Output alias configuration for exporting variables.
+    type: object
+    required:
+      - key
+      - scope
+    properties:
+      key:
+        description: Output variable key. Supports expressions.
+        type: string
+      scope:
+        description: Export scope for the output.
+        type: string
+        enum:
+          - Pipeline
+          - Stage
+          - StepGroup
+$schema: http://json-schema.org/draft-07/schema#

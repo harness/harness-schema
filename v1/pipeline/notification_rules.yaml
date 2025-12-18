@@ -1,28 +1,38 @@
 title: NotificationRules
+description: NotificationRules defines notification configuration for pipeline events.
 type: object
-required:
-  - method
-  - enabled
 properties:
-  pipeline_events:
-    type: array
-    items:
-      type: string
-      enum:
-        - start
-        - end
-        - success
-        - failed
-        - all
-  stage_events:
-    type: array
-    items:
-      $ref: ./stage_event.yaml
-  step_events:
+  id:
     type: string
-    enum:
-      - failed
-  method:
-    $ref: ./notification-channel-wrapper.yaml
-  enabled:
+    description: Unique identifier for the notification rule.
+  name:
+    type: string
+    description: Name of the notification rule.
+  disabled:
     type: boolean
+    description: Whether the notification rule is disabled.
+  on:
+    type: array
+    description: Notification events that trigger the notification.
+    items:
+      $ref: ./notification-event.yaml
+  uses:
+    type: string
+    description: Notification channel type.
+    enum:
+      - email
+      - webhook
+      - pagerduty
+      - msteams
+      - slack
+      - datadog
+  with:
+    description: Channel-specific configuration based on 'uses' type.
+    oneOf:
+      - $ref: ./pms-email-channel.yaml
+      - $ref: ./pms-slack-channel.yaml
+      - $ref: ./pms-msteam-channel.yaml
+      - $ref: ./pms-webhook-channel.yaml
+      - $ref: ./pms-pager-duty-channel.yaml
+      - $ref: ./pms-datadog-channel.yaml
+$schema: http://json-schema.org/draft-07/schema#

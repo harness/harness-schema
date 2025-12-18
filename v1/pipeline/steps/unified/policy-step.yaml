@@ -1,0 +1,29 @@
+title: UnifiedPolicyStepNode
+description: Policy step node for OPA policy evaluation.
+allOf:
+  - $ref: ./abstract-step-node.yaml
+  - type: object
+    required:
+      - policy
+    properties:
+      policy:
+        description: Policy step configuration.
+        type: object
+        required:
+          - sets
+          - payload
+        properties:
+          sets:
+            description: Policy sets to evaluate. Supports single value or array. Supports expressions.
+            oneOf:
+              - type: array
+                items:
+                  type: string
+              - type: string
+                pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+          payload:
+            description: JSON payload to evaluate against policies. Supports expressions.
+            type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+$schema: http://json-schema.org/draft-07/schema#
+

@@ -1,10 +1,18 @@
-title: While
-description: Defines a while loop execution strategy.
+title: WhileConfigV1
 type: object
+description: While loop strategy configuration.
 properties:
-  condition:
-    type: string
-    description: Defines the while condition.
   iterations:
-    type: number
-    description: Defines the maximum number of iterations.
+    description: Maximum number of iterations. Supports expressions.
+    oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  condition:
+    description: Condition expression to evaluate for continuing the loop. Supports expressions.
+    type: string
+  node-name:
+    description: Custom naming pattern for loop nodes. Supports expressions.
+    type: string
+$schema: http://json-schema.org/draft-07/schema#

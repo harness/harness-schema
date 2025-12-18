@@ -104,7 +104,7 @@
             "description" : "Variables defines for service",
             "additionalProperties" : {
               "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/common/StringVariable"
+                "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
               }, {
                 "$ref" : "#/definitions/pipeline/common/NumberVariable"
               }, {
@@ -510,22 +510,59 @@
             "type" : {
               "description" : "Type defines the input type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "duration", "choice", "environment" ]
             },
-            "desc" : {
+            "description" : {
               "type" : "string",
-              "description" : "Desc defines the input description."
+              "description" : "Description defines the input description."
+            },
+            "default" : {
+              "description" : "Default defines the default value."
             },
             "required" : {
               "type" : "boolean",
               "description" : "Required indicates the input is required."
             },
-            "execution_input" : {
-              "description" : "a boolean that defines whether the value is an execution input",
+            "items" : {
+              "type" : "array",
+              "description" : "Items defines an array type."
+            },
+            "enum" : {
+              "type" : "array",
+              "description" : "Enum defines a list of accepted input values."
+            },
+            "pattern" : {
+              "type" : "string",
+              "description" : "Pattern defines a regular expression input constraint."
+            },
+            "component" : {
+              "type" : "string",
+              "description" : "Component defines the form element for rendering the input.",
+              "enum" : [ "dropdown", "text", "number", "date", "datetime" ]
+            },
+            "autofocus" : {
               "type" : "boolean",
-              "default" : false
+              "description" : "Autofocus configures the form element autofocus attribute."
+            },
+            "placeholder" : {
+              "type" : "string",
+              "description" : "Placeholder configures the form element placeholder attribute."
+            },
+            "tooltip" : {
+              "type" : "string",
+              "description" : "Tooltip configures the form element alt attribute."
+            },
+            "options" : {
+              "type" : "array",
+              "description" : "Options defines a list of accepted input values (alias for enum, GitHub compatibility)."
+            },
+            "mask" : {
+              "type" : "boolean",
+              "description" : "Mask indicates the input should be masked (deprecated).",
+              "deprecated" : true
             }
-          }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "NumberInput" : {
           "title" : "NumberInput",
@@ -731,55 +768,41 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "StringVariable" : {
-          "title" : "StringVariable",
+        "StringNGVariableV1" : {
+          "title" : "StringNGVariableV1",
+          "description" : "String variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "string"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "string" ]
               },
               "value" : {
-                "type" : "string",
-                "metadata" : {
-                  "inputProperties" : {
-                    "dependsOn" : [ "type" ]
-                  }
+                "description" : "Variable value. Supports expressions.",
+                "type" : "string"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
                 }
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "string"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "options" : {
+                "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
               }
             }
           } ],
@@ -794,7 +817,7 @@
             "type" : {
               "description" : "Type defines the variable type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "stage", "connector" ]
             },
             "desc" : {
               "type" : "string",
@@ -805,29 +828,93 @@
               "description" : "Required indicates the variable is required."
             },
             "execution_input" : {
-              "description" : "a boolean that defines whether the value is an execution input",
+              "description" : "A boolean that defines whether the value is an execution input.",
               "type" : "boolean",
               "default" : false
+            },
+            "items" : {
+              "description" : "Defines the item type for array variables.",
+              "type" : "array"
+            },
+            "options" : {
+              "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+              "type" : "array"
+            },
+            "enum" : {
+              "description" : "Defines a list of accepted input values.",
+              "type" : "array"
+            },
+            "pattern" : {
+              "description" : "Regex pattern for variable value validation.",
+              "type" : "string"
+            },
+            "mask" : {
+              "description" : "Indicates the input should be masked.",
+              "type" : "boolean",
+              "deprecated" : true
+            },
+            "ui" : {
+              "description" : "UI configuration for variable rendering in forms.",
+              "$ref" : "#/definitions/pipeline/common/VariableUI"
             }
           }
         },
+        "VariableUI" : {
+          "title" : "VariableUI",
+          "description" : "UI configuration for variable rendering in forms.",
+          "type" : "object",
+          "properties" : {
+            "component" : {
+              "description" : "Form element type for rendering the variable input.",
+              "type" : "string",
+              "enum" : [ "dropdown", "text", "number", "date", "datetime", "textarea", "checkbox", "radio" ]
+            },
+            "placeholder" : {
+              "description" : "Placeholder text for the form element.",
+              "type" : "string"
+            },
+            "tooltip" : {
+              "description" : "Tooltip/help text for the form element.",
+              "type" : "string"
+            },
+            "autofocus" : {
+              "description" : "Whether the form element should be auto-focused.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "hidden" : {
+              "description" : "Whether the variable should be hidden in the UI.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "readonly" : {
+              "description" : "Whether the variable should be read-only in the UI.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "label" : {
+              "description" : "Display label for the variable in the UI.",
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "NumberVariable" : {
           "title" : "NumberVariable",
+          "description" : "Number variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "number",
-                "format" : "double"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "number" ]
               },
               "value" : {
+                "description" : "Variable value. Supports expressions.",
                 "oneOf" : [ {
                   "type" : "number",
                   "format" : "double"
@@ -841,38 +928,23 @@
                   }
                 }
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "oneOf" : [ {
-                            "type" : "number",
-                            "format" : "double"
-                          }, {
-                            "type" : "string",
-                            "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
-                          } ]
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for an variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "number",
+                "format" : "double"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "type" : "number",
+                    "format" : "double"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                  } ]
+                }
               }
             }
           } ],
@@ -880,48 +952,32 @@
         },
         "ArrayVariable" : {
           "title" : "ArrayVariable",
+          "description" : "Array variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "array"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "array" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "array"
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "array"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "array"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "array"
+                }
               }
             }
           } ],
@@ -929,21 +985,32 @@
         },
         "BooleanVariable" : {
           "title" : "BooleanVariable",
+          "description" : "Boolean variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "boolean"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "boolean" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "boolean"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "boolean"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "boolean"
+                }
               }
             }
           } ],
@@ -951,48 +1018,32 @@
         },
         "ObjectVariable" : {
           "title" : "ObjectVariable",
+          "description" : "Object variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "object"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "object" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "object"
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "object"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "object"
+                }
               }
             }
           } ],
@@ -1000,25 +1051,36 @@
         },
         "SecretVariable" : {
           "title" : "SecretVariable",
+          "description" : "Secret variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "string"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "secret" ]
               },
               "value" : {
+                "description" : "Variable value (secret reference).",
                 "type" : "string",
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
                   }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
                 }
               }
             }

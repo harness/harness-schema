@@ -1,0 +1,114 @@
+title: UnifiedStageNodeV1
+description: Unified stage node supporting CI, CD, IaCM and other stage types.
+type: object
+properties:
+  id:
+    type: string
+    description: Unique identifier for the stage.
+  name:
+    type: string
+    description: Display name of the stage.
+  desc:
+    type: string
+    description: Description of the stage.
+  tags:
+    type: object
+    description: Tags for the stage.
+    additionalProperties:
+      type: string
+  if:
+    type: string
+    description: Conditional execution expression. Stage is skipped if condition resolves to false.
+  inputs:
+    $ref: ../../common/ng-variable-v1-wrapper.yaml
+  delegate:
+    $ref: ../../common/delegate.yaml
+  strategy:
+    description: Execution strategy (matrix, parallelism, etc.).
+    $ref: ../../common/strategy.yaml
+  timeout:
+    type: string
+    description: Stage timeout duration.
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  labels:
+    type: object
+    description: Labels for the stage.
+    additionalProperties:
+      type: string
+  exports:
+    type: object
+    description: Export configuration for stage outputs.
+  on-failure:
+    $ref: ../../common/on-failure.yaml
+  needs:
+    description: Stage dependencies (stages that must complete before this one).
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+  runs-on:
+    type: string
+    description: Infrastructure/runner specification.
+  steps:
+    type: array
+    description: List of steps to execute in the stage.
+    items:
+      $ref: ../../steps/unified/step-items.yaml
+  rollback:
+    type: array
+    description: Rollback steps to execute on failure.
+    items:
+      $ref: ../../steps/unified/step-items.yaml
+  runtime:
+    description: Runtime configuration (cloud, VM, Kubernetes).
+    $ref: ./runtime.yaml
+  clone:
+    type: object
+    description: Git clone configuration for the stage.
+    $ref: ../../clone.yaml
+  platform:
+    type: object
+    description: Platform configuration (OS, architecture).
+    properties:
+      os:
+        type: string
+        enum:
+          - linux
+          - windows
+          - macos
+      arch:
+        type: string
+        enum:
+          - amd64
+          - arm64
+  service:
+    description: Service configuration for CD stages.
+    $ref: ./service.yaml
+  environment:
+    description: Environment configuration for CD stages.
+    $ref: ./environment.yaml
+  
+  # IaCM specific fields
+  workspace:
+    type: string
+    description: IaCM workspace identifier.
+  remote-execution:
+    type: string
+    description: Remote execution configuration for IaCM.
+  tofu-module:
+    type: string
+    description: OpenTofu/Terraform module reference.
+  env:
+    type: object
+    description: Environment variables for the stage.
+    additionalProperties:
+      type: string
+  cache:
+    description: Cache intelligence configuration.
+    $ref: ./caching.yaml
+  build-intelligence:
+    description: Build intelligence configuration for test optimization.
+    $ref: ./build-intelligence.yaml
+$schema: http://json-schema.org/draft-07/schema#
+

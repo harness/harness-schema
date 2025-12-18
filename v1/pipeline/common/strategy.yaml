@@ -1,39 +1,50 @@
-title: Strategy
+title: StrategyConfigV1
 type: object
-description: Strategy defines an optional execution strategy.
+description: Strategy defines execution strategy configuration (matrix, for, while, repeat).
 properties:
-  type:
-    description: Type defines the execution strategy type.
-    type: string
-    enum:
-      - for
-      - matrix
-      - while
-metadata:
-  inputProperties:
-    type: object
-    internalType: looping_strategy
+  max-parallel:
+    description: Maximum number of parallel executions. Supports expressions.
+    oneOf:
+      - type: integer
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  fail-fast:
+    description: Whether to fail fast on first failure. Supports expressions.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
 oneOf:
-  - allOf:
-      - properties:
-          type:
-            const: for
-      - properties:
-          spec:
-            $ref: ./strategy_for.yaml
-  
-  - allOf:
-      - properties:
-          type:
-            const: matrix
-      - properties:
-          spec:
-            $ref: ./strategy_matrix.yaml
-  
-  - allOf:
-      - properties:
-          type:
-            const: while
-      - properties:
-          spec:
-            $ref: ./strategy_while.yaml
+  - properties:
+      matrix:
+        oneOf:
+          - $ref: ./strategy_matrix.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+    required:
+      - matrix
+  - properties:
+      for:
+        oneOf:
+          - $ref: ./strategy_for.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+    required:
+      - for
+  - properties:
+      while:
+        oneOf:
+          - $ref: ./strategy_while.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+    required:
+      - while
+  - properties:
+      repeat:
+        oneOf:
+          - $ref: ./strategy_repeat.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+    required:
+      - repeat
+$schema: http://json-schema.org/draft-07/schema#

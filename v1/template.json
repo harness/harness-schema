@@ -1505,22 +1505,59 @@
             "type" : {
               "description" : "Type defines the input type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "duration", "choice", "environment" ]
             },
-            "desc" : {
+            "description" : {
               "type" : "string",
-              "description" : "Desc defines the input description."
+              "description" : "Description defines the input description."
+            },
+            "default" : {
+              "description" : "Default defines the default value."
             },
             "required" : {
               "type" : "boolean",
               "description" : "Required indicates the input is required."
             },
-            "execution_input" : {
-              "description" : "a boolean that defines whether the value is an execution input",
+            "items" : {
+              "type" : "array",
+              "description" : "Items defines an array type."
+            },
+            "enum" : {
+              "type" : "array",
+              "description" : "Enum defines a list of accepted input values."
+            },
+            "pattern" : {
+              "type" : "string",
+              "description" : "Pattern defines a regular expression input constraint."
+            },
+            "component" : {
+              "type" : "string",
+              "description" : "Component defines the form element for rendering the input.",
+              "enum" : [ "dropdown", "text", "number", "date", "datetime" ]
+            },
+            "autofocus" : {
               "type" : "boolean",
-              "default" : false
+              "description" : "Autofocus configures the form element autofocus attribute."
+            },
+            "placeholder" : {
+              "type" : "string",
+              "description" : "Placeholder configures the form element placeholder attribute."
+            },
+            "tooltip" : {
+              "type" : "string",
+              "description" : "Tooltip configures the form element alt attribute."
+            },
+            "options" : {
+              "type" : "array",
+              "description" : "Options defines a list of accepted input values (alias for enum, GitHub compatibility)."
+            },
+            "mask" : {
+              "type" : "boolean",
+              "description" : "Mask indicates the input should be masked (deprecated).",
+              "deprecated" : true
             }
-          }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "NumberInput" : {
           "title" : "NumberInput",
@@ -1761,7 +1798,7 @@
           "required" : [ "onFailure" ],
           "properties" : {
             "onFailure" : {
-              "$ref" : "#/definitions/pipeline/common/OnFailureConfig"
+              "$ref" : "#/definitions/pipeline/common/FailureConfigV1"
             },
             "description" : {
               "desc" : "This is the description for FailureStrategyConfig"
@@ -1775,39 +1812,158 @@
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "OnFailureConfig" : {
-          "title" : "OnFailureConfig",
+        "FailureConfigV1" : {
+          "title" : "FailureConfigV1",
           "type" : "object",
-          "required" : [ "action", "errors" ],
+          "description" : "Failure strategy configuration for handling errors.",
+          "required" : [ "errors", "action" ],
           "properties" : {
-            "action" : {
-              "$ref" : "#/definitions/pipeline/common/FailureStrategyActionConfig"
-            },
             "errors" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string",
-                "enum" : [ "Unknown", "AllErrors", "Authentication", "Connectivity", "Timeout", "Authorization", "Verification", "DelegateProvisioning", "PolicyEvaluationFailure", "InputTimeoutError", "ApprovalRejection", "DelegateRestart", "UserMarkedFailure" ]
-              }
+              "description" : "List of error types to handle. Supports single value or array. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/common/NGFailureTypeV1"
+                }
+              }, {
+                "$ref" : "#/definitions/pipeline/common/NGFailureTypeV1"
+              } ]
             },
-            "description" : {
-              "desc" : "This is the description for OnFailureConfig"
+            "action" : {
+              "$ref" : "#/definitions/pipeline/common/FailureStrategyActionConfigV1"
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "FailureStrategyActionConfig" : {
-          "title" : "FailureStrategyActionConfig",
+        "NGFailureTypeV1" : {
+          "title" : "NGFailureTypeV1",
+          "description" : "Failure error types for failure strategy configuration.",
+          "type" : "string",
+          "enum" : [ "unknown", "all", "authentication", "connectivity", "timeout", "authorization", "verification", "delegate-provisioning", "policy-evaluation", "input-timeout", "approval-rejection", "delegate-restart", "user-mark-fail" ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "FailureStrategyActionConfigV1" : {
+          "title" : "FailureStrategyActionConfigV1",
           "type" : "object",
-          "required" : [ "type" ],
-          "discriminator" : "type",
+          "description" : "Action configuration for failure strategy. Only one action type should be specified.",
           "properties" : {
-            "type" : {
-              "type" : "string",
-              "enum" : [ "Ignore", "Retry", "MarkAsSuccess", "Abort", "StageRollback", "StepGroupRollback", "PipelineRollback", "ManualIntervention", "ProceedWithDefaultValues", "MarkAsFailure", "RetryStepGroup" ]
+            "retry" : {
+              "$ref" : "#/definitions/pipeline/common/RetryFailureSpecConfigV1"
             },
-            "description" : {
-              "desc" : "This is the description for FailureStrategyActionConfig"
+            "manual-intervention" : {
+              "$ref" : "#/definitions/pipeline/common/ManualFailureSpecConfigV1"
+            },
+            "abort" : {
+              "description" : "Abort the execution.",
+              "type" : "object"
+            },
+            "ignore" : {
+              "description" : "Ignore the failure and continue.",
+              "type" : "object"
+            },
+            "success" : {
+              "description" : "Mark the execution as success.",
+              "type" : "object"
+            },
+            "stage-rollback" : {
+              "description" : "Rollback the stage.",
+              "type" : "object"
+            },
+            "pipeline-rollback" : {
+              "description" : "Rollback the pipeline.",
+              "type" : "object"
+            },
+            "fail" : {
+              "description" : "Mark the execution as failed.",
+              "type" : "object"
+            },
+            "retry-step-group" : {
+              "$ref" : "#/definitions/pipeline/common/RetryStepGroupFailureSpecConfigV1"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "RetryFailureSpecConfigV1" : {
+          "title" : "RetryFailureSpecConfigV1",
+          "type" : "object",
+          "description" : "Retry configuration for failure strategy.",
+          "properties" : {
+            "attempts" : {
+              "description" : "Number of retry attempts. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 1
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "interval" : {
+              "description" : "Interval between retries. Can be single value or array of timeouts. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }, {
+                "type" : "string"
+              } ]
+            },
+            "failure-action" : {
+              "description" : "Action to take after all retries are exhausted.",
+              "$ref" : "#/definitions/pipeline/common/FailureStrategyActionConfigV1"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ManualFailureSpecConfigV1" : {
+          "title" : "ManualFailureSpecConfigV1",
+          "type" : "object",
+          "description" : "Manual intervention configuration for failure strategy.",
+          "properties" : {
+            "timeout" : {
+              "description" : "Timeout for manual intervention. Supports expressions.",
+              "type" : "string"
+            },
+            "timeout-action" : {
+              "description" : "Action to take when timeout is reached.",
+              "$ref" : "#/definitions/pipeline/common/FailureStrategyActionConfigV1"
+            },
+            "available-actions" : {
+              "description" : "List of available actions for manual intervention.",
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/pipeline/common/FailureStrategyActionConfigV1"
+              }
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "RetryStepGroupFailureSpecConfigV1" : {
+          "title" : "RetryStepGroupFailureSpecConfigV1",
+          "type" : "object",
+          "description" : "Retry step group configuration for failure strategy.",
+          "properties" : {
+            "attempts" : {
+              "description" : "Number of retry attempts. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 1
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "interval" : {
+              "description" : "Interval between retries. Can be single value or array of timeouts. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }, {
+                "type" : "string"
+              } ]
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -2770,137 +2926,249 @@
             } ]
           } ]
         },
-        "Strategy" : {
-          "title" : "Strategy",
+        "StrategyConfigV1" : {
+          "title" : "StrategyConfigV1",
           "type" : "object",
-          "description" : "Strategy defines an optional execution strategy.",
+          "description" : "Strategy defines execution strategy configuration (matrix, for, while, repeat).",
           "properties" : {
-            "type" : {
-              "description" : "Type defines the execution strategy type.",
-              "type" : "string",
-              "enum" : [ "for", "matrix", "while" ]
-            }
-          },
-          "metadata" : {
-            "inputProperties" : {
-              "type" : "object",
-              "internalType" : "looping_strategy"
+            "max-parallel" : {
+              "description" : "Maximum number of parallel executions. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer"
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "fail-fast" : {
+              "description" : "Whether to fail fast on first failure. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "boolean"
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
             }
           },
           "oneOf" : [ {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "for"
-                }
+            "properties" : {
+              "matrix" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/MatrixConfigV1"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                } ]
               }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/For"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "matrix"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/Matrix"
-                }
-              }
-            } ]
-          }, {
-            "allOf" : [ {
-              "properties" : {
-                "type" : {
-                  "const" : "while"
-                }
-              }
-            }, {
-              "properties" : {
-                "spec" : {
-                  "$ref" : "#/definitions/pipeline/common/While"
-                }
-              }
-            } ]
-          } ]
-        },
-        "For" : {
-          "title" : "For",
-          "description" : "Defines a for loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "concurrency" : {
-              "description" : "Defines the for loop concurrency.",
-              "type" : "number"
             },
-            "iterations" : {
-              "type" : "number"
-            }
-          }
+            "required" : [ "matrix" ]
+          }, {
+            "properties" : {
+              "for" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ForConfigV1"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                } ]
+              }
+            },
+            "required" : [ "for" ]
+          }, {
+            "properties" : {
+              "while" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/WhileConfigV1"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                } ]
+              }
+            },
+            "required" : [ "while" ]
+          }, {
+            "properties" : {
+              "repeat" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/RepeatConfigV1"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                } ]
+              }
+            },
+            "required" : [ "repeat" ]
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "Matrix" : {
-          "title" : "Matrix",
+        "MatrixConfigV1" : {
+          "title" : "MatrixConfigV1",
           "type" : "object",
-          "description" : "Defines a matrix execution strategy.",
+          "description" : "Matrix strategy configuration for parallel execution across multiple dimensions.",
           "properties" : {
-            "axis" : {
-              "type" : "object",
-              "additionalProperties" : {
+            "exclude" : {
+              "description" : "Combinations to exclude from the matrix. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "include" : {
+              "description" : "Additional combinations to include in the matrix. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "node-name" : {
+              "description" : "Custom naming pattern for matrix nodes. Supports expressions.",
+              "type" : "string"
+            }
+          },
+          "additionalProperties" : {
+            "description" : "Matrix axes - key is axis name, value is array of values or expression.",
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "object"
+                } ]
+              }
+            }, {
+              "type" : "string"
+            } ]
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ForConfigV1" : {
+          "title" : "ForConfigV1",
+          "type" : "object",
+          "description" : "For loop strategy configuration.",
+          "properties" : {
+            "iterations" : {
+              "description" : "Number of iterations to execute. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 0
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "node-name" : {
+              "description" : "Custom naming pattern for loop nodes. Supports expressions.",
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "WhileConfigV1" : {
+          "title" : "WhileConfigV1",
+          "type" : "object",
+          "description" : "While loop strategy configuration.",
+          "properties" : {
+            "iterations" : {
+              "description" : "Maximum number of iterations. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 0
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "condition" : {
+              "description" : "Condition expression to evaluate for continuing the loop. Supports expressions.",
+              "type" : "string"
+            },
+            "node-name" : {
+              "description" : "Custom naming pattern for loop nodes. Supports expressions.",
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "RepeatConfigV1" : {
+          "title" : "RepeatConfigV1",
+          "type" : "object",
+          "description" : "Repeat strategy configuration for iterating over items.",
+          "properties" : {
+            "iterations" : {
+              "description" : "Number of iterations (alternative to items). Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer"
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "items" : {
+              "description" : "List of items to iterate over. Supports expressions.",
+              "oneOf" : [ {
                 "type" : "array",
                 "items" : {
                   "type" : "string"
                 }
-              }
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
             },
-            "concurrency" : {
-              "description" : "Defines the matrix concurrency.",
-              "type" : "number"
-            },
-            "node_name" : {
-              "description" : "Defines the naming for matrix nodes.",
+            "node-name" : {
+              "description" : "Custom naming pattern for repeat nodes. Supports expressions.",
               "type" : "string"
             },
-            "include" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
+            "partition-size" : {
+              "description" : "Size of each partition when splitting items. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 0
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
             },
-            "exclude" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "While" : {
-          "title" : "While",
-          "description" : "Defines a while loop execution strategy.",
-          "type" : "object",
-          "properties" : {
-            "condition" : {
+            "start" : {
+              "description" : "Starting index for iteration. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 0
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "end" : {
+              "description" : "Ending index for iteration. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 0
+              }, {
+                "type" : "string",
+                "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+              } ]
+            },
+            "unit" : {
+              "description" : "Unit for partition-size (percentage or count).",
               "type" : "string",
-              "description" : "Defines the while condition."
-            },
-            "iterations" : {
-              "type" : "number",
-              "description" : "Defines the maximum number of iterations."
+              "enum" : [ "percentage", "count" ]
             }
-          }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "Timeout" : {
           "title" : "Timeout",
@@ -2926,17 +3194,25 @@
             "type" : "string"
           } ]
         },
-        "OutputNGVariable" : {
-          "title" : "OutputNGVariable",
+        "OutputV1" : {
+          "title" : "OutputV1",
+          "description" : "Output variable definition for capturing step outputs.",
           "type" : "object",
+          "required" : [ "name" ],
           "properties" : {
-            "description" : {
-              "type" : "string",
-              "desc" : "This is the description for OutputNGVariable"
-            },
             "name" : {
+              "description" : "Name of the output variable.",
               "type" : "string",
               "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+            },
+            "alias" : {
+              "description" : "Alias for the output variable.",
+              "type" : "string"
+            },
+            "mask" : {
+              "description" : "Whether to mask the output variable value in logs.",
+              "type" : "boolean",
+              "default" : false
             }
           },
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -2994,55 +3270,41 @@
             }
           }
         },
-        "StringVariable" : {
-          "title" : "StringVariable",
+        "StringNGVariableV1" : {
+          "title" : "StringNGVariableV1",
+          "description" : "String variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "string"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "string" ]
               },
               "value" : {
-                "type" : "string",
-                "metadata" : {
-                  "inputProperties" : {
-                    "dependsOn" : [ "type" ]
-                  }
+                "description" : "Variable value. Supports expressions.",
+                "type" : "string"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
                 }
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "string"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "options" : {
+                "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
               }
             }
           } ],
@@ -3057,7 +3319,7 @@
             "type" : {
               "description" : "Type defines the variable type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "stage", "connector" ]
             },
             "desc" : {
               "type" : "string",
@@ -3068,29 +3330,93 @@
               "description" : "Required indicates the variable is required."
             },
             "execution_input" : {
-              "description" : "a boolean that defines whether the value is an execution input",
+              "description" : "A boolean that defines whether the value is an execution input.",
               "type" : "boolean",
               "default" : false
+            },
+            "items" : {
+              "description" : "Defines the item type for array variables.",
+              "type" : "array"
+            },
+            "options" : {
+              "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+              "type" : "array"
+            },
+            "enum" : {
+              "description" : "Defines a list of accepted input values.",
+              "type" : "array"
+            },
+            "pattern" : {
+              "description" : "Regex pattern for variable value validation.",
+              "type" : "string"
+            },
+            "mask" : {
+              "description" : "Indicates the input should be masked.",
+              "type" : "boolean",
+              "deprecated" : true
+            },
+            "ui" : {
+              "description" : "UI configuration for variable rendering in forms.",
+              "$ref" : "#/definitions/pipeline/common/VariableUI"
             }
           }
         },
+        "VariableUI" : {
+          "title" : "VariableUI",
+          "description" : "UI configuration for variable rendering in forms.",
+          "type" : "object",
+          "properties" : {
+            "component" : {
+              "description" : "Form element type for rendering the variable input.",
+              "type" : "string",
+              "enum" : [ "dropdown", "text", "number", "date", "datetime", "textarea", "checkbox", "radio" ]
+            },
+            "placeholder" : {
+              "description" : "Placeholder text for the form element.",
+              "type" : "string"
+            },
+            "tooltip" : {
+              "description" : "Tooltip/help text for the form element.",
+              "type" : "string"
+            },
+            "autofocus" : {
+              "description" : "Whether the form element should be auto-focused.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "hidden" : {
+              "description" : "Whether the variable should be hidden in the UI.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "readonly" : {
+              "description" : "Whether the variable should be read-only in the UI.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "label" : {
+              "description" : "Display label for the variable in the UI.",
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "NumberVariable" : {
           "title" : "NumberVariable",
+          "description" : "Number variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "number",
-                "format" : "double"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "number" ]
               },
               "value" : {
+                "description" : "Variable value. Supports expressions.",
                 "oneOf" : [ {
                   "type" : "number",
                   "format" : "double"
@@ -3104,38 +3430,23 @@
                   }
                 }
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "oneOf" : [ {
-                            "type" : "number",
-                            "format" : "double"
-                          }, {
-                            "type" : "string",
-                            "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
-                          } ]
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for an variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "number",
+                "format" : "double"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "type" : "number",
+                    "format" : "double"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                  } ]
+                }
               }
             }
           } ],
@@ -3143,48 +3454,32 @@
         },
         "ArrayVariable" : {
           "title" : "ArrayVariable",
+          "description" : "Array variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "array"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "array" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "array"
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "array"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "array"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "array"
+                }
               }
             }
           } ],
@@ -3192,21 +3487,32 @@
         },
         "BooleanVariable" : {
           "title" : "BooleanVariable",
+          "description" : "Boolean variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "boolean"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "boolean" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "boolean"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "boolean"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "boolean"
+                }
               }
             }
           } ],
@@ -3214,48 +3520,32 @@
         },
         "ObjectVariable" : {
           "title" : "ObjectVariable",
+          "description" : "Object variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "object"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "object" ]
               },
               "value" : {
+                "description" : "Variable value.",
                 "type" : "object"
               },
-              "validator" : {
-                "type" : "object",
-                "oneOf" : [ {
-                  "allOf" : [ {
-                    "properties" : {
-                      "allowed" : {
-                        "description" : "defines allowed values for a variable",
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object"
-                        }
-                      }
-                    }
-                  } ],
-                  "required" : [ "allowed" ]
-                }, {
-                  "allOf" : [ {
-                    "properties" : {
-                      "regex" : {
-                        "description" : "defines regex pattern for a variable value",
-                        "type" : "string"
-                      }
-                    }
-                  } ],
-                  "required" : [ "regex" ]
-                } ]
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "object"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "object"
+                }
               }
             }
           } ],
@@ -3263,25 +3553,36 @@
         },
         "SecretVariable" : {
           "title" : "SecretVariable",
+          "description" : "Secret variable definition.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
             "type" : "object",
-            "required" : [ "type", "value" ],
+            "required" : [ "type" ],
             "properties" : {
-              "default" : {
-                "type" : "string"
-              },
               "type" : {
+                "description" : "Variable type.",
                 "type" : "string",
                 "enum" : [ "secret" ]
               },
               "value" : {
+                "description" : "Variable value (secret reference).",
                 "type" : "string",
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
                   }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
                 }
               }
             }
@@ -17501,7 +17802,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -32607,7 +32908,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -34667,7 +34968,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "when" : {
                 "description" : "The stage conditional logic.",
@@ -38462,7 +38763,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -38635,7 +38936,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -38726,7 +39027,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -39093,7 +39394,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -39144,7 +39445,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -39165,7 +39466,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -39240,7 +39541,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -39334,7 +39635,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -39434,7 +39735,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -39724,7 +40025,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -39795,7 +40096,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -39813,7 +40114,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -39889,7 +40190,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -39981,7 +40282,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40084,7 +40385,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40186,7 +40487,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40333,7 +40634,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40407,7 +40708,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40522,7 +40823,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40627,7 +40928,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40806,7 +41107,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -40954,7 +41255,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -41001,7 +41302,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -41051,7 +41352,7 @@
                   "type" : "object",
                   "additionalProperties" : {
                     "oneOf" : [ {
-                      "$ref" : "#/definitions/pipeline/common/StringVariable"
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/common/NumberVariable"
                     }, {
@@ -41143,7 +41444,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -41233,7 +41534,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41291,7 +41592,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -41425,7 +41726,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "$ref" : "#/definitions/pipeline/common/Timeout"
@@ -41488,7 +41789,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41546,7 +41847,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -41600,7 +41901,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41658,7 +41959,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41716,7 +42017,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41774,7 +42075,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41832,7 +42133,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41890,7 +42191,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -41948,7 +42249,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -42006,7 +42307,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -42064,7 +42365,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -42122,7 +42423,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -42180,7 +42481,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -43039,7 +43340,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "timeout" : {
                 "type" : "string",
@@ -43098,7 +43399,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "when" : {
                 "description" : "The stage conditional logic.",
@@ -43759,7 +44060,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -43849,7 +44150,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -44242,7 +44543,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -44329,7 +44630,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -44530,7 +44831,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -44614,7 +44915,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -45093,7 +45394,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -45174,7 +45475,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -45333,7 +45634,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -45423,7 +45724,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -45595,7 +45896,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -45676,7 +45977,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -45841,7 +46142,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -45937,7 +46238,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -46159,7 +46460,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -46249,7 +46550,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -46430,7 +46731,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -46523,7 +46824,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -46679,7 +46980,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -46760,7 +47061,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -46913,7 +47214,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -46994,7 +47295,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -47147,7 +47448,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -47228,7 +47529,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -47381,7 +47682,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -47462,7 +47763,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -47621,7 +47922,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -47708,7 +48009,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -47861,7 +48162,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -47942,7 +48243,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -48098,7 +48399,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -48182,7 +48483,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -48341,7 +48642,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -48431,7 +48732,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -48633,7 +48934,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -48720,7 +49021,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -48895,7 +49196,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -48976,7 +49277,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -49132,7 +49433,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -49216,7 +49517,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -49369,7 +49670,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -49450,7 +49751,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -49609,7 +49910,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -49699,7 +50000,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -49892,7 +50193,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -49982,7 +50283,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -50138,7 +50439,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -50222,7 +50523,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -50378,7 +50679,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -50465,7 +50766,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -50650,7 +50951,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -50734,7 +51035,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -50896,7 +51197,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -50986,7 +51287,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -51145,7 +51446,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -51232,7 +51533,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -51388,7 +51689,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -51472,7 +51773,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -51625,7 +51926,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -51706,7 +52007,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -52077,7 +52378,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -52164,7 +52465,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -52326,7 +52627,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -52416,7 +52717,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -52569,7 +52870,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -52650,7 +52951,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -52803,7 +53104,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -52884,7 +53185,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -53039,7 +53340,7 @@
                     }, {
                       "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     } ]
                   }
                 },
@@ -53121,7 +53422,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -53285,7 +53586,7 @@
                     }, {
                       "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                     }, {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     } ]
                   }
                 },
@@ -53367,7 +53668,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -54183,7 +54484,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -54240,7 +54541,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -54328,7 +54629,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -54412,7 +54713,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -54500,7 +54801,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -54584,7 +54885,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -54691,7 +54992,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -54772,7 +55073,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -54866,7 +55167,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -54953,7 +55254,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -55050,7 +55351,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -55143,7 +55444,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -55306,7 +55607,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -55393,7 +55694,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -55484,7 +55785,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -55568,7 +55869,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -55668,7 +55969,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -55764,7 +56065,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -55881,7 +56182,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -55968,7 +56269,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -56084,7 +56385,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -56171,7 +56472,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -56297,7 +56598,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -56390,7 +56691,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -56501,7 +56802,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -56588,7 +56889,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -58771,7 +59072,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -58861,7 +59162,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -59023,7 +59324,7 @@
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
-                      "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                      "$ref" : "#/definitions/pipeline/common/OutputV1"
                     }
                   }, {
                     "type" : "string",
@@ -59113,7 +59414,7 @@
                 "oneOf" : [ {
                   "type" : "array",
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/common/OutputNGVariable"
+                    "$ref" : "#/definitions/pipeline/common/OutputV1"
                   }
                 }, {
                   "type" : "string",
@@ -65634,7 +65935,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66324,7 +66625,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66409,7 +66710,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66523,7 +66824,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66608,7 +66909,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66727,7 +67028,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "type" : "string",
@@ -66913,7 +67214,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "when" : {
                 "description" : "The stage conditional logic.",
@@ -71682,7 +71983,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "delegates" : {
                 "description" : "Configures the delegate matching logic.",
@@ -71705,7 +72006,7 @@
                 "description" : "Variables defines the pipeline variable parameters.",
                 "additionalProperties" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                   }, {
                     "$ref" : "#/definitions/pipeline/common/NumberVariable"
                   }, {
@@ -76122,7 +76423,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "type" : {
                 "description" : "The stage type.",
@@ -76134,7 +76435,7 @@
                 "description" : "Variables defines the pipeline variable parameters.",
                 "additionalProperties" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                   }, {
                     "$ref" : "#/definitions/pipeline/common/NumberVariable"
                   }, {
@@ -76486,7 +76787,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "delegates" : {
                 "description" : "Configures the delegate matching logic.",
@@ -76509,7 +76810,7 @@
                 "description" : "Variables defines the pipeline variable parameters.",
                 "additionalProperties" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                   }, {
                     "$ref" : "#/definitions/pipeline/common/NumberVariable"
                   }, {
@@ -77659,7 +77960,7 @@
               },
               "strategy" : {
                 "description" : "The stage execution strategy.",
-                "$ref" : "#/definitions/pipeline/common/Strategy"
+                "$ref" : "#/definitions/pipeline/common/StrategyConfigV1"
               },
               "delegates" : {
                 "description" : "Configures the delegate matching logic.",
@@ -77682,7 +77983,7 @@
                 "description" : "Variables defines the pipeline variable parameters.",
                 "additionalProperties" : {
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/StringVariable"
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
                   }, {
                     "$ref" : "#/definitions/pipeline/common/NumberVariable"
                   }, {
@@ -78243,16 +78544,36 @@
       "Resource" : {
         "title" : "Resource",
         "type" : "object",
-        "description" : "Resource defines the system resources.",
+        "description" : "Resource defines container resource limits and requests.",
+        "properties" : {
+          "limits" : {
+            "description" : "Limits defines the maximum resources the container can use.",
+            "$ref" : "#/definitions/pipeline/ResourceLimits"
+          },
+          "requests" : {
+            "description" : "Requests defines the minimum resources reserved for the container.",
+            "$ref" : "#/definitions/pipeline/ResourceLimits"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ResourceLimits" : {
+        "title" : "ResourceLimits",
+        "type" : "object",
+        "description" : "ResourceLimits defines CPU and memory constraints.",
         "properties" : {
           "cpu" : {
-            "type" : [ "string", "number" ]
+            "description" : "CPU allocation (e.g., \"100m\", \"0.5\", \"2\").",
+            "type" : "string",
+            "minLength" : 1
           },
           "memory" : {
-            "format" : "bytes",
-            "type" : [ "string", "number" ]
+            "description" : "Memory allocation (e.g., \"128Mi\", \"1Gi\").",
+            "type" : "string",
+            "minLength" : 1
           }
-        }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "Options" : {
         "type" : "object",
@@ -78298,7 +78619,14 @@
         "properties" : {
           "depth" : {
             "description" : "Depth defines the clone depth.",
-            "type" : "number"
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
           },
           "disabled" : {
             "description" : "Disabled disables the default clone step.",
@@ -78306,22 +78634,90 @@
           },
           "insecure" : {
             "description" : "Insecure disables ssl verification.",
-            "type" : "boolean"
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "lfs" : {
+            "description" : "Lfs enables cloning lfs files.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
           },
           "strategy" : {
-            "description" : "Strategy configures the clone strategy.",
+            "description" : "Strategy configures the PR clone strategy.",
             "type" : "string",
             "enum" : [ "source-branch", "merge" ]
           },
+          "submodules" : {
+            "description" : "Submodules enables cloning all submodules.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "tags" : {
+            "description" : "Tags enables cloning all tags.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
           "trace" : {
             "description" : "Trace enables trace logging.",
-            "type" : "boolean"
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
           },
           "ref" : {
             "description" : "Reference defines the clone ref.",
-            "$ref" : "#/definitions/pipeline/Reference"
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/Reference"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "repo" : {
+            "description" : "Repo defines the repository name or URL.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "connector" : {
+            "description" : "Connector defines the connector reference.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "clonedir" : {
+            "description" : "Clonedir defines the clone directory path.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "resources" : {
+            "description" : "Resources defines container resource limits.",
+            "$ref" : "#/definitions/pipeline/Resource"
           }
-        }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "Reference" : {
         "title" : "Reference",
@@ -78329,19 +78725,22 @@
         "type" : "object",
         "properties" : {
           "name" : {
-            "description" : "Name provides ref name.",
-            "type" : "string"
+            "description" : "Name provides ref name (branch name, tag name, or PR number).",
+            "type" : "string",
+            "minLength" : 1
           },
           "type" : {
             "description" : "Type defines the ref type.",
             "type" : "string",
-            "enum" : [ "branch", "tag", "pr" ]
+            "enum" : [ "branch", "tag", "pull-request" ]
           },
           "sha" : {
-            "description" : "Sha provides the ref sha.",
-            "type" : "string"
+            "description" : "Sha provides the commit sha for direct sha-based clone.",
+            "type" : "string",
+            "minLength" : 1
           }
-        }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "Repository" : {
         "title" : "Repository",

@@ -1,0 +1,28 @@
+title: ActionStepInfoV1
+description: Action step configuration for running GitHub-style actions.
+type: object
+properties:
+  uses:
+    description: Action reference (e.g., actions/checkout@v3). Supports expressions.
+    type: string
+  with:
+    description: Action inputs. Supports expressions.
+    $ref: ../../common/object-or-expression.yaml
+  env:
+    description: Environment variables. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  outputs:
+    description: Output variables to capture. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+$schema: http://json-schema.org/draft-07/schema#
+

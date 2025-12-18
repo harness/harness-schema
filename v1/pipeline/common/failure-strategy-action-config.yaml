@@ -1,23 +1,29 @@
-title: FailureStrategyActionConfig
+title: FailureStrategyActionConfigV1
 type: object
-required:
-- type
-discriminator: type
+description: Action configuration for failure strategy. Only one action type should be specified.
 properties:
-  type:
-    type: string
-    enum:
-    - Ignore
-    - Retry
-    - MarkAsSuccess
-    - Abort
-    - StageRollback
-    - StepGroupRollback
-    - PipelineRollback
-    - ManualIntervention
-    - ProceedWithDefaultValues
-    - MarkAsFailure
-    - RetryStepGroup
-  description:
-    desc: This is the description for FailureStrategyActionConfig
+  retry:
+    $ref: ./retry-failure-spec-config.yaml
+  manual-intervention:
+    $ref: ./manual-failure-spec-config.yaml
+  abort:
+    description: Abort the execution.
+    type: object
+  ignore:
+    description: Ignore the failure and continue.
+    type: object
+  success:
+    description: Mark the execution as success.
+    type: object
+  stage-rollback:
+    description: Rollback the stage.
+    type: object
+  pipeline-rollback:
+    description: Rollback the pipeline.
+    type: object
+  fail:
+    description: Mark the execution as failed.
+    type: object
+  retry-step-group:
+    $ref: ./retry-step-group-failure-spec-config.yaml
 $schema: http://json-schema.org/draft-07/schema#

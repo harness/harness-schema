@@ -1,0 +1,21 @@
+title: ServiceV1
+description: Service configuration for CD stages. Supports multiple formats.
+oneOf:
+  # Single service (string or object with id/with)
+  - $ref: ./service-item.yaml
+  # Multi-service with items
+  - type: object
+    required:
+      - items
+    properties:
+      items:
+        description: List of services for multi-service deployment.
+        type: array
+        items:
+          $ref: ./service-item.yaml
+      sequential:
+        description: Execute services sequentially (one at a time). When false, services run in parallel.
+        type: boolean
+        default: false
+    additionalProperties: false
+$schema: http://json-schema.org/draft-07/schema#

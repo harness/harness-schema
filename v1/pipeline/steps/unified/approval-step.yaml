@@ -1,0 +1,60 @@
+title: UnifiedApprovalStepNode
+description: Approval step node for manual, Jira, ServiceNow, or custom approvals.
+allOf:
+  - $ref: ./abstract-step-node.yaml
+  - type: object
+    required:
+      - approval
+    properties:
+      approval:
+        description: Approval step configuration.
+        type: object
+        required:
+          - uses
+        properties:
+          uses:
+            description: Type of approval.
+            type: string
+            enum:
+              - harness
+              - jira
+              - servicenow
+              - custom
+          with:
+            description: Approval type-specific configuration.
+            type: object
+        allOf:
+          - if:
+              properties:
+                uses:
+                  const: harness
+            then:
+              properties:
+                with:
+                  $ref: ./approval-harness-spec.yaml
+          - if:
+              properties:
+                uses:
+                  const: jira
+            then:
+              properties:
+                with:
+                  $ref: ./approval-jira-spec.yaml
+          - if:
+              properties:
+                uses:
+                  const: servicenow
+            then:
+              properties:
+                with:
+                  $ref: ./approval-servicenow-spec.yaml
+          - if:
+              properties:
+                uses:
+                  const: custom
+            then:
+              properties:
+                with:
+                  $ref: ./approval-custom-spec.yaml
+$schema: http://json-schema.org/draft-07/schema#
+

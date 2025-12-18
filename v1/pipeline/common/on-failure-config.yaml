@@ -1,29 +1,17 @@
-title: OnFailureConfig
+title: FailureConfigV1
 type: object
+description: Failure strategy configuration for handling errors.
 required:
-- action
-- errors
+  - errors
+  - action
 properties:
-  action:
-    $ref: failure-strategy-action-config.yaml
   errors:
-    type: array
-    items:
-      type: string
-      enum:
-      - Unknown
-      - AllErrors
-      - Authentication
-      - Connectivity
-      - Timeout
-      - Authorization
-      - Verification
-      - DelegateProvisioning
-      - PolicyEvaluationFailure
-      - InputTimeoutError
-      - ApprovalRejection
-      - DelegateRestart
-      - UserMarkedFailure
-  description:
-    desc: This is the description for OnFailureConfig
+    description: List of error types to handle. Supports single value or array. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          $ref: ./ng-failure-type.yaml
+      - $ref: ./ng-failure-type.yaml
+  action:
+    $ref: ./failure-strategy-action-config.yaml
 $schema: http://json-schema.org/draft-07/schema#

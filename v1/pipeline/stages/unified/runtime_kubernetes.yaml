@@ -1,0 +1,103 @@
+title: K8RuntimeSpec
+description: Kubernetes runtime specification.
+type: object
+properties:
+  namespace:
+    description: Kubernetes namespace. Supports expressions.
+    type: string
+  connector:
+    description: Kubernetes connector reference. Supports expressions.
+    type: string
+  user:
+    description: User ID to run container as. Supports expressions.
+    oneOf:
+      - type: integer
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  pull:
+    description: Image pull policy. Supports expressions.
+    oneOf:
+      - type: string
+        enum:
+          - always
+          - never
+          - if-not-exists
+      - type: string
+  os:
+    description: Operating system type. Supports expressions.
+    oneOf:
+      - type: string
+        enum:
+          - Linux
+          - MacOS
+          - Windows
+      - type: string
+  harness-image-connector:
+    description: Harness image connector for pulling images. Supports expressions.
+    type: string
+  automount-service-token:
+    description: Whether to automount service account token. Supports expressions.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  priority-class:
+    description: Kubernetes priority class name. Supports expressions.
+    type: string
+  tolerations:
+    description: Kubernetes pod tolerations.
+    type: array
+    items:
+      $ref: ./toleration.yaml
+  host:
+    description: Host aliases for the pod. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+  node-selector:
+    description: Kubernetes node selector. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+  timeout:
+    description: Init timeout duration. Supports expressions.
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  service-account:
+    description: Kubernetes service account name. Supports expressions.
+    type: string
+  labels:
+    description: Pod labels. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+  annotations:
+    description: Pod annotations. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+  volumes:
+    description: Volume configurations. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          $ref: ./ci-volume.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  pod-spec-overlay:
+    description: Pod spec overlay JSON/YAML. Supports expressions.
+    type: string
+  security-context:
+    description: Pod security context. Supports expressions.
+    oneOf:
+      - $ref: ./security-context.yaml
+      - type: string
+$schema: http://json-schema.org/draft-07/schema#

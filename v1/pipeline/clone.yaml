@@ -4,22 +4,76 @@ description: Clone defines the default clone behavior.
 properties:
   depth:
     description: Depth defines the clone depth.
-    type: number
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
   disabled:
     description: Disabled disables the default clone step.
     type: boolean
   insecure:
     description: Insecure disables ssl verification.
-    type: boolean
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  lfs:
+    description: Lfs enables cloning lfs files.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
   strategy:
-    description: Strategy configures the clone strategy.
+    description: Strategy configures the PR clone strategy.
     type: string
     enum:
       - source-branch
       - merge
+  submodules:
+    description: Submodules enables cloning all submodules.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  tags:
+    description: Tags enables cloning all tags.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
   trace:
     description: Trace enables trace logging.
-    type: boolean
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
   ref:
-    $ref: ./reference.yaml
     description: Reference defines the clone ref.
+    oneOf:
+      - $ref: ./reference.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  repo:
+    description: Repo defines the repository name or URL.
+    type: string
+    minLength: 1
+  connector:
+    description: Connector defines the connector reference.
+    type: string
+    minLength: 1
+  clonedir:
+    description: Clonedir defines the clone directory path.
+    type: string
+    minLength: 1
+  resources:
+    description: Resources defines container resource limits.
+    $ref: ./resource.yaml
+$schema: http://json-schema.org/draft-07/schema#

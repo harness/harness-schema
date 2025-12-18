@@ -1,0 +1,90 @@
+title: NotificationEvent
+description: NotificationEvent defines event types that trigger notifications.
+type: object
+properties:
+  pipeline:
+    description: Pipeline-level events.
+    oneOf:
+      - type: string
+        enum:
+          - all
+          - start
+          - success
+          - failed
+          - end
+      - type: array
+        items:
+          type: string
+          enum:
+            - all
+            - start
+            - success
+            - failed
+            - end
+  stage:
+    description: Stage-level events.
+    oneOf:
+      - type: string
+        enum:
+          - all
+      - type: array
+        items:
+          oneOf:
+            - type: string
+              enum:
+                - all
+                - start
+                - success
+                - failed
+            - type: object
+              properties:
+                all:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                start:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                success:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                failed:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+              minProperties: 1
+              maxProperties: 1
+  step:
+    description: Step-level events.
+    oneOf:
+      - type: string
+        enum:
+          - failed
+      - type: array
+        items:
+          type: string
+          enum:
+            - failed
+  trigger:
+    description: Trigger-level events.
+    oneOf:
+      - type: string
+        enum:
+          - failed
+      - type: array
+        items:
+          type: string
+          enum:
+            - failed
+$schema: http://json-schema.org/draft-07/schema#
+

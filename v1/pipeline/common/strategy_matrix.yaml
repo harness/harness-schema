@@ -1,29 +1,35 @@
-title: Matrix
+title: MatrixConfigV1
 type: object
-description: Defines a matrix execution strategy.
-
+description: Matrix strategy configuration for parallel execution across multiple dimensions.
 properties:
-  axis:
-    type: object
-    additionalProperties:
-      type: array
-      items:
-        type: string
-  concurrency:
-    description: Defines the matrix concurrency.
-    type: number
-  node_name:
-    description: Defines the naming for matrix nodes.
-    type: string
-  include:
-    type: array
-    items:
-      type: object
-      additionalProperties:
-        type: string
   exclude:
-    type: array
-    items:
-      type: object
-      additionalProperties:
-        type: string
+    description: Combinations to exclude from the matrix. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: object
+          additionalProperties: true
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  include:
+    description: Additional combinations to include in the matrix. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: object
+          additionalProperties: true
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  node-name:
+    description: Custom naming pattern for matrix nodes. Supports expressions.
+    type: string
+additionalProperties:
+  description: Matrix axes - key is axis name, value is array of values or expression.
+  oneOf:
+    - type: array
+      items:
+        oneOf:
+          - type: string
+          - type: object
+    - type: string
+$schema: http://json-schema.org/draft-07/schema#

@@ -1,0 +1,61 @@
+title: CIVolumeV1
+description: CI volume configuration. Type determined by 'uses' property.
+type: object
+required:
+  - uses
+  - with
+properties:
+  name:
+    description: Volume name.
+    type: string
+  uses:
+    description: Volume type.
+    type: string
+    enum:
+      - empty-dir
+      - persistent-volume-claim
+      - host-path
+      - config-map
+      - secret
+allOf:
+  - if:
+      properties:
+        uses:
+          const: empty-dir
+    then:
+      properties:
+        with:
+          $ref: ./volume-empty-dir-spec.yaml
+  - if:
+      properties:
+        uses:
+          const: persistent-volume-claim
+    then:
+      properties:
+        with:
+          $ref: ./volume-pvc-spec.yaml
+  - if:
+      properties:
+        uses:
+          const: host-path
+    then:
+      properties:
+        with:
+          $ref: ./volume-host-path-spec.yaml
+  - if:
+      properties:
+        uses:
+          const: config-map
+    then:
+      properties:
+        with:
+          $ref: ./volume-config-map-spec.yaml
+  - if:
+      properties:
+        uses:
+          const: secret
+    then:
+      properties:
+        with:
+          $ref: ./volume-secret-spec.yaml
+$schema: http://json-schema.org/draft-07/schema#

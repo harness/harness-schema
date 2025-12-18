@@ -1,0 +1,33 @@
+title: UnifiedPmsAbstractStepNode
+description: Abstract step node with common properties shared by all step types.
+type: object
+properties:
+  id:
+    description: Unique identifier for the step.
+    type: string
+  name:
+    description: Display name of the step.
+    type: string
+  desc:
+    description: Description of the step.
+    type: string
+  if:
+    description: Conditional execution expression. Step is skipped if condition resolves to false. Supports expressions.
+    type: string
+  strategy:
+    description: Execution strategy (matrix, for, while, repeat). Supports expressions.
+    oneOf:
+      - $ref: ../../common/strategy.yaml
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  enforce:
+    description: Policy enforcement configuration.
+    $ref: ./policy-config.yaml
+  on-failure:
+    $ref: ../../common/on-failure.yaml
+  timeout:
+    description: Step timeout duration. Supports expressions.
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+$schema: http://json-schema.org/draft-07/schema#
+

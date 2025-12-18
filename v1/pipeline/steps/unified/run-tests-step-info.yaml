@@ -1,0 +1,49 @@
+title: RunTestsStepInfoV1
+description: Run tests step configuration for test intelligence.
+type: object
+properties:
+  shell:
+    description: Shell type to use. Supports expressions.
+    type: string
+  script:
+    description: Test command to execute. Supports expressions.
+    type: string
+  match:
+    description: Test file patterns to match. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  container:
+    description: Container configuration for the step.
+    $ref: ./container.yaml
+  output:
+    description: Output variables to capture.
+    type: array
+    items:
+      $ref: ../../common/output-ng-variable.yaml
+  report:
+    description: Test report configuration. Supports expressions.
+    $ref: ./report.yaml
+  delegate:
+    description: Delegate selectors.
+    $ref: ../../common/delegate.yaml
+  env:
+    description: Environment variables. Supports expressions.
+    $ref: ../../common/object-or-expression.yaml
+  with:
+    description: Additional parameters. Supports expressions.
+    $ref: ../../common/object-or-expression.yaml
+  intelligence:
+    description: Test intelligence configuration.
+    type: object
+    properties:
+      disabled:
+        description: Whether test intelligence is disabled. Supports expressions.
+        oneOf:
+          - type: boolean
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+$schema: http://json-schema.org/draft-07/schema#

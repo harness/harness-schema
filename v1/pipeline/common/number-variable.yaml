@@ -1,19 +1,18 @@
 title: NumberVariable
+description: Number variable definition.
 allOf:
   - $ref: ./variable.yaml
   - type: object
     required:
       - type
-      - value
     properties:
-      default:
-        type: number
-        format: double
       type:
+        description: Variable type.
         type: string
         enum:
           - number
       value:
+        description: Variable value. Supports expressions.
         oneOf:
           - type: number
             format: double
@@ -22,27 +21,17 @@ allOf:
         metadata:
           inputProperties:
             dependsOn: [ type ]
-      validator:
-        type: object
-        oneOf:
-          - allOf:
-              - properties:
-                  allowed:
-                    description: defines allowed values for a variable
-                    type: array
-                    items:
-                      oneOf:
-                        - type: number
-                          format: double
-                        - type: string
-                          pattern: ((^[+-]?[0-9]*\.?[0-9]+$)|(<\+.+>.*))
-            required:
-              - allowed
-          - allOf:
-              - properties:
-                  regex:
-                    description: defines regex pattern for an variable value
-                    type: string
-            required:
-              - regex
+      default:
+        description: Default value for the variable.
+        type: number
+        format: double
+      enum:
+        description: Defines a list of accepted input values.
+        type: array
+        items:
+          oneOf:
+            - type: number
+              format: double
+            - type: string
+              pattern: ((^[+-]?[0-9]*\.?[0-9]+$)|(<\+.+>.*))
 $schema: http://json-schema.org/draft-07/schema#

@@ -1,0 +1,61 @@
+title: EnvironmentV1
+description: Environment configuration for CD stages. Supports multiple formats.
+oneOf:
+  # Single environment with id and deploy-to
+  - type: object
+    required:
+      - id
+      - deploy-to
+    properties:
+      id:
+        description: Environment identifier.
+        type: string
+      deploy-to:
+        description: Infrastructure(s) to deploy to.
+        $ref: ./deploy-to.yaml
+      ref:
+        description: Git branch for the environment configuration.
+        type: string
+    additionalProperties: false
+  # Multi-environment with items
+  - type: object
+    required:
+      - items
+    properties:
+      items:
+        description: List of environments for multi-environment deployment.
+        type: array
+        items:
+          $ref: ./environment-item.yaml
+      sequential:
+        description: Execute environments sequentially (one at a time). When false, environments run in parallel.
+        type: boolean
+        default: false
+    additionalProperties: false
+  # Multi-environment with group
+  - type: object
+    required:
+      - group
+    properties:
+      group:
+        description: Environment group configuration.
+        $ref: ./environment-group.yaml
+      sequential:
+        description: Execute environments sequentially (one at a time). When false, environments run in parallel.
+        type: boolean
+        default: false
+    additionalProperties: false
+  # Multi-environment with filters
+  - type: object
+    required:
+      - filters
+    properties:
+      filters:
+        description: Filters for selecting environments and infrastructures.
+        $ref: ./filters.yaml
+      sequential:
+        description: Execute environments sequentially (one at a time). When false, environments run in parallel.
+        type: boolean
+        default: false
+    additionalProperties: false
+$schema: http://json-schema.org/draft-07/schema#

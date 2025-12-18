@@ -1,0 +1,49 @@
+title: RepeatConfigV1
+type: object
+description: Repeat strategy configuration for iterating over items.
+properties:
+  iterations:
+    description: Number of iterations (alternative to items). Supports expressions.
+    oneOf:
+      - type: integer
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  items:
+    description: List of items to iterate over. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  node-name:
+    description: Custom naming pattern for repeat nodes. Supports expressions.
+    type: string
+  partition-size:
+    description: Size of each partition when splitting items. Supports expressions.
+    oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  start:
+    description: Starting index for iteration. Supports expressions.
+    oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  end:
+    description: Ending index for iteration. Supports expressions.
+    oneOf:
+      - type: integer
+        minimum: 0
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+  unit:
+    description: Unit for partition-size (percentage or count).
+    type: string
+    enum:
+      - percentage
+      - count
+$schema: http://json-schema.org/draft-07/schema#
