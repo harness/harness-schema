@@ -1,30 +1,172 @@
 title: ChaosStepInfo
 allOf:
-- $ref: ../../common/step-spec-type.yaml
-- type: object
-  required:
-  - expectedResilienceScore
-  - experimentRef
-  properties:
-    assertion:
-      type: string
-    expectedResilienceScore:
-      type: number
-      format: double
-    experimentRef:
-      type: string
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - expectedResilienceScore
+    properties:
+      assertion:
+        type: string
+      expectedResilienceScore:
+        oneOf:
+          - type: number
+            format: double
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
+      experimentRef:
+        type: string
+        minLength: 1
+      identifier:
+        type: string
+        minLength: 1
+      kind:
+        type: string
+        enum: [ "experiment", "template" ]
+      hubRef:
+        type: string
+        minLength: 1
+      infraReference:
+        oneOf:
+          - type: string
+            minLength: 1
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
+      tasks:
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - identifier
+              properties:
+                identifier:
+                  type: string
+                  minLength: 1
+                values:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - value
+                    properties:
+                      name:
+                        type: string
+                        minLength: 1
+                      value:
+                        anyOf:
+                          - type: string
+                          - type: number
+                          - type: boolean
+                          - type: string
+                            pattern: "(<\\+.+>.*)"
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
+    anyOf:
+      - required:
+          - experimentRef
+      - required:
+          - identifier
+    allOf:
+      - if:
+          properties:
+            identifier:
+              type: string
+            kind:
+              const: "template"
+          required:
+            - identifier
+            - kind
+        then:
+          required:
+            - hubRef
+            - infraReference
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
-- expectedResilienceScore
-- experimentRef
+  - expectedResilienceScore
 properties:
   assertion:
     type: string
   expectedResilienceScore:
-    type: number
-    format: double
+    oneOf:
+      - type: number
+        format: double
+      - type: string
+        pattern: "(<\\+.+>.*)"
+        minLength: 1
   experimentRef:
     type: string
+    minLength: 1
+  identifier:
+    type: string
+    minLength: 1
+  kind:
+    type: string
+    enum: [ "experiment", "template" ]
+  hubRef:
+    type: string
+    minLength: 1
+  infraReference:
+    oneOf:
+      - type: string
+        minLength: 1
+      - type: string
+        pattern: "(<\\+.+>.*)"
+        minLength: 1
+  tasks:
+    oneOf:
+      - type: array
+        items:
+          type: object
+          required:
+            - identifier
+          properties:
+            identifier:
+              type: string
+              minLength: 1
+            values:
+              type: array
+              items:
+                type: object
+                required:
+                  - name
+                  - value
+                properties:
+                  name:
+                    type: string
+                    minLength: 1
+                  value:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: boolean
+                      - type: string
+                        pattern: "(<\\+.+>.*)"
+      - type: string
+        pattern: "(<\\+.+>.*)"
+        minLength: 1
   description:
     desc: This is the description for ChaosStepInfo
+anyOf:
+  - required:
+      - experimentRef
+  - required:
+      - identifier
+allOf:
+  - if:
+      properties:
+        identifier:
+          type: string
+        kind:
+          const: "template"
+      required:
+        - identifier
+        - kind
+    then:
+      required:
+        - hubRef
+        - infraReference
