@@ -510,6 +510,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVVerifyStepNode_template"
@@ -44838,6 +44840,133 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "FmeSetDynamicConfigurationStepNode_template" : {
+            "title" : "FmeSetDynamicConfigurationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeSetDynamicConfiguration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeSetDynamicConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeSetDynamicConfigurationStepInfo" : {
+            "title" : "FmeSetDynamicConfigurationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment", "treatments" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "replace" : {
+                  "description" : "Whether to replace existing configuration",
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "treatments" : {
+                  "description" : "List of treatments with their configurations",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment", "configuration" ],
+                      "properties" : {
+                        "treatment" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        },
+                        "configuration" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "EventListenerStepNode_template" : {
             "title" : "EventListenerStepNode_template",
             "type" : "object",
@@ -47292,6 +47421,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeSetDynamicConfigurationStepNode" : {
+            "title" : "FmeSetDynamicConfigurationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeSetDynamicConfigurationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeSetDynamicConfiguration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeSetDynamicConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepInfo"
                   }
                 }
               }
@@ -63717,6 +63923,12 @@
             "not" : {
               "pattern" : "^<\\+.*>.*$"
             }
+          },
+          "fme-flag-common-treatments" : {
+            "title" : "fme-flag-common-treatments",
+            "type" : "string",
+            "description" : "FME Treatment Name",
+            "pattern" : "^[a-zA-Z0-9][-_\\.a-zA-Z0-9]*$"
           },
           "AwsCdkBootstrapStepNode_template" : {
             "title" : "AwsCdkBootstrapStepNode_template",
@@ -97215,6 +97427,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRestoreStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -99458,6 +99672,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetIndividualTargetsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepNode"
                 } ]
               },
               "stepGroup" : {

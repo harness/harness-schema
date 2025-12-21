@@ -1,0 +1,42 @@
+title: FmeSetDynamicConfigurationStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - name
+      - environment
+      - treatments
+    properties:
+      name:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      replace:
+        description: "Whether to replace existing configuration"
+        oneOf:
+          - type: boolean
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "List of treatments with their configurations"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+                - configuration
+              properties:
+                treatment:
+                  oneOf:
+                    - $ref: ../common/fme-flag-common-treatment.yaml
+                    - $ref: ../common/common-jexl.yaml
+                configuration:
+                  oneOf:
+                    - $ref: ../common/string-without-jexl.yaml
+                    - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
