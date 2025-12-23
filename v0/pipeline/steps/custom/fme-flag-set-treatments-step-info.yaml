@@ -1,0 +1,43 @@
+title: FmeFlagSetTreatmentsStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - flagName
+      - environment
+      - defaultTreatment
+      - treatments
+    properties:
+      flagName:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      defaultTreatment:
+        description: "Default treatment for the configuration"
+        oneOf:
+          - $ref: ../common/fme-flag-common-treatment.yaml
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "List of treatments with their descriptions"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+                - description
+              properties:
+                treatment:
+                  oneOf:
+                    - $ref: ../common/fme-flag-common-treatment.yaml
+                    - $ref: ../common/common-jexl.yaml
+                description:
+                  oneOf:
+                    - $ref: ../common/string-without-jexl.yaml
+                    - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
