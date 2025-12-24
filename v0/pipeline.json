@@ -6681,14 +6681,14 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeSetDynamicConfigurationStepNode" : {
-            "title" : "FmeSetDynamicConfigurationStepNode",
+          "FmeFlagSetDynamicConfigurationsStepNode" : {
+            "title" : "FmeFlagSetDynamicConfigurationsStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for FmeSetDynamicConfigurationStepNode"
+                "desc" : "This is the description for FmeFlagSetDynamicConfigurationsStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -6728,7 +6728,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeSetDynamicConfiguration" ]
+                "enum" : [ "FmeFlagSetDynamicConfigurations" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -6745,21 +6745,21 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeSetDynamicConfiguration"
+                    "const" : "FmeFlagSetDynamicConfigurations"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepInfo"
                   }
                 }
               }
             } ]
           },
-          "FmeSetDynamicConfigurationStepInfo" : {
-            "title" : "FmeSetDynamicConfigurationStepInfo",
+          "FmeFlagSetDynamicConfigurationsStepInfo" : {
+            "title" : "FmeFlagSetDynamicConfigurationsStepInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
@@ -6780,14 +6780,6 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "replace" : {
-                  "description" : "Whether to replace existing configuration",
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
                 "treatments" : {
                   "description" : "List of treatments with their configurations",
                   "oneOf" : [ {
@@ -6804,17 +6796,25 @@
                           } ]
                         },
                         "configuration" : {
-                          "oneOf" : [ {
-                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
-                          }, {
-                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                          } ]
+                          "type" : "string"
                         }
                       }
                     }
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
+                },
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
                 }
               }
             } ],
@@ -80618,7 +80618,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
                 } ]
@@ -81142,7 +81142,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSetDynamicConfigurationStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
                 } ]
