@@ -5262,289 +5262,6 @@
               }
             }
           },
-          "VmInfraSpec" : {
-            "title" : "VmInfraSpec",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Pool" ]
-              },
-              "description" : {
-                "desc" : "This is the description for VmInfraSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "SscaComplianceSource" : {
-            "title" : "SscaComplianceSource",
-            "type" : "object",
-            "required" : [ "type" ],
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "scm", "github", "harness" ]
-              },
-              "description" : {
-                "desc" : "This is the description for SscaComplianceSource"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "scm"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "github"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
-                  }
-                }
-              }
-            }, {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "harness"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessSscaComplianceSource"
-                  }
-                }
-              }
-            } ]
-          },
-          "RepositorySscaComplianceSource" : {
-            "title" : "RepositorySscaComplianceSource",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "connectorRef", "scan_org" ],
-              "properties" : {
-                "connectorRef" : {
-                  "type" : "string"
-                },
-                "repoName" : {
-                  "type" : "string"
-                },
-                "scan_org" : {
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+.*>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                },
-                "description" : {
-                  "desc" : "This is the description for RepositorySscaComplianceSource"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "HarnessSscaComplianceSource" : {
-            "title" : "HarnessSscaComplianceSource",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "type", "pipelineIds" ],
-              "properties" : {
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "pipeline" ]
-                },
-                "pipelineIds" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "type" : "string",
-                    "minLength" : 1
-                  } ]
-                },
-                "description" : {
-                  "desc" : "This is the description for RepositorySscaComplianceSource"
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "FlagConfigurationStepNode" : {
-            "title" : "FlagConfigurationStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for FlagConfigurationStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FlagConfiguration" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FlagConfiguration"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "FlagConfigurationStepInfo" : {
-            "title" : "FlagConfigurationStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "environment", "feature", "instructions" ],
-              "properties" : {
-                "environment" : {
-                  "type" : "string"
-                },
-                "feature" : {
-                  "type" : "string"
-                },
-                "instructions" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
-                    }
-                  }, {
-                    "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength" : 1
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "environment", "feature", "instructions" ],
-            "properties" : {
-              "environment" : {
-                "type" : "string"
-              },
-              "feature" : {
-                "type" : "string"
-              },
-              "instructions" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for FlagConfigurationStepInfo"
-              }
-            }
-          },
-          "PatchInstruction" : {
-            "title" : "PatchInstruction",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "SetFeatureFlagState", "SetOnVariation", "SetOffVariation", "SetDefaultVariations", "AddRule", "UpdateRule", "AddTargetsToVariationTargetMap", "RemoveTargetsToVariationTargetMap", "AddSegmentToVariationTargetMap", "RemoveSegmentsToVariationTargetMap" ]
-              },
-              "description" : {
-                "desc" : "This is the description for PatchInstruction"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagCreateStepNode" : {
             "title" : "FmeFlagCreateStepNode",
             "type" : "object",
@@ -6958,6 +6675,413 @@
                 }
               }
             } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagPatchDefinitionStepNode" : {
+            "title" : "FmeFlagPatchDefinitionStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagPatchDefinitionStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagPatchDefinition" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagPatchDefinition"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagPatchDefinitionStepInfo" : {
+            "title" : "FmeFlagPatchDefinitionStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "minProperties" : 2,
+              "required" : [ "flagName", "environment", "operations" ],
+              "properties" : {
+                "flagName" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "operations" : {
+                  "description" : "Patch operations to apply",
+                  "oneOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "inputVariables" : {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                    } ]
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "VmInfraSpec" : {
+            "title" : "VmInfraSpec",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Pool" ]
+              },
+              "description" : {
+                "desc" : "This is the description for VmInfraSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "SscaComplianceSource" : {
+            "title" : "SscaComplianceSource",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "scm", "github", "harness" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SscaComplianceSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "scm"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "github"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RepositorySscaComplianceSource"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "harness"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/HarnessSscaComplianceSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "RepositorySscaComplianceSource" : {
+            "title" : "RepositorySscaComplianceSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "scan_org" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "repoName" : {
+                  "type" : "string"
+                },
+                "scan_org" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+.*>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for RepositorySscaComplianceSource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "HarnessSscaComplianceSource" : {
+            "title" : "HarnessSscaComplianceSource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "type", "pipelineIds" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "pipeline" ]
+                },
+                "pipelineIds" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "minLength" : 1
+                  } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for RepositorySscaComplianceSource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FlagConfigurationStepNode" : {
+            "title" : "FlagConfigurationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FlagConfigurationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FlagConfiguration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FlagConfiguration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FlagConfigurationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FlagConfigurationStepInfo" : {
+            "title" : "FlagConfigurationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "environment", "feature", "instructions" ],
+              "properties" : {
+                "environment" : {
+                  "type" : "string"
+                },
+                "feature" : {
+                  "type" : "string"
+                },
+                "instructions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "environment", "feature", "instructions" ],
+            "properties" : {
+              "environment" : {
+                "type" : "string"
+              },
+              "feature" : {
+                "type" : "string"
+              },
+              "instructions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/PatchInstruction"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for FlagConfigurationStepInfo"
+              }
+            }
+          },
+          "PatchInstruction" : {
+            "title" : "PatchInstruction",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SetFeatureFlagState", "SetOnVariation", "SetOffVariation", "SetDefaultVariations", "AddRule", "UpdateRule", "AddTargetsToVariationTargetMap", "RemoveTargetsToVariationTargetMap", "AddSegmentToVariationTargetMap", "RemoveSegmentsToVariationTargetMap" ]
+              },
+              "description" : {
+                "desc" : "This is the description for PatchInstruction"
+              }
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
@@ -24791,6 +24915,43 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "string-without-jexl" : {
+            "title" : "string-without-jexl",
+            "description" : "A plain string type that explicitly excludes JEXL expressions (e.g., <+input>, <+variable>).\n\nThis is used in oneOf schemas alongside common-jexl to prevent validation conflicts.\nWithout the 'not' constraint, both schemas would match JEXL expressions since both are \ntype: string, causing oneOf validation to fail (oneOf requires exactly one match).\n\nThe 'not' pattern ensures mutual exclusivity:\n- This schema matches: plain strings that don't start with <+\n- common-jexl matches: JEXL expressions like <+input>, <+variable>, etc.\n\nUse this when you need a field that accepts either a literal string OR a JEXL expression.\n",
+            "type" : "string",
+            "not" : {
+              "pattern" : "^<\\+.*>.*$"
+            }
+          },
+          "common-jexl" : {
+            "title" : "common-jexl",
+            "type" : "string",
+            "pattern" : "(<\\+.+>.*)"
+          },
+          "fme-flag-common-flag-name" : {
+            "title" : "fme-flag-common-flag-name",
+            "type" : "string",
+            "description" : "Feature flag name",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
+          },
+          "fme-flag-common-environment" : {
+            "title" : "fme-flag-common-environment",
+            "type" : "string",
+            "description" : "FME Environment Name or ID",
+            "minLength" : 1,
+            "maxLength" : 100,
+            "not" : {
+              "pattern" : "^<\\+.*>.*$"
+            }
+          },
+          "fme-flag-common-treatments" : {
+            "title" : "fme-flag-common-treatments",
+            "type" : "string",
+            "description" : "FME Treatment Name",
+            "pattern" : "^[a-zA-Z0-9][-_\\.a-zA-Z0-9]*$"
+          },
           "AnchoreScanNode" : {
             "title" : "AnchoreScanNode",
             "type" : "object",
@@ -29767,43 +29928,6 @@
                 "desc" : "Harness Artifact Registry source spec"
               }
             }
-          },
-          "string-without-jexl" : {
-            "title" : "string-without-jexl",
-            "description" : "A plain string type that explicitly excludes JEXL expressions (e.g., <+input>, <+variable>).\n\nThis is used in oneOf schemas alongside common-jexl to prevent validation conflicts.\nWithout the 'not' constraint, both schemas would match JEXL expressions since both are \ntype: string, causing oneOf validation to fail (oneOf requires exactly one match).\n\nThe 'not' pattern ensures mutual exclusivity:\n- This schema matches: plain strings that don't start with <+\n- common-jexl matches: JEXL expressions like <+input>, <+variable>, etc.\n\nUse this when you need a field that accepts either a literal string OR a JEXL expression.\n",
-            "type" : "string",
-            "not" : {
-              "pattern" : "^<\\+.*>.*$"
-            }
-          },
-          "common-jexl" : {
-            "title" : "common-jexl",
-            "type" : "string",
-            "pattern" : "(<\\+.+>.*)"
-          },
-          "fme-flag-common-flag-name" : {
-            "title" : "fme-flag-common-flag-name",
-            "type" : "string",
-            "description" : "Feature flag name",
-            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-            "minLength" : 1,
-            "maxLength" : 100
-          },
-          "fme-flag-common-environment" : {
-            "title" : "fme-flag-common-environment",
-            "type" : "string",
-            "description" : "FME Environment Name or ID",
-            "minLength" : 1,
-            "maxLength" : 100,
-            "not" : {
-              "pattern" : "^<\\+.*>.*$"
-            }
-          },
-          "fme-flag-common-treatments" : {
-            "title" : "fme-flag-common-treatments",
-            "type" : "string",
-            "description" : "FME Treatment Name",
-            "pattern" : "^[a-zA-Z0-9][-_\\.a-zA-Z0-9]*$"
           }
         },
         "ci" : {
@@ -63843,6 +63967,233 @@
               }
             }
           },
+          "GCEProvisionBackendServiceStepNode" : {
+            "title" : "GCEProvisionBackendServiceStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for GCEProvisionBackendServiceStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GCEProvisionBackendService" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GCEProvisionBackendService"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GCEProvisionBackendServiceStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GCEProvisionBackendServiceStepInfo" : {
+            "title" : "GCEProvisionBackendServiceStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "project", "backendServiceName" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                },
+                "project" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "backendServiceName" : {
+                  "type" : "string"
+                },
+                "gcpConnectorRef" : {
+                  "type" : "string"
+                },
+                "configFilePath" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "project" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "backendServiceName" : {
+                "type" : "string"
+              },
+              "gcpConnectorRef" : {
+                "type" : "string"
+              },
+              "configFilePath" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for GCEProvisionBackendServiceStepInfo"
+              }
+            }
+          },
           "SalesforceDeployStepNode" : {
             "title" : "SalesforceDeployStepNode",
             "type" : "object",
@@ -71715,6 +72066,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigBlueGreenRollbackStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GCEProvisionBackendServiceStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceRollbackStepNode"
@@ -71756,6 +72109,30 @@
                   "$ref" : "#/definitions/pipeline/steps/common/FlywayCommandStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefaultAllocationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveIndividualTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetIndividualTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRestoreStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -80622,6 +80999,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -81111,6 +81490,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigBlueGreenRollbackStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GCEProvisionBackendServiceStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDeployStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceRollbackStepNode"
@@ -81146,6 +81527,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
                 } ]
               },
               "stepGroup" : {
