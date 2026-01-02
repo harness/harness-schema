@@ -193,7 +193,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "Gcr", "Ecr", "DockerRegistry", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "Acr", "AmazonS3", "Jenkins", "CustomArtifact", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "GoogleCloudStorage", "Bamboo" ]
+                "enum" : [ "Gcr", "Ecr", "DockerRegistry", "Nexus3Registry", "Nexus2Registry", "ArtifactoryRegistry", "Acr", "AmazonS3", "Jenkins", "CustomArtifact", "GoogleArtifactRegistry", "GithubPackageRegistry", "AzureArtifacts", "AmazonMachineImage", "GoogleCloudStorage", "GceImage", "Bamboo" ]
               }
             }
           }, {
@@ -388,6 +388,21 @@
               "properties" : {
                 "spec" : {
                   "$ref" : "#/definitions/trigger/artifact_trigger/google_cloud"
+                }
+              }
+            }
+          }, {
+            "if" : {
+              "properties" : {
+                "type" : {
+                  "const" : "GceImage"
+                }
+              }
+            },
+            "then" : {
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/trigger/artifact_trigger/gce_image_registry_spec"
                 }
               }
             }
@@ -1288,6 +1303,82 @@
               }
             }
           } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "gce_image_registry_spec" : {
+          "title" : "gce_image_registry_spec",
+          "allOf" : [ {
+            "$ref" : "#/definitions/trigger/artifact_trigger/artifact_type_spec"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "eventConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "filters" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/artifact_trigger/gce_image_filter"
+                }
+              },
+              "jexlCondition" : {
+                "type" : "string"
+              },
+              "labels" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/artifact_trigger/gce_image_label"
+                }
+              },
+              "metaDataConditions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/trigger/trigger_event_data"
+                }
+              },
+              "project" : {
+                "type" : "string"
+              },
+              "version" : {
+                "type" : "string"
+              },
+              "versionRegex" : {
+                "type" : "string"
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "gce_image_filter" : {
+          "title" : "gce_image_filter",
+          "type" : "object",
+          "properties" : {
+            "name" : {
+              "type" : "string"
+            },
+            "value" : {
+              "type" : "string"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "gce_image_label" : {
+          "title" : "gce_image_label",
+          "type" : "object",
+          "properties" : {
+            "name" : {
+              "type" : "string"
+            },
+            "value" : {
+              "type" : "string"
+            }
+          },
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "jenkins_registry" : {
