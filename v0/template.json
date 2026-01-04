@@ -494,6 +494,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode_template"
@@ -45327,6 +45329,90 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "FmeFlagDeleteStepNode_template" : {
+            "title" : "FmeFlagDeleteStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagDelete" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagDelete"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagDeleteStepInfo" : {
+            "title" : "FmeFlagDeleteStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "FmeFlagLimitExposureStepNode_template" : {
             "title" : "FmeFlagLimitExposureStepNode_template",
             "type" : "object",
@@ -48428,6 +48514,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagDeleteStepNode" : {
+            "title" : "FmeFlagDeleteStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagDeleteStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagDelete" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagDelete"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepInfo"
                   }
                 }
               }
@@ -91969,6 +92132,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
@@ -99223,6 +99388,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
@@ -101485,6 +101652,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
