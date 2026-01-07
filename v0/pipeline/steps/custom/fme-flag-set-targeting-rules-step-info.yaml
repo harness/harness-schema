@@ -1,0 +1,131 @@
+title: FmeFlagSetTargetingRulesStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - flagName
+      - environment
+      - targetingRules
+    properties:
+      flagName:
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      targetingRules:
+        description: "Array of targeting rules, each containing conditions and allocations"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - condition
+                - allocation
+              properties:
+                condition:
+                  description: "Condition object containing rules"
+                  type: object
+                  required:
+                    - rules
+                  properties:
+                    rules:
+                      description: "List of condition rules"
+                      type: array
+                      items:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - IN_SEGMENT
+                              - IN_SPLIT
+                              - BOOLEAN
+                              - ON_DATE
+                              - ON_OR_AFTER_DATE
+                              - ON_OR_BEFORE_DATE
+                              - BETWEEN_DATE
+                              - EQUAL_SET
+                              - ANY_OF_SET
+                              - ALL_OF_SET
+                              - PART_OF_SET
+                              - EQUAL_NUMBER
+                              - LESS_THAN_OR_EQUAL_NUMBER
+                              - GREATER_THAN_OR_EQUAL_NUMBER
+                              - BETWEEN_NUMBER
+                              - IN_LIST_STRING
+                              - STARTS_WITH_STRING
+                              - ENDS_WITH_STRING
+                              - CONTAINS_STRING
+                              - MATCHES_STRING
+                              - EQUAL_TO_SEMVER
+                              - GREATER_THAN_OR_EQUAL_TO_SEMVER
+                              - LESS_THAN_OR_EQUAL_TO_SEMVER
+                              - BETWEEN_SEMVER
+                              - IN_LIST_SEMVER
+                          negate:
+                            type: boolean
+                            default: false
+                          feature_flag:
+                            description: "Feature flag name (only for IN_SPLIT type)"
+                            oneOf:
+                              - $ref: ../common/fme-flag-common-flag-name.yaml
+                              - $ref: ../common/common-jexl.yaml
+                          attribute:
+                            description: "Attribute name for attribute-based matchers"
+                            type: string
+                          value:
+                            description: "Value for the matcher (can be single, multiple, or between)"
+                            oneOf:
+                              - type: boolean
+                              - type: number
+                              - $ref: ../common/string-without-jexl.yaml
+                              - type: array
+                                items:
+                                  oneOf:
+                                    - type: number
+                                    - $ref: ../common/string-without-jexl.yaml
+                                    - $ref: ../common/common-jexl.yaml
+                              - type: object
+                                required:
+                                  - from
+                                  - to
+                                properties:
+                                  from:
+                                    oneOf:
+                                      - type: number
+                                      - $ref: ../common/string-without-jexl.yaml
+                                      - $ref: ../common/common-jexl.yaml
+                                  to:
+                                    oneOf:
+                                      - type: number
+                                      - $ref: ../common/string-without-jexl.yaml
+                                      - $ref: ../common/common-jexl.yaml
+                              - $ref: ../common/common-jexl.yaml
+                allocation:
+                  description: "Traffic allocation across treatments"
+                  oneOf:
+                    - type: array
+                      items:
+                        type: object
+                        required:
+                          - treatment
+                          - size
+                        properties:
+                          treatment:
+                            oneOf:
+                              - $ref: ../common/fme-flag-common-treatment.yaml
+                              - $ref: ../common/common-jexl.yaml
+                          size:
+                            oneOf:
+                              - type: integer
+                                minimum: 0
+                                maximum: 100
+                              - $ref: ../common/common-jexl.yaml
+                    - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
