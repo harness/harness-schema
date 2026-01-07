@@ -6605,7 +6605,7 @@
                           "oneOf" : [ {
                             "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                           }, {
-                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
                           } ]
                         },
                         "configuration" : {
@@ -6752,7 +6752,7 @@
                           "oneOf" : [ {
                             "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                           }, {
-                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
                           } ]
                         },
                         "description" : {
@@ -25253,6 +25253,18 @@
             "title" : "common-jexl",
             "type" : "string",
             "pattern" : "(<\\+.+>.*)"
+          },
+          "common-jexl-expression-only" : {
+            "title" : "common-jexl-expression-only",
+            "description" : "JEXL expression that excludes runtime input. Allows expressions like <+pipeline.variables.x> but excludes <+input>, <+input>.allowedValues(...), etc.",
+            "type" : "string",
+            "allOf" : [ {
+              "pattern" : "^<\\+.+>.*$"
+            }, {
+              "not" : {
+                "pattern" : "^<\\+input>.*$"
+              }
+            } ]
           },
           "fme-flag-common-flag-name" : {
             "title" : "fme-flag-common-flag-name",
