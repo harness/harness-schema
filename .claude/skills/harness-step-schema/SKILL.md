@@ -1,18 +1,36 @@
 ---
 name: harness-step-schema
-description: Creates or updates pipeline step schemas in the harness-schema repository. Use when the user wants to add a new step, modify an existing step's fields, or make a step available in different stages. Triggers for requests about "create step", "add step", "new step schema", "update step", or "step available in stage".
+description: |
+  Creates or updates pipeline step schemas in the harness-schema repository.
+
+  ALWAYS use this skill when user mentions ANY of these:
+  - Step operations: "create step", "add step", "new step", "update step", "modify step", "edit step", "implement step", "define step", "build step"
+  - Schema files: "step-info.yaml", "step-node.yaml", "StepInfo", "StepNode", "step schema", "step definition", "step spec"
+  - Stage availability: "add to stage", "enable in stage", "available in stage", "register step", "execution-wrapper-config"
+  - Template support: "step template", "template_config.yaml", "enable as template"
+  - JSON updates: "pipeline.json", "template.json", "add definition", "update schema"
+  - Field work: "add field", "add property", "new field", "step property", "step field", "modify field"
+  - Expression support: "runtime input", "JEXL", "expression support", "<+input>", "common-jexl"
+  - Category mentions: "CD step", "CI step", "custom step", "FME step", "feature flag step", "approval step"
+
+  If user is working with files in v0/pipeline/steps/ or mentions step-related schema changes, USE THIS SKILL.
 ---
 
 # Harness Pipeline Step Schema Management
 
 This skill helps create or update pipeline step schemas in the harness-schema repository.
 
+**Reference Documentation:**
+- `v0/AGENTS.md` - Directory structure, common schema files, and field patterns
+- `TEMPLATES.md` - Full YAML/JSON templates for step creation
+- `EXAMPLES.md` - Existing step examples
+
 ## Before Starting - Ask These Questions
 
 When creating a new step, gather this information from the user:
 
 1. **Step name**: PascalCase name (e.g., `FmeFlagDelete`, `MyCustomStep`)
-2. **Step category**: Where to place it?
+2. **Step category**: Where to place it? (see `v0/AGENTS.md` for directory structure)
    - `cd` - CD (Continuous Deployment) specific steps
    - `ci` - CI (Continuous Integration) specific steps
    - `common` - Shared across multiple stages
@@ -24,6 +42,7 @@ When creating a new step, gather this information from the user:
 3. **Step fields**: What properties does the step spec need?
    - Field name, type, required/optional, description
    - Should fields support runtime input (`<+input>`) and expressions?
+   - See `v0/AGENTS.md` "Common Schema Files" section for available field patterns
 
 4. **Target stages**: Which stages should have this step? (select multiple)
    - `approval` - Approval stage
@@ -35,7 +54,7 @@ When creating a new step, gather this information from the user:
    - `idp` - IDP stage
    - `security` - Security stage
 
-   **Note:** Steps can be added to multiple stages. For example, FME flag steps are available in cd, cf, and custom stages simultaneously.
+   **Note:** Steps can be added to multiple stages. See `v0/AGENTS.md` "Stage-Step Availability" for common patterns.
 
 5. **Include in templates?**: Should this step be available as a step template?
 
@@ -46,7 +65,7 @@ Each step requires these files:
 ### 1. Step Info YAML
 `v0/pipeline/steps/{category}/{step-name}-step-info.yaml`
 
-Defines the step's spec properties.
+Defines the step's spec properties. See `v0/AGENTS.md` "Common Field Patterns" for available patterns.
 
 ### 2. Step Node YAML
 `v0/pipeline/steps/{category}/{step-name}-step-node.yaml`
@@ -86,5 +105,6 @@ Add to `step_template_types:` list.
 
 ## Reference Files
 
-See TEMPLATES.md for YAML/JSON templates.
-See EXAMPLES.md for existing step examples.
+- **v0/AGENTS.md** - Common schema files, field patterns, directory structure
+- **TEMPLATES.md** - YAML/JSON templates for step definitions
+- **EXAMPLES.md** - Existing step examples (FmeFlagDelete, FmeFlagCreate)
