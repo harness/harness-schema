@@ -5868,12 +5868,20 @@
                       "required" : [ "treatment", "amount" ],
                       "properties" : {
                         "treatment" : {
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                          } ]
                         },
                         "amount" : {
-                          "type" : "integer",
-                          "maximum" : 100,
-                          "minimum" : 0
+                          "oneOf" : [ {
+                            "type" : "integer",
+                            "maximum" : 100,
+                            "minimum" : 0
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
                         }
                       }
                     }
@@ -5994,7 +6002,11 @@
                       "required" : [ "treatment" ],
                       "properties" : {
                         "treatment" : {
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                          } ]
                         },
                         "addKeys" : {
                           "description" : "Individual keys to add",
@@ -6159,7 +6171,11 @@
                       "required" : [ "treatment" ],
                       "properties" : {
                         "treatment" : {
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                          } ]
                         },
                         "keys" : {
                           "description" : "Individual keys to set for this treatment",
@@ -21616,6 +21632,12 @@
                 "awsConnectorRef" : {
                   "type" : "string"
                 },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                },
                 "commandOptions" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -21696,6 +21718,12 @@
                 "type" : "string"
               },
               "awsConnectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "roleArn" : {
                 "type" : "string"
               },
               "commandOptions" : {
@@ -21864,6 +21892,12 @@
                 "awsConnectorRef" : {
                   "type" : "string"
                 },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                },
                 "commandOptions" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -21959,6 +21993,12 @@
                 "type" : "string"
               },
               "awsConnectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "roleArn" : {
                 "type" : "string"
               },
               "commandOptions" : {
@@ -22142,6 +22182,12 @@
                 "awsConnectorRef" : {
                   "type" : "string"
                 },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                },
                 "commandOptions" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -22234,6 +22280,12 @@
                 "type" : "string"
               },
               "awsConnectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "roleArn" : {
                 "type" : "string"
               },
               "commandOptions" : {
@@ -22414,6 +22466,12 @@
                 "awsConnectorRef" : {
                   "type" : "string"
                 },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                },
                 "commandOptions" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -22515,6 +22573,12 @@
                 "type" : "string"
               },
               "awsConnectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "roleArn" : {
                 "type" : "string"
               },
               "commandOptions" : {
@@ -22704,6 +22768,12 @@
                 "awsConnectorRef" : {
                   "type" : "string"
                 },
+                "region" : {
+                  "type" : "string"
+                },
+                "roleArn" : {
+                  "type" : "string"
+                },
                 "commandOptions" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -22796,6 +22866,12 @@
                 "type" : "string"
               },
               "awsConnectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "roleArn" : {
                 "type" : "string"
               },
               "commandOptions" : {
@@ -25262,18 +25338,6 @@
             "type" : "string",
             "pattern" : "(<\\+.+>.*)"
           },
-          "common-jexl-expression-only" : {
-            "title" : "common-jexl-expression-only",
-            "description" : "JEXL expression that excludes runtime input. Allows expressions like <+pipeline.variables.x> but excludes <+input>, <+input>.allowedValues(...), etc.",
-            "type" : "string",
-            "allOf" : [ {
-              "pattern" : "^<\\+.+>.*$"
-            }, {
-              "not" : {
-                "pattern" : "^<\\+input>.*$"
-              }
-            } ]
-          },
           "fme-flag-common-flag-name" : {
             "title" : "fme-flag-common-flag-name",
             "type" : "string",
@@ -25297,6 +25361,18 @@
             "type" : "string",
             "description" : "FME Treatment Name",
             "pattern" : "^[a-zA-Z0-9][-_\\.a-zA-Z0-9]*$"
+          },
+          "common-jexl-expression-only" : {
+            "title" : "common-jexl-expression-only",
+            "description" : "JEXL expression that excludes runtime input.\n\nThis schema allows JEXL expressions like <+pipeline.variables.x>, <+stage.variables.y>, etc.\nbut explicitly excludes runtime input patterns:\n- <+input>\n- <+input>.allowedValues(...)\n- <+input>.default(...)\n- <+input>.executionInput()\n- <+input>.regex(...)\n- <+input>.selectOneFrom(...)\n- <+input>.selectManyFrom(...)\n\nUse this when a field should support expressions but NOT runtime input.\n",
+            "type" : "string",
+            "allOf" : [ {
+              "pattern" : "^<\\+.+>.*$"
+            }, {
+              "not" : {
+                "pattern" : "^<\\+input>.*$"
+              }
+            } ]
           },
           "AnchoreScanNode" : {
             "title" : "AnchoreScanNode",
