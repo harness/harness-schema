@@ -5406,6 +5406,110 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "FmeFlagDeleteStepNode" : {
+            "title" : "FmeFlagDeleteStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagDeleteStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagDelete" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagDelete"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagDeleteStepInfo" : {
+            "title" : "FmeFlagDeleteStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "deleteAllDefinitions" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ],
+                  "description" : "When enabled, deletes all feature flag definitions before deleting the flag"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "FmeFlagLimitExposureStepNode" : {
             "title" : "FmeFlagLimitExposureStepNode",
             "type" : "object",
@@ -6509,7 +6613,7 @@
                           "oneOf" : [ {
                             "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                           }, {
-                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
                           } ]
                         },
                         "configuration" : {
@@ -6656,7 +6760,7 @@
                           "oneOf" : [ {
                             "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                           }, {
-                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
                           } ]
                         },
                         "description" : {
@@ -6796,6 +6900,236 @@
                       "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                     } ]
                   }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagSetTargetingRulesStepNode" : {
+            "title" : "FmeFlagSetTargetingRulesStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeFlagSetTargetingRulesStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagSetTargetingRules" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagSetTargetingRules"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTargetingRulesStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagSetTargetingRulesStepInfo" : {
+            "title" : "FmeFlagSetTargetingRulesStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "flagName", "environment", "targetingRules" ],
+              "properties" : {
+                "flagName" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "targetingRules" : {
+                  "description" : "Array of targeting rules, each containing conditions and allocations",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "condition", "allocation" ],
+                      "properties" : {
+                        "condition" : {
+                          "description" : "Condition object containing rules",
+                          "type" : "object",
+                          "required" : [ "rules" ],
+                          "properties" : {
+                            "rules" : {
+                              "description" : "List of condition rules",
+                              "type" : "array",
+                              "items" : {
+                                "type" : "object",
+                                "required" : [ "type" ],
+                                "properties" : {
+                                  "type" : {
+                                    "type" : "string",
+                                    "enum" : [ "IN_SEGMENT", "IN_SPLIT", "BOOLEAN", "ON_DATE", "ON_OR_AFTER_DATE", "ON_OR_BEFORE_DATE", "BETWEEN_DATE", "EQUAL_SET", "ANY_OF_SET", "ALL_OF_SET", "PART_OF_SET", "EQUAL_NUMBER", "LESS_THAN_OR_EQUAL_NUMBER", "GREATER_THAN_OR_EQUAL_NUMBER", "BETWEEN_NUMBER", "IN_LIST_STRING", "STARTS_WITH_STRING", "ENDS_WITH_STRING", "CONTAINS_STRING", "MATCHES_STRING", "EQUAL_TO_SEMVER", "GREATER_THAN_OR_EQUAL_TO_SEMVER", "LESS_THAN_OR_EQUAL_TO_SEMVER", "BETWEEN_SEMVER", "IN_LIST_SEMVER" ]
+                                  },
+                                  "negate" : {
+                                    "type" : "boolean",
+                                    "default" : false
+                                  },
+                                  "feature_flag" : {
+                                    "description" : "Feature flag name (only for IN_SPLIT type)",
+                                    "oneOf" : [ {
+                                      "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                    } ]
+                                  },
+                                  "attribute" : {
+                                    "description" : "Attribute name for attribute-based matchers",
+                                    "type" : "string"
+                                  },
+                                  "value" : {
+                                    "description" : "Value for the matcher (can be single, multiple, or between)",
+                                    "oneOf" : [ {
+                                      "type" : "boolean"
+                                    }, {
+                                      "type" : "number"
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                    }, {
+                                      "type" : "array",
+                                      "items" : {
+                                        "oneOf" : [ {
+                                          "type" : "number"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                        } ]
+                                      }
+                                    }, {
+                                      "type" : "object",
+                                      "required" : [ "from", "to" ],
+                                      "properties" : {
+                                        "from" : {
+                                          "oneOf" : [ {
+                                            "type" : "number"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                          } ]
+                                        },
+                                        "to" : {
+                                          "oneOf" : [ {
+                                            "type" : "number"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                          } ]
+                                        }
+                                      }
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                    } ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "allocation" : {
+                          "description" : "Traffic allocation across treatments",
+                          "oneOf" : [ {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "object",
+                              "required" : [ "treatment", "size" ],
+                              "properties" : {
+                                "treatment" : {
+                                  "oneOf" : [ {
+                                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                                  }, {
+                                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                  } ]
+                                },
+                                "size" : {
+                                  "oneOf" : [ {
+                                    "type" : "integer",
+                                    "minimum" : 0,
+                                    "maximum" : 100
+                                  }, {
+                                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                  } ]
+                                }
+                              }
+                            }
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -24927,6 +25261,18 @@
             "title" : "common-jexl",
             "type" : "string",
             "pattern" : "(<\\+.+>.*)"
+          },
+          "common-jexl-expression-only" : {
+            "title" : "common-jexl-expression-only",
+            "description" : "JEXL expression that excludes runtime input. Allows expressions like <+pipeline.variables.x> but excludes <+input>, <+input>.allowedValues(...), etc.",
+            "type" : "string",
+            "allOf" : [ {
+              "pattern" : "^<\\+.+>.*$"
+            }, {
+              "not" : {
+                "pattern" : "^<\\+input>.*$"
+              }
+            } ]
           },
           "fme-flag-common-flag-name" : {
             "title" : "fme-flag-common-flag-name",
@@ -58380,41 +58726,117 @@
           "ChaosStepInfo" : {
             "title" : "ChaosStepInfo",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "expectedResilienceScore", "experimentRef" ],
-              "properties" : {
-                "assertion" : {
-                  "type" : "string"
+              "if" : {
+                "properties" : {
+                  "identifier" : {
+                    "type" : "string"
+                  },
+                  "kind" : {
+                    "const" : "template"
+                  }
                 },
-                "expectedResilienceScore" : {
-                  "type" : "number",
-                  "format" : "double"
-                },
-                "experimentRef" : {
-                  "type" : "string"
-                }
+                "required" : [ "identifier", "kind" ]
+              },
+              "then" : {
+                "required" : [ "hubRef", "infraReference" ]
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "expectedResilienceScore", "experimentRef" ],
+            "required" : [ "expectedResilienceScore" ],
             "properties" : {
               "assertion" : {
                 "type" : "string"
               },
               "expectedResilienceScore" : {
-                "type" : "number",
-                "format" : "double"
+                "oneOf" : [ {
+                  "type" : "number",
+                  "format" : "double"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               },
               "experimentRef" : {
-                "type" : "string"
+                "type" : "string",
+                "minLength" : 1
+              },
+              "identifier" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "kind" : {
+                "type" : "string",
+                "enum" : [ "experiment", "template" ]
+              },
+              "hubRef" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "infraReference" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "minLength" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "tasks" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "required" : [ "identifier" ],
+                    "properties" : {
+                      "identifier" : {
+                        "type" : "string",
+                        "minLength" : 1
+                      },
+                      "values" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "required" : [ "name", "value" ],
+                          "properties" : {
+                            "name" : {
+                              "type" : "string",
+                              "minLength" : 1
+                            },
+                            "value" : {
+                              "anyOf" : [ {
+                                "type" : "string"
+                              }, {
+                                "type" : "number"
+                              }, {
+                                "type" : "boolean"
+                              }, {
+                                "type" : "string",
+                                "pattern" : "(<\\+.+>.*)"
+                              } ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               },
               "description" : {
                 "desc" : "This is the description for ChaosStepInfo"
               }
-            }
+            },
+            "anyOf" : [ {
+              "required" : [ "experimentRef" ]
+            }, {
+              "required" : [ "identifier" ]
+            } ]
           },
           "AiTestAutomationStepNode" : {
             "title" : "AiTestAutomationStepNode",
@@ -72702,6 +73124,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
@@ -72723,6 +73147,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTargetingRulesStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -81570,6 +81996,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
@@ -81591,6 +82019,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTargetingRulesStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -82106,6 +82536,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagLimitExposureStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagUpdateStepNode"
@@ -82116,6 +82548,10 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetIndividualTargetsStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagKillStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagRestoreStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagReallocateTrafficStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetDynamicConfigurationsStepNode"
@@ -82123,6 +82559,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTargetingRulesStepNode"
                 } ]
               },
               "stepGroup" : {

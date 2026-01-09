@@ -1,0 +1,20 @@
+title: common-jexl-expression-only
+description: |
+  JEXL expression that excludes runtime input.
+
+  This schema allows JEXL expressions like <+pipeline.variables.x>, <+stage.variables.y>, etc.
+  but explicitly excludes runtime input patterns:
+  - <+input>
+  - <+input>.allowedValues(...)
+  - <+input>.default(...)
+  - <+input>.executionInput()
+  - <+input>.regex(...)
+  - <+input>.selectOneFrom(...)
+  - <+input>.selectManyFrom(...)
+
+  Use this when a field should support expressions but NOT runtime input.
+type: string
+allOf:
+  - pattern: "^<\\+.+>.*$"
+  - not:
+      pattern: "^<\\+input>.*$"
