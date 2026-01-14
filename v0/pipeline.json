@@ -41359,7 +41359,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Aws", "Azure" ]
+                "enum" : [ "Aws", "Azure", "Gcp" ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -41390,6 +41390,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/TerraformAzureProviderCredentialSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Gcp"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/TerraformGcpProviderCredentialSpec"
                   }
                 }
               }
@@ -41436,6 +41451,25 @@
                   "type" : "string"
                 },
                 "subscriptionId" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "TerraformGcpProviderCredentialSpec" : {
+            "title" : "TerraformGcpProviderCredentialSpec",
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/TerraformProviderCredentialSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "project" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "project" : {
                   "type" : "string"
                 }
               }
