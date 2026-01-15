@@ -1,0 +1,51 @@
+title: FmeSegmentCreateStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+    - trafficType
+    - name
+    - segmentType
+    properties:
+      trafficType:
+        description: "FME Traffic Type name (case-sensitive)"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      name:
+          oneOf:
+            - $ref: ../common/fme-segment-common-segment-name.yaml
+            - $ref: ../common/common-jexl.yaml
+      description:
+        description: "Segment description"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      owners:
+        description: "Segment owners (optional - defaults to admin team if not provided)"
+        oneOf:
+          - type: array
+            items:
+              type: string
+            minItems: 1
+          - $ref: ../common/common-jexl.yaml
+      tags:
+        description: "Segment tags"
+        oneOf:
+          - type: array
+            items:
+              type: string
+              pattern: ^([a-zA-Z0-9-_]+)$
+            maxItems: 20
+          - $ref: ../common/common-jexl.yaml
+      segmentType:
+        description: "Segment type: Standard (less than 100,000 IDs), Large (more than 100,000 IDs, client-side SDKs only), or RuleBased (dynamic based on targeting rules)"
+        oneOf:
+          - type: string
+            enum:
+              - Standard
+              - Large
+              - RuleBased
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
+
