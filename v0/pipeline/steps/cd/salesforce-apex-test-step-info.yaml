@@ -1,0 +1,120 @@
+title: SalesforceApexTestStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    properties:
+      testLevel:
+        type: string
+        enum:
+          - RunLocalTests
+          - RunAllTestsInOrg
+          - RunSpecifiedTests
+      testType:
+        type: string
+        enum:
+          - ClassNames
+          - Tests
+          - SuiteNames
+      testValues:
+        type: string
+      connectorRef:
+        type: string
+      delegateSelectors:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      commandOptions:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      image:
+        type: string
+      imagePullPolicy:
+        oneOf:
+          - type: string
+            enum:
+              - Always
+              - Never
+              - IfNotPresent
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      privileged:
+        oneOf:
+          - type: boolean
+          - type: string
+            pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+            minLength: 1
+      resources:
+        $ref: ../../common/container-resource.yaml
+      runAsUser:
+        oneOf:
+          - type: integer
+            format: int32
+          - type: string
+      preExecution:
+        type: string
+  - if:
+      properties:
+        testLevel:
+          const: RunSpecifiedTests
+    then:
+      required:
+        - testType
+        - testValues
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  testLevel:
+    type: string
+    enum:
+      - RunLocalTests
+      - RunAllTestsInOrg
+      - RunSpecifiedTests
+  testType:
+    type: string
+    enum:
+      - ClassNames
+      - Tests
+      - SuiteNames
+  testValues:
+    type: string
+  connectorRef:
+    type: string
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  commandOptions:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  image:
+    type: string
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+  preExecution:
+    type: string
+  description:
+    desc: This is the description for SalesforceApexTestStepInfo
