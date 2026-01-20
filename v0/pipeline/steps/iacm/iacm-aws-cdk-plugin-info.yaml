@@ -1,0 +1,98 @@
+title: IACMAwsCdkPluginInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - command
+  properties:
+    command:
+      type: string
+      enum:
+      - bootstrap
+      - synth
+      - deploy
+      - destroy
+      - diff
+    image:
+      type: string
+    appPath:
+      type: string
+    stackNames:
+      oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
+    commandOptions:
+      oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+          minLength: 1
+    envVariables:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    context:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    resources:
+      $ref: ../../common/container-resource.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- command
+properties:
+  command:
+    type: string
+    enum:
+    - bootstrap
+    - synth
+    - deploy
+    - destroy
+    - diff
+  image:
+    type: string
+  appPath:
+    type: string
+  description:
+    desc: This is the description for IACMAwsCdkPluginInfo
+  stackNames:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  commandOptions:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
+      minLength: 1
+  envVariables:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  context:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  resources:
+    $ref: ../../common/container-resource.yaml
