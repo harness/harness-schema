@@ -75744,6 +75744,43 @@
                 }
               },
               "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "required" : [ "hostGroups" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "hostAttributes" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "hostGroups" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/HostGroup"
+                  }
+                },
+                "provisioner" : {
+                  "type" : "string"
+                }
+              },
+              "additionalProperties" : false
             } ],
             "properties" : {
               "description" : {
@@ -75811,6 +75848,36 @@
                 }
               }
             } ]
+          },
+          "HostGroup" : {
+            "title" : "HostGroup",
+            "type" : "object",
+            "required" : ["identifier", "credentialRef", "hosts"],
+            "properties" : {
+              "identifier" : {
+                "type" : "string",
+                "description" : "Unique identifier for the host group"
+              },
+              "credentialRef" : {
+                "type" : "string",
+                "description" : "Credential reference for this host group"
+              },
+              "hosts" : {
+                "oneOf" : [
+                  {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength": 1
+                  }
+                ]
+              }
+            }
           },
           "AllHostsFilter" : {
             "title" : "AllHostsFilter",
