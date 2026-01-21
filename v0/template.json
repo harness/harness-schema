@@ -90536,14 +90536,14 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "DRComponentNode" : {
-            "title" : "DRComponentNode",
+          "ChaosProbeNode" : {
+            "title" : "ChaosProbeNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for DRComponentNode"
+                "desc" : "This is the description for ChaosProbeNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -90583,7 +90583,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "DRComponent" ]
+                "enum" : [ "ChaosProbe" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -90600,21 +90600,215 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "DRComponent"
+                    "const" : "ChaosProbe"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/drtest/DRComponentInfo"
+                    "$ref" : "#/definitions/pipeline/steps/drtest/ChaosProbeInfo"
                   }
                 }
               }
             } ]
           },
-          "DRComponentInfo" : {
-            "title" : "DRComponentInfo",
+          "ChaosProbeInfo" : {
+            "title" : "ChaosProbeInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "componentRef" : {
+                  "type" : "string"
+                },
+                "environmentRef" : {
+                  "type" : "string"
+                },
+                "infraRef" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ChaosActionNode" : {
+            "title" : "ChaosActionNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ChaosActionNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ChaosAction" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ChaosAction"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/drtest/ChaosActionInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ChaosActionInfo" : {
+            "title" : "ChaosActionInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "componentRef" : {
+                  "type" : "string"
+                },
+                "environmentRef" : {
+                  "type" : "string"
+                },
+                "infraRef" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ChaosFaultNode" : {
+            "title" : "ChaosFaultNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ChaosFaultNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ChaosFault" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ChaosFault"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/drtest/ChaosFaultInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ChaosFaultInfo" : {
+            "title" : "ChaosFaultInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
@@ -104848,6 +105042,10 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ShellScriptStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/PolicyStepNode"
@@ -104860,7 +105058,11 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/drtest/DRTestSlackNotifyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/drtest/DRComponentNode"
+                  "$ref" : "#/definitions/pipeline/steps/drtest/ChaosProbeNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/drtest/ChaosActionNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/drtest/ChaosFaultNode"
                 } ]
               },
               "description" : {
