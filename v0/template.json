@@ -104936,72 +104936,13 @@
           "DRTestStageConfigImpl" : {
             "title" : "DRTestStageConfigImpl",
             "type" : "object",
+            "required" : [ "execution" ],
             "properties" : {
-              "cloneCodebase" : {
-                "oneOf" : [ {
-                  "type" : "boolean"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
               "execution" : {
                 "$ref" : "#/definitions/pipeline/stages/drtest/ExecutionElementConfig"
               },
-              "infrastructure" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/UseFromStageInfraYaml"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/VmInfraYaml"
-                } ]
-              },
-              "platform" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/Platform"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "runtime" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/steps/common/CloudRuntime"
-                }, {
-                  "$ref" : "#/definitions/pipeline/steps/common/DockerRuntime"
-                } ]
-              },
-              "serviceDependencies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/DependencyElement"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|default|regex)\\(.+?\\)))*$",
-                  "minLength" : 1
-                } ]
-              },
-              "sharedPaths" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
-                }, {
-                  "type" : "string"
-                } ]
-              },
               "description" : {
-                "desc" : "This is the description for DRTestStageConfigImpl"
+                "desc" : "This is the description for CustomStageConfig"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -105009,6 +104950,7 @@
           "ExecutionElementConfig" : {
             "title" : "ExecutionElementConfig",
             "type" : "object",
+            "required" : [ "steps" ],
             "properties" : {
               "steps" : {
                 "type" : "array",
@@ -105065,6 +105007,9 @@
                   "$ref" : "#/definitions/pipeline/steps/drtest/ChaosFaultNode"
                 } ]
               },
+              "stepGroup" : {
+                "$ref" : "#/definitions/pipeline/stages/drtest/StepGroupElementConfig"
+              },
               "description" : {
                 "desc" : "This is the description for ExecutionWrapperConfig"
               }
@@ -105111,6 +105056,116 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "StepGroupElementConfig" : {
+            "title" : "StepGroupElementConfig",
+            "type" : "object",
+            "required" : [ "identifier", "name" ],
+            "properties" : {
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "sharedPaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "stepGroupInfra" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/VMInfra"
+                } ]
+              },
+              "steps" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/drtest/ExecutionWrapperConfig"
+                },
+                "maxItems" : 2147483647,
+                "minItems" : 1
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "template" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/TemplateLinkConfig"
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for StepGroupElementConfig"
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/NumberNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/SecretNGVariable"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/StringNGVariable"
+                  } ]
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "oneOf" : [ {
+                "required" : [ "template" ]
+              }, {
+                "required" : [ "steps" ]
+              } ]
+            } ]
           }
         }
       },
