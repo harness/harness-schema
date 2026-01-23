@@ -82531,18 +82531,62 @@
           "DynamicStageConfig" : {
             "title" : "DynamicStageConfig",
             "type" : "object",
-            "required" : [ "source" ],
             "properties" : {
               "source" : {
                 "type" : "string",
                 "not" : {
                   "const" : "<+input>"
-                }
+                },
+                "description" : "Inline YAML source (base64 encoded) - for backward compatibility"
               },
-              "description" : {
-                "desc" : "This is the description for DynamicStageConfig"
+              "sourceConfig" : {
+                "type" : "object",
+                "description" : "Source configuration - supports Git/Remote sources",
+                "properties" : {
+                  "type" : {
+                    "type" : "string",
+                    "enum" : [ "Git" ],
+                    "description" : "Type of source configuration"
+                  },
+                  "spec" : {
+                    "type" : "object",
+                    "description" : "Source-specific configuration",
+                    "properties" : {
+                      "connectorRef" : {
+                        "type" : "string",
+                        "description" : "Git connector reference"
+                      },
+                      "branchName" : {
+                        "type" : "string",
+                        "description" : "Git branch name"
+                      },
+                      "commitId" : {
+                        "type" : "string",
+                        "description" : "Git commit ID"
+                      },
+                      "filePath" : {
+                        "type" : "string",
+                        "description" : "Path to the pipeline YAML file in Git"
+                      },
+                      "repoName" : {
+                        "type" : "string",
+                        "description" : "Git repository name"
+                      }
+                    },
+                    "required" : [ "repoName", "filePath" ]
+                  }
+                },
+                "required" : [ "type", "spec" ]
               }
             },
+            "oneOf" : [ {
+              "required" : [ "source" ],
+              "additionalProperties" : false
+            }, {
+              "required" : [ "sourceConfig" ],
+              "additionalProperties" : false
+            } ],
+            "description" : "This is the description for DynamicStageConfig",
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "CustomStageNode" : {
