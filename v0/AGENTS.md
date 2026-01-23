@@ -166,14 +166,19 @@ Add to `v0/template/template_config.yaml` under `step_template_types:`:
   - ../pipeline/steps/{category}/{step-name}-step-node.yaml
 ```
 
-### 5. Update Bundled JSON
+### 5. Generate Bundled JSON
 
-Add definitions to both `pipeline.json` and `template.json`:
+Run the following command to bundle the YAML schemas into JSON files:
+```bash
+bazel run bundler/schema_store:module
+```
+
+This will automatically generate/update `pipeline.json` and `template.json` with:
 - `{StepName}StepNode` definition
 - `{StepName}StepInfo` definition
 - References in stage ExecutionWrapperConfig oneOf arrays
 
-For `template.json`, also add `{StepName}StepNode_template` (without identifier/name required).
+For `template.json`, the bundler also generates `{StepName}StepNode_template` (without identifier/name required).
 
 ## Stage-Step Availability
 
