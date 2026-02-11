@@ -8,42 +8,28 @@ allOf:
   - instances
   properties:
     connectorRef:
-      description: AWS connector reference
-      oneOf:
-      - $ref: ../common/string-without-jexl.yaml
-      - $ref: ../common/common-jexl.yaml
-    region:
-      description: AWS region
-      oneOf:
-      - $ref: ../common/string-without-jexl.yaml
-      - $ref: ../common/common-jexl.yaml
-    cluster:
-      description: ECS cluster name
-      oneOf:
-      - $ref: ../common/string-without-jexl.yaml
-      - $ref: ../common/common-jexl.yaml
-    service:
-      description: ECS service name
-      oneOf:
-      - $ref: ../common/string-without-jexl.yaml
-      - $ref: ../common/common-jexl.yaml
-    instanceUnit:
-      description: Instance unit type (COUNT or PERCENTAGE)
       type: string
-      enum:
-      - COUNT
-      - PERCENTAGE
+    region:
+      type: string
+    cluster:
+      type: string
+    service:
+      type: string
+    instanceUnit:
+      type: string
     instances:
-      description: Number of instances (count or percentage)
       oneOf:
       - type: integer
-        minimum: 0
-      - $ref: ../common/common-jexl.yaml
+        format: int32
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
     skipSteadyStateCheck:
-      description: Skip waiting for service to reach steady state
       oneOf:
       - type: boolean
-      - $ref: ../common/common-jexl.yaml
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
     delegateSelectors:
       oneOf:
       - type: array
@@ -60,44 +46,30 @@ required:
 - instances
 properties:
   connectorRef:
-    description: AWS connector reference
-    oneOf:
-    - $ref: ../common/string-without-jexl.yaml
-    - $ref: ../common/common-jexl.yaml
-  region:
-    description: AWS region
-    oneOf:
-    - $ref: ../common/string-without-jexl.yaml
-    - $ref: ../common/common-jexl.yaml
-  cluster:
-    description: ECS cluster name
-    oneOf:
-    - $ref: ../common/string-without-jexl.yaml
-    - $ref: ../common/common-jexl.yaml
-  service:
-    description: ECS service name
-    oneOf:
-    - $ref: ../common/string-without-jexl.yaml
-    - $ref: ../common/common-jexl.yaml
-  instanceUnit:
-    description: Instance unit type (COUNT or PERCENTAGE)
     type: string
-    enum:
-    - COUNT
-    - PERCENTAGE
+  region:
+    type: string
+  cluster:
+    type: string
+  service:
+    type: string
+  instanceUnit:
+    type: string
   instances:
-    description: Number of instances (count or percentage)
     oneOf:
     - type: integer
-      minimum: 0
-    - $ref: ../common/common-jexl.yaml
+      format: int32
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
   skipSteadyStateCheck:
-    description: Skip waiting for service to reach steady state
     oneOf:
     - type: boolean
-    - $ref: ../common/common-jexl.yaml
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
   delegateSelectors:
-    oneOf:
+    oneOf:  
     - type: array
       items:
         type: string
