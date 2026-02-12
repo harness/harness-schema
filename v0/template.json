@@ -150,6 +150,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingRollbackStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/EcsScaleStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/EcsRunTaskStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/EcsUpgradeContainerStepNode_template"
@@ -9544,6 +9546,182 @@
               },
               "description" : {
                 "desc" : "This is the description for EcsRollingRollbackStepInfo"
+              }
+            }
+          },
+          "EcsScaleStepNode_template" : {
+            "title" : "EcsScaleStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EcsScale" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "EcsScale"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsScaleStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "EcsScaleStepInfo" : {
+            "title" : "EcsScaleStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "service", "instanceUnit", "instances" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "cluster" : {
+                  "type" : "string"
+                },
+                "service" : {
+                  "type" : "string"
+                },
+                "instanceUnit" : {
+                  "type" : "string"
+                },
+                "instances" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "skipSteadyStateCheck" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "service", "instanceUnit", "instances" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "region" : {
+                "type" : "string"
+              },
+              "cluster" : {
+                "type" : "string"
+              },
+              "service" : {
+                "type" : "string"
+              },
+              "instanceUnit" : {
+                "type" : "string"
+              },
+              "instances" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "skipSteadyStateCheck" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for EcsScaleStepInfo"
               }
             }
           },
@@ -36212,6 +36390,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "EcsScaleStepNode" : {
+            "title" : "EcsScaleStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for EcsScaleStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EcsScale" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "EcsScale"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/EcsScaleStepInfo"
                   }
                 }
               }
@@ -84987,6 +85242,142 @@
               }
             } ]
           },
+          "RestoreCacheAzureNode" : {
+            "title" : "RestoreCacheAzureNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for RestoreCacheAzureNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "RestoreCacheAzure" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "RestoreCacheAzure"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheAzureStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "RestoreCacheAzureStepInfo" : {
+            "title" : "RestoreCacheAzureStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "containerName", "connectorRef", "key", "sourcePaths", "storageAccount" ],
+              "properties" : {
+                "containerName" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "failIfKeyNotFound" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "key" : {
+                  "type" : "string"
+                },
+                "preserveMetadata" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "sourcePaths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "storageAccount" : {
+                  "type" : "string"
+                },
+                "unevaluatedProperties" : false
+              }
+            }, {
+              "type" : "object",
+              "properties" : {
+                "desc" : {
+                  "type" : "string"
+                }
+              },
+              "examples" : [ {
+                "desc" : "This is the description for RestoreCacheAzureStepInfo"
+              } ]
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "RestoreCacheNode" : {
             "title" : "RestoreCacheNode",
             "type" : "object",
@@ -85550,6 +85941,194 @@
                 }
               }
             } ]
+          },
+          "SaveCacheAzureNode" : {
+            "title" : "SaveCacheAzureNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SaveCacheAzureNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SaveCacheAzure" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SaveCacheAzure"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheAzureStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SaveCacheAzureStepInfo" : {
+            "title" : "SaveCacheAzureStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "key", "storageAccount", "containerName", "sourcePaths" ],
+              "properties" : {
+                "archiveFormat" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Tar", "Gzip", "Zstd" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "baseImageConnectorRefs" : {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ParameterFieldListString"
+                },
+                "storageAccount" : {
+                  "type" : "string"
+                },
+                "containerName" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "key" : {
+                  "type" : "string"
+                },
+                "override" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "sourcePaths" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "connectorRef", "key", "storageAccount", "containerName", "sourcePaths" ],
+            "properties" : {
+              "archiveFormat" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Tar", "Gzip", "Zstd" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "storageAccount" : {
+                "type" : "string"
+              },
+              "containerName" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "key" : {
+                "type" : "string"
+              },
+              "override" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "sourcePaths" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for SaveCacheAzureStepInfo"
+              }
+            }
           },
           "SaveCacheNode" : {
             "title" : "SaveCacheNode",
@@ -93485,6 +94064,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/AwsLambdaRollbackStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/EcsRollingDeployStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/EcsScaleStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AsgBlueGreenDeployStepNode"
                 }, {
@@ -102374,6 +102955,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheS3Node"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheAzureNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RestoreCacheNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepNode"
@@ -102385,6 +102968,8 @@
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheGCSNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheS3Node"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheAzureNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/SaveCacheNode"
                 }, {
