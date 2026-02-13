@@ -1,48 +1,38 @@
-title: RestoreCacheStepInfo
+title: SaveCacheAzureStepInfo
 allOf:
 - $ref: ../../steps/ci/ci-step-info.yaml
 - type: object
   required:
-  - providerType
+  - connectorRef
   - key
-  if:
-    properties:
-      providerType:
-        enum: [Gcs, S3]
-  then:
-    required:
-    - bucket
-    - connectorRef
+  - storageAccount
+  - containerName
+  - sourcePaths
   properties:
-    providerType:
-      oneOf:
-        - type: string
-          enum:
-            - Gcs
-            - S3
-            - Harness
-            - Azure
     archiveFormat:
       oneOf:
       - type: string
         enum:
         - Tar
         - Gzip
+        - Zstd
       - type: string
-        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
         minLength: 1
     baseImageConnectorRefs:
       $ref: ../../steps/ci/parameter-field-list-string.yaml
-    bucket:
+    storageAccount:
+      type: string
+    containerName:
       type: string
     connectorRef:
       type: string
-    failIfKeyNotFound:
+    key:
+      type: string
+    override:
       oneOf:
       - type: boolean
       - type: string
-    key:
-      type: string
     resources:
       $ref: ../../common/container-resource.yaml
     runAsUser:
@@ -50,19 +40,20 @@ allOf:
       - type: integer
         format: int32
       - type: string
+    sourcePaths:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
+- connectorRef
 - key
-- providerType
-if:
-  properties:
-    providerType:
-      enum: [Gcs, S3]
-then:
-  required:
-  - bucket
-  - connectorRef
+- storageAccount
+- containerName
+- sourcePaths
 properties:
   archiveFormat:
     oneOf:
@@ -70,28 +61,24 @@ properties:
       enum:
       - Tar
       - Gzip
+      - Zstd
     - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|default|regex)\(.+?\)))*$
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
       minLength: 1
   baseImageConnectorRefs:
     $ref: ../../steps/ci/parameter-field-list-string.yaml
-  bucket:
+  storageAccount:
+    type: string
+  containerName:
     type: string
   connectorRef:
     type: string
-  failIfKeyNotFound:
+  key:
+    type: string
+  override:
     oneOf:
     - type: boolean
     - type: string
-  key:
-    type: string
-  providerType:
-    type: string
-    enum:
-    - Gcs
-    - S3
-    - Harness
-    - Azure
   resources:
     $ref: ../../common/container-resource.yaml
   runAsUser:
@@ -99,5 +86,11 @@ properties:
     - type: integer
       format: int32
     - type: string
+  sourcePaths:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
   description:
-    desc: This is the description for RestoreCacheStepInfo
+    desc: This is the description for SaveCacheAzureStepInfo
