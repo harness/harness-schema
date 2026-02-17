@@ -502,12 +502,6 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentDeleteStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode_template"
-              }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode_template"
-              }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagArchiveStepNode_template"
@@ -535,6 +529,12 @@
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagSetTreatmentsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagPatchDefinitionStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
               }, {
@@ -599,6 +599,14 @@
                 "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsDeployStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsPrepareRollbackDataStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsTrafficShiftStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRollbackStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunPrepareRollbackDataStepNode_template"
               }, {
@@ -25848,6 +25856,829 @@
               } ]
             } ]
           },
+          "AzureContainerAppsDeployStepNode_template" : {
+            "title" : "AzureContainerAppsDeployStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsDeployStepInfo" : {
+            "title" : "AzureContainerAppsDeployStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "commandOptions" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "skipTrafficShift" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "commandOptions" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "skipTrafficShift" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsDeployStepInfo"
+              }
+            }
+          },
+          "AzureContainerAppsPrepareRollbackDataStepNode_template" : {
+            "title" : "AzureContainerAppsPrepareRollbackDataStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsPrepareRollbackData" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsPrepareRollbackData"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsPrepareRollbackDataStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsPrepareRollbackDataStepInfo" : {
+            "title" : "AzureContainerAppsPrepareRollbackDataStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsPrepareRollbackDataStepInfo"
+              }
+            }
+          },
+          "AzureContainerAppsTrafficShiftStepNode_template" : {
+            "title" : "AzureContainerAppsTrafficShiftStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsTrafficShift" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsTrafficShift"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsTrafficShiftStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsTrafficShiftStepInfo" : {
+            "title" : "AzureContainerAppsTrafficShiftStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "revisionTrafficDetails" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRevisionMetadata"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "revisionTrafficDetails" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRevisionMetadata"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsTrafficShiftStepInfo"
+              }
+            }
+          },
+          "AzureContainerAppsRevisionMetadata" : {
+            "title" : "AzureContainerAppsRevisionMetadata",
+            "type" : "object",
+            "properties" : {
+              "revisionName" : {
+                "type" : "string"
+              },
+              "trafficWeight" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "label" : {
+                "type" : "string"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AzureContainerAppsRollbackStepNode_template" : {
+            "title" : "AzureContainerAppsRollbackStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsRollbackStepInfo" : {
+            "title" : "AzureContainerAppsRollbackStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsRollbackStepInfo"
+              }
+            }
+          },
           "GoogleCloudRunPrepareRollbackDataStepNode_template" : {
             "title" : "GoogleCloudRunPrepareRollbackDataStepNode_template",
             "type" : "object",
@@ -38547,6 +39378,314 @@
               }
             } ]
           },
+          "AzureContainerAppsDeployStepNode" : {
+            "title" : "AzureContainerAppsDeployStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AzureContainerAppsDeployStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsDeploy" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsDeploy"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsDeployStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsPrepareRollbackDataStepNode" : {
+            "title" : "AzureContainerAppsPrepareRollbackDataStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AzureContainerAppsPrepareRollbackDataStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsPrepareRollbackData" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsPrepareRollbackData"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsPrepareRollbackDataStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsTrafficShiftStepNode" : {
+            "title" : "AzureContainerAppsTrafficShiftStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AzureContainerAppsTrafficShiftStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsTrafficShift" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsTrafficShift"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsTrafficShiftStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AzureContainerAppsRollbackStepNode" : {
+            "title" : "AzureContainerAppsRollbackStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AzureContainerAppsRollbackStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AzureContainerAppsRollback" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerAppsRollback"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRollbackStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
           "GoogleCloudRunPrepareRollbackDataStepNode" : {
             "title" : "GoogleCloudRunPrepareRollbackDataStepNode",
             "type" : "object",
@@ -46314,327 +47453,6 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeFlagsetCreateStepNode_template" : {
-            "title" : "FmeFlagsetCreateStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for FmeFlagsetCreateStepNode"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FmeFlagsetCreate" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FmeFlagsetCreate"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "FmeFlagsetCreateStepInfo" : {
-            "title" : "FmeFlagsetCreateStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "name" ],
-              "properties" : {
-                "name" : {
-                  "description" : "Flag set name",
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "description" : {
-                  "description" : "Flag set description",
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "FmeFlagsetDeleteStepNode_template" : {
-            "title" : "FmeFlagsetDeleteStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for FmeFlagsetDeleteStepNode"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FmeFlagsetDelete" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FmeFlagsetDelete"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "FmeFlagsetDeleteStepInfo" : {
-            "title" : "FmeFlagsetDeleteStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "name" ],
-              "properties" : {
-                "name" : {
-                  "description" : "Flag set name to delete",
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "FmeFlagsetAddRemoveFlagsStepNode_template" : {
-            "title" : "FmeFlagsetAddRemoveFlagsStepNode_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for FmeFlagsetAddRemoveFlagsStepNode"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "FmeFlagsetAddRemoveFlags" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "FmeFlagsetAddRemoveFlags"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "FmeFlagsetAddRemoveFlagsStepInfo" : {
-            "title" : "FmeFlagsetAddRemoveFlagsStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "name" ],
-              "properties" : {
-                "name" : {
-                  "description" : "Flag set name",
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "addFlags" : {
-                  "description" : "List of flag names to add to the flag set",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "removeFlags" : {
-                  "description" : "List of flag names to remove from the flag set",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "FmeFlagDeleteStepNode_template" : {
             "title" : "FmeFlagDeleteStepNode_template",
             "type" : "object",
@@ -48303,6 +49121,291 @@
                       "$ref" : "#/definitions/pipeline/common/StringNGVariable"
                     } ]
                   }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagsetCreateStepNode_template" : {
+            "title" : "FmeFlagsetCreateStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagsetCreate" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagsetCreate"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagsetCreateStepInfo" : {
+            "title" : "FmeFlagsetCreateStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "description" : "Flag set name",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "description" : {
+                  "description" : "Flag set description",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagsetDeleteStepNode_template" : {
+            "title" : "FmeFlagsetDeleteStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagsetDelete" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagsetDelete"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagsetDeleteStepInfo" : {
+            "title" : "FmeFlagsetDeleteStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "description" : "Flag set name to delete",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeFlagsetAddRemoveFlagsStepNode_template" : {
+            "title" : "FmeFlagsetAddRemoveFlagsStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeFlagsetAddRemoveFlags" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeFlagsetAddRemoveFlags"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeFlagsetAddRemoveFlagsStepInfo" : {
+            "title" : "FmeFlagsetAddRemoveFlagsStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name" ],
+              "properties" : {
+                "name" : {
+                  "description" : "Flag set name",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "addFlags" : {
+                  "description" : "List of flag names to add to the flag set",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "removeFlags" : {
+                  "description" : "List of flag names to remove from the flag set",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -68110,14 +69213,6 @@
             "minLength" : 1,
             "maxLength" : 100
           },
-          "fme-flagset-common-flagset-name" : {
-            "title" : "fme-flagset-common-flagset-name",
-            "type" : "string",
-            "description" : "Flag set name",
-            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
-            "minLength" : 1,
-            "maxLength" : 100
-          },
           "fme-flag-common-environment" : {
             "title" : "fme-flag-common-environment",
             "type" : "string",
@@ -68145,6 +69240,14 @@
                 "pattern" : "^<\\+input>.*$"
               }
             } ]
+          },
+          "fme-flagset-common-flagset-name" : {
+            "title" : "fme-flagset-common-flagset-name",
+            "type" : "string",
+            "description" : "Flag set name",
+            "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$",
+            "minLength" : 1,
+            "maxLength" : 100
           },
           "AwsCdkBootstrapStepNode_template" : {
             "title" : "AwsCdkBootstrapStepNode_template",
@@ -93692,7 +94795,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce", "GoogleManagedInstanceGroup" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -94616,6 +95719,14 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsDeployStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsPrepareRollbackDataStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsTrafficShiftStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRollbackStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunPrepareRollbackDataStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunDeployStepNode"
@@ -95166,7 +96277,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "Salesforce", "GoogleManagedInstanceGroup" ]
+                "enum" : [ "KubernetesDirect", "KubernetesGcp", "KubernetesAzure", "Pdc", "SshWinRmAzure", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "SshWinRmAws", "SshGcp", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AWS_SAM", "AwsLambda", "KubernetesAws", "KubernetesRancher", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup" ]
               },
               "description" : {
                 "desc" : "This is the description for InfrastructureDef"
@@ -95200,6 +96311,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunInfrastructure"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerApps"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureContainerAppsInfrastructure"
                   }
                 }
               }
@@ -95580,6 +96706,42 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunInfrastructure"
+              }
+            }
+          },
+          "AzureContainerAppsInfrastructure" : {
+            "title" : "AzureContainerAppsInfrastructure",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "subscriptionId", "resourceGroup", "managedEnvironment" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "subscriptionId" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "resourceGroup" : {
+                  "type" : "string",
+                  "minLength" : 1
+                },
+                "managedEnvironment" : {
+                  "type" : "string",
+                  "minLength" : 1
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsInfrastructure"
               }
             }
           },
@@ -96867,7 +98029,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "Salesforce", "GoogleManagedInstanceGroup" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -96901,6 +98063,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleCloudRunServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AzureContainerApps"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AzureContainerAppsServiceSpec"
                   }
                 }
               }
@@ -99892,6 +101069,21 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleCloudRunServiceSpec"
+              }
+            }
+          },
+          "AzureContainerAppsServiceSpec" : {
+            "title" : "AzureContainerAppsServiceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/cd/ServiceSpec"
+            }, {
+              "type" : "object",
+              "properties" : { }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AzureContainerAppsServiceSpec"
               }
             }
           },
@@ -104240,6 +105432,14 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadAwsS3StepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsDeployStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsPrepareRollbackDataStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsTrafficShiftStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AzureContainerAppsRollbackStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunPrepareRollbackDataStepNode"
                 }, {
