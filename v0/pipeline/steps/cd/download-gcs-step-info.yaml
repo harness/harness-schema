@@ -1,0 +1,91 @@
+title: DownloadGcsStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  properties:
+    connectorRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+    downloadPath:
+      type: string
+    bucketName:
+      type: string
+    filePath:
+      type: string
+    outputFilePathsContent:
+      type: array
+      items:
+        type: string
+    privileged:
+      oneOf:
+        - type: boolean
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  connectorRef:
+    type: string
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+  downloadPath:
+    type: string
+  bucketName:
+    type: string
+  filePath:
+    type: string
+  outputFilePathsContent:
+    type: array
+    items:
+      type: string
+  privileged:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+description: |
+  Downloads files from Google Cloud Storage (GCS) bucket.
+  
+  Example YAML:
+  ```yaml
+  - step:
+      type: DownloadGcs
+      name: DownloadGcs_1
+      identifier: DownloadGcs_1
+      spec:
+        connectorRef: account.GcpConnector
+        bucketName: my-gcs-bucket
+        filePath: path/to/file.yaml
+        downloadPath: /harness/manifests
+      description: Downloads manifest from GCS bucket
+      timeout: 10m
+  ```
