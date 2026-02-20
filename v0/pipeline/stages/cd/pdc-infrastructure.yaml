@@ -95,6 +95,42 @@ oneOf:
     provisioner:
       type: string
   additionalProperties: false
+- type: object
+  required:
+    - hostGroups
+  properties:
+    delegateSelectors:
+      oneOf:
+        - type: array
+          items:
+            type: string
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+    hostAttributes:
+      oneOf:
+        - type: object
+          additionalProperties:
+            type: string
+        - type: string
+    hostGroups:
+      type: array
+      required:
+      - credentialsRef
+      - identifier
+      - hosts
+      items:
+        identifier:
+          type: string
+        credentialsRef:
+          type: string
+        hosts:
+          type: array
+          items:
+            type: string
+    provisioner:
+      type: string
+  additionalProperties: false
 properties:
   description:
     desc: This is the description for PdcInfrastructure

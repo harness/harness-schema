@@ -77048,6 +77048,43 @@
                 }
               },
               "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "required" : [ "hostGroups" ],
+              "properties" : {
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "hostAttributes" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "hostGroups" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/HostGroup"
+                  }
+                },
+                "provisioner" : {
+                  "type" : "string"
+                }
+              },
+              "additionalProperties" : false
             } ],
             "properties" : {
               "description" : {
@@ -77115,6 +77152,90 @@
                 }
               }
             } ]
+          },
+          "HostGroup": {
+            "title": "HostGroup",
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "oneOf": [ {
+              "type": "object",
+              "required": [
+                "credentialsRef",
+                "hosts"
+              ],
+              "properties": {
+                "credentialsRef": {
+                  "type": "string",
+                  "description": "Credential reference for this host group"
+                },
+                "hosts": {
+                  "oneOf": [ {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength": 1
+                  } ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "credentialsRef",
+                "hostFilter",
+                "connectorRef"
+              ],
+              "properties": {
+                "connectorRef": {
+                  "type": "string"
+                },
+                "credentialsRef": {
+                  "type": "string"
+                },
+                "delegateSelectors": {
+                  "oneOf": [ {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength": 1
+                  } ]
+                },
+                "hostAttributes": {
+                  "oneOf": [ {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "string"
+                  } ]
+                },
+                "hostFilter": {
+                  "$ref": "#/definitions/pipeline/stages/cd/HostFilter"
+                },
+                "provisioner": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            } ],
+            "properties": {
+              "description": {
+                "desc": "This is the description for Host Group Pdc Infrastructure"
+              }
+            }
           },
           "AllHostsFilter" : {
             "title" : "AllHostsFilter",
