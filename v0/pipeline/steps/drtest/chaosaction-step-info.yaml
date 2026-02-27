@@ -1,0 +1,48 @@
+title: ChaosActionInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - identity
+      - duration
+      - infraReference
+    properties:
+      identity:
+        type: string
+      duration:
+        type: string
+      infraReference:
+        type: string
+      tasks:
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - identifier
+              properties:
+                identifier:
+                  type: string
+                  minLength: 1
+                values:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - value
+                    properties:
+                      name:
+                        type: string
+                        minLength: 1
+                      value:
+                        anyOf:
+                          - type: string
+                          - type: number
+                          - type: boolean
+                          - type: string
+                            pattern: "(<\\+.+>.*)"
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
