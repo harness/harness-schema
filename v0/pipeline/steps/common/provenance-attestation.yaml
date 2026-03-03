@@ -5,6 +5,9 @@ properties:
     type: string
     enum:
       - cosign
+      - keyless
+      - keybased
+      - secret-manager
   description:
     desc: This is the description for ProvenanceAttestation
   spec:
@@ -22,4 +25,31 @@ allOf:
           oneOf:
             - $ref: cosign-provenance-attestation.yaml
             - $ref: cosign-secret-manager-provenance-attestation.yaml
+  - if:
+      properties:
+        type:
+          const: keyless
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: keyless-provenance-attestation.yaml
+  - if:
+      properties:
+        type:
+          const: keybased
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: cosign-provenance-attestation.yaml
+  - if:
+      properties:
+        type:
+          const: secret-manager
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: cosign-secret-manager-provenance-attestation.yaml
 additionalProperties: false

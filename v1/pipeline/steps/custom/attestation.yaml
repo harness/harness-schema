@@ -5,6 +5,9 @@ properties:
     type: string
     enum:
       - cosign
+      - keyless
+      - keybased
+      - secret-manager
   description:
     desc: This is the description for Attestation
   spec:
@@ -22,14 +25,31 @@ allOf:
           oneOf:
             - $ref: cosign-attestation.yaml
             - $ref: cosign-secret-manager-attestation.yaml
-          properties:
-            cosignVariables:
-              type: array
-              items:
-                type: object
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
+  - if:
+      properties:
+        type:
+          const: keyless
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: keyless-attestation.yaml
+  - if:
+      properties:
+        type:
+          const: keybased
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: cosign-attestation.yaml
+  - if:
+      properties:
+        type:
+          const: secret-manager
+    then:
+      properties:
+        spec:
+          type: object
+          $ref: cosign-secret-manager-attestation.yaml
 additionalProperties: false

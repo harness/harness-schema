@@ -4353,7 +4353,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "keyless", "keybased", "secret-manager" ]
               },
               "description" : {
                 "desc" : "This is the description for Attestation"
@@ -4379,23 +4379,55 @@
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keyless"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/KeylessAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keybased"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "secret-manager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
                   }
                 }
               }
@@ -4451,6 +4483,18 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+          },
+          "KeylessAttestation" : {
+            "title" : "KeylessAttestation",
+            "type" : "object",
+            "properties" : {
+              "oidcProvider" : {
+                "type" : "string",
+                "enum" : [ "harness", "non-harness" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false
           },
           "SbomSource" : {
             "title" : "SbomSource",
@@ -30110,7 +30154,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "keyless", "keybased", "secret-manager" ]
               },
               "description" : {
                 "desc" : "This is the description for ProvenanceAttestation"
@@ -30137,6 +30181,54 @@
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
                     } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keyless"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/KeylessProvenanceAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keybased"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "secret-manager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerProvenanceAttestation"
                   }
                 }
               }
@@ -30192,6 +30284,18 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/common/AttestationSpecV1"
+          },
+          "KeylessProvenanceAttestation" : {
+            "title" : "KeylessProvenanceAttestation",
+            "type" : "object",
+            "properties" : {
+              "oidcProvider" : {
+                "type" : "string",
+                "enum" : [ "harness", "non-harness" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false
           },
           "UploadSignature" : {
             "title" : "UploadSignature",
@@ -77605,8 +77709,20 @@
                 },
                 "hostGroups" : {
                   "type" : "array",
+                  "required" : [ "credentialsRef", "identifier", "hosts" ],
                   "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/cd/HostGroup"
+                    "identifier" : {
+                      "type" : "string"
+                    },
+                    "credentialsRef" : {
+                      "type" : "string"
+                    },
+                    "hosts" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }
                   }
                 },
                 "provisioner" : {
@@ -77681,90 +77797,6 @@
                 }
               }
             } ]
-          },
-          "HostGroup": {
-            "title": "HostGroup",
-            "type": "object",
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "oneOf": [ {
-              "type": "object",
-              "required": [
-                "credentialsRef",
-                "hosts"
-              ],
-              "properties": {
-                "credentialsRef": {
-                  "type": "string",
-                  "description": "Credential reference for this host group"
-                },
-                "hosts": {
-                  "oneOf": [ {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength": 1
-                  } ]
-                }
-              },
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "required": [
-                "credentialsRef",
-                "hostFilter",
-                "connectorRef"
-              ],
-              "properties": {
-                "connectorRef": {
-                  "type": "string"
-                },
-                "credentialsRef": {
-                  "type": "string"
-                },
-                "delegateSelectors": {
-                  "oneOf": [ {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
-                    "minLength": 1
-                  } ]
-                },
-                "hostAttributes": {
-                  "oneOf": [ {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "type": "string"
-                  } ]
-                },
-                "hostFilter": {
-                  "$ref": "#/definitions/pipeline/stages/cd/HostFilter"
-                },
-                "provisioner": {
-                  "type": "string"
-                }
-              },
-              "additionalProperties": false
-            } ],
-            "properties": {
-              "description": {
-                "desc": "This is the description for Host Group Pdc Infrastructure"
-              }
-            }
           },
           "AllHostsFilter" : {
             "title" : "AllHostsFilter",

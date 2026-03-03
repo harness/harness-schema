@@ -42650,7 +42650,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "keyless", "keybased", "secret-manager" ]
               },
               "description" : {
                 "desc" : "This is the description for Attestation"
@@ -42676,23 +42676,55 @@
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keyless"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/KeylessAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keybased"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "secret-manager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerAttestation"
                   }
                 }
               }
@@ -42748,6 +42780,18 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/custom/AttestationSpec"
+          },
+          "KeylessAttestation" : {
+            "title" : "KeylessAttestation",
+            "type" : "object",
+            "properties" : {
+              "oidcProvider" : {
+                "type" : "string",
+                "enum" : [ "harness", "non-harness" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false
           },
           "SbomSource" : {
             "title" : "SbomSource",
