@@ -36,9 +36,47 @@ allOf:
               pattern: ^([a-zA-Z0-9-_]+)$
               maxItems: 20
           - $ref: ../common/common-jexl.yaml
-      addDefaultRolloutPlans:
+      defaultTreatment:
+        description: "Default treatment for the feature flag"
         oneOf:
-          - type: boolean
+          - $ref: ../common/fme-flag-common-treatment.yaml
           - $ref: ../common/common-jexl.yaml
-        description: "Creates all feature flag definitions in default state (\"off\")"
+      baselineTreatment:
+        description: "Baseline treatment for the feature flag"
+        oneOf:
+          - $ref: ../common/fme-flag-common-treatment.yaml
+          - $ref: ../common/common-jexl.yaml
+      treatments:
+        description: "List of treatments with their descriptions"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - treatment
+                - description
+              properties:
+                treatment:
+                  oneOf:
+                    - $ref: ../common/fme-flag-common-treatment.yaml
+                    - $ref: ../common/common-jexl-expression-only.yaml
+                description:
+                  oneOf:
+                    - $ref: ../common/string-without-jexl.yaml
+                    - $ref: ../common/common-jexl.yaml
+            minItems: 2
+          - $ref: ../common/common-jexl.yaml
+    dependencies:
+      treatments:
+        required:
+          - defaultTreatment
+          - baselineTreatment
+      defaultTreatment:
+        required:
+          - treatments
+          - baselineTreatment
+      baselineTreatment:
+        required:
+          - treatments
+          - defaultTreatment
 $schema: http://json-schema.org/draft-07/schema#

@@ -46269,13 +46269,61 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "addDefaultRolloutPlans" : {
+                "defaultTreatment" : {
+                  "description" : "Default treatment for the feature flag",
                   "oneOf" : [ {
-                    "type" : "boolean"
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ],
-                  "description" : "Creates all feature flag definitions in default state (\"off\")"
+                  } ]
+                },
+                "baselineTreatment" : {
+                  "description" : "Baseline treatment for the feature flag",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "treatments" : {
+                  "description" : "List of treatments with their descriptions",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "treatment", "description" ],
+                      "properties" : {
+                        "treatment" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                          } ]
+                        },
+                        "description" : {
+                          "oneOf" : [ {
+                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        }
+                      }
+                    },
+                    "minItems" : 2
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              },
+              "dependencies" : {
+                "treatments" : {
+                  "required" : [ "defaultTreatment", "baselineTreatment" ]
+                },
+                "defaultTreatment" : {
+                  "required" : [ "treatments", "baselineTreatment" ]
+                },
+                "baselineTreatment" : {
+                  "required" : [ "treatments", "defaultTreatment" ]
                 }
               }
             } ],
@@ -48121,7 +48169,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "flagName", "environment", "defaultTreatment", "treatments" ],
+              "required" : [ "flagName", "environment", "defaultTreatment", "baselineTreatment", "treatments" ],
               "properties" : {
                 "flagName" : {
                   "oneOf" : [ {
@@ -48139,6 +48187,14 @@
                 },
                 "defaultTreatment" : {
                   "description" : "Default treatment for the configuration",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "baselineTreatment" : {
+                  "description" : "Baseline treatment for the configuration",
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
                   }, {
