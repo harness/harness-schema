@@ -70375,7 +70375,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Docker", "Gcr", "Ecr", "Acr", "Gar", "Har" ]
+                "enum" : [ "Docker", "Gcr", "Ecr", "Acr", "Gar", "Har", "Local" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerificationSource"
@@ -70469,6 +70469,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/SlsaHarSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Local"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/LocalSourceSpec"
                   }
                 }
               }
@@ -70658,6 +70673,58 @@
             "properties" : {
               "description" : {
                 "desc" : "Slsa Har source spec"
+              }
+            }
+          },
+          "LocalSourceSpec" : {
+            "title" : "LocalSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSource"
+            }, {
+              "type" : "object",
+              "required" : [ "workspace", "type" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                },
+                "workspace" : {
+                  "type" : "string"
+                },
+                "artifact_name" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                },
+                "version" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for LocalSourceSpec"
               }
             }
           },
@@ -71749,58 +71816,6 @@
               }
             }
           },
-          "LocalSourceSpec" : {
-            "title" : "LocalSourceSpec",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
-            }, {
-              "type" : "object",
-              "required" : [ "workspace", "type" ],
-              "properties" : {
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "manual", "auto" ]
-                },
-                "workspace" : {
-                  "type" : "string"
-                },
-                "artifact_name" : {
-                  "type" : "string",
-                  "description" : "Required when type is manual",
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "manual"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "minLength" : 1
-                  }
-                },
-                "version" : {
-                  "type" : "string",
-                  "description" : "Required when type is manual",
-                  "if" : {
-                    "properties" : {
-                      "type" : {
-                        "const" : "manual"
-                      }
-                    }
-                  },
-                  "then" : {
-                    "minLength" : 1
-                  }
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for LocalSourceSpec"
-              }
-            }
-          },
           "UploadSignature" : {
             "title" : "UploadSignature",
             "type" : "object",
@@ -72019,7 +72034,7 @@
                   "source" : {
                     "properties" : {
                       "type" : {
-                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr", "har" ]
+                        "enum" : [ "ecr", "docker", "gar", "gcr", "acr", "har", "local" ]
                       }
                     }
                   }
@@ -72070,7 +72085,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har" ]
+                "enum" : [ "docker", "gcr", "ecr", "acr", "gar", "har", "local" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaGenerationSource"
@@ -72164,6 +72179,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/ProvenanceHarSourceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "local"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ProvenanceLocalSourceSpec"
                   }
                 }
               }
@@ -72353,6 +72383,58 @@
             "properties" : {
               "description" : {
                 "desc" : "Harness Artifact Registry source spec"
+              }
+            }
+          },
+          "ProvenanceLocalSourceSpec" : {
+            "title" : "ProvenanceLocalSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ProvenanceSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "workspace", "type" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                },
+                "workspace" : {
+                  "type" : "string"
+                },
+                "artifact_name" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                },
+                "version" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ProvenanceLocalSourceSpec"
               }
             }
           },
