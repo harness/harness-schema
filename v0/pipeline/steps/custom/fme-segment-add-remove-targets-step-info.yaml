@@ -1,0 +1,53 @@
+title: FmeSegmentAddRemoveTargetsStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - name
+      - environment
+      - operation
+      - keys
+    properties:
+      name:
+        description: "Name of the segment to update"
+        oneOf:
+          - $ref: ../common/fme-segment-common-segment-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        description: "ID of the FME environment"
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      operation:
+        description: "Operation to perform: add, remove, or replace"
+        oneOf:
+          - type: string
+            enum:
+              - add
+              - remove
+              - replace
+          - $ref: ../common/common-jexl.yaml
+      keys:
+        description: "List of keys (identifiers) to add, remove, or replace"
+        oneOf:
+          - type: array
+            items:
+              type: string
+            minItems: 1
+          - $ref: ../common/common-jexl.yaml
+      comment:
+        description: "Optional comment for the operation"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      title:
+        description: "Optional title for the operation"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      replace:
+        description: "When operation is add, whether to replace existing keys (true) or append (false)"
+        oneOf:
+          - type: boolean
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#

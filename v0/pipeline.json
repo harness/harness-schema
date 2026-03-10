@@ -7719,6 +7719,327 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "FmeSegmentAddRemoveTargetsStepNode" : {
+            "title" : "FmeSegmentAddRemoveTargetsStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeSegmentAddRemoveTargetsStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeSegmentAddRemoveTargets" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeSegmentAddRemoveTargets"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeSegmentAddRemoveTargetsStepInfo" : {
+            "title" : "FmeSegmentAddRemoveTargetsStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment", "operation", "keys" ],
+              "properties" : {
+                "name" : {
+                  "description" : "Name of the segment to update",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-segment-common-segment-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "description" : "ID of the FME environment",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "operation" : {
+                  "description" : "Operation to perform: add, remove, or replace",
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "add", "remove", "replace" ]
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "keys" : {
+                  "description" : "List of keys (identifiers) to add, remove, or replace",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    },
+                    "minItems" : 1
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "comment" : {
+                  "description" : "Optional comment for the operation",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "title" : {
+                  "description" : "Optional title for the operation",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "replace" : {
+                  "description" : "When operation is add, whether to replace existing keys (true) or append (false)",
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "FmeConfigureSegmentRuleStepNode" : {
+            "title" : "FmeConfigureSegmentRuleStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for FmeConfigureSegmentRuleStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "FmeConfigureSegmentRule" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "FmeConfigureSegmentRule"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "FmeConfigureSegmentRuleStepInfo" : {
+            "title" : "FmeConfigureSegmentRuleStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "name", "environment" ],
+              "properties" : {
+                "name" : {
+                  "description" : "Name of the rule-based segment to configure",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-segment-common-segment-name"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environment" : {
+                  "description" : "ID of the FME environment",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "rules" : {
+                  "description" : "List of targeting rules",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "condition" ],
+                      "properties" : {
+                        "condition" : {
+                          "description" : "Targeting condition expression",
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "excludedKeys" : {
+                  "description" : "List of keys to exclude from the segment",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "excludedSegments" : {
+                  "description" : "List of segments to exclude",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "properties" : {
+                        "name" : {
+                          "description" : "Segment name to exclude",
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "description" : "Segment type",
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "comment" : {
+                  "description" : "Optional comment for the operation",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "title" : {
+                  "description" : "Optional title for the operation",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "FmeFlagsetCreateStepNode" : {
             "title" : "FmeFlagsetCreateStepNode",
             "type" : "object",
@@ -76053,6 +76374,10 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentDeleteStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode"
@@ -85038,6 +85363,10 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentDeleteStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode"
@@ -85597,6 +85926,10 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentDeleteStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {

@@ -1,0 +1,63 @@
+title: FmeConfigureSegmentRuleStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - name
+      - environment
+    properties:
+      name:
+        description: "Name of the rule-based segment to configure"
+        oneOf:
+          - $ref: ../common/fme-segment-common-segment-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        description: "ID of the FME environment"
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      rules:
+        description: "List of targeting rules"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - condition
+              properties:
+                condition:
+                  description: "Targeting condition expression"
+                  type: string
+          - $ref: ../common/common-jexl.yaml
+      excludedKeys:
+        description: "List of keys to exclude from the segment"
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - $ref: ../common/common-jexl.yaml
+      excludedSegments:
+        description: "List of segments to exclude"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: "Segment name to exclude"
+                  type: string
+                type:
+                  description: "Segment type"
+                  type: string
+          - $ref: ../common/common-jexl.yaml
+      comment:
+        description: "Optional comment for the operation"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      title:
+        description: "Optional title for the operation"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
