@@ -504,7 +504,7 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDeleteStepNode_template"
               }, {
@@ -51875,7 +51875,7 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "name", "environment", "operation", "keys" ],
+              "required" : [ "name", "environment" ],
               "properties" : {
                 "name" : {
                   "description" : "Name of the segment to update",
@@ -51893,47 +51893,24 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "operation" : {
-                  "description" : "Operation to perform: add, remove, or replace",
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "add", "remove", "replace" ]
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "keys" : {
-                  "description" : "List of keys (identifiers) to add, remove, or replace",
+                "addKeys" : {
+                  "description" : "Keys to add to the segment",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
                       "type" : "string"
-                    },
-                    "minItems" : 1
+                    }
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "comment" : {
-                  "description" : "Optional comment for the operation",
+                "removeKeys" : {
+                  "description" : "Keys to remove from the segment",
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "title" : {
-                  "description" : "Optional title for the operation",
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
-                  } ]
-                },
-                "replace" : {
-                  "description" : "When operation is add, whether to replace existing keys (true) or append (false)",
-                  "oneOf" : [ {
-                    "type" : "boolean"
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -52019,14 +51996,14 @@
               }
             } ]
           },
-          "FmeConfigureSegmentRuleStepNode_template" : {
-            "title" : "FmeConfigureSegmentRuleStepNode_template",
+          "FmeSegmentSetTargetingRulesStepNode_template" : {
+            "title" : "FmeSegmentSetTargetingRulesStepNode_template",
             "type" : "object",
             "required" : [ "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for FmeConfigureSegmentRuleStepNode"
+                "desc" : "This is the description for FmeSegmentSetTargetingRulesStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -52066,7 +52043,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeConfigureSegmentRule" ]
+                "enum" : [ "FmeSegmentSetTargetingRules" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -52083,21 +52060,21 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeConfigureSegmentRule"
+                    "const" : "FmeSegmentSetTargetingRules"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepInfo"
                   }
                 }
               }
             } ]
           },
-          "FmeConfigureSegmentRuleStepInfo" : {
-            "title" : "FmeConfigureSegmentRuleStepInfo",
+          "FmeSegmentSetTargetingRulesStepInfo" : {
+            "title" : "FmeSegmentSetTargetingRulesStepInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
@@ -52121,7 +52098,7 @@
                   } ]
                 },
                 "rules" : {
-                  "description" : "List of targeting rules",
+                  "description" : "List of targeting rules, each containing conditions",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -52129,8 +52106,87 @@
                       "required" : [ "condition" ],
                       "properties" : {
                         "condition" : {
-                          "description" : "Targeting condition expression",
-                          "type" : "string"
+                          "description" : "Condition object containing rules",
+                          "type" : "object",
+                          "required" : [ "rules" ],
+                          "properties" : {
+                            "rules" : {
+                              "description" : "List of condition rules",
+                              "type" : "array",
+                              "items" : {
+                                "type" : "object",
+                                "required" : [ "type" ],
+                                "properties" : {
+                                  "type" : {
+                                    "type" : "string",
+                                    "enum" : [ "IN_SEGMENT", "IN_SPLIT", "BOOLEAN", "ON_DATE", "ON_OR_AFTER_DATE", "ON_OR_BEFORE_DATE", "BETWEEN_DATE", "EQUAL_SET", "ANY_OF_SET", "ALL_OF_SET", "PART_OF_SET", "EQUAL_NUMBER", "LESS_THAN_OR_EQUAL_NUMBER", "GREATER_THAN_OR_EQUAL_NUMBER", "BETWEEN_NUMBER", "IN_LIST_STRING", "STARTS_WITH_STRING", "ENDS_WITH_STRING", "CONTAINS_STRING", "MATCHES_STRING", "EQUAL_TO_SEMVER", "GREATER_THAN_OR_EQUAL_TO_SEMVER", "LESS_THAN_OR_EQUAL_TO_SEMVER", "BETWEEN_SEMVER", "IN_LIST_SEMVER" ]
+                                  },
+                                  "negate" : {
+                                    "type" : "boolean",
+                                    "default" : false
+                                  },
+                                  "feature_flag" : {
+                                    "description" : "Feature flag name (only for IN_SPLIT type)",
+                                    "oneOf" : [ {
+                                      "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                    } ]
+                                  },
+                                  "attribute" : {
+                                    "description" : "Attribute name for attribute-based matchers",
+                                    "type" : "string"
+                                  },
+                                  "value" : {
+                                    "description" : "Value for the matcher (can be single, multiple, or between)",
+                                    "oneOf" : [ {
+                                      "type" : "boolean"
+                                    }, {
+                                      "type" : "number"
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                    }, {
+                                      "type" : "array",
+                                      "items" : {
+                                        "oneOf" : [ {
+                                          "type" : "number"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                        } ]
+                                      }
+                                    }, {
+                                      "type" : "object",
+                                      "required" : [ "from", "to" ],
+                                      "properties" : {
+                                        "from" : {
+                                          "oneOf" : [ {
+                                            "type" : "number"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                          } ]
+                                        },
+                                        "to" : {
+                                          "oneOf" : [ {
+                                            "type" : "number"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                          }, {
+                                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                          } ]
+                                        }
+                                      }
+                                    }, {
+                                      "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                    } ]
+                                  }
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -52138,7 +52194,7 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "excludedKeys" : {
+                "excludeKeys" : {
                   "description" : "List of keys to exclude from the segment",
                   "oneOf" : [ {
                     "type" : "array",
@@ -52149,7 +52205,7 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "excludedSegments" : {
+                "excludeSegments" : {
                   "description" : "List of segments to exclude",
                   "oneOf" : [ {
                     "type" : "array",
@@ -52190,14 +52246,14 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeConfigureSegmentRuleStepNode" : {
-            "title" : "FmeConfigureSegmentRuleStepNode",
+          "FmeSegmentSetTargetingRulesStepNode" : {
+            "title" : "FmeSegmentSetTargetingRulesStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for FmeConfigureSegmentRuleStepNode"
+                "desc" : "This is the description for FmeSegmentSetTargetingRulesStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -52237,7 +52293,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeConfigureSegmentRule" ]
+                "enum" : [ "FmeSegmentSetTargetingRules" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -52254,14 +52310,14 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeConfigureSegmentRule"
+                    "const" : "FmeSegmentSetTargetingRules"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepInfo"
                   }
                 }
               }
@@ -96534,7 +96590,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {
@@ -103861,7 +103917,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {
@@ -106200,7 +106256,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentAddRemoveTargetsStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeConfigureSegmentRuleStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentSetTargetingRulesStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetCreateStepNode"
                 }, {
