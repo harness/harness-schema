@@ -540,7 +540,7 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode_template"
               }, {
-                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode_template"
+                "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cvng/CVAnalyzeDeploymentStepNode_template"
               }, {
@@ -50104,8 +50104,8 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "FmeFlagsetAddRemoveFlagsStepNode_template" : {
-            "title" : "FmeFlagsetAddRemoveFlagsStepNode_template",
+          "FmeFlagAddRemoveFlagsetsStepNode_template" : {
+            "title" : "FmeFlagAddRemoveFlagsetsStepNode_template",
             "type" : "object",
             "required" : [ "spec", "type" ],
             "properties" : {
@@ -50139,7 +50139,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeFlagsetAddRemoveFlags" ]
+                "enum" : [ "FmeFlagAddRemoveFlagsets" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -50156,37 +50156,45 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeFlagsetAddRemoveFlags"
+                    "const" : "FmeFlagAddRemoveFlagsets"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepInfo"
                   }
                 }
               }
             } ]
           },
-          "FmeFlagsetAddRemoveFlagsStepInfo" : {
-            "title" : "FmeFlagsetAddRemoveFlagsStepInfo",
+          "FmeFlagAddRemoveFlagsetsStepInfo" : {
+            "title" : "FmeFlagAddRemoveFlagsetsStepInfo",
             "allOf" : [ {
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "name" ],
+              "required" : [ "flagName", "environment" ],
               "properties" : {
-                "name" : {
-                  "description" : "Flag set name",
+                "flagName" : {
+                  "description" : "Feature flag name",
                   "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/steps/common/fme-flagset-common-flagset-name"
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-flag-name"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "addFlags" : {
-                  "description" : "List of flag names to add to the flag set",
+                "environment" : {
+                  "description" : "FME Environment Name or ID",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-environment"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "addFlagsets" : {
+                  "description" : "List of flagset names to add to the feature flag",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -50196,8 +50204,8 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "removeFlags" : {
-                  "description" : "List of flag names to remove from the flag set",
+                "removeFlagsets" : {
+                  "description" : "List of flagset names to remove from the feature flag",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -53748,14 +53756,14 @@
               }
             } ]
           },
-          "FmeFlagsetAddRemoveFlagsStepNode" : {
-            "title" : "FmeFlagsetAddRemoveFlagsStepNode",
+          "FmeFlagAddRemoveFlagsetsStepNode" : {
+            "title" : "FmeFlagAddRemoveFlagsetsStepNode",
             "type" : "object",
             "required" : [ "identifier", "name", "spec", "type" ],
             "properties" : {
               "description" : {
                 "type" : "string",
-                "desc" : "This is the description for FmeFlagsetAddRemoveFlagsStepNode"
+                "desc" : "This is the description for FmeFlagAddRemoveFlagsetsStepNode"
               },
               "enforce" : {
                 "$ref" : "#/definitions/pipeline/common/PolicyConfig"
@@ -53795,7 +53803,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "FmeFlagsetAddRemoveFlags" ]
+                "enum" : [ "FmeFlagAddRemoveFlagsets" ]
               },
               "when" : {
                 "oneOf" : [ {
@@ -53812,14 +53820,14 @@
               "if" : {
                 "properties" : {
                   "type" : {
-                    "const" : "FmeFlagsetAddRemoveFlags"
+                    "const" : "FmeFlagAddRemoveFlagsets"
                   }
                 }
               },
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepInfo"
+                    "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepInfo"
                   }
                 }
               }
@@ -97892,7 +97900,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -105316,7 +105324,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/GCEProvisionBackendServiceStepNode"
                 } ]
@@ -107665,7 +107673,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetDeleteStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagsetAddRemoveFlagsStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagAddRemoveFlagsetsStepNode"
                 } ]
               },
               "stepGroup" : {
