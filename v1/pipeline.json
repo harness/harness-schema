@@ -15,6 +15,20 @@
     "additionalProperties" : false
   }, {
     "type" : "object",
+    "required" : [ "agent" ],
+    "properties" : {
+      "version" : {
+        "description" : "Version defines the schema version.",
+        "type" : [ "string", "number" ]
+      },
+      "agent" : {
+        "description" : "Agent pipeline configuration. Agents are pipelines with AI-specific capabilities including tools, MCP servers, rules, and skills.",
+        "$ref" : "#/definitions/pipeline/Agent"
+      }
+    },
+    "additionalProperties" : false
+  }, {
+    "type" : "object",
     "properties" : {
       "id" : {
         "type" : "string",
@@ -33,7 +47,7 @@
       "timeout" : {
         "type" : "string",
         "description" : "Defines pipeline timeout",
-        "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+        "pattern" : "duration"
       },
       "allow-stage-executions" : {
         "type" : "boolean",
@@ -104,7 +118,8 @@
         "maxItems" : 256,
         "minItems" : 1
       }
-    }
+    },
+    "additionalProperties" : false
   } ],
   "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
@@ -1060,7 +1075,172 @@
             "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Tools" : {
+          "title" : "Tools",
+          "description" : "Tools configures built-in tools available to the agent.",
+          "type" : "object",
+          "properties" : {
+            "read" : {
+              "description" : "Read enables file read capability.",
+              "type" : "boolean"
+            },
+            "write" : {
+              "description" : "Write enables file write capability.",
+              "type" : "boolean"
+            },
+            "grep" : {
+              "description" : "Grep enables grep/search capability.",
+              "type" : "boolean"
+            },
+            "bash" : {
+              "description" : "Bash configures shell command execution.\n- true: enables default safe commands\n- false: disables bash\n- string[]: list of allowed commands (e.g., [\"echo\", \"ls\", \"git:*\"])",
+              "oneOf" : [ {
+                "type" : "boolean"
+              }, {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              } ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "McpServer" : {
+          "title" : "McpServer",
+          "description" : "McpServer defines a Model Context Protocol server configuration. Supports multiple transport types: stdio (command), container (docker), HTTP (url), and registry-based servers.",
+          "type" : "object",
+          "properties" : {
+            "command" : {
+              "description" : "Command specifies the command to run for stdio-based MCP servers. Used with args for process-based servers (e.g., \"npx\", \"uvx\").",
+              "type" : "string"
+            },
+            "args" : {
+              "description" : "Args specifies command arguments for stdio-based MCP servers.",
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "container" : {
+              "description" : "Container specifies a Docker image for container-based MCP servers. The container is run with stdin/stdout communication.",
+              "$ref" : "#/definitions/pipeline/steps/unified/Container"
+            },
+            "url" : {
+              "description" : "Url specifies the HTTP endpoint for remote MCP servers. Must implement the MCP specification over HTTP.",
+              "type" : "string"
+            },
+            "headers" : {
+              "description" : "Headers specifies HTTP headers for authentication with remote MCP servers. Commonly used for Bearer tokens or API keys.",
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "registry" : {
+              "description" : "Registry specifies a reference to an MCP server in a registry. Used for discovery and version management.",
+              "type" : "string"
+            },
+            "env" : {
+              "description" : "Env specifies environment variables passed to the MCP server.",
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "allowed" : {
+              "description" : "Allowed specifies which tools from this MCP server are available. Use [\"*\"] to allow all tools, or list specific tool names.",
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          },
+          "additionalProperties" : false,
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
+      },
+      "Agent" : {
+        "title" : "Agent",
+        "description" : "Agent extends pipeline with AI agent-specific configuration. Agents are pipelines that can leverage AI capabilities including built-in tools, MCP servers, rules, and skills.",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+          },
+          "clone" : {
+            "$ref" : "#/definitions/pipeline/Clone"
+          },
+          "inputs" : {
+            "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
+          },
+          "timeout" : {
+            "type" : "string",
+            "description" : "Defines pipeline timeout",
+            "format" : "duration"
+          },
+          "delegate" : {
+            "$ref" : "#/definitions/pipeline/common/Delegate"
+          },
+          "env" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Provides the default environment variables."
+          },
+          "repo" : {
+            "description" : "Configures the default repository.",
+            "$ref" : "#/definitions/pipeline/Repository"
+          },
+          "barriers" : {
+            "type" : "array",
+            "description" : "Barriers provides optional pipeline barriers.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "if" : {
+            "type" : "string",
+            "description" : "If provides conditional pipeline execution logic. If the condition resolves to false, the pipeline is skipped."
+          },
+          "on" : {
+            "$ref" : "#/definitions/pipeline/true"
+          },
+          "tags" : {
+            "type" : "object",
+            "description" : "Tags for the pipeline.",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "stages" : {
+            "type" : "array",
+            "description" : "Pipeline stages - can contain stages, groups, or parallel executions.",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+              } ]
+            },
+            "maxItems" : 256,
+            "minItems" : 1
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "Clone" : {
         "title" : "Clone",
@@ -1242,7 +1422,7 @@
         }
       },
       "true" : {
-        "title" : true,
+        "title" : "On",
         "description" : "On provides conditional pipeline execution logic based on trigger event and action mapping. If the conditional logic resolves to false, the pipeline is skipped.",
         "oneOf" : [ {
           "$ref" : "#/definitions/pipeline/EventType"
@@ -1651,7 +1831,7 @@
               "timeout" : {
                 "type" : "string",
                 "description" : "Stage timeout duration.",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "pattern" : "duration"
               },
               "labels" : {
                 "type" : "object",
@@ -1916,7 +2096,7 @@
               "timeout" : {
                 "description" : "Init timeout duration. Supports expressions.",
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "pattern" : "duration"
               },
               "service-account" : {
                 "description" : "Kubernetes service account name. Supports expressions.",
@@ -1994,7 +2174,7 @@
                   "type" : "integer"
                 }, {
                   "type" : "string",
-                  "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                  "pattern" : "duration"
                 } ]
               },
               "value" : {
@@ -2908,7 +3088,7 @@
               "timeout" : {
                 "description" : "Step timeout duration. Supports expressions.",
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "pattern" : "duration"
               },
               "run" : {
                 "description" : "Run step configuration. Supports expressions.",
@@ -2940,6 +3120,15 @@
                 "description" : "Background service step configuration. Supports expressions.",
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/unified/RunStepInfoV1"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                } ]
+              },
+              "agent" : {
+                "description" : "Agent step configuration. Supports expressions.",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepAgent"
                 }, {
                   "type" : "string",
                   "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
@@ -3383,7 +3572,7 @@
                     "duration" : {
                       "description" : "Duration to wait (e.g., 10s, 5m, 1h). Supports expressions.",
                       "type" : "string",
-                      "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                      "pattern" : "duration"
                     }
                   }
                 }
@@ -3431,7 +3620,7 @@
               "timeout" : {
                 "description" : "Step timeout duration. Supports expressions.",
                 "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                "pattern" : "duration"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -3889,7 +4078,7 @@
                   "timeout" : {
                     "type" : "string",
                     "description" : "Step group timeout duration.",
-                    "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                    "pattern" : "duration"
                   },
                   "steps" : {
                     "type" : "array",
@@ -3900,6 +4089,53 @@
                 }
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "StepAgent" : {
+            "title" : "StepAgent",
+            "description" : "StepAgent defines an AI agent step configuration. Agent-specific fields (tools, mcp_servers, rules, skills) at step level are merged with pipeline-level Agent configuration using merge strategy.",
+            "type" : "object",
+            "properties" : {
+              "container" : {
+                "description" : "Container runs the agent inside a container.",
+                "$ref" : "#/definitions/pipeline/steps/unified/Container"
+              },
+              "env" : {
+                "description" : "Env defines the environment variables for the agent.",
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "with" : {
+                "description" : "With defines configuration parameters passed to the agent.",
+                "type" : "object",
+                "additionalProperties" : true
+              },
+              "mcp_servers" : {
+                "description" : "McpServers defines MCP servers for this agent step. Merged with pipeline-level mcp_servers configuration.",
+                "type" : "object",
+                "additionalProperties" : {
+                  "$ref" : "#/definitions/pipeline/common/McpServer"
+                }
+              },
+              "rules" : {
+                "description" : "Rules defines behavioral constraints for this agent step. Merged with pipeline-level rules.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "max_turns" : {
+                "description" : "MaxTurns defines the maximum number of agentic turns before forced stop.",
+                "type" : "number"
+              },
+              "task" : {
+                "description" : "Task defines the task prompt or path to a task file.",
+                "type" : "string"
+              }
+            },
+            "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         }
