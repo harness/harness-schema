@@ -5149,7 +5149,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "keyless", "keybased", "secret-manager" ]
               },
               "description" : {
                 "desc" : "This is the description for VerifyAttestation"
@@ -5175,23 +5175,55 @@
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerVerifyAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keyless"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/KeylessVerifyAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keybased"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignVerifyAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "secret-manager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/custom/CosignSecretManagerVerifyAttestation"
                   }
                 }
               }
@@ -5244,6 +5276,18 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/custom/VerifyAttestationSpec"
+          },
+          "KeylessVerifyAttestation" : {
+            "title" : "KeylessVerifyAttestation",
+            "type" : "object",
+            "properties" : {
+              "oidcProvider" : {
+                "type" : "string",
+                "enum" : [ "harness", "non-harness" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false
           },
           "SbomDrift" : {
             "title" : "SbomDrift",
@@ -22577,7 +22621,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "cosign" ]
+                "enum" : [ "cosign", "keyless", "keybased", "secret-manager" ]
               },
               "description" : {
                 "desc" : "This is the description for SlsaVerifyAttestation"
@@ -22604,6 +22648,54 @@
                     }, {
                       "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
                     } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keyless"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/KeylessSlsaVerifyAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "keybased"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignSlsaVerifyAttestation"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "secret-manager"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "type" : "object",
+                    "$ref" : "#/definitions/pipeline/steps/common/CosignSecretManagerVerifyAttestation"
                   }
                 }
               }
@@ -22656,6 +22748,18 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "additionalProperties" : false,
             "$ref" : "#/definitions/pipeline/steps/common/SlsaVerifyAttestationSpec"
+          },
+          "KeylessSlsaVerifyAttestation" : {
+            "title" : "KeylessSlsaVerifyAttestation",
+            "type" : "object",
+            "properties" : {
+              "oidcProvider" : {
+                "type" : "string",
+                "enum" : [ "harness", "non-harness" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "additionalProperties" : false
           },
           "AiVerifyStepNode" : {
             "title" : "AiVerifyStepNode",
@@ -85455,23 +85559,7 @@
                       "$ref" : "#/definitions/pipeline/stages/ci/CosignAttestationV1"
                     }, {
                       "$ref" : "#/definitions/pipeline/stages/ci/CosignSecretManagerAttestation"
-                    } ],
-                    "properties" : {
-                      "cosignVariables" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "properties" : {
-                            "key" : {
-                              "type" : "string"
-                            },
-                            "value" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    } ]
                   }
                 }
               }
