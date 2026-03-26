@@ -1,147 +1,295 @@
 {
+  "type" : "object",
   "title" : "pipeline",
-  "oneOf" : [ {
-    "type" : "object",
-    "required" : [ "template" ],
-    "properties" : {
-      "template" : {
-        "description" : "Pipeline template reference.",
-        "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
-      },
-      "inputs" : {
-        "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
-      }
-    },
-    "additionalProperties" : false
-  }, {
-    "type" : "object",
-    "properties" : {
-      "id" : {
-        "type" : "string",
-        "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-      },
-      "name" : {
-        "type" : "string",
-        "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-      },
-      "clone" : {
-        "$ref" : "#/definitions/pipeline/Clone"
-      },
-      "inputs" : {
-        "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
-      },
-      "timeout" : {
-        "type" : "string",
-        "description" : "Defines pipeline timeout",
-        "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-      },
-      "allow-stage-executions" : {
-        "type" : "boolean",
-        "description" : "Allows stage executions."
-      },
-      "fixed-inputs-on-rerun" : {
-        "type" : "boolean",
-        "description" : "Fixed inputs on rerun."
-      },
-      "delegate" : {
-        "$ref" : "#/definitions/pipeline/common/Delegate"
-      },
-      "env" : {
-        "type" : "object",
-        "additionalProperties" : {
-          "type" : "string"
-        },
-        "description" : "Provides the default environment variables."
-      },
-      "repo" : {
-        "description" : "Configures the default repository.",
-        "$ref" : "#/definitions/pipeline/Repository"
-      },
-      "barriers" : {
-        "type" : "array",
-        "description" : "Barriers provides optional pipeline barriers.",
-        "items" : {
-          "type" : "string"
-        }
-      },
-      "if" : {
-        "type" : "string",
-        "description" : "If provides conditional pipeline execution logic. If the condition resolves to false, the pipeline is skipped."
-      },
-      "on" : {
-        "$ref" : "#/definitions/pipeline/true"
-      },
-      "notifications" : {
-        "type" : "array",
-        "description" : "Notifications provides optional pipeline notifications.",
-        "items" : {
-          "$ref" : "#/definitions/pipeline/NotificationRules"
-        }
-      },
-      "tags" : {
-        "type" : "object",
-        "description" : "Tags for the pipeline.",
-        "additionalProperties" : {
-          "type" : "string"
-        }
-      },
-      "stages" : {
-        "type" : "array",
-        "description" : "Pipeline stages - can contain stages, groups, or parallel executions.",
-        "items" : {
-          "oneOf" : [ {
-            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
-          }, {
-            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
-          }, {
-            "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
-          }, {
-            "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
-          }, {
-            "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
-          } ]
-        },
-        "maxItems" : 256,
-        "minItems" : 1
-      }
+  "required" : [ "pipeline" ],
+  "properties" : {
+    "pipeline" : {
+      "$ref" : "#/definitions/pipeline/pipeline"
     }
-  } ],
-  "$schema" : "http://json-schema.org/draft-07/schema#",
+  },
   "definitions" : {
     "pipeline" : {
-      "common" : {
-        "UnifiedTemplate" : {
-          "title" : "UnifiedTemplate",
-          "description" : "Template reference for steps, stages, or pipelines.",
-          "type" : "object",
-          "required" : [ "uses" ],
-          "properties" : {
-            "uses" : {
-              "description" : "Template identifier reference.",
+      "pipeline" : {
+        "type" : "object",
+        "title" : "pipeline",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+          },
+          "clone" : {
+            "$ref" : "#/definitions/pipeline/Clone"
+          },
+          "inputs" : {
+            "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
+          },
+          "timeout" : {
+            "type" : "string",
+            "description" : "Defines pipeline timeout",
+            "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+          },
+          "allow-stage-executions" : {
+            "type" : "boolean",
+            "description" : "Allows stage executions."
+          },
+          "fixed-inputs-on-rerun" : {
+            "type" : "boolean",
+            "description" : "Fixed inputs on rerun."
+          },
+          "delegate" : {
+            "$ref" : "#/definitions/pipeline/common/Delegate"
+          },
+          "env" : {
+            "type" : "object",
+            "additionalProperties" : {
               "type" : "string"
             },
-            "with" : {
-              "description" : "Template input overrides.",
-              "$ref" : "#/definitions/pipeline/common/WithInputs"
+            "description" : "Provides the default environment variables."
+          },
+          "repo" : {
+            "description" : "Configures the default repository.",
+            "$ref" : "#/definitions/pipeline/Repository"
+          },
+          "barriers" : {
+            "type" : "array",
+            "description" : "Barriers provides optional pipeline barriers.",
+            "items" : {
+              "type" : "string"
             }
           },
-          "additionalProperties" : false,
-          "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "WithInputs" : {
-          "title" : "WithInputs",
-          "description" : "Input overrides for service, environment, or infrastructure.",
-          "type" : "object",
-          "properties" : {
-            "overlay" : {
-              "description" : "Overlay configuration for merging inputs.",
-              "type" : "object",
-              "additionalProperties" : true
+          "if" : {
+            "type" : "string",
+            "description" : "If provides conditional pipeline execution logic. If the condition resolves to false, the pipeline is skipped."
+          },
+          "on" : {
+            "$ref" : "#/definitions/pipeline/true"
+          },
+          "notifications" : {
+            "type" : "array",
+            "description" : "Notifications provides optional pipeline notifications.",
+            "items" : {
+              "$ref" : "#/definitions/pipeline/NotificationRules"
             }
           },
-          "additionalProperties" : true,
-          "$schema" : "http://json-schema.org/draft-07/schema#"
+          "tags" : {
+            "type" : "object",
+            "description" : "Tags for the pipeline.",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "template" : {
+            "description" : "Pipeline template reference.",
+            "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+          },
+          "stages" : {
+            "type" : "array",
+            "description" : "Pipeline stages - can contain stages, groups, or parallel executions.",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
+              }, {
+                "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+              } ]
+            },
+            "maxItems" : 256,
+            "minItems" : 1
+          }
         },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "Clone" : {
+        "title" : "Clone",
+        "type" : "object",
+        "description" : "Clone defines the default clone behavior.",
+        "properties" : {
+          "depth" : {
+            "description" : "Depth defines the clone depth.",
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "enabled" : {
+            "description" : "Enables or disables the default clone step.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "insecure" : {
+            "description" : "Insecure disables ssl verification.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "lfs" : {
+            "description" : "Lfs enables cloning lfs files.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "strategy" : {
+            "description" : "Strategy configures the PR clone strategy.",
+            "type" : "string",
+            "enum" : [ "source-branch", "merge" ]
+          },
+          "submodules" : {
+            "description" : "Submodules enables cloning all submodules.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "tags" : {
+            "description" : "Tags enables cloning all tags.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "trace" : {
+            "description" : "Trace enables trace logging.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "ref" : {
+            "description" : "Reference defines the clone ref.",
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/Reference"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          },
+          "repo" : {
+            "description" : "Repo defines the repository name or URL.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "connector" : {
+            "description" : "Connector defines the connector reference.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "clonedir" : {
+            "description" : "Clonedir defines the clone directory path.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "resources" : {
+            "description" : "Resources defines container resource limits.",
+            "$ref" : "#/definitions/pipeline/Resource"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "Reference" : {
+        "title" : "Reference",
+        "description" : "Reference defines a git clone reference.",
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "description" : "Name provides ref name (branch name, tag name, or PR number).",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "type" : {
+            "description" : "Type defines the ref type.",
+            "type" : "string",
+            "enum" : [ "branch", "tag", "pull-request", "commit" ]
+          },
+          "sha" : {
+            "description" : "Sha provides the commit sha for direct sha-based clone.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "number" : {
+            "description" : "Number provides the PR number for pull-request type clone.",
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "Resource" : {
+        "title" : "Resource",
+        "type" : "object",
+        "description" : "Resource defines container resource limits and requests.",
+        "properties" : {
+          "limits" : {
+            "description" : "Limits defines the maximum resources the container can use.",
+            "$ref" : "#/definitions/pipeline/ResourceLimits"
+          },
+          "requests" : {
+            "description" : "Requests defines the minimum resources reserved for the container.",
+            "$ref" : "#/definitions/pipeline/ResourceLimits"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "ResourceLimits" : {
+        "title" : "ResourceLimits",
+        "type" : "object",
+        "description" : "ResourceLimits defines CPU and memory constraints.",
+        "properties" : {
+          "cpu" : {
+            "description" : "CPU allocation (e.g., \"100m\", \"0.5\", \"2\").",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "memory" : {
+            "description" : "Memory allocation (e.g., \"128Mi\", \"1Gi\").",
+            "type" : "string",
+            "minLength" : 1
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "common" : {
         "NGVariableV1Wrapper" : {
           "title" : "NGVariableV1Wrapper",
           "description" : "Wrapper for stage/pipeline-level input variables. Keys are variable names, values define variable configuration.",
@@ -610,6 +758,38 @@
             "type" : "string"
           } ]
         },
+        "UnifiedTemplate" : {
+          "title" : "UnifiedTemplate",
+          "description" : "Template reference for steps, stages, or pipelines.",
+          "type" : "object",
+          "required" : [ "uses" ],
+          "properties" : {
+            "uses" : {
+              "description" : "Template identifier reference.",
+              "type" : "string"
+            },
+            "with" : {
+              "description" : "Template input overrides.",
+              "$ref" : "#/definitions/pipeline/common/WithInputs"
+            }
+          },
+          "additionalProperties" : false,
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "WithInputs" : {
+          "title" : "WithInputs",
+          "description" : "Input overrides for service, environment, or infrastructure.",
+          "type" : "object",
+          "properties" : {
+            "overlay" : {
+              "description" : "Overlay configuration for merging inputs.",
+              "type" : "object",
+              "additionalProperties" : true
+            }
+          },
+          "additionalProperties" : true,
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "StrategyConfigV1" : {
           "title" : "StrategyConfigV1",
           "type" : "object",
@@ -1061,170 +1241,6 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         }
-      },
-      "Clone" : {
-        "title" : "Clone",
-        "type" : "object",
-        "description" : "Clone defines the default clone behavior.",
-        "properties" : {
-          "depth" : {
-            "description" : "Depth defines the clone depth.",
-            "oneOf" : [ {
-              "type" : "integer",
-              "format" : "int32"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "disabled" : {
-            "description" : "Disabled disables the default clone step.",
-            "type" : "boolean"
-          },
-          "insecure" : {
-            "description" : "Insecure disables ssl verification.",
-            "oneOf" : [ {
-              "type" : "boolean"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "lfs" : {
-            "description" : "Lfs enables cloning lfs files.",
-            "oneOf" : [ {
-              "type" : "boolean"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "strategy" : {
-            "description" : "Strategy configures the PR clone strategy.",
-            "type" : "string",
-            "enum" : [ "source-branch", "merge" ]
-          },
-          "submodules" : {
-            "description" : "Submodules enables cloning all submodules.",
-            "oneOf" : [ {
-              "type" : "boolean"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "tags" : {
-            "description" : "Tags enables cloning all tags.",
-            "oneOf" : [ {
-              "type" : "boolean"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "trace" : {
-            "description" : "Trace enables trace logging.",
-            "oneOf" : [ {
-              "type" : "boolean"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "ref" : {
-            "description" : "Reference defines the clone ref.",
-            "oneOf" : [ {
-              "$ref" : "#/definitions/pipeline/Reference"
-            }, {
-              "type" : "string",
-              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
-              "minLength" : 1
-            } ]
-          },
-          "repo" : {
-            "description" : "Repo defines the repository name or URL.",
-            "type" : "string",
-            "minLength" : 1
-          },
-          "connector" : {
-            "description" : "Connector defines the connector reference.",
-            "type" : "string",
-            "minLength" : 1
-          },
-          "clonedir" : {
-            "description" : "Clonedir defines the clone directory path.",
-            "type" : "string",
-            "minLength" : 1
-          },
-          "resources" : {
-            "description" : "Resources defines container resource limits.",
-            "$ref" : "#/definitions/pipeline/Resource"
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
-      },
-      "Reference" : {
-        "title" : "Reference",
-        "description" : "Reference defines a git clone reference.",
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "description" : "Name provides ref name (branch name, tag name, or PR number).",
-            "type" : "string",
-            "minLength" : 1
-          },
-          "type" : {
-            "description" : "Type defines the ref type.",
-            "type" : "string",
-            "enum" : [ "branch", "tag", "pull-request" ]
-          },
-          "sha" : {
-            "description" : "Sha provides the commit sha for direct sha-based clone.",
-            "type" : "string",
-            "minLength" : 1
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
-      },
-      "Resource" : {
-        "title" : "Resource",
-        "type" : "object",
-        "description" : "Resource defines container resource limits and requests.",
-        "properties" : {
-          "limits" : {
-            "description" : "Limits defines the maximum resources the container can use.",
-            "$ref" : "#/definitions/pipeline/ResourceLimits"
-          },
-          "requests" : {
-            "description" : "Requests defines the minimum resources reserved for the container.",
-            "$ref" : "#/definitions/pipeline/ResourceLimits"
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
-      },
-      "ResourceLimits" : {
-        "title" : "ResourceLimits",
-        "type" : "object",
-        "description" : "ResourceLimits defines CPU and memory constraints.",
-        "properties" : {
-          "cpu" : {
-            "description" : "CPU allocation (e.g., \"100m\", \"0.5\", \"2\").",
-            "type" : "string",
-            "minLength" : 1
-          },
-          "memory" : {
-            "description" : "Memory allocation (e.g., \"128Mi\", \"1Gi\").",
-            "type" : "string",
-            "minLength" : 1
-          }
-        },
-        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "Repository" : {
         "title" : "Repository",
@@ -2911,12 +2927,11 @@
                 "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "run" : {
-                "description" : "Run step configuration. Supports expressions.",
+                "description" : "Run step configuration. Can be a simple command string or a detailed run configuration object.",
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/unified/RunStepInfoV1"
                 }, {
-                  "type" : "string",
-                  "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+                  "type" : "string"
                 } ]
               },
               "run-test" : {

@@ -80060,9 +80060,15 @@
               "minLength" : 1
             } ]
           },
-          "disabled" : {
-            "description" : "Disabled disables the default clone step.",
-            "type" : "boolean"
+          "enabled" : {
+            "description" : "Enables or disables the default clone step.",
+            "oneOf" : [ {
+              "type" : "boolean"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
           },
           "insecure" : {
             "description" : "Insecure disables ssl verification.",
@@ -80164,12 +80170,23 @@
           "type" : {
             "description" : "Type defines the ref type.",
             "type" : "string",
-            "enum" : [ "branch", "tag", "pull-request" ]
+            "enum" : [ "branch", "tag", "pull-request", "commit" ]
           },
           "sha" : {
             "description" : "Sha provides the commit sha for direct sha-based clone.",
             "type" : "string",
             "minLength" : 1
+          },
+          "number" : {
+            "description" : "Number provides the PR number for pull-request type clone.",
+            "oneOf" : [ {
+              "type" : "integer",
+              "format" : "int32"
+            }, {
+              "type" : "string",
+              "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+              "minLength" : 1
+            } ]
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"

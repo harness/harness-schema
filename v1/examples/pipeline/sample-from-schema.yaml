@@ -1,0 +1,246 @@
+# Sample Pipeline YAML - Generated from v1/pipeline.json schema
+# This pipeline demonstrates CI build, test, and CD deployment
+
+# Pipeline definition (matches pipeline.json root schema)
+id: my_sample_pipeline
+name: My Sample Pipeline
+
+# Pipeline tags (additionalProperties: string)
+tags:
+  team: platform
+  project: demo
+
+# Pipeline timeout (pattern: duration format like 1h, 30m, etc.)
+timeout: 1h
+
+# Allow individual stage executions
+allow-stage-executions: true
+
+# Default delegate selector (Delegate type: array of strings)
+delegate:
+  - my-delegate
+
+# Default environment variables (additionalProperties: string)
+env:
+  CI: "true"
+  LOG_LEVEL: info
+
+# Pipeline inputs (NGVariableV1Wrapper - additionalProperties with variable types)
+inputs:
+  target_env:
+    type: string
+    description: Target deployment environment
+    required: true
+    default: dev
+    enum:
+      - dev
+      - staging
+      - prod
+  image_tag:
+    type: string
+    description: Docker image tag
+    default: latest
+  enable_tests:
+    type: boolean
+    description: Enable test execution
+    default: true
+  replica_count:
+    type: number
+    description: Number of deployment replicas
+    default: 2
+
+# Pipeline stages (array of UnifiedStageNodeV1 | ParallelStages | GroupStages | UnifiedTemplate)
+stages:
+  # ===========================================
+  # Stage 1: Build Stage (UnifiedStageNodeV1)
+  # ===========================================
+  - id: build_stage
+    name: Build Application
+    desc: Build and package the application
+    
+    # Stage tags
+    tags:
+      stage-type: ci
+    
+    # Platform configuration (os: linux|windows|macos, arch: amd64|arm64)
+    platform:
+      os: linux
+      arch: amd64
+    
+    # Runtime configuration (RuntimeV1)
+    runtime:
+      type: cloud
+      spec: {}
+    
+    # Clone configuration
+    clone:
+      depth: 50
+      disabled: false
+    
+    # Cache intelligence (CachingV1)
+    cache:
+      enabled: true
+      paths:
+        - node_modules
+        - .npm
+    
+    # Build intelligence (BuildIntelligenceV1)
+    build-intelligence:
+      enabled: true
+    
+    # Stage environment variables
+    env:
+      NODE_ENV: production
+    
+    # Stage timeout
+    timeout: 30m
+    
+    # Steps array (StepItems - StepNodeV1 | ParallelSteps | GroupSteps | UnifiedTemplate)
+    steps:
+      # Step using 'run' property (RunStepInfoV1)
+      - id: install_deps
+        name: Install Dependencies
+        run:
+          shell: sh
+          script: |
+            npm ci
+      
+      # Another run step
+      - id: build_app
+        name: Build Application
+        run:
+          shell: sh
+          script: |
+            npm run build
+        timeout: 10m
+      
+      # Run step with environment variables
+      - id: build_docker
+        name: Build Docker Image
+        run:
+          shell: sh
+          script: |
+            docker build -t myapp:<+inputs.image_tag> .
+          env:
+            DOCKER_BUILDKIT: "1"
+
+  # ===========================================
+  # Stage 2: Test Stage (with conditional)
+  # ===========================================
+  - id: test_stage
+    name: Run Tests
+    desc: Execute unit and integration tests
+    
+    # Conditional execution (if: expression)
+    if: <+inputs.enable_tests> == true
+    
+    # Stage dependencies (needs: string | array)
+    needs: build_stage
+    
+    platform:
+      os: linux
+      arch: amd64
+    
+    runtime:
+      type: cloud
+      spec: {}
+    
+    timeout: 20m
+    
+    steps:
+      - id: unit_tests
+        name: Unit Tests
+        run:
+          shell: sh
+          script: |
+            npm run test:unit -- --coverage
+      
+      - id: integration_tests
+        name: Integration Tests
+        run:
+          shell: sh
+          script: |
+            npm run test:integration
+        # Step-level failure handling (OnFailure)
+        on-failure:
+          errors:
+            - all
+          action:
+            type: ignore
+
+  # ===========================================
+  # Stage 3: Deploy Stage (CD with service/environment)
+  # ===========================================
+  - id: deploy_stage
+    name: Deploy to <+inputs.target_env>
+    desc: Deploy application to Kubernetes
+    
+    # Multiple stage dependencies
+    needs:
+      - build_stage
+      - test_stage
+    
+    # Service configuration (ServiceV1)
+    service:
+      ref: my-service
+      inputs:
+        image_tag: <+inputs.image_tag>
+    
+    # Environment configuration (EnvironmentV1)
+    environment:
+      ref: <+inputs.target_env>
+      type: production
+      infrastructure:
+        ref: k8s-infra
+    
+    # Delegate for this stage
+    delegate:
+      - k8s-delegate
+    
+    timeout: 15m
+    
+    steps:
+      - id: deploy
+        name: Rolling Deployment
+        run:
+          shell: sh
+          script: |
+            kubectl apply -f k8s/deployment.yaml
+            kubectl rollout status deployment/myapp
+    
+    # Rollback steps (array of StepItems)
+    rollback:
+      - id: rollback_deploy
+        name: Rollback Deployment
+        run:
+          shell: sh
+          script: |
+            kubectl rollout undo deployment/myapp
+    
+    # Stage-level failure handling
+    on-failure:
+      errors:
+        - all
+      action:
+        type: stage-rollback
+
+  # ===========================================
+  # Stage 4: Using a Template (UnifiedTemplate)
+  # ===========================================
+  - uses: account.notification_template
+    with:
+      channel: slack
+      message: "Deployment completed for <+inputs.target_env>"
+
+# Pipeline notifications (array of NotificationRules)
+notifications:
+  - name: pipeline_alerts
+    enabled: true
+    events:
+      - pipeline_success
+      - pipeline_failed
+    channels:
+      - type: slack
+        spec:
+          webhook_url: <+secrets.getValue("slack_webhook")>
+
