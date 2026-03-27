@@ -3,6 +3,10 @@
   "title" : "pipeline",
   "required" : [ "pipeline" ],
   "properties" : {
+    "version" : {
+      "type" : "number",
+      "enum" : [ 1 ]
+    },
     "pipeline" : {
       "$ref" : "#/definitions/pipeline/pipeline"
     }
@@ -66,7 +70,7 @@
             "description" : "If provides conditional pipeline execution logic. If the condition resolves to false, the pipeline is skipped."
           },
           "on" : {
-            "$ref" : "#/definitions/pipeline/true"
+            "$ref" : "#/definitions/pipeline/On"
           },
           "notifications" : {
             "type" : "array",
@@ -84,7 +88,7 @@
           },
           "template" : {
             "description" : "Pipeline template reference.",
-            "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+            "$ref" : "#/definitions/pipeline/common/TemplateRef"
           },
           "stages" : {
             "type" : "array",
@@ -758,9 +762,9 @@
             "type" : "string"
           } ]
         },
-        "UnifiedTemplate" : {
-          "title" : "UnifiedTemplate",
-          "description" : "Template reference for steps, stages, or pipelines.",
+        "TemplateRef" : {
+          "title" : "TemplateRef",
+          "description" : "Template identifier and input configuration.",
           "type" : "object",
           "required" : [ "uses" ],
           "properties" : {
@@ -771,9 +775,12 @@
             "with" : {
               "description" : "Template input overrides.",
               "$ref" : "#/definitions/pipeline/common/WithInputs"
+            },
+            "gitBranch" : {
+              "description" : "Git branch for remote template resolution.",
+              "type" : "string"
             }
           },
-          "additionalProperties" : false,
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "WithInputs" : {
@@ -1082,43 +1089,48 @@
         },
         "FailureStrategyActionConfigV1" : {
           "title" : "FailureStrategyActionConfigV1",
-          "type" : "object",
-          "description" : "Action configuration for failure strategy. Only one action type should be specified.",
-          "properties" : {
-            "retry" : {
-              "$ref" : "#/definitions/pipeline/common/RetryFailureSpecConfigV1"
-            },
-            "manual-intervention" : {
-              "$ref" : "#/definitions/pipeline/common/ManualFailureSpecConfigV1"
-            },
-            "abort" : {
-              "description" : "Abort the execution.",
-              "type" : "object"
-            },
-            "ignore" : {
-              "description" : "Ignore the failure and continue.",
-              "type" : "object"
-            },
-            "success" : {
-              "description" : "Mark the execution as success.",
-              "type" : "object"
-            },
-            "stage-rollback" : {
-              "description" : "Rollback the stage.",
-              "type" : "object"
-            },
-            "pipeline-rollback" : {
-              "description" : "Rollback the pipeline.",
-              "type" : "object"
-            },
-            "fail" : {
-              "description" : "Mark the execution as failed.",
-              "type" : "object"
-            },
-            "retry-step-group" : {
-              "$ref" : "#/definitions/pipeline/common/RetryStepGroupFailureSpecConfigV1"
+          "description" : "Action configuration for failure strategy. Can be a string shorthand or a detailed object.",
+          "oneOf" : [ {
+            "type" : "string",
+            "enum" : [ "abort", "ignore", "success", "stage-rollback", "pipeline-rollback", "fail" ]
+          }, {
+            "type" : "object",
+            "properties" : {
+              "retry" : {
+                "$ref" : "#/definitions/pipeline/common/RetryFailureSpecConfigV1"
+              },
+              "manual-intervention" : {
+                "$ref" : "#/definitions/pipeline/common/ManualFailureSpecConfigV1"
+              },
+              "abort" : {
+                "description" : "Abort the execution.",
+                "type" : "object"
+              },
+              "ignore" : {
+                "description" : "Ignore the failure and continue.",
+                "type" : "object"
+              },
+              "success" : {
+                "description" : "Mark the execution as success.",
+                "type" : "object"
+              },
+              "stage-rollback" : {
+                "description" : "Rollback the stage.",
+                "type" : "object"
+              },
+              "pipeline-rollback" : {
+                "description" : "Rollback the pipeline.",
+                "type" : "object"
+              },
+              "fail" : {
+                "description" : "Mark the execution as failed.",
+                "type" : "object"
+              },
+              "retry-step-group" : {
+                "$ref" : "#/definitions/pipeline/common/RetryStepGroupFailureSpecConfigV1"
+              }
             }
-          },
+          } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
         "RetryFailureSpecConfigV1" : {
@@ -1240,6 +1252,26 @@
             "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "UnifiedTemplate" : {
+          "title" : "UnifiedTemplate",
+          "description" : "Template reference for steps, stages, or pipelines.",
+          "type" : "object",
+          "required" : [ "template" ],
+          "properties" : {
+            "id" : {
+              "type" : "string",
+              "description" : "Identifier for the template-referenced item."
+            },
+            "name" : {
+              "type" : "string",
+              "description" : "Display name for the template-referenced item."
+            },
+            "template" : {
+              "$ref" : "#/definitions/pipeline/common/TemplateRef"
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
       "Repository" : {
@@ -1257,8 +1289,8 @@
           }
         }
       },
-      "true" : {
-        "title" : true,
+      "On" : {
+        "title" : "On",
         "description" : "On provides conditional pipeline execution logic based on trigger event and action mapping. If the conditional logic resolves to false, the pipeline is skipped.",
         "oneOf" : [ {
           "$ref" : "#/definitions/pipeline/EventType"
@@ -1630,6 +1662,7 @@
             "title" : "UnifiedStageNodeV1",
             "description" : "Unified stage node supporting CI, CD, IaCM and other stage types.",
             "type" : "object",
+            "required" : [ "steps" ],
             "properties" : {
               "id" : {
                 "type" : "string",
@@ -2881,6 +2914,17 @@
             "title" : "StepNodeV1",
             "description" : "Unified step node for CI/CD pipelines.",
             "type" : "object",
+            "anyOf" : [ {
+              "required" : [ "run" ]
+            }, {
+              "required" : [ "action" ]
+            }, {
+              "required" : [ "clone" ]
+            }, {
+              "required" : [ "background" ]
+            }, {
+              "required" : [ "run-test" ]
+            } ],
             "properties" : {
               "id" : {
                 "description" : "Unique identifier for the step.",

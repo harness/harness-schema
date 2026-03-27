@@ -1,0 +1,58 @@
+title: GroupTemplateSpec
+oneOf:
+  - type: object
+    required:
+      - steps
+    properties:
+      id:
+        type: string
+        description: Unique identifier for the step group.
+        pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+      name:
+        type: string
+        description: Display name of the step group.
+      desc:
+        type: string
+        description: Description of the step group.
+      if:
+        type: string
+        description: Conditional execution expression. Group is skipped if condition resolves to false.
+      strategy:
+        description: Execution strategy (matrix, for, while, repeat). Supports expressions.
+        oneOf:
+          - $ref: ../../pipeline/common/strategy.yaml
+          - type: string
+            pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+      on-failure:
+        $ref: ../../pipeline/common/on-failure.yaml
+      timeout:
+        type: string
+        description: Step group timeout duration.
+        pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+      steps:
+        type: array
+        items:
+          $ref: ../../pipeline/steps/unified/step-items.yaml
+        maxItems: 256
+        minItems: 1
+  - type: object
+    required:
+      - stages
+    properties:
+      id:
+        description: Unique identifier for the group.
+        type: string
+      name:
+        description: Display name of the group.
+        type: string
+      stages:
+        description: Stages within the group.
+        type: array
+        items:
+          oneOf:
+            - $ref: ../../pipeline/stages/unified/unified-stage.yaml
+            - $ref: ../../pipeline/stages/unified/pipeline-chain.yaml
+            - $ref: ../../pipeline/stages/unified/parallel-stages.yaml
+            - $ref: ../../pipeline/stages/unified/group-stages.yaml
+        minItems: 1
+$schema: http://json-schema.org/draft-07/schema#
