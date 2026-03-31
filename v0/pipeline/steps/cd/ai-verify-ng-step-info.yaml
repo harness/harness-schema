@@ -1,0 +1,154 @@
+title: AIVerifyNGStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - healthSourceRefs
+  - dataCollectionWindow
+  - dataCollectionInfrastructure
+  properties:
+    healthSourceRefs:
+      oneOf:
+      - type: array
+        items:
+          type: string
+          minLength: 1
+        minItems: 1
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    dataCollectionInfrastructure:
+      $ref: ai-verify-ng-data-collection-infrastructure.yaml
+    dataCollectionWindow:
+      description: Data collection window in minutes (positive integer); may be a runtime expression string.
+      oneOf:
+      - type: integer
+        format: int32
+        minimum: 1
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    image:
+      type: string
+    connectorRef:
+      type: string
+    envVariables:
+      oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+    imagePullPolicy:
+      oneOf:
+      - type: string
+        enum:
+        - Always
+        - Never
+        - IfNotPresent
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    privileged:
+      oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+    preExecution:
+      type: string
+    optionalConfigurations:
+      description: Optional. Omit entirely or set any subset of nested fields (all nested fields are optional).
+      allOf:
+        - $ref: ai-verify-ng-optional-configurations.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- healthSourceRefs
+- dataCollectionWindow
+- dataCollectionInfrastructure
+properties:
+  healthSourceRefs:
+    oneOf:
+    - type: array
+      items:
+        type: string
+        minLength: 1
+      minItems: 1
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  dataCollectionInfrastructure:
+    $ref: ai-verify-ng-data-collection-infrastructure.yaml
+  dataCollectionWindow:
+    description: Data collection window in minutes (positive integer); may be a runtime expression string.
+    oneOf:
+    - type: integer
+      format: int32
+      minimum: 1
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  delegateSelectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  image:
+    type: string
+  connectorRef:
+    type: string
+  envVariables:
+    oneOf:
+    - type: object
+      additionalProperties:
+        type: string
+    - type: string
+  imagePullPolicy:
+    oneOf:
+    - type: string
+      enum:
+      - Always
+      - Never
+      - IfNotPresent
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  privileged:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+      minLength: 1
+  resources:
+    $ref: ../../common/container-resource.yaml
+  runAsUser:
+    oneOf:
+    - type: integer
+      format: int32
+    - type: string
+  preExecution:
+    type: string
+  optionalConfigurations:
+    description: Optional. Omit entirely or set any subset of nested fields (all nested fields are optional).
+    allOf:
+      - $ref: ai-verify-ng-optional-configurations.yaml
+  description:
+    desc: AI Verify NG Step - AI-powered deployment verification using health sources

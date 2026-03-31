@@ -430,6 +430,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AiVerifyStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/SecurityNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/SemgrepScanNode_template"
@@ -24706,6 +24708,395 @@
               }
             }
           },
+          "AIVerifyNGStepNode_template" : {
+            "title" : "AIVerifyNGStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AIVerifyNG" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AIVerifyNG"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AIVerifyNGStepInfo" : {
+            "title" : "AIVerifyNGStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "healthSourceRefs", "dataCollectionWindow", "dataCollectionInfrastructure" ],
+              "properties" : {
+                "healthSourceRefs" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string",
+                      "minLength" : 1
+                    },
+                    "minItems" : 1
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "dataCollectionInfrastructure" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructure"
+                },
+                "dataCollectionWindow" : {
+                  "description" : "Data collection window in minutes (positive integer); may be a runtime expression string.",
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32",
+                    "minimum" : 1
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "preExecution" : {
+                  "type" : "string"
+                },
+                "optionalConfigurations" : {
+                  "description" : "Optional. Omit entirely or set any subset of nested fields (all nested fields are optional).",
+                  "allOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyOptionalConfigurations"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "healthSourceRefs", "dataCollectionWindow", "dataCollectionInfrastructure" ],
+            "properties" : {
+              "healthSourceRefs" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "minLength" : 1
+                  },
+                  "minItems" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "dataCollectionInfrastructure" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructure"
+              },
+              "dataCollectionWindow" : {
+                "description" : "Data collection window in minutes (positive integer); may be a runtime expression string.",
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32",
+                  "minimum" : 1
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "image" : {
+                "type" : "string"
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "envVariables" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "privileged" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "runAsUser" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "preExecution" : {
+                "type" : "string"
+              },
+              "optionalConfigurations" : {
+                "description" : "Optional. Omit entirely or set any subset of nested fields (all nested fields are optional).",
+                "allOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyOptionalConfigurations"
+                } ]
+              },
+              "description" : {
+                "desc" : "AI Verify NG Step - AI-powered deployment verification using health sources"
+              }
+            }
+          },
+          "DataCollectionInfrastructure" : {
+            "title" : "DataCollectionInfrastructure",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "KubernetesDirect" ]
+              },
+              "spec" : {
+                "type" : "object",
+                "required" : [ "connectorRef", "namespace" ],
+                "properties" : {
+                  "connectorRef" : {
+                    "type" : "string"
+                  },
+                  "namespace" : {
+                    "type" : "string"
+                  },
+                  "resources" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructureResources"
+                  }
+                }
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "DataCollectionInfrastructureResources" : {
+            "title" : "DataCollectionInfrastructureResources",
+            "description" : "Optional resource requests/limits for AI Verify data collection infrastructure. Omit the block entirely, or include only the fields you need; CPU and memory are optional under requests and limits.",
+            "type" : "object",
+            "properties" : {
+              "limits" : {
+                "$ref" : "#/definitions/pipeline/common/Limits"
+              },
+              "requests" : {
+                "$ref" : "#/definitions/pipeline/common/Limits"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AIVerifyOptionalConfigurations" : {
+            "title" : "AIVerifyOptionalConfigurations",
+            "description" : "Optional cv-nextgen parity fields; not mapped to plugin env in current release. The parent step may omit optionalConfigurations entirely, or supply an empty object. When present, every property below remains optional; set only the fields you need.",
+            "type" : "object",
+            "required" : [ ],
+            "properties" : {
+              "sensitivity" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "verificationType" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "failOnNoAnalysis" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "controlNodeRegexPattern" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "testNodeRegexPattern" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "baselineEndTime" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "verificationStartTime" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "K8sBGStageScaleDownStepNode_template" : {
             "title" : "K8sBGStageScaleDownStepNode_template",
             "type" : "object",
@@ -38142,6 +38533,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/UpdateReleaseRepoStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AIVerifyNGStepNode" : {
+            "title" : "AIVerifyNGStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AIVerifyNGStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AIVerifyNG" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AIVerifyNG"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGStepInfo"
                   }
                 }
               }
@@ -98189,6 +98657,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/RunStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AiVerifyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/PluginStepNode"
                 }, {
