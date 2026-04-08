@@ -1,0 +1,154 @@
+title: AgentStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - engine
+      - model
+      - prompt
+    properties:
+      engine:
+        type: object
+        required:
+          - type
+        properties:
+          type:
+            type: string
+      model:
+        type: object
+        required:
+          - connectorRef
+        properties:
+          connectorRef:
+            type: string
+          name:
+            type: string
+      prompt:
+        type: string
+      envVariables:
+        oneOf:
+          - type: object
+            additionalProperties:
+              type: string
+          - type: string
+      tools:
+        type: object
+        properties:
+          mcp:
+            type: array
+            items:
+              type: object
+              required:
+                - connectorRef
+              properties:
+                connectorRef:
+                  type: string
+                allowed:
+                  type: array
+                  items:
+                    type: string
+      permissions:
+        type: array
+        items:
+          type: string
+      maxTurns:
+        oneOf:
+          - type: integer
+            format: int32
+          - type: string
+      delegateSelectors:
+        oneOf:
+          - type: array
+            items:
+              type: string
+          - type: string
+            pattern: (<\+.+>.*)
+            minLength: 1
+      connectorRef:
+        type: string
+      inputs:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            type:
+              type: string
+            default:
+              type: string
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+  - engine
+  - model
+  - prompt
+properties:
+  engine:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+  model:
+    type: object
+    required:
+      - connectorRef
+    properties:
+      connectorRef:
+        type: string
+      name:
+        type: string
+  prompt:
+    type: string
+  envVariables:
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: string
+  tools:
+    type: object
+    properties:
+      mcp:
+        type: array
+        items:
+          type: object
+          required:
+            - connectorRef
+          properties:
+            connectorRef:
+              type: string
+            allowed:
+              type: array
+              items:
+                type: string
+  permissions:
+    type: array
+    items:
+      type: string
+  maxTurns:
+    oneOf:
+      - type: integer
+        format: int32
+      - type: string
+  delegateSelectors:
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  connectorRef:
+    type: string
+  inputs:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        type:
+          type: string
+        default:
+          type: string
+  description:
+    desc: This is the description for AgentStepInfo
