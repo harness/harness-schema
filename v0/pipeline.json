@@ -26241,6 +26241,302 @@
               }
             }
           },
+          "AgentStepNode" : {
+            "title" : "AgentStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AgentStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/AIAgentMLOpsFailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Agent" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Agent"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AgentStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AgentStepInfo" : {
+            "title" : "AgentStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "engine", "model", "prompt" ],
+              "properties" : {
+                "engine" : {
+                  "type" : "object",
+                  "required" : [ "type" ],
+                  "properties" : {
+                    "type" : {
+                      "type" : "string"
+                    }
+                  }
+                },
+                "model" : {
+                  "type" : "object",
+                  "required" : [ "connectorRef" ],
+                  "properties" : {
+                    "connectorRef" : {
+                      "type" : "string"
+                    },
+                    "name" : {
+                      "type" : "string"
+                    }
+                  }
+                },
+                "prompt" : {
+                  "type" : "string"
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "tools" : {
+                  "type" : "object",
+                  "properties" : {
+                    "mcp" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "required" : [ "connectorRef" ],
+                        "properties" : {
+                          "connectorRef" : {
+                            "type" : "string"
+                          },
+                          "allowed" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "permissions" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "maxTurns" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "inputs" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "object",
+                    "properties" : {
+                      "type" : {
+                        "type" : "string"
+                      },
+                      "default" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "engine", "model", "prompt" ],
+            "properties" : {
+              "engine" : {
+                "type" : "object",
+                "required" : [ "type" ],
+                "properties" : {
+                  "type" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "model" : {
+                "type" : "object",
+                "required" : [ "connectorRef" ],
+                "properties" : {
+                  "connectorRef" : {
+                    "type" : "string"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "prompt" : {
+                "type" : "string"
+              },
+              "envVariables" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "tools" : {
+                "type" : "object",
+                "properties" : {
+                  "mcp" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "connectorRef" ],
+                      "properties" : {
+                        "connectorRef" : {
+                          "type" : "string"
+                        },
+                        "allowed" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "permissions" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "maxTurns" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "format" : "int32"
+                }, {
+                  "type" : "string"
+                } ]
+              },
+              "delegateSelectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "inputs" : {
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "object",
+                  "properties" : {
+                    "type" : {
+                      "type" : "string"
+                    },
+                    "default" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for AgentStepInfo"
+              }
+            }
+          },
           "DBOPSTestAndPreviewStepNode" : {
             "title" : "DBOPSTestAndPreviewStepNode",
             "type" : "object",
@@ -78414,6 +78710,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBOPSTestAndPreviewStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBSchemaUpdateSQLNode"
@@ -86726,6 +87024,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -87493,6 +87793,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/CustomIngestScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBOPSTestAndPreviewStepNode"
                 }, {
