@@ -44033,6 +44033,8 @@
                 "infrastructure" : {
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ContainerECSDirectInfra"
                   } ]
                 },
                 "metadata" : {
@@ -44124,6 +44126,8 @@
               "infrastructure" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/custom/ContainerK8sInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ContainerECSDirectInfra"
                 } ]
               },
               "metadata" : {
@@ -44203,7 +44207,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "VM" ]
+                "enum" : [ "KubernetesDirect", "VM", "ECSDirect" ]
               },
               "description" : {
                 "desc" : "This is the description for ContainerStepInfra"
@@ -44475,6 +44479,161 @@
               },
               "description" : {
                 "desc" : "This is the description for ContainerVolume"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ContainerECSDirectInfra" : {
+            "title" : "ContainerECSDirectInfra",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/ContainerStepInfra"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ECSDirectInfraYamlSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "ECSDirect" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for ContainerECSDirectInfra"
+              }
+            }
+          },
+          "ECSDirectInfraYamlSpec" : {
+            "title" : "ECSDirectInfraYamlSpec",
+            "type" : "object",
+            "required" : [ "connectorRef" ],
+            "properties" : {
+              "connectorRef" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "harnessImageConnectorRef" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "cluster" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "region" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "subnets" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "securityGroups" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "taskRoleArn" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "executionRoleArn" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "initTimeout" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "enableExecuteCommand" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "logGroupName" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "volumes" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/CIVolume"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "containerSecurityContext" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SecurityContext"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for ECSDirectInfraYamlSpec"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -71825,6 +71984,21 @@
               "pattern" : "^<\\+.*>.*$"
             }
           },
+          "CIVolume" : {
+            "title" : "CIVolume",
+            "type" : "object",
+            "discriminator" : "type",
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
+              },
+              "description" : {
+                "desc" : "This is the description for CIVolume"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "fme-flag-common-flag-name" : {
             "title" : "fme-flag-common-flag-name",
             "type" : "string",
@@ -84263,21 +84437,6 @@
               },
               "description" : {
                 "desc" : "This is the description for K8sDirectInfraYamlSpec"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "CIVolume" : {
-            "title" : "CIVolume",
-            "type" : "object",
-            "discriminator" : "type",
-            "properties" : {
-              "type" : {
-                "type" : "string",
-                "enum" : [ "EmptyDir", "PersistentVolumeClaim", "HostPath" ]
-              },
-              "description" : {
-                "desc" : "This is the description for CIVolume"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -97790,7 +97949,7 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "enum" : [ "KubernetesDirect", "Delegate", "Noop", "VM" ]
+              "enum" : [ "KubernetesDirect", "Delegate", "Noop", "VM", "ECSDirect" ]
             },
             "description" : {
               "desc" : "This is the description for StepGroupInfra"
@@ -97819,6 +97978,30 @@
           "properties" : {
             "description" : {
               "desc" : "This is the description for VMInfra"
+            }
+          }
+        },
+        "ECSDirectInfra" : {
+          "title" : "ECSDirectInfra",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/StepGroupInfra"
+          }, {
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "spec" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/ECSDirectInfraYamlSpec"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ECSDirect" ]
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#",
+          "properties" : {
+            "description" : {
+              "desc" : "This is the description for ECSDirectInfra"
             }
           }
         }
@@ -99400,6 +99583,8 @@
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 }, {
                   "$ref" : "#/definitions/pipeline/common/VMInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/ECSDirectInfra"
                 } ]
               },
               "steps" : {
@@ -106816,6 +107001,8 @@
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 }, {
                   "$ref" : "#/definitions/pipeline/common/VMInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/ECSDirectInfra"
                 } ]
               },
               "steps" : {
@@ -111159,6 +111346,8 @@
                   "$ref" : "#/definitions/pipeline/common/K8sDirectInfra"
                 }, {
                   "$ref" : "#/definitions/pipeline/common/VMInfra"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/ECSDirectInfra"
                 } ]
               },
               "steps" : {
