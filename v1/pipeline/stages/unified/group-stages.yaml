@@ -18,11 +18,33 @@ properties:
         description: Stages within the group.
         type: array
         items:
-          oneOf:
-            - $ref: ./unified-stage.yaml
-            - $ref: ./pipeline-chain.yaml
-            - $ref: ./parallel-stages.yaml
-            - $ref: ./group-stages.yaml
+          type: object
+          if:
+            anyOf:
+              - required: [steps]
+              - required: [chain]
+              - required: [parallel]
+              - required: [group]
+          then:
+            allOf:
+              - if:
+                  required: [steps]
+                then:
+                  $ref: ./unified-stage.yaml
+              - if:
+                  required: [chain]
+                then:
+                  $ref: ./pipeline-chain.yaml
+              - if:
+                  required: [parallel]
+                then:
+                  $ref: ./parallel-stages.yaml
+              - if:
+                  required: [group]
+                then:
+                  $ref: ./group-stages.yaml
+          else:
+            required: [steps]
         minItems: 1
 $schema: http://json-schema.org/draft-07/schema#
 

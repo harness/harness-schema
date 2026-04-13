@@ -58,12 +58,38 @@ properties:
     type: array
     description: Pipeline stages - can contain stages, groups, or parallel executions.
     items:
-      oneOf:
-        - $ref: ./stages/unified/unified-stage.yaml
-        - $ref: ./stages/unified/pipeline-chain.yaml
-        - $ref: ./stages/unified/parallel-stages.yaml
-        - $ref: ./stages/unified/group-stages.yaml
-        - $ref: ./common/unified-template.yaml
+      type: object
+      if:
+        anyOf:
+          - required: [steps]
+          - required: [chain]
+          - required: [parallel]
+          - required: [group]
+          - required: [template]
+      then:
+        allOf:
+          - if:
+              required: [steps]
+            then:
+              $ref: ./stages/unified/unified-stage.yaml
+          - if:
+              required: [chain]
+            then:
+              $ref: ./stages/unified/pipeline-chain.yaml
+          - if:
+              required: [parallel]
+            then:
+              $ref: ./stages/unified/parallel-stages.yaml
+          - if:
+              required: [group]
+            then:
+              $ref: ./stages/unified/group-stages.yaml
+          - if:
+              required: [template]
+            then:
+              $ref: ./common/unified-template.yaml
+      else:
+        required: [steps]
     maxItems: 256
     minItems: 1
 "$schema": http://json-schema.org/draft-07/schema#

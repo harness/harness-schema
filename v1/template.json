@@ -1464,17 +1464,61 @@
             "type" : "array",
             "description" : "Pipeline stages - can contain stages, groups, or parallel executions.",
             "items" : {
-              "oneOf" : [ {
-                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
-              }, {
-                "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
-              }, {
-                "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
-              } ]
+              "type" : "object",
+              "if" : {
+                "anyOf" : [ {
+                  "required" : [ "steps" ]
+                }, {
+                  "required" : [ "chain" ]
+                }, {
+                  "required" : [ "parallel" ]
+                }, {
+                  "required" : [ "group" ]
+                }, {
+                  "required" : [ "template" ]
+                } ]
+              },
+              "then" : {
+                "allOf" : [ {
+                  "if" : {
+                    "required" : [ "steps" ]
+                  },
+                  "then" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+                  }
+                }, {
+                  "if" : {
+                    "required" : [ "chain" ]
+                  },
+                  "then" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+                  }
+                }, {
+                  "if" : {
+                    "required" : [ "parallel" ]
+                  },
+                  "then" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
+                  }
+                }, {
+                  "if" : {
+                    "required" : [ "group" ]
+                  },
+                  "then" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+                  }
+                }, {
+                  "if" : {
+                    "required" : [ "template" ]
+                  },
+                  "then" : {
+                    "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+                  }
+                } ]
+              },
+              "else" : {
+                "required" : [ "steps" ]
+              }
             },
             "maxItems" : 256,
             "minItems" : 1
@@ -2818,74 +2862,111 @@
           },
           "EnvironmentV1" : {
             "title" : "EnvironmentV1",
-            "description" : "Environment configuration for CD stages. Supports multiple formats.",
-            "oneOf" : [ {
-              "type" : "object",
-              "required" : [ "id", "deploy-to" ],
-              "properties" : {
-                "id" : {
-                  "description" : "Environment identifier.",
-                  "type" : "string"
+            "description" : "Environment configuration for CD stages.",
+            "type" : "object",
+            "if" : {
+              "anyOf" : [ {
+                "required" : [ "deploy-to" ]
+              }, {
+                "required" : [ "items" ]
+              }, {
+                "required" : [ "group" ]
+              }, {
+                "required" : [ "filters" ]
+              } ]
+            },
+            "then" : {
+              "allOf" : [ {
+                "if" : {
+                  "required" : [ "deploy-to" ]
                 },
-                "deploy-to" : {
-                  "description" : "Infrastructure(s) to deploy to.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
-                },
-                "ref" : {
-                  "description" : "Git branch for the environment configuration.",
-                  "type" : "string"
+                "then" : {
+                  "type" : "object",
+                  "required" : [ "id", "deploy-to" ],
+                  "properties" : {
+                    "id" : {
+                      "description" : "Environment identifier.",
+                      "type" : "string"
+                    },
+                    "deploy-to" : {
+                      "description" : "Infrastructure(s) to deploy to.",
+                      "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
+                    },
+                    "ref" : {
+                      "description" : "Git branch for the environment configuration.",
+                      "type" : "string"
+                    }
+                  },
+                  "additionalProperties" : false
                 }
-              },
-              "additionalProperties" : false
-            }, {
-              "type" : "object",
-              "required" : [ "items" ],
-              "properties" : {
-                "items" : {
-                  "description" : "List of environments for multi-environment deployment.",
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
-                  }
+              }, {
+                "if" : {
+                  "required" : [ "items" ]
                 },
-                "sequential" : {
-                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                  "type" : "boolean",
-                  "default" : false
+                "then" : {
+                  "type" : "object",
+                  "required" : [ "items" ],
+                  "properties" : {
+                    "items" : {
+                      "description" : "List of environments for multi-environment deployment.",
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
+                      }
+                    },
+                    "sequential" : {
+                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                      "type" : "boolean",
+                      "default" : false
+                    }
+                  },
+                  "additionalProperties" : false
                 }
-              },
-              "additionalProperties" : false
-            }, {
-              "type" : "object",
-              "required" : [ "group" ],
-              "properties" : {
-                "group" : {
-                  "description" : "Environment group configuration.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentGroup"
+              }, {
+                "if" : {
+                  "required" : [ "group" ]
                 },
-                "sequential" : {
-                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                  "type" : "boolean",
-                  "default" : false
+                "then" : {
+                  "type" : "object",
+                  "required" : [ "group" ],
+                  "properties" : {
+                    "group" : {
+                      "description" : "Environment group configuration.",
+                      "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentGroup"
+                    },
+                    "sequential" : {
+                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                      "type" : "boolean",
+                      "default" : false
+                    }
+                  },
+                  "additionalProperties" : false
                 }
-              },
-              "additionalProperties" : false
-            }, {
-              "type" : "object",
-              "required" : [ "filters" ],
-              "properties" : {
-                "filters" : {
-                  "description" : "Filters for selecting environments and infrastructures.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/Filters"
+              }, {
+                "if" : {
+                  "required" : [ "filters" ]
                 },
-                "sequential" : {
-                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                  "type" : "boolean",
-                  "default" : false
+                "then" : {
+                  "type" : "object",
+                  "required" : [ "filters" ],
+                  "properties" : {
+                    "filters" : {
+                      "description" : "Filters for selecting environments and infrastructures.",
+                      "$ref" : "#/definitions/pipeline/stages/unified/Filters"
+                    },
+                    "sequential" : {
+                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                      "type" : "boolean",
+                      "default" : false
+                    }
+                  },
+                  "additionalProperties" : false
                 }
-              },
-              "additionalProperties" : false
-            } ],
+              } ]
+            },
+            "else" : {
+              "required" : [ "deploy-to" ]
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "DeployTo" : {
@@ -3223,13 +3304,43 @@
                   "stages" : {
                     "type" : "array",
                     "items" : {
-                      "oneOf" : [ {
-                        "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
-                      }, {
-                        "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
-                      }, {
-                        "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
-                      } ]
+                      "type" : "object",
+                      "if" : {
+                        "anyOf" : [ {
+                          "required" : [ "steps" ]
+                        }, {
+                          "required" : [ "chain" ]
+                        }, {
+                          "required" : [ "group" ]
+                        } ]
+                      },
+                      "then" : {
+                        "allOf" : [ {
+                          "if" : {
+                            "required" : [ "steps" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+                          }
+                        }, {
+                          "if" : {
+                            "required" : [ "chain" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+                          }
+                        }, {
+                          "if" : {
+                            "required" : [ "group" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+                          }
+                        } ]
+                      },
+                      "else" : {
+                        "required" : [ "steps" ]
+                      }
                     },
                     "minItems" : 1
                   }
@@ -3260,15 +3371,52 @@
                     "description" : "Stages within the group.",
                     "type" : "array",
                     "items" : {
-                      "oneOf" : [ {
-                        "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
-                      }, {
-                        "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
-                      }, {
-                        "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
-                      }, {
-                        "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
-                      } ]
+                      "type" : "object",
+                      "if" : {
+                        "anyOf" : [ {
+                          "required" : [ "steps" ]
+                        }, {
+                          "required" : [ "chain" ]
+                        }, {
+                          "required" : [ "parallel" ]
+                        }, {
+                          "required" : [ "group" ]
+                        } ]
+                      },
+                      "then" : {
+                        "allOf" : [ {
+                          "if" : {
+                            "required" : [ "steps" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+                          }
+                        }, {
+                          "if" : {
+                            "required" : [ "chain" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+                          }
+                        }, {
+                          "if" : {
+                            "required" : [ "parallel" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
+                          }
+                        }, {
+                          "if" : {
+                            "required" : [ "group" ]
+                          },
+                          "then" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+                          }
+                        } ]
+                      },
+                      "else" : {
+                        "required" : [ "steps" ]
+                      }
                     },
                     "minItems" : 1
                   }
@@ -3284,25 +3432,115 @@
           "StepItems" : {
             "title" : "StepItems",
             "description" : "Available step types for pipeline execution.",
-            "oneOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/unified/StepNodeV1"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedWaitStepNode"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedBarrierStepNode"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedQueueStepNode"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedPolicyStepNode"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedApprovalStepNode"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/ParallelSteps"
-            }, {
-              "$ref" : "#/definitions/pipeline/steps/unified/GroupSteps"
-            }, {
-              "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
-            } ],
+            "type" : "object",
+            "if" : {
+              "anyOf" : [ {
+                "required" : [ "run" ]
+              }, {
+                "required" : [ "action" ]
+              }, {
+                "required" : [ "clone" ]
+              }, {
+                "required" : [ "background" ]
+              }, {
+                "required" : [ "run-test" ]
+              }, {
+                "required" : [ "wait" ]
+              }, {
+                "required" : [ "barrier" ]
+              }, {
+                "required" : [ "queue" ]
+              }, {
+                "required" : [ "policy" ]
+              }, {
+                "required" : [ "approval" ]
+              }, {
+                "required" : [ "parallel" ]
+              }, {
+                "required" : [ "group" ]
+              }, {
+                "required" : [ "template" ]
+              } ]
+            },
+            "then" : {
+              "allOf" : [ {
+                "if" : {
+                  "anyOf" : [ {
+                    "required" : [ "run" ]
+                  }, {
+                    "required" : [ "action" ]
+                  }, {
+                    "required" : [ "clone" ]
+                  }, {
+                    "required" : [ "background" ]
+                  }, {
+                    "required" : [ "run-test" ]
+                  } ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepNodeV1"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "wait" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedWaitStepNode"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "barrier" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedBarrierStepNode"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "queue" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedQueueStepNode"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "policy" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedPolicyStepNode"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "approval" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedApprovalStepNode"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "parallel" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/ParallelSteps"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "group" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/GroupSteps"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "template" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+                }
+              } ]
+            },
+            "else" : {
+              "required" : [ "run" ]
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "StepNodeV1" : {
