@@ -25384,7 +25384,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/LocalSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationLocalSourceSpec"
                   }
                 }
               }
@@ -25574,6 +25574,58 @@
             "properties" : {
               "description" : {
                 "desc" : "Slsa Har source spec"
+              }
+            }
+          },
+          "SlsaVerificationLocalSourceSpec" : {
+            "title" : "SlsaVerificationLocalSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "workspace", "type" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                },
+                "workspace" : {
+                  "type" : "string"
+                },
+                "artifact_name" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                },
+                "version" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for LocalSourceSpec"
               }
             }
           },

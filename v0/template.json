@@ -74121,7 +74121,7 @@
               "then" : {
                 "properties" : {
                   "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/common/LocalSourceSpec"
+                    "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationLocalSourceSpec"
                   }
                 }
               }
@@ -74314,10 +74314,10 @@
               }
             }
           },
-          "LocalSourceSpec" : {
-            "title" : "LocalSourceSpec",
+          "SlsaVerificationLocalSourceSpec" : {
+            "title" : "SlsaVerificationLocalSourceSpec",
             "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+              "$ref" : "#/definitions/pipeline/steps/common/SlsaVerificationSourceSpec"
             }, {
               "type" : "object",
               "required" : [ "workspace", "type" ],
@@ -75511,6 +75511,58 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GarSourceSpec"
+              }
+            }
+          },
+          "LocalSourceSpec" : {
+            "title" : "LocalSourceSpec",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "workspace", "type" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "manual", "auto" ]
+                },
+                "workspace" : {
+                  "type" : "string"
+                },
+                "artifact_name" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                },
+                "version" : {
+                  "type" : "string",
+                  "description" : "Required when type is manual",
+                  "if" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "manual"
+                      }
+                    }
+                  },
+                  "then" : {
+                    "minLength" : 1
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for LocalSourceSpec"
               }
             }
           },
@@ -87914,71 +87966,6 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/RunTestsStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "RunTestStepV2Node_template" : {
-            "title" : "RunTestStepV2Node_template",
-            "type" : "object",
-            "required" : [ "spec", "type" ],
-            "properties" : {
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "Test" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "Test"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/ci/RunTestStepV2Info"
                   }
                 }
               }
