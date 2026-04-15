@@ -1,0 +1,52 @@
+title: StageItems
+description: Available stage types for pipeline execution.
+type: object
+if:
+  anyOf:
+    - required: [steps]
+    - required: [chain]
+    - required: [parallel]
+    - required: [group]
+    - required: [template]
+    - required: [action]
+    - required: [deploy]
+    - required: [build]
+    - required: [test]
+    - required: [chaos]
+    - required: [idp]
+    - required: [iacm]
+    - required: [sto]
+then:
+  allOf:
+    - if:
+        required: [steps]
+      then:
+        $ref: ./unified-stage.yaml
+    - if:
+        required: [chain]
+      then:
+        $ref: ./pipeline-chain.yaml
+    - if:
+        required: [parallel]
+      then:
+        $ref: ./parallel-stages.yaml
+    - if:
+        required: [group]
+      then:
+        $ref: ./group-stages.yaml
+    - if:
+        anyOf:
+          - required: [template]
+          - required: [action]
+          - required: [deploy]
+          - required: [build]
+          - required: [test]
+          - required: [chaos]
+          - required: [idp]
+          - required: [iacm]
+          - required: [sto]
+      then:
+        $ref: ../../common/unified-template.yaml
+else:
+  required: [steps]
+$schema: http://json-schema.org/draft-07/schema#
