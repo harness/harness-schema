@@ -20,3 +20,33 @@ properties:
   trace:
     description: Trace enables trace logging.
     type: boolean
+  sparse-checkout:
+    description: SparseCheckout defines paths to limit the clone to specific directories.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  pre-fetch:
+    description: PreFetch defines a command to run before the clone operation.
+    oneOf:
+      - type: string
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  persist-credentials:
+    description: PersistCredentials configures git credentials to persist after clone so subsequent git operations in the workspace can authenticate.
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+        minLength: 1
+  clonedir:
+    description: Clonedir defines the clone directory path.
+    type: string
+    minLength: 1
+  resources:
+    description: Resources defines container resource limits.
+    $ref: ../../resource.yaml
