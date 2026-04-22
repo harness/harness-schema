@@ -128,6 +128,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/ci/AiTestAutomationStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/CloudformationCreateStackStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/CloudformationDeleteStackStepNode_template"
@@ -85848,6 +85850,167 @@
           }
         },
         "ci" : {
+          "AiTestAutomationStepNode_template" : {
+            "title" : "AiTestAutomationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AiTestAutomation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AiTestAutomation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/AiTestAutomationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AiTestAutomationStepInfo" : {
+            "title" : "AiTestAutomationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "required" : [ "applicationName" ],
+              "properties" : {
+                "testType" : {
+                  "type" : "string",
+                  "enum" : [ "aiTestAutomation", "playwright" ],
+                  "description" : "Type of test: aiTestAutomation (default) or playwright"
+                },
+                "applicationName" : {
+                  "type" : "string",
+                  "description" : "Name of the application to test"
+                },
+                "environmentName" : {
+                  "type" : "string",
+                  "description" : "Name of the environment where test will be executed"
+                },
+                "testSuiteName" : {
+                  "type" : "string",
+                  "description" : "Name of the test suite to execute"
+                },
+                "tunnelName" : {
+                  "type" : "string",
+                  "description" : "Name of the tunnel to use"
+                },
+                "buildId" : {
+                  "type" : "string",
+                  "description" : "ID of the Playwright build to execute"
+                },
+                "executionAliasId" : {
+                  "type" : "string",
+                  "description" : "Execution alias ID for variable resolution"
+                },
+                "configOverride" : {
+                  "type" : "string",
+                  "description" : "Configuration override as JSON string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "applicationName" ],
+            "properties" : {
+              "testType" : {
+                "type" : "string",
+                "enum" : [ "aiTestAutomation", "playwright" ],
+                "description" : "Type of test: aiTestAutomation (default) or playwright"
+              },
+              "applicationName" : {
+                "type" : "string",
+                "description" : "Name of the application to test"
+              },
+              "environmentName" : {
+                "type" : "string",
+                "description" : "Name of the environment where test will be executed"
+              },
+              "testSuiteName" : {
+                "type" : "string",
+                "description" : "Name of the test suite to execute"
+              },
+              "tunnelName" : {
+                "type" : "string",
+                "description" : "Name of the tunnel to use"
+              },
+              "buildId" : {
+                "type" : "string",
+                "description" : "ID of the Playwright build to execute"
+              },
+              "executionAliasId" : {
+                "type" : "string",
+                "description" : "Execution alias ID for variable resolution"
+              },
+              "configOverride" : {
+                "type" : "string",
+                "description" : "Configuration override as JSON string"
+              },
+              "description" : {
+                "desc" : "This is the description for AiTestAutomationStepInfo"
+              }
+            }
+          },
+          "CIStepInfo" : {
+            "title" : "CIStepInfo",
+            "type" : "object",
+            "discriminator" : "type",
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for CIStepInfo"
+              }
+            }
+          },
           "ArtifactoryUploadNode_template" : {
             "title" : "ArtifactoryUploadNode_template",
             "type" : "object",
@@ -85983,17 +86146,6 @@
               },
               "description" : {
                 "desc" : "This is the description for UploadToArtifactoryStepInfo"
-              }
-            }
-          },
-          "CIStepInfo" : {
-            "title" : "CIStepInfo",
-            "type" : "object",
-            "discriminator" : "type",
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "properties" : {
-              "description" : {
-                "desc" : "This is the description for CIStepInfo"
               }
             }
           },
@@ -90610,6 +90762,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/ci/UploadToS3StepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AiTestAutomationStepNode" : {
+            "title" : "AiTestAutomationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AiTestAutomationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AiTestAutomation" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AiTestAutomation"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/AiTestAutomationStepInfo"
                   }
                 }
               }
@@ -109348,6 +109577,8 @@
               "step" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/StepElementConfig"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/AiTestAutomationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/ArtifactoryUploadNode"
                 }, {
