@@ -665,6 +665,8 @@
                 "$ref" : "#/definitions/pipeline/steps/common/DBSchemaRollbackSQLNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/FlywayCommandStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode_template"
               } ]
             },
             "tags" : {
@@ -78316,6 +78318,175 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "AgentStepNode_template" : {
+            "title" : "AgentStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Agent" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Agent"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AgentStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AgentStepInfo" : {
+            "title" : "AgentStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "agentName" ],
+              "properties" : {
+                "agentName" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "agentSettings" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "not" : {
+                      "pattern" : "^<\\+.*>.*$"
+                    }
+                  }, {
+                    "type" : "object",
+                    "additionalProperties" : true
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^(<\\+.+>.*)$",
+                    "minLength" : 1
+                  } ]
+                },
+                "llmConnector" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "mcpConnectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "agentName" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "agentSettings" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "not" : {
+                    "pattern" : "^<\\+.*>.*$"
+                  }
+                }, {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string",
+                  "pattern" : "^(<\\+.+>.*)$",
+                  "minLength" : 1
+                } ]
+              },
+              "llmConnector" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "mcpConnectors" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for AgentStepInfo"
+              }
+            }
+          },
           "BackgroundStepNode" : {
             "title" : "BackgroundStepNode",
             "type" : "object",
@@ -79989,6 +80160,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/WizStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "AgentStepNode" : {
+            "title" : "AgentStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for AgentStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "Agent" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Agent"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/AgentStepInfo"
                   }
                 }
               }
@@ -100719,6 +100967,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/WizScanNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeSegmentCreateStepNode"
@@ -108208,6 +108458,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/GCEProvisionBackendServiceStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/EcsScaleStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -109748,6 +110000,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SastScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ScaScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
                 } ]
               },
               "stepGroup" : {

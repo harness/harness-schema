@@ -1,0 +1,68 @@
+title: AgentStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+    - agentName
+  properties:
+    agentName:
+      oneOf:
+      - $ref: string-without-jexl.yaml
+      - $ref: common-jexl.yaml
+    agentSettings:
+      oneOf:
+      - type: string
+        not:
+          pattern: "^<\\+.*>.*$"
+      - type: object
+        additionalProperties: true
+      - type: string
+        pattern: ^(<\+.+>.*)$
+        minLength: 1
+    llmConnector:
+      oneOf:
+      - $ref: string-without-jexl.yaml
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    mcpConnectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  agentName:
+    oneOf:
+    - $ref: string-without-jexl.yaml
+    - $ref: common-jexl.yaml
+  agentSettings:
+    oneOf:
+    - type: string
+      not:
+        pattern: "^<\\+.*>.*$"
+    - type: object
+      additionalProperties: true
+    - type: string
+      pattern: ^(<\+.+>.*)$
+      minLength: 1
+  llmConnector:
+    oneOf:
+    - $ref: string-without-jexl.yaml
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  mcpConnectors:
+    oneOf:
+    - type: array
+      items:
+        type: string
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
+  description:
+    desc: This is the description for AgentStepInfo
