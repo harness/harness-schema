@@ -2,7 +2,7 @@
 
 This utility converts JSON schema files into Markdown documentation files. It reads a JSON schema file, extracts the properties, and generates human-readable documentation in Markdown format.
 
-## Setup
+## Setup #
 
 To set up the project, follow these steps:
 
