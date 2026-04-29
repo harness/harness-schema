@@ -1,0 +1,64 @@
+title: FmeMetricCheckStepInfo
+allOf:
+  - $ref: ../../common/step-spec-type.yaml
+  - type: object
+    required:
+      - featureFlag
+      - environment
+      - metrics
+      - lookbackWindow
+      - failureCriteria
+    properties:
+      featureFlag:
+        description: "Feature flag name (testId in Tinybird)"
+        oneOf:
+          - $ref: ../common/fme-flag-common-flag-name.yaml
+          - $ref: ../common/common-jexl.yaml
+      environment:
+        description: "FME Environment ID"
+        oneOf:
+          - $ref: ../common/fme-flag-common-environment.yaml
+          - $ref: ../common/common-jexl.yaml
+      metrics:
+        description: "One or more metrics to evaluate"
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - ref
+              properties:
+                ref:
+                  description: "Webadmin metric ID"
+                  oneOf:
+                    - $ref: ../common/string-without-jexl.yaml
+                    - $ref: ../common/common-jexl.yaml
+            minItems: 1
+          - $ref: ../common/common-jexl.yaml
+      lookbackWindow:
+        description: "Time window from now (e.g. 7d, 24h)"
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      failureCriteria:
+        description: "Criteria to determine step failure. When condition evaluates to true, the step fails."
+        type: object
+        required:
+          - type
+          - spec
+        properties:
+          type:
+            type: string
+            enum:
+              - Jexl
+          spec:
+            type: object
+            required:
+              - condition
+            properties:
+              condition:
+                description: "JEXL condition expression. Evaluates to true = FAIL, false = PASS."
+                oneOf:
+                  - $ref: ../common/string-without-jexl.yaml
+                  - $ref: ../common/common-jexl.yaml
+$schema: http://json-schema.org/draft-07/schema#
