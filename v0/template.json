@@ -51900,7 +51900,7 @@
                         "properties" : {
                           "type" : {
                             "type" : "string",
-                            "enum" : [ "SetDefaultTreatment", "SetBaselineTreatment", "SetTrackImpression", "SetLimitExposure", "UpdateIndividualTargets", "UpdateDynamicConfiguration", "SetTargetingRules" ]
+                            "enum" : [ "SetDefaultTreatment", "SetBaselineTreatment", "SetTrackImpression", "SetLimitExposure", "UpdateIndividualTargets", "UpdateDynamicConfiguration", "SetTargetingRules", "SetDefaultAllocations", "SetTreatments", "SetRolloutStatus" ]
                           },
                           "value" : { }
                         },
@@ -52202,98 +52202,107 @@
                               }
                             }
                           }
+                        }, {
+                          "if" : {
+                            "properties" : {
+                              "type" : {
+                                "enum" : [ "SetDefaultAllocations" ]
+                              }
+                            }
+                          },
+                          "then" : {
+                            "properties" : {
+                              "value" : {
+                                "oneOf" : [ {
+                                  "type" : "array",
+                                  "items" : {
+                                    "type" : "object",
+                                    "required" : [ "treatment", "amount" ],
+                                    "properties" : {
+                                      "treatment" : {
+                                        "oneOf" : [ {
+                                          "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                                        } ]
+                                      },
+                                      "amount" : {
+                                        "oneOf" : [ {
+                                          "type" : "integer",
+                                          "maximum" : 100,
+                                          "minimum" : 0
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                        } ]
+                                      }
+                                    }
+                                  }
+                                }, {
+                                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                } ]
+                              }
+                            }
+                          }
+                        }, {
+                          "if" : {
+                            "properties" : {
+                              "type" : {
+                                "enum" : [ "SetTreatments" ]
+                              }
+                            }
+                          },
+                          "then" : {
+                            "properties" : {
+                              "value" : {
+                                "oneOf" : [ {
+                                  "type" : "array",
+                                  "minItems" : 2,
+                                  "items" : {
+                                    "type" : "object",
+                                    "required" : [ "treatment", "description" ],
+                                    "properties" : {
+                                      "treatment" : {
+                                        "oneOf" : [ {
+                                          "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                                        } ]
+                                      },
+                                      "description" : {
+                                        "oneOf" : [ {
+                                          "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                        }, {
+                                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                        } ]
+                                      }
+                                    }
+                                  }
+                                }, {
+                                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                } ]
+                              }
+                            }
+                          }
+                        }, {
+                          "if" : {
+                            "properties" : {
+                              "type" : {
+                                "enum" : [ "SetRolloutStatus" ]
+                              }
+                            }
+                          },
+                          "then" : {
+                            "properties" : {
+                              "value" : {
+                                "oneOf" : [ {
+                                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                }, {
+                                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                } ]
+                              }
+                            }
+                          }
                         } ]
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "SetDefaultTreatment"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "SetBaselineTreatment"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "SetTrackImpression"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "SetLimitExposure"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "UpdateIndividualTargets"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "UpdateDynamicConfiguration"
-                          }
-                        }
-                      }
-                    }, {
-                      "type" : "array",
-                      "minContains" : 0,
-                      "maxContains" : 1,
-                      "contains" : {
-                        "type" : "object",
-                        "required" : [ "type" ],
-                        "properties" : {
-                          "type" : {
-                            "const" : "SetTargetingRules"
-                          }
-                        }
                       }
                     } ]
                   }, {

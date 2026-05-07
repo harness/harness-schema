@@ -38,6 +38,9 @@ allOf:
                         - UpdateIndividualTargets
                         - UpdateDynamicConfiguration
                         - SetTargetingRules
+                        - SetDefaultAllocations
+                        - SetTreatments
+                        - SetRolloutStatus
                     value: {}
                   allOf:
                     - if:
@@ -272,76 +275,69 @@ allOf:
                                                   - $ref: ../common/common-jexl.yaml
                                         - $ref: ../common/common-jexl.yaml
                               - $ref: ../common/common-jexl.yaml
-              # At most one entry per instruction type (JSON Schema 2019-09 contains / maxContains)
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: SetDefaultTreatment
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: SetBaselineTreatment
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: SetTrackImpression
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: SetLimitExposure
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: UpdateIndividualTargets
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: UpdateDynamicConfiguration
-              - type: array
-                minContains: 0
-                maxContains: 1
-                contains:
-                  type: object
-                  required:
-                    - type
-                  properties:
-                    type:
-                      const: SetTargetingRules
+                    - if:
+                        properties:
+                          type:
+                            enum:
+                              - SetDefaultAllocations
+                      then:
+                        properties:
+                          value:
+                            oneOf:
+                              - type: array
+                                items:
+                                  type: object
+                                  required:
+                                    - treatment
+                                    - amount
+                                  properties:
+                                    treatment:
+                                      oneOf:
+                                        - $ref: ../common/fme-flag-common-treatment.yaml
+                                        - $ref: ../common/common-jexl-expression-only.yaml
+                                    amount:
+                                      oneOf:
+                                        - type: integer
+                                          maximum: 100
+                                          minimum: 0
+                                        - $ref: ../common/common-jexl.yaml
+                              - $ref: ../common/common-jexl.yaml
+                    - if:
+                        properties:
+                          type:
+                            enum:
+                              - SetTreatments
+                      then:
+                        properties:
+                          value:
+                            oneOf:
+                              - type: array
+                                minItems: 2
+                                items:
+                                  type: object
+                                  required:
+                                    - treatment
+                                    - description
+                                  properties:
+                                    treatment:
+                                      oneOf:
+                                        - $ref: ../common/fme-flag-common-treatment.yaml
+                                        - $ref: ../common/common-jexl-expression-only.yaml
+                                    description:
+                                      oneOf:
+                                        - $ref: ../common/string-without-jexl.yaml
+                                        - $ref: ../common/common-jexl.yaml
+                              - $ref: ../common/common-jexl.yaml
+                    - if:
+                        properties:
+                          type:
+                            enum:
+                              - SetRolloutStatus
+                      then:
+                        properties:
+                          value:
+                            oneOf:
+                              - $ref: ../common/string-without-jexl.yaml
+                              - $ref: ../common/common-jexl.yaml
           - $ref: ../common/common-jexl.yaml
 $schema: https://json-schema.org/draft/2019-09/schema
