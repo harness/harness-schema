@@ -51887,6 +51887,55 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
+                "defaultDefinition" : {
+                  "description" : "Optional. If the flag definition does not exist in the target environment, create one with these values. Ignored if definition already exists.",
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "required" : [ "treatments", "defaultTreatment", "baselineTreatment" ],
+                    "properties" : {
+                      "treatments" : {
+                        "type" : "array",
+                        "minItems" : 2,
+                        "items" : {
+                          "type" : "object",
+                          "required" : [ "treatment", "description" ],
+                          "properties" : {
+                            "treatment" : {
+                              "oneOf" : [ {
+                                "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                              }, {
+                                "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                              } ]
+                            },
+                            "description" : {
+                              "oneOf" : [ {
+                                "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                              }, {
+                                "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                              } ]
+                            }
+                          }
+                        }
+                      },
+                      "defaultTreatment" : {
+                        "oneOf" : [ {
+                          "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                        }, {
+                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                        } ]
+                      },
+                      "baselineTreatment" : {
+                        "oneOf" : [ {
+                          "$ref" : "#/definitions/pipeline/steps/common/fme-flag-common-treatments"
+                        }, {
+                          "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                        } ]
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
                 "instructions" : {
                   "description" : "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once (validated when using a literal array; expressions are not checked).",
                   "oneOf" : [ {
@@ -51900,7 +51949,7 @@
                         "properties" : {
                           "type" : {
                             "type" : "string",
-                            "enum" : [ "SetDefaultTreatment", "SetBaselineTreatment", "SetTrackImpression", "SetLimitExposure", "UpdateIndividualTargets", "UpdateDynamicConfiguration", "SetTargetingRules", "SetDefaultAllocations", "SetTreatments", "SetRolloutStatus" ]
+                            "enum" : [ "SetDefaultTreatment", "SetBaselineTreatment", "SetTrackImpression", "SetLimitExposure", "UpdateIndividualTargets", "UpdateDynamicConfiguration", "SetTargetingRules", "SetDefaultAllocations", "SetTreatments", "SetRolloutStatus", "SetFlagKilled" ]
                           },
                           "value" : { }
                         },
@@ -52296,6 +52345,25 @@
                               "value" : {
                                 "oneOf" : [ {
                                   "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                                }, {
+                                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                } ]
+                              }
+                            }
+                          }
+                        }, {
+                          "if" : {
+                            "properties" : {
+                              "type" : {
+                                "enum" : [ "SetFlagKilled" ]
+                              }
+                            }
+                          },
+                          "then" : {
+                            "properties" : {
+                              "value" : {
+                                "oneOf" : [ {
+                                  "type" : "boolean"
                                 }, {
                                   "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                                 } ]
