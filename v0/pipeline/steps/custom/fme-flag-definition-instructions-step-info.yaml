@@ -15,6 +15,41 @@ allOf:
         oneOf:
           - $ref: ../common/fme-flag-common-environment.yaml
           - $ref: ../common/common-jexl.yaml
+      defaultDefinition:
+        description: "Optional. If the flag definition does not exist in the target environment, create one with these values. Ignored if definition already exists."
+        oneOf:
+          - type: object
+            required:
+              - treatments
+              - defaultTreatment
+              - baselineTreatment
+            properties:
+              treatments:
+                type: array
+                minItems: 2
+                items:
+                  type: object
+                  required:
+                    - treatment
+                    - description
+                  properties:
+                    treatment:
+                      oneOf:
+                        - $ref: ../common/fme-flag-common-treatment.yaml
+                        - $ref: ../common/common-jexl-expression-only.yaml
+                    description:
+                      oneOf:
+                        - $ref: ../common/string-without-jexl.yaml
+                        - $ref: ../common/common-jexl.yaml
+              defaultTreatment:
+                oneOf:
+                  - $ref: ../common/fme-flag-common-treatment.yaml
+                  - $ref: ../common/common-jexl.yaml
+              baselineTreatment:
+                oneOf:
+                  - $ref: ../common/fme-flag-common-treatment.yaml
+                  - $ref: ../common/common-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
       instructions:
         description: "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once (validated when using a literal array; expressions are not checked)."
         oneOf:
@@ -41,6 +76,7 @@ allOf:
                         - SetDefaultAllocations
                         - SetTreatments
                         - SetRolloutStatus
+                        - SetFlagKilled
                     value: {}
                   allOf:
                     - if:
@@ -338,6 +374,17 @@ allOf:
                           value:
                             oneOf:
                               - $ref: ../common/string-without-jexl.yaml
+                              - $ref: ../common/common-jexl.yaml
+                    - if:
+                        properties:
+                          type:
+                            enum:
+                              - SetFlagKilled
+                      then:
+                        properties:
+                          value:
+                            oneOf:
+                              - type: boolean
                               - $ref: ../common/common-jexl.yaml
           - $ref: ../common/common-jexl.yaml
 $schema: https://json-schema.org/draft/2019-09/schema
