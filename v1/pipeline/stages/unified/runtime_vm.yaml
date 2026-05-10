@@ -1,10 +1,27 @@
 title: VMRuntimeSpec
-description: VM runtime specification.
+description: VM runtime specification. Mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1.VMRuntimeSpec.
 type: object
+additionalProperties: false
 required:
   - pool
 properties:
   pool:
     description: VM pool identifier. Supports expressions.
     type: string
+  os:
+    description: Operating system for the VM runtime. Supports expressions.
+    oneOf:
+      - type: string
+        enum:
+          - linux
+          - windows
+          - macos
+      - $ref: ../../common/expression.yaml
+  harness-image-connector:
+    description: Harness image connector used to pull runner images. Supports expressions.
+    type: string
+  timeout:
+    description: VM init timeout duration. Supports expressions.
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
 $schema: http://json-schema.org/draft-07/schema#

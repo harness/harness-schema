@@ -1,38 +1,27 @@
 title: RuntimeV1
-description: Defines the runtime execution engine. Can be a string shorthand or object with configuration.
+description: Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs.
 $schema: http://json-schema.org/draft-07/schema#
 oneOf:
-  # String shorthand format (matches RuntimeV1Deserializer)
+  # String shorthand — handled by RuntimeV1Deserializer.
   - type: string
     enum:
       - cloud
       - shell
       - vm
       - k8
-  # Object format with full configuration
+  # Object form — mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1 fields.
   - type: object
-    oneOf:
-      - properties:
-          shell:
-            $ref: ./runtime_shell.yaml
-        required:
-          - shell
-        additionalProperties: false
-      - properties:
-          cloud:
-            $ref: ./runtime_cloud.yaml
-        required:
-          - cloud
-        additionalProperties: false
-      - properties:
-          vm:
-            $ref: ./runtime_vm.yaml
-        required:
-          - vm
-        additionalProperties: false
-      - properties:
-          kubernetes:
-            $ref: ./runtime_kubernetes.yaml
-        required:
-          - kubernetes
-        additionalProperties: false
+    additionalProperties: false
+    properties:
+      shell:
+        description: Shell runtime specification.
+        $ref: ./runtime_shell.yaml
+      cloud:
+        description: Cloud runtime specification.
+        $ref: ./runtime_cloud.yaml
+      vm:
+        description: VM runtime specification.
+        $ref: ./runtime_vm.yaml
+      kubernetes:
+        description: Kubernetes runtime specification.
+        $ref: ./runtime_kubernetes.yaml

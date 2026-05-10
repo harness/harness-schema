@@ -10,7 +10,7 @@ properties:
   name:
     type: string
     description: Display name of the stage.
-  desc:
+  description:
     type: string
     description: Description of the stage.
   tags:
@@ -21,13 +21,19 @@ properties:
   if:
     type: string
     description: Conditional execution expression. Stage is skipped if condition resolves to false.
+  variables:
+    description: Stage-level variables.
+    $ref: ../../common/ng-variable-v1-wrapper.yaml
   inputs:
+    description: Stage-level input variables.
     $ref: ../../common/ng-variable-v1-wrapper.yaml
   delegate:
     $ref: ../../common/delegate.yaml
   strategy:
-    description: Execution strategy (matrix, parallelism, etc.).
-    $ref: ../../common/strategy.yaml
+    description: Execution strategy (matrix, parallelism, etc.). Supports expressions.
+    oneOf:
+      - $ref: ../../common/strategy.yaml
+      - $ref: ../../common/expression.yaml
   timeout:
     type: string
     description: Stage timeout duration.
@@ -42,6 +48,13 @@ properties:
     description: Export configuration for stage outputs.
   on-failure:
     $ref: ../../common/on-failure.yaml
+  shared-paths:
+    description: Paths shared across steps within the stage. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - $ref: ../../common/expression.yaml
   needs:
     description: Stage dependencies (stages that must complete before this one).
     oneOf:
@@ -70,26 +83,18 @@ properties:
     description: Git clone configuration for the stage.
     $ref: ../../clone.yaml
   platform:
-    type: object
     description: Platform configuration (OS, architecture).
-    properties:
-      os:
-        type: string
-        enum:
-          - linux
-          - windows
-          - macos
-      arch:
-        type: string
-        enum:
-          - amd64
-          - arm64
+    $ref: ../../steps/common/platform.yaml
   service:
-    description: Service configuration for CD stages.
-    $ref: ./service.yaml
+    description: Service configuration for CD stages. Supports expressions.
+    oneOf:
+      - $ref: ./service.yaml
+      - $ref: ../../common/expression.yaml
   environment:
-    description: Environment configuration for CD stages.
-    $ref: ./environment.yaml
+    description: Environment configuration for CD stages. Supports expressions.
+    oneOf:
+      - $ref: ./environment.yaml
+      - $ref: ../../common/expression.yaml
   
   # IaCM specific fields
   workspace:
@@ -102,15 +107,23 @@ properties:
     type: string
     description: OpenTofu/Terraform module reference.
   env:
-    type: object
-    description: Environment variables for the stage.
-    additionalProperties:
-      type: string
+    description: Environment variables for the stage. Supports expressions.
+    oneOf:
+      - type: object
+        additionalProperties: true
+      - $ref: ../../common/expression.yaml
   cache:
     description: Cache intelligence configuration.
     $ref: ./caching.yaml
   build-intelligence:
     description: Build intelligence configuration for test optimization.
     $ref: ./build-intelligence.yaml
+  volumes:
+    description: Volume configurations for the stage runtime. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          $ref: ./ci-volume.yaml
+      - $ref: ../../common/expression.yaml
 $schema: http://json-schema.org/draft-07/schema#
 

@@ -1,6 +1,7 @@
 title: K8RuntimeSpec
-description: Kubernetes runtime specification.
+description: Kubernetes runtime specification. Mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1.K8RuntimeSpec.
 type: object
+additionalProperties: false
 properties:
   namespace:
     description: Kubernetes namespace. Supports expressions.
@@ -12,26 +13,17 @@ properties:
     description: User ID to run container as. Supports expressions.
     oneOf:
       - type: integer
-      - type: string
-        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+      - $ref: ../../common/expression.yaml
   pull:
     description: Image pull policy. Supports expressions.
     oneOf:
-      - type: string
-        enum:
-          - always
-          - never
-          - if-not-exists
-      - type: string
+      - $ref: ../../common/pull-policy.yaml
+      - $ref: ../../common/expression.yaml
   os:
     description: Operating system type. Supports expressions.
     oneOf:
-      - type: string
-        enum:
-          - Linux
-          - MacOS
-          - Windows
-      - type: string
+      - $ref: ../../common/os-type.yaml
+      - $ref: ../../common/expression.yaml
   harness-image-connector:
     description: Harness image connector for pulling images. Supports expressions.
     type: string
@@ -39,30 +31,31 @@ properties:
     description: Whether to automount service account token. Supports expressions.
     oneOf:
       - type: boolean
-      - type: string
-        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+      - $ref: ../../common/expression.yaml
   priority-class:
     description: Kubernetes priority class name. Supports expressions.
     type: string
   tolerations:
-    description: Kubernetes pod tolerations.
-    type: array
-    items:
-      $ref: ./toleration.yaml
+    description: Kubernetes pod tolerations. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          $ref: ./toleration.yaml
+      - $ref: ../../common/expression.yaml
   host:
     description: Host aliases for the pod. Supports expressions.
     oneOf:
       - type: array
         items:
           type: string
-      - type: string
+      - $ref: ../../common/expression.yaml
   node-selector:
     description: Kubernetes node selector. Supports expressions.
     oneOf:
       - type: object
         additionalProperties:
           type: string
-      - type: string
+      - $ref: ../../common/expression.yaml
   timeout:
     description: Init timeout duration. Supports expressions.
     type: string
@@ -76,22 +69,21 @@ properties:
       - type: object
         additionalProperties:
           type: string
-      - type: string
+      - $ref: ../../common/expression.yaml
   annotations:
     description: Pod annotations. Supports expressions.
     oneOf:
       - type: object
         additionalProperties:
           type: string
-      - type: string
+      - $ref: ../../common/expression.yaml
   volumes:
     description: Volume configurations. Supports expressions.
     oneOf:
       - type: array
         items:
           $ref: ./ci-volume.yaml
-      - type: string
-        pattern: "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)"
+      - $ref: ../../common/expression.yaml
   pod-spec-overlay:
     description: Pod spec overlay JSON/YAML. Supports expressions.
     type: string
@@ -99,5 +91,5 @@ properties:
     description: Pod security context. Supports expressions.
     oneOf:
       - $ref: ./security-context.yaml
-      - type: string
+      - $ref: ../../common/expression.yaml
 $schema: http://json-schema.org/draft-07/schema#
