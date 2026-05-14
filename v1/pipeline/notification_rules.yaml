@@ -17,22 +17,65 @@ properties:
     items:
       $ref: ./notification-event.yaml
   uses:
-    type: string
     description: Notification channel type.
+    type: string
     enum:
       - email
       - webhook
-      - pagerduty
-      - msteams
+      - pager-duty
+      - ms-teams
       - slack
       - datadog
   with:
     description: Channel-specific configuration based on 'uses' type.
-    oneOf:
-      - $ref: ./pms-email-channel.yaml
-      - $ref: ./pms-slack-channel.yaml
-      - $ref: ./pms-msteam-channel.yaml
-      - $ref: ./pms-webhook-channel.yaml
-      - $ref: ./pms-pager-duty-channel.yaml
-      - $ref: ./pms-datadog-channel.yaml
+    type: object
+allOf:
+  - if:
+      properties:
+        uses:
+          const: email
+    then:
+      properties:
+        with:
+          $ref: ./pms-email-channel.yaml
+  - if:
+      properties:
+        uses:
+          const: slack
+    then:
+      properties:
+        with:
+          $ref: ./pms-slack-channel.yaml
+  - if:
+      properties:
+        uses:
+          const: ms-teams
+    then:
+      properties:
+        with:
+          $ref: ./pms-msteam-channel.yaml
+  - if:
+      properties:
+        uses:
+          const: webhook
+    then:
+      properties:
+        with:
+          $ref: ./pms-webhook-channel.yaml
+  - if:
+      properties:
+        uses:
+          const: pager-duty
+    then:
+      properties:
+        with:
+          $ref: ./pms-pager-duty-channel.yaml
+  - if:
+      properties:
+        uses:
+          const: datadog
+    then:
+      properties:
+        with:
+          $ref: ./pms-datadog-channel.yaml
 $schema: http://json-schema.org/draft-07/schema#
