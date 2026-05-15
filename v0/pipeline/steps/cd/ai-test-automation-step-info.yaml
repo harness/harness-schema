@@ -32,6 +32,30 @@ allOf:
     configOverride:
       type: string
       description: Configuration override as JSON string
+    variables:
+      type: array
+      description: "Per-execution variable overrides (variable_scope='build_run', highest precedence)"
+      items:
+        type: object
+        required:
+        - key
+        - valueType
+        properties:
+          id:
+            type: string
+            description: Variable identifier (carried back from the alias defaults)
+          key:
+            type: string
+            description: Variable key
+          value:
+            type: string
+            description: Variable value (literal string for string, secret reference for secret)
+          valueType:
+            type: string
+            enum:
+            - string
+            - secret
+            description: Variable value type
 
 $schema: http://json-schema.org/draft-07/schema#
 type: object
@@ -65,3 +89,27 @@ properties:
   configOverride:
     type: string
     description: Configuration override as JSON string
+  variables:
+    type: array
+    description: "Per-execution variable overrides (variable_scope='build_run', highest precedence)"
+    items:
+      type: object
+      required:
+      - key
+      - valueType
+      properties:
+        id:
+          type: string
+          description: Variable identifier (carried back from the alias defaults)
+        key:
+          type: string
+          description: Variable key
+        value:
+          type: string
+          description: Variable value (literal string for string, secret reference for secret)
+        valueType:
+          type: string
+          enum:
+          - string
+          - secret
+          description: Variable value type
