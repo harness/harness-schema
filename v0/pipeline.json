@@ -70476,6 +70476,22 @@
                                 },
                                 "required" : [ "destination", "weight" ]
                               }
+                            },
+                            "headerRoutingAdd" : {
+                              "type" : "array",
+                              "items" : {
+                                "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigHeaderRoutingAddSpec"
+                              },
+                              "minItems" : 1,
+                              "description" : "Optional. Add or update header-based routing rules."
+                            },
+                            "headerRoutingRemove" : {
+                              "type" : "array",
+                              "items" : {
+                                "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigHeaderRoutingRemoveSpec"
+                              },
+                              "minItems" : 1,
+                              "description" : "Optional. Remove header-based routing rules by key."
                             }
                           },
                           "required" : [ "type", "route", "destinations" ]
@@ -70614,6 +70630,22 @@
                               },
                               "required" : [ "destination", "weight" ]
                             }
+                          },
+                          "headerRoutingAdd" : {
+                            "type" : "array",
+                            "items" : {
+                              "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigHeaderRoutingAddSpec"
+                            },
+                            "minItems" : 1,
+                            "description" : "Optional. Add or update header-based routing rules."
+                          },
+                          "headerRoutingRemove" : {
+                            "type" : "array",
+                            "items" : {
+                              "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigHeaderRoutingRemoveSpec"
+                            },
+                            "minItems" : 1,
+                            "description" : "Optional. Remove header-based routing rules by key."
                           }
                         },
                         "required" : [ "type", "route", "destinations" ]
@@ -70625,6 +70657,68 @@
               },
               "description" : {
                 "desc" : "This is the description for GoogleMigTrafficShiftStepInfo"
+              }
+            }
+          },
+          "GoogleMigHeaderRoutingAddSpec" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "title" : "GoogleMigHeaderRoutingAddSpec",
+            "type" : "object",
+            "required" : [ "key", "value", "destination" ],
+            "properties" : {
+              "key" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ],
+                "description" : "HTTP header key to match. Supports fixed value or expression."
+              },
+              "value" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ],
+                "description" : "HTTP header value to match. Supports fixed value or expression."
+              },
+              "matchType" : {
+                "type" : "string",
+                "enum" : [ "exact", "regex" ],
+                "default" : "exact",
+                "description" : "How to match the header value. Default: exact. Both HTTPRoute and GRPCRoute support these types."
+              },
+              "destination" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ],
+                "description" : "Target backend: 'stable', 'stage', or full backend service path. Supports expression."
+              }
+            }
+          },
+          "GoogleMigHeaderRoutingRemoveSpec" : {
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "title" : "GoogleMigHeaderRoutingRemoveSpec",
+            "type" : "object",
+            "required" : [ "key" ],
+            "properties" : {
+              "key" : {
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ],
+                "description" : "HTTP header key of the rule to remove. Supports fixed value or expression."
               }
             }
           },
