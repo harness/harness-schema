@@ -7,10 +7,24 @@ properties:
   id:
     description: Environment group identifier.
     type: string
+  sequential:
+    description: Execute environments sequentially (one at a time). When false, environments run in parallel.
+    oneOf:
+      - type: boolean
+        default: false
+      - $ref: ../../common/expression.yaml
   items:
     description: List of environments from the group.
     type: array
     items:
       $ref: ./environment-item.yaml
+  filters:
+    description: Filters for selecting environments and infrastructures.
+    $ref: ./filters.yaml
+oneOf:
+  - required:
+      - items
+  - required:
+      - filters
 additionalProperties: false
 $schema: http://json-schema.org/draft-07/schema#

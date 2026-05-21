@@ -851,14 +851,7 @@
           "additionalProperties" : {
             "description" : "Matrix axes - key is axis name, value is array of values or expression.",
             "oneOf" : [ {
-              "type" : "array",
-              "items" : {
-                "oneOf" : [ {
-                  "type" : "string"
-                }, {
-                  "type" : "object"
-                } ]
-              }
+              "type" : "array"
             }, {
               "type" : "string"
             } ]
@@ -1024,9 +1017,10 @@
           "description" : "Action configuration for failure strategy. Can be a string shorthand or a detailed object.",
           "oneOf" : [ {
             "type" : "string",
-            "enum" : [ "abort", "ignore", "success", "stage-rollback", "pipeline-rollback", "fail" ]
+            "enum" : [ "abort", "ignore", "success", "stage-rollback", "pipeline-rollback", "fail", "proceed-with-default" ]
           }, {
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "retry" : {
                 "$ref" : "#/definitions/pipeline/common/RetryFailureSpecConfigV1"
@@ -1060,6 +1054,14 @@
               },
               "retry-step-group" : {
                 "$ref" : "#/definitions/pipeline/common/RetryStepGroupFailureSpecConfigV1"
+              },
+              "proceed-with-default" : {
+                "description" : "Proceed with default values.",
+                "type" : "object"
+              },
+              "fail-all" : {
+                "description" : "Fail all running stages/steps.",
+                "type" : "boolean"
               }
             }
           } ],
@@ -1270,10 +1272,9 @@
           "number" : {
             "description" : "Number provides the PR number for pull-request type clone.",
             "oneOf" : [ {
-              "type" : "integer",
-              "format" : "int32"
+              "type" : "integer"
             }, {
-              "$ref" : "#/definitions/pipeline/common/Expression"
+              "type" : "string"
             } ]
           }
         },
@@ -1647,7 +1648,6 @@
         "title" : "PmsSlackChannel",
         "description" : "Slack notification channel configuration.",
         "type" : "object",
-        "required" : [ "webhook" ],
         "properties" : {
           "user-groups" : {
             "description" : "List of user group references.",
@@ -1671,7 +1671,6 @@
         "title" : "PmsMSTeamChannel",
         "description" : "Microsoft Teams notification channel configuration.",
         "type" : "object",
-        "required" : [ "keys" ],
         "properties" : {
           "keys" : {
             "description" : "List of MS Teams webhook keys.",
@@ -1698,7 +1697,6 @@
         "title" : "PmsWebhookChannel",
         "description" : "Webhook notification channel configuration.",
         "type" : "object",
-        "required" : [ "url" ],
         "properties" : {
           "url" : {
             "description" : "Webhook URL.",
@@ -1718,7 +1716,6 @@
         "title" : "PmsPagerDutyChannel",
         "description" : "PagerDuty notification channel configuration.",
         "type" : "object",
-        "required" : [ "key" ],
         "properties" : {
           "user-groups" : {
             "description" : "List of user group references.",
@@ -1742,7 +1739,6 @@
         "title" : "PmsDatadogChannel",
         "description" : "Datadog notification channel configuration.",
         "type" : "object",
-        "required" : [ "api-key", "url" ],
         "properties" : {
           "api-key" : {
             "description" : "Datadog API key.",
@@ -2162,7 +2158,7 @@
                 "oneOf" : [ {
                   "type" : "integer"
                 }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
+                  "type" : "string"
                 } ]
               },
               "pull" : {
@@ -2585,7 +2581,7 @@
                 "oneOf" : [ {
                   "type" : "integer"
                 }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
+                  "type" : "string"
                 } ]
               },
               "capabilities" : {
@@ -2647,8 +2643,12 @@
                 },
                 "sequential" : {
                   "description" : "Execute services sequentially (one at a time). When false, services run in parallel.",
-                  "type" : "boolean",
-                  "default" : false
+                  "oneOf" : [ {
+                    "type" : "boolean",
+                    "default" : false
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/Expression"
+                  } ]
                 }
               },
               "additionalProperties" : false
@@ -2738,8 +2738,12 @@
                     },
                     "sequential" : {
                       "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "type" : "boolean",
-                      "default" : false
+                      "oneOf" : [ {
+                        "type" : "boolean",
+                        "default" : false
+                      }, {
+                        "$ref" : "#/definitions/pipeline/common/Expression"
+                      } ]
                     }
                   },
                   "additionalProperties" : false
@@ -2758,8 +2762,12 @@
                     },
                     "sequential" : {
                       "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "type" : "boolean",
-                      "default" : false
+                      "oneOf" : [ {
+                        "type" : "boolean",
+                        "default" : false
+                      }, {
+                        "$ref" : "#/definitions/pipeline/common/Expression"
+                      } ]
                     }
                   },
                   "additionalProperties" : false
@@ -2778,8 +2786,12 @@
                     },
                     "sequential" : {
                       "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "type" : "boolean",
-                      "default" : false
+                      "oneOf" : [ {
+                        "type" : "boolean",
+                        "default" : false
+                      }, {
+                        "$ref" : "#/definitions/pipeline/common/Expression"
+                      } ]
                     }
                   },
                   "additionalProperties" : false
@@ -2840,25 +2852,16 @@
               "ref" : {
                 "description" : "Git branch for the environment configuration.",
                 "type" : "string"
+              },
+              "deploy-to" : {
+                "description" : "Infrastructure(s) to deploy to.",
+                "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
+              },
+              "filters" : {
+                "description" : "Filters for selecting infrastructures.",
+                "$ref" : "#/definitions/pipeline/stages/unified/Filters"
               }
             },
-            "oneOf" : [ {
-              "required" : [ "deploy-to" ],
-              "properties" : {
-                "deploy-to" : {
-                  "description" : "Infrastructure(s) to deploy to.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
-                }
-              }
-            }, {
-              "required" : [ "filters" ],
-              "properties" : {
-                "filters" : {
-                  "description" : "Filters for selecting infrastructures.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/Filters"
-                }
-              }
-            } ],
             "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
@@ -2945,10 +2948,14 @@
                   "properties" : {
                     "in" : {
                       "description" : "Match any of the specified tags (OR).",
-                      "type" : "object",
-                      "additionalProperties" : {
+                      "anyOf" : [ {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "string"
+                        }
+                      }, {
                         "type" : "string"
-                      }
+                      } ]
                     }
                   },
                   "additionalProperties" : false
@@ -2957,10 +2964,14 @@
                   "properties" : {
                     "all" : {
                       "description" : "Match all of the specified tags (AND).",
-                      "type" : "object",
-                      "additionalProperties" : {
+                      "anyOf" : [ {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "string"
+                        }
+                      }, {
                         "type" : "string"
-                      }
+                      } ]
                     }
                   },
                   "additionalProperties" : false
@@ -2980,14 +2991,32 @@
                 "description" : "Environment group identifier.",
                 "type" : "string"
               },
+              "sequential" : {
+                "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                "oneOf" : [ {
+                  "type" : "boolean",
+                  "default" : false
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
               "items" : {
                 "description" : "List of environments from the group.",
                 "type" : "array",
                 "items" : {
                   "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
                 }
+              },
+              "filters" : {
+                "description" : "Filters for selecting environments and infrastructures.",
+                "$ref" : "#/definitions/pipeline/stages/unified/Filters"
               }
             },
+            "oneOf" : [ {
+              "required" : [ "items" ]
+            }, {
+              "required" : [ "filters" ]
+            } ],
             "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
@@ -3005,11 +3034,15 @@
                 } ]
               },
               "path" : {
-                "description" : "Paths to cache.",
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
+                "description" : "Paths to cache. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               },
               "key" : {
                 "description" : "Cache key.",
@@ -3649,7 +3682,7 @@
                 "oneOf" : [ {
                   "type" : "integer"
                 }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
+                  "type" : "string"
                 } ]
               },
               "group" : {
@@ -4061,7 +4094,7 @@
                 "oneOf" : [ {
                   "type" : "integer"
                 }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
+                  "type" : "string"
                 } ]
               },
               "block-executor" : {
@@ -4077,8 +4110,12 @@
                 "type" : "boolean"
               },
               "auto-reject" : {
-                "description" : "Enable automatic rejection on timeout.",
-                "type" : "boolean"
+                "description" : "Enable automatic rejection on timeout. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               },
               "auto-approve" : {
                 "description" : "Enable automatic approval.",
@@ -4111,7 +4148,8 @@
             "title" : "UnifiedJiraApprovalStepSpec",
             "description" : "Jira approval step specification.",
             "type" : "object",
-            "required" : [ "retry", "approve", "source" ],
+            "additionalProperties" : true,
+            "required" : [ "approve" ],
             "properties" : {
               "retry" : {
                 "description" : "Retry interval for polling Jira.",
@@ -4119,18 +4157,21 @@
               },
               "approve" : {
                 "description" : "Approval criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "reject" : {
                 "description" : "Rejection criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
-              },
-              "source" : {
-                "description" : "Shell script source configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "run" : {
                 "description" : "Run step configuration for script execution.",
@@ -4143,7 +4184,8 @@
             "title" : "UnifiedServiceNowApprovalStepSpec",
             "description" : "ServiceNow approval step specification.",
             "type" : "object",
-            "required" : [ "retry", "approve", "source" ],
+            "additionalProperties" : true,
+            "required" : [ "approve" ],
             "properties" : {
               "retry" : {
                 "description" : "Retry interval for polling ServiceNow.",
@@ -4151,18 +4193,21 @@
               },
               "approve" : {
                 "description" : "Approval criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "reject" : {
                 "description" : "Rejection criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
-              },
-              "source" : {
-                "description" : "Shell script source configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "run" : {
                 "description" : "Run step configuration for script execution.",
@@ -4189,7 +4234,8 @@
             "title" : "UnifiedCustomApprovalStepSpec",
             "description" : "Custom approval step specification.",
             "type" : "object",
-            "required" : [ "retry", "approve", "source" ],
+            "additionalProperties" : true,
+            "required" : [ "retry", "approve" ],
             "properties" : {
               "script-timeout" : {
                 "description" : "Timeout for script execution.",
@@ -4201,18 +4247,21 @@
               },
               "approve" : {
                 "description" : "Approval criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "reject" : {
                 "description" : "Rejection criteria configuration.",
-                "type" : "object",
-                "additionalProperties" : true
-              },
-              "source" : {
-                "description" : "Shell script source configuration.",
-                "type" : "object",
-                "additionalProperties" : true
+                "anyOf" : [ {
+                  "type" : "object",
+                  "additionalProperties" : true
+                }, {
+                  "type" : "string"
+                } ]
               },
               "run" : {
                 "description" : "Run step configuration for script execution.",
