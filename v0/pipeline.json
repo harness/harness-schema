@@ -22203,6 +22203,141 @@
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object"
           },
+          "IdpActionStepNode" : {
+            "title" : "IdpActionStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for IdpActionStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "IdpAction" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "IdpAction"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "IdpActionStepInfo" : {
+            "title" : "IdpActionStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "actionRef" ],
+              "properties" : {
+                "actionRef" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "actionVersion" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "inputs" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "actionRef" ],
+            "properties" : {
+              "actionRef" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "actionVersion" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "inputs" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              }
+            }
+          },
           "DockerInfraYaml" : {
             "title" : "DockerInfraYaml",
             "allOf" : [ {
@@ -77966,149 +78101,6 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "IdpActionStepNode" : {
-            "title" : "IdpActionStepNode",
-            "type" : "object",
-            "required" : [ "identifier", "name", "spec", "type" ],
-            "properties" : {
-              "description" : {
-                "type" : "string",
-                "desc" : "This is the description for IdpActionStepNode"
-              },
-              "enforce" : {
-                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
-              },
-              "failureStrategies" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
-                  }
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "identifier" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
-              },
-              "name" : {
-                "type" : "string",
-                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
-              },
-              "strategy" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              },
-              "timeout" : {
-                "type" : "string",
-                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
-              },
-              "type" : {
-                "type" : "string",
-                "enum" : [ "IdpAction" ]
-              },
-              "when" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
-                }, {
-                  "type" : "string",
-                  "pattern" : "^<\\+input>$",
-                  "minLength" : 1
-                } ]
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "allOf" : [ {
-              "if" : {
-                "properties" : {
-                  "type" : {
-                    "const" : "IdpAction"
-                  }
-                }
-              },
-              "then" : {
-                "properties" : {
-                  "spec" : {
-                    "$ref" : "#/definitions/pipeline/steps/idp/IdpActionStepInfo"
-                  }
-                }
-              }
-            } ]
-          },
-          "IdpActionStepInfo" : {
-            "title" : "IdpActionStepInfo",
-            "allOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/StepSpecType"
-            }, {
-              "type" : "object",
-              "required" : [ "actionRef" ],
-              "properties" : {
-                "actionRef" : {
-                  "oneOf" : [ {
-                    "type" : "string"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "actionVersion" : {
-                  "oneOf" : [ {
-                    "type" : "string"
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "inputs" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                  }, {
-                    "type" : "string"
-                  } ]
-                }
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#",
-            "type" : "object",
-            "required" : [ "actionRef" ],
-            "properties" : {
-              "actionRef" : {
-                "oneOf" : [ {
-                  "type" : "string"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "actionVersion" : {
-                "oneOf" : [ {
-                  "type" : "string"
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "inputs" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
-                }, {
-                  "type" : "string"
-                } ]
-              }
-            }
           }
         },
         "drtest" : {
@@ -80470,6 +80462,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "description" : {
@@ -81746,6 +81740,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefinitionInstructionsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeMetricCheckStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -88962,6 +88958,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SastScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ScaScanNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "description" : {
@@ -89524,6 +89522,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/ScaScanNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AgentStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -90019,6 +90019,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -90880,6 +90882,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceDownloadOrgStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceEvaluateDiffStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -91476,6 +91480,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagDefinitionInstructionsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeMetricCheckStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
@@ -91918,7 +91924,7 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/idp/IDPUpdateCatalogPropertyStepNode"
                 }, {
-                  "$ref" : "#/definitions/pipeline/steps/idp/IdpActionStepNode"
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "description" : {
@@ -92189,6 +92195,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowUpdateStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/ServiceNowImportSetStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
                 } ]
               },
               "stepGroup" : {
