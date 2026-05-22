@@ -656,6 +656,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ArtifactSigningStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ArtifactVerificationStepNode_template"
@@ -52856,6 +52858,101 @@
               }
             }
           },
+          "RONotifyStepNode_template" : {
+            "title" : "RONotifyStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "RONotify" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "RONotify"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "RONotifyStepInfo" : {
+            "title" : "RONotifyStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "object",
+                  "properties" : {
+                    "values" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "key" : {
+                            "type" : "string"
+                          },
+                          "value" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "SscaComplianceSource" : {
             "title" : "SscaComplianceSource",
             "type" : "object",
@@ -54471,6 +54568,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "RONotifyStepNode" : {
+            "title" : "RONotifyStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for RONotifyStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "RONotify" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "RONotify"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepInfo"
                   }
                 }
               }
@@ -102689,6 +102863,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/HelmDeleteStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/EcsBlueGreenTrafficShiftStepNode"
@@ -110137,6 +110313,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/HelmDeleteStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/S3UploadNode"
@@ -111009,6 +111187,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AIExperimentStepNode"
                 } ]
               },
@@ -111776,6 +111956,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/HsaRepoScanStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SastScanNode"
                 }, {
@@ -112545,6 +112727,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/GoogleCloudRunJobStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/FmeFlagCreateStepNode"
                 }, {
@@ -113750,6 +113934,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/FilesUploadStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
                 } ]
               },
               "description" : {
@@ -114602,6 +114788,8 @@
                   "$ref" : "#/definitions/pipeline/steps/custom/WaitStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/EventListenerStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/custom/RONotifyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/custom/HarnessApprovalStepNode"
                 }, {
