@@ -32,11 +32,5 @@ public class SchemaBundlerRegistrar {
             YamlEntityType.INPUT_SET_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.INPUT_SET_V1).build());
     registeredSchemaBundlers.put(
             YamlEntityType.OVERLAY_INPUT_SET_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.OVERLAY_INPUT_SET_V1).build());
-    registeredSchemaBundlers.put(
-            YamlEntityType.TRIGGER_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.TRIGGER_V1).build());
-    registeredSchemaBundlers.put(
-            YamlEntityType.SERVICE_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.SERVICE_V1).build());
-    registeredSchemaBundlers.put(
-            YamlEntityType.INFRA_V1, SchemaBundleUtils.builder().yamlEntityType(YamlEntityType.INFRA_V1).build());
   }
 }
