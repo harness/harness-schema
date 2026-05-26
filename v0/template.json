@@ -356,6 +356,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/common/SscaAibomOrchestrationStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AnchoreScanNode_template"
@@ -45104,6 +45106,70 @@
               }
             }
           },
+          "SscaAibomSource" : {
+            "title" : "SscaAibomSource",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "repository" ]
+              },
+              "description" : {
+                "desc" : "This is the description for SscaAibomSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "repository"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/custom/SscaAibomRepositorySource"
+                  }
+                }
+              }
+            } ]
+          },
+          "SscaAibomRepositorySource" : {
+            "title" : "SscaAibomRepositorySource",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/custom/SbomSourceSpec"
+            }, {
+              "type" : "object",
+              "required" : [ "url", "variant_type", "variant" ],
+              "properties" : {
+                "url" : {
+                  "type" : "string"
+                },
+                "path" : {
+                  "type" : "string"
+                },
+                "variant_type" : {
+                  "type" : "string",
+                  "enum" : [ "branch", "git_tag", "commit" ]
+                },
+                "variant" : {
+                  "type" : "string"
+                },
+                "cloned_codebase" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for SscaAibomRepositorySource"
+              }
+            }
+          },
           "OutputAlias" : {
             "title" : "OutputAlias",
             "type" : "object",
@@ -58176,6 +58242,148 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "SscaAibomOrchestrationStepNode_template" : {
+            "title" : "SscaAibomOrchestrationStepNode_template",
+            "type" : "object",
+            "required" : [ "spec" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaAibomOrchestration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaAibomOrchestration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaAibomOrchestrationStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "SscaAibomOrchestrationStepInfo" : {
+            "title" : "SscaAibomOrchestrationStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "source" ],
+              "properties" : {
+                "format" : {
+                  "type" : "string",
+                  "enum" : [ "CycloneDX", "SPDX" ]
+                },
+                "additionalCliFlags" : {
+                  "type" : "string"
+                },
+                "source" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/SscaAibomSource"
+                },
+                "overrideConnectorRef" : {
+                  "type" : "string"
+                },
+                "imageTag" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "source" ],
+            "properties" : {
+              "format" : {
+                "type" : "string",
+                "enum" : [ "CycloneDX", "SPDX" ]
+              },
+              "additionalCliFlags" : {
+                "type" : "string"
+              },
+              "source" : {
+                "$ref" : "#/definitions/pipeline/steps/custom/SscaAibomSource"
+              },
+              "overrideConnectorRef" : {
+                "type" : "string"
+              },
+              "imageTag" : {
+                "type" : "string"
+              },
+              "imagePullPolicy" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Always", "Never", "IfNotPresent" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "resources" : {
+                "$ref" : "#/definitions/pipeline/common/ContainerResource"
+              },
+              "description" : {
+                "desc" : "This is the description for SscaAibomOrchestrationStepInfo"
+              }
+            }
           },
           "ActionStepNode_template" : {
             "title" : "ActionStepNode_template",
@@ -82490,6 +82698,83 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "SscaAibomOrchestrationStepNode" : {
+            "title" : "SscaAibomOrchestrationStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for SscaAibomOrchestrationStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "SscaAibomOrchestration" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "SscaAibomOrchestration"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/SscaAibomOrchestrationStepInfo"
+                  }
+                }
+              }
+            } ]
           },
           "ActionStepNode" : {
             "title" : "ActionStepNode",
@@ -112439,6 +112724,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaAibomOrchestrationStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/ActionStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AnchoreScanNode"
@@ -114012,6 +114299,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/SscaEnforcementStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaOrchestrationStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/SscaAibomOrchestrationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/SscaComplianceStepNode"
                 }, {
