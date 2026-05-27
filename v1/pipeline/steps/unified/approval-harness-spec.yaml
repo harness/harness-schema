@@ -52,11 +52,38 @@ properties:
   comments:
     description: Comments for auto-approval. Supports expressions.
     type: string
-  params:
-    description: Approver input parameters.
-    type: array
-    items:
+  inputs:
+    description: Approver input parameters keyed by input variable name.
+    type: object
+    additionalProperties:
       type: object
-      additionalProperties: true
+      additionalProperties: false
+      properties:
+        description:
+          description: Description of the approver input.
+          type: string
+        pattern:
+          description: Regex pattern the approver input value must match. Mutually exclusive with `enum`. Supports expressions.
+          type: string
+        multi-select:
+          description: Allow selecting multiple values from `enum`. Only applicable when `enum` is provided.
+          type: boolean
+        enum:
+          description: Allowed values for the approver input. Mutually exclusive with `pattern`. Supports expressions.
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - $ref: ../../common/expression.yaml
+        required:
+          description: Whether the approver input is required.
+          type: boolean
+        default:
+          description: Default value for the approver input. Supports expressions.
+          type: string
+      not:
+        required:
+          - pattern
+          - enum
 $schema: http://json-schema.org/draft-07/schema#
 
