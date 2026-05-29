@@ -2685,122 +2685,85 @@
           "EnvironmentV1" : {
             "title" : "EnvironmentV1",
             "description" : "Environment configuration for CD stages.",
-            "type" : "object",
-            "if" : {
-              "anyOf" : [ {
-                "required" : [ "id" ]
-              }, {
-                "required" : [ "items" ]
-              }, {
-                "required" : [ "group" ]
-              }, {
-                "required" : [ "filters" ]
-              } ]
-            },
-            "then" : {
-              "allOf" : [ {
-                "if" : {
-                  "required" : [ "id" ]
+            "oneOf" : [ {
+              "type" : "object",
+              "required" : [ "id" ],
+              "properties" : {
+                "id" : {
+                  "description" : "Environment identifier.",
+                  "type" : "string"
                 },
-                "then" : {
-                  "type" : "object",
-                  "required" : [ "id" ],
-                  "properties" : {
-                    "id" : {
-                      "description" : "Environment identifier.",
-                      "type" : "string"
-                    },
-                    "deploy-to" : {
-                      "description" : "Infrastructure(s) to deploy to.",
-                      "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
-                    },
-                    "ref" : {
-                      "description" : "Git branch for the environment configuration.",
-                      "type" : "string"
-                    }
-                  },
-                  "additionalProperties" : false
-                }
-              }, {
-                "if" : {
-                  "required" : [ "items" ]
+                "deploy-to" : {
+                  "description" : "Infrastructure(s) to deploy to.",
+                  "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
                 },
-                "then" : {
-                  "type" : "object",
-                  "required" : [ "items" ],
-                  "properties" : {
-                    "items" : {
-                      "description" : "List of environments for multi-environment deployment.",
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
-                      }
-                    },
-                    "sequential" : {
-                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "oneOf" : [ {
-                        "type" : "boolean",
-                        "default" : false
-                      }, {
-                        "$ref" : "#/definitions/pipeline/common/Expression"
-                      } ]
-                    }
-                  },
-                  "additionalProperties" : false
+                "ref" : {
+                  "description" : "Git branch for the environment configuration.",
+                  "type" : "string"
                 }
-              }, {
-                "if" : {
-                  "required" : [ "group" ]
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "required" : [ "items" ],
+              "properties" : {
+                "items" : {
+                  "description" : "List of environments for multi-environment deployment.",
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
+                  }
                 },
-                "then" : {
-                  "type" : "object",
-                  "required" : [ "group" ],
-                  "properties" : {
-                    "group" : {
-                      "description" : "Environment group configuration.",
-                      "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentGroup"
-                    },
-                    "sequential" : {
-                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "oneOf" : [ {
-                        "type" : "boolean",
-                        "default" : false
-                      }, {
-                        "$ref" : "#/definitions/pipeline/common/Expression"
-                      } ]
-                    }
-                  },
-                  "additionalProperties" : false
+                "sequential" : {
+                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                  "oneOf" : [ {
+                    "type" : "boolean",
+                    "default" : false
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/Expression"
+                  } ]
                 }
-              }, {
-                "if" : {
-                  "required" : [ "filters" ]
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "required" : [ "group" ],
+              "properties" : {
+                "group" : {
+                  "description" : "Environment group configuration.",
+                  "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentGroup"
                 },
-                "then" : {
-                  "type" : "object",
-                  "required" : [ "filters" ],
-                  "properties" : {
-                    "filters" : {
-                      "description" : "Filters for selecting environments and infrastructures.",
-                      "$ref" : "#/definitions/pipeline/stages/unified/Filters"
-                    },
-                    "sequential" : {
-                      "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
-                      "oneOf" : [ {
-                        "type" : "boolean",
-                        "default" : false
-                      }, {
-                        "$ref" : "#/definitions/pipeline/common/Expression"
-                      } ]
-                    }
-                  },
-                  "additionalProperties" : false
+                "sequential" : {
+                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                  "oneOf" : [ {
+                    "type" : "boolean",
+                    "default" : false
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/Expression"
+                  } ]
                 }
-              } ]
-            },
-            "else" : {
-              "required" : [ "id" ]
-            },
+              },
+              "additionalProperties" : false
+            }, {
+              "type" : "object",
+              "required" : [ "filters" ],
+              "properties" : {
+                "filters" : {
+                  "description" : "Filters for selecting environments and infrastructures.",
+                  "$ref" : "#/definitions/pipeline/stages/unified/Filters"
+                },
+                "sequential" : {
+                  "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
+                  "oneOf" : [ {
+                    "type" : "boolean",
+                    "default" : false
+                  }, {
+                    "$ref" : "#/definitions/pipeline/common/Expression"
+                  } ]
+                }
+              },
+              "additionalProperties" : false
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "DeployTo" : {
