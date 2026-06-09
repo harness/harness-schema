@@ -19429,6 +19429,9 @@
                   "type" : "string"
                 } ]
               },
+              "resourcesFilter" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/ResourcesFilter"
+              },
               "retryStrategy" : {
                 "$ref" : "#/definitions/pipeline/steps/cd/SyncRetryStrategy"
               },
@@ -19515,8 +19518,88 @@
               "applicationName" : {
                 "type" : "string"
               },
+              "resourcesSelector" : {
+                "$ref" : "#/definitions/pipeline/steps/cd/ResourcesSelector"
+              },
               "description" : {
                 "desc" : "This is the description for AgentApplicationTargets"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ResourcesSelector" : {
+            "title" : "ResourcesSelector",
+            "type" : "object",
+            "properties" : {
+              "group" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                } ]
+              },
+              "kind" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                } ]
+              },
+              "name" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                } ]
+              },
+              "namespace" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl-expression-only"
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "ResourcesFilter" : {
+            "title" : "ResourcesFilter",
+            "type" : "object",
+            "properties" : {
+              "group" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "kind" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "name" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "namespace" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "label" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -57923,6 +58006,18 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "common-jexl-expression-only" : {
+            "title" : "common-jexl-expression-only",
+            "description" : "JEXL expression that excludes runtime input.\n\nThis schema allows JEXL expressions like <+pipeline.variables.x>, <+stage.variables.y>, etc.\nbut explicitly excludes runtime input patterns:\n- <+input>\n- <+input>.allowedValues(...)\n- <+input>.default(...)\n- <+input>.executionInput()\n- <+input>.regex(...)\n- <+input>.selectOneFrom(...)\n- <+input>.selectManyFrom(...)\n\nUse this when a field should support expressions but NOT runtime input.\n",
+            "type" : "string",
+            "allOf" : [ {
+              "pattern" : "^<\\+.+>.*$"
+            }, {
+              "not" : {
+                "pattern" : "^<\\+input>.*$"
+              }
+            } ]
+          },
           "UnitTestReport" : {
             "title" : "UnitTestReport",
             "type" : "object",
@@ -74313,18 +74408,6 @@
             "type" : "string",
             "description" : "FME Treatment Name",
             "pattern" : "^[a-zA-Z0-9][-_\\.a-zA-Z0-9]*$"
-          },
-          "common-jexl-expression-only" : {
-            "title" : "common-jexl-expression-only",
-            "description" : "JEXL expression that excludes runtime input.\n\nThis schema allows JEXL expressions like <+pipeline.variables.x>, <+stage.variables.y>, etc.\nbut explicitly excludes runtime input patterns:\n- <+input>\n- <+input>.allowedValues(...)\n- <+input>.default(...)\n- <+input>.executionInput()\n- <+input>.regex(...)\n- <+input>.selectOneFrom(...)\n- <+input>.selectManyFrom(...)\n\nUse this when a field should support expressions but NOT runtime input.\n",
-            "type" : "string",
-            "allOf" : [ {
-              "pattern" : "^<\\+.+>.*$"
-            }, {
-              "not" : {
-                "pattern" : "^<\\+input>.*$"
-              }
-            } ]
           },
           "fme-segment-common-segment-name" : {
             "title" : "fme-segment-common-segment-name",
