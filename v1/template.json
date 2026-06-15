@@ -1041,13 +1041,6 @@
           "type" : "string",
           "enum" : [ "always", "never", "if-not-exists" ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
-        },
-        "OSType" : {
-          "title" : "OSType",
-          "description" : "Operating system type enumeration (maps to io.harness.beans.yaml.extended.infrastrucutre.OSType).",
-          "type" : "string",
-          "enum" : [ "Linux", "MacOS", "Windows" ],
-          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
       "pipeline" : {
@@ -2187,14 +2180,6 @@
                 "description" : "Image pull policy. Supports expressions.",
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/common/PullPolicy"
-                }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
-                } ]
-              },
-              "os" : {
-                "description" : "Operating system type. Supports expressions.",
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/OSType"
                 }, {
                   "$ref" : "#/definitions/pipeline/common/Expression"
                 } ]
@@ -3535,6 +3520,10 @@
                 "description" : "Image registry connector. Supports expressions.",
                 "type" : "string"
               },
+              "registryRef" : {
+                "description" : "Harness Artifact Registry reference for the image. Supports expressions.",
+                "type" : "string"
+              },
               "credentials" : {
                 "description" : "Container registry credentials.",
                 "type" : "object",
@@ -3675,12 +3664,16 @@
                 "type" : "string"
               },
               "cpu" : {
-                "description" : "CPU limit.",
+                "description" : "CPU limit. Ignored when resources.limits.cpu is set.",
                 "type" : "string"
               },
               "memory" : {
-                "description" : "Memory limit.",
+                "description" : "Memory limit. Ignored when resources.limits.memory is set.",
                 "type" : "string"
+              },
+              "resources" : {
+                "description" : "Container resource limits and requests. Takes precedence over the flat cpu/memory fields.",
+                "$ref" : "#/definitions/pipeline/Resource"
               },
               "shm-size" : {
                 "description" : "Shared memory size.",
