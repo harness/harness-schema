@@ -23018,6 +23018,38 @@
               }
             } ]
           },
+          "ChaosExperimentValue" : {
+            "title" : "ChaosExperimentValue",
+            "type" : "object",
+            "required" : [ "name", "value" ],
+            "properties" : {
+              "name" : {
+                "type" : "string",
+                "minLength" : 1
+              },
+              "value" : {
+                "anyOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "number"
+                }, {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)"
+                } ]
+              },
+              "referenceKind" : {
+                "type" : "string",
+                "enum" : [ "Connector", "Secret" ]
+              },
+              "referenceType" : {
+                "type" : "string",
+                "enum" : [ "Prometheus", "AppDynamics", "SignalFX", "Dynatrace", "NewRelic", "Datadog", "Splunk", "SecretFile", "SecretText" ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "BackgroundStepNode" : {
             "title" : "BackgroundStepNode",
             "type" : "object",
@@ -76257,6 +76289,22 @@
                   "minLength" : 1
                 } ]
               },
+              "infraType" : {
+                "type" : "string",
+                "enum" : [ "Kubernetes", "KubernetesV2", "Linux", "Windows" ]
+              },
+              "experimentValues" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/ChaosExperimentValue"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "tasks" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -76271,26 +76319,7 @@
                       "values" : {
                         "type" : "array",
                         "items" : {
-                          "type" : "object",
-                          "required" : [ "name", "value" ],
-                          "properties" : {
-                            "name" : {
-                              "type" : "string",
-                              "minLength" : 1
-                            },
-                            "value" : {
-                              "anyOf" : [ {
-                                "type" : "string"
-                              }, {
-                                "type" : "number"
-                              }, {
-                                "type" : "boolean"
-                              }, {
-                                "type" : "string",
-                                "pattern" : "(<\\+.+>.*)"
-                              } ]
-                            }
-                          }
+                          "$ref" : "#/definitions/pipeline/steps/common/ChaosExperimentValue"
                         }
                       }
                     }
