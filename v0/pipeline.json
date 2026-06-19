@@ -55014,8 +55014,28 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "instanceSelection" ],
               "properties" : {
+                "canaryType" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Standard", "Progressive" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "targetPercentage" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "minimum" : 1,
+                    "maximum" : 100
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
                 "commandFlags" : {
                   "oneOf" : [ {
                     "type" : "array",
@@ -55054,11 +55074,46 @@
                   } ]
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "canaryType" : {
+                    "const" : "Progressive"
+                  }
+                },
+                "required" : [ "canaryType" ]
+              },
+              "then" : {
+                "required" : [ "targetPercentage" ]
+              },
+              "else" : {
+                "required" : [ "instanceSelection" ]
+              }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "instanceSelection" ],
             "properties" : {
+              "canaryType" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Standard", "Progressive" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "targetPercentage" : {
+                "oneOf" : [ {
+                  "type" : "integer",
+                  "minimum" : 1,
+                  "maximum" : 100
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
               "commandFlags" : {
                 "oneOf" : [ {
                   "type" : "array",
@@ -55099,6 +55154,20 @@
               "description" : {
                 "desc" : "This is the description for K8sCanaryStepInfo"
               }
+            },
+            "if" : {
+              "properties" : {
+                "canaryType" : {
+                  "const" : "Progressive"
+                }
+              },
+              "required" : [ "canaryType" ]
+            },
+            "then" : {
+              "required" : [ "targetPercentage" ]
+            },
+            "else" : {
+              "required" : [ "instanceSelection" ]
             }
           },
           "EcsCanaryDeleteStepNode" : {
