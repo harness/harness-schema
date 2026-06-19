@@ -46212,7 +46212,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "Generic", "ECR" ]
+                "enum" : [ "Generic", "ECR", "GAR" ]
               },
               "description" : {
                 "desc" : "This is the description for OciHelmChartStoreConfigWrapper"
@@ -46246,6 +46246,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/OciHelmChartStoreGenericConfig"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GAR"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/OciHelmChartStoreGarConfig"
                   }
                 }
               }
@@ -46351,6 +46366,36 @@
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "OciHelmChartStoreGarConfig" : {
+            "title" : "OciHelmChartStoreGarConfig",
+            "allOf" : [ { }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "region", "project", "repositoryName" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "region" : {
+                  "type" : "string"
+                },
+                "project" : {
+                  "type" : "string"
+                },
+                "repositoryName" : {
+                  "type" : "string"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for OciHelmChartStoreGarConfig"
+              }
+            }
           },
           "S3StoreConfig" : {
             "title" : "S3StoreConfig",
