@@ -24790,24 +24790,14 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "healthSourceRefs", "dataCollectionWindow", "dataCollectionInfrastructure" ],
+              "required" : [ "healthSources", "dataCollectionWindow" ],
               "properties" : {
-                "healthSourceRefs" : {
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string",
-                      "minLength" : 1
-                    },
-                    "minItems" : 1
-                  }, {
-                    "type" : "string",
-                    "pattern" : "(<\\+.+>.*)",
-                    "minLength" : 1
-                  } ]
-                },
-                "dataCollectionInfrastructure" : {
-                  "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructure"
+                "healthSources" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGHealthSource"
+                  },
+                  "minItems" : 1
                 },
                 "dataCollectionWindow" : {
                   "description" : "Data collection window as a duration string '<n>m' (minutes) or '<n>h' (hours), e.g. '30m', '1h', '2h'; may also be a runtime expression.",
@@ -24892,24 +24882,14 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "healthSourceRefs", "dataCollectionWindow", "dataCollectionInfrastructure" ],
+            "required" : [ "healthSources", "dataCollectionWindow" ],
             "properties" : {
-              "healthSourceRefs" : {
-                "oneOf" : [ {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "minLength" : 1
-                  },
-                  "minItems" : 1
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "dataCollectionInfrastructure" : {
-                "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructure"
+              "healthSources" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGHealthSource"
+                },
+                "minItems" : 1
               },
               "dataCollectionWindow" : {
                 "description" : "Data collection window as a duration string '<n>m' (minutes) or '<n>h' (hours), e.g. '30m', '1h', '2h'; may also be a runtime expression.",
@@ -24995,43 +24975,16 @@
               }
             }
           },
-          "DataCollectionInfrastructure" : {
-            "title" : "DataCollectionInfrastructure",
+          "AIVerifyNGHealthSource" : {
+            "title" : "AIVerifyNGHealthSource",
+            "description" : "A health source reference for the AI Verify NG step. Multiple entries are expanded into a per-source matrix at plan creation time.",
             "type" : "object",
-            "required" : [ "type", "spec" ],
+            "required" : [ "healthSourceRef" ],
             "properties" : {
-              "type" : {
+              "healthSourceRef" : {
+                "description" : "Identifier of the health source to verify. May be a literal id or a per-element runtime expression.",
                 "type" : "string",
-                "enum" : [ "KubernetesDirect" ]
-              },
-              "spec" : {
-                "type" : "object",
-                "required" : [ "connectorRef", "namespace" ],
-                "properties" : {
-                  "connectorRef" : {
-                    "type" : "string"
-                  },
-                  "namespace" : {
-                    "type" : "string"
-                  },
-                  "resources" : {
-                    "$ref" : "#/definitions/pipeline/steps/cd/DataCollectionInfrastructureResources"
-                  }
-                }
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "DataCollectionInfrastructureResources" : {
-            "title" : "DataCollectionInfrastructureResources",
-            "description" : "Optional resource requests/limits for AI Verify data collection infrastructure. Omit the block entirely, or include only the fields you need; CPU and memory are optional under requests and limits.",
-            "type" : "object",
-            "properties" : {
-              "limits" : {
-                "$ref" : "#/definitions/pipeline/common/Limits"
-              },
-              "requests" : {
-                "$ref" : "#/definitions/pipeline/common/Limits"
+                "minLength" : 1
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
