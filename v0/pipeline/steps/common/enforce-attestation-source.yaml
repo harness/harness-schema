@@ -1,0 +1,79 @@
+# Copyright 2026 Harness Inc. All rights reserved.
+# Use of this source code is governed by the PolyForm Free Trial 1.0.0 license that can be found in the licenses directory at the root of this repository, also available at
+# https://polyformproject.org/wp-content/uploads/2020/05/PolyForm-Free-Trial-1.0.0.txt.
+
+title: EnforceAttestationSource
+type: object
+required:
+- type
+properties:
+  type:
+    type: string
+    enum:
+    - image
+    - docker
+    - ecr
+    - gcr
+    - acr
+    - gar
+    - har
+  description:
+    desc: This is the description for EnforceAttestationSource
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+- if:
+    properties:
+      type:
+        const: image
+  then:
+    properties:
+      spec:
+        $ref: ../custom/image-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: docker
+  then:
+    properties:
+      spec:
+        $ref: ../custom/image-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: ecr
+  then:
+    properties:
+      spec:
+        $ref: ../custom/ecr-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: gcr
+  then:
+    properties:
+      spec:
+        $ref: ../custom/gcr-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: acr
+  then:
+    properties:
+      spec:
+        $ref: ../custom/acr-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: gar
+  then:
+    properties:
+      spec:
+        $ref: ../custom/gar-sbom-source.yaml
+- if:
+    properties:
+      type:
+        const: har
+  then:
+    properties:
+      spec:
+        $ref: ../custom/har-sbom-source.yaml

@@ -1,0 +1,42 @@
+# Copyright 2026 Harness Inc. All rights reserved.
+# Use of this source code is governed by the PolyForm Free Trial 1.0.0 license that can be found in the licenses directory at the root of this repository, also available at
+# https://polyformproject.org/wp-content/uploads/2020/05/PolyForm-Free-Trial-1.0.0.txt.
+
+title: EnforceAttestationStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  properties:
+    description:
+      desc: This is the description for EnforceAttestationStepInfo
+    policy:
+      oneOf:
+        - $ref: ../custom/enforcement-policy.yaml
+        - $ref: ../../common/policy-config.yaml
+    source:
+      $ref: enforce-attestation-source.yaml
+    verifyAttestationSignatures:
+      type: boolean
+    attestedEventScope:
+      $ref: attested-event-scope.yaml
+    resources:
+      $ref: ../../common/container-resource.yaml
+    overrideConnectorRef:
+      type: string
+    imageTag:
+      type: string
+    imagePullPolicy:
+      oneOf:
+      - type: string
+        enum:
+        - Always
+        - Never
+        - IfNotPresent
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- policy
+- source
