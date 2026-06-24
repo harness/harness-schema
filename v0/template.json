@@ -57681,6 +57681,39 @@
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
+                },
+                "inputs" : {
+                  "description" : "Values for the load test's runtime inputs (entries the selected load test marks as <+input>). Each entry is a name/value pair; value may be fixed or a pipeline expression/runtime input.",
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "name" ],
+                      "properties" : {
+                        "name" : {
+                          "type" : "string",
+                          "minLength" : 1
+                        },
+                        "value" : {
+                          "oneOf" : [ {
+                            "type" : "integer"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                          }, {
+                            "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                          } ]
+                        },
+                        "type" : {
+                          "type" : "string"
+                        },
+                        "required" : {
+                          "type" : "boolean"
+                        }
+                      }
+                    }
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
                 }
               }
             } ],
@@ -83887,6 +83920,36 @@
               }
             } ]
           },
+          "Platform" : {
+            "title" : "Platform",
+            "type" : "object",
+            "properties" : {
+              "arch" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Amd64", "Arm64" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "os" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Linux", "MacOS", "Windows" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for Platform"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "Infrastructure" : {
             "title" : "Infrastructure",
             "type" : "object",
@@ -89328,36 +89391,6 @@
               },
               "description" : {
                 "desc" : "This is the description for ParameterFieldPlatform"
-              }
-            },
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "Platform" : {
-            "title" : "Platform",
-            "type" : "object",
-            "properties" : {
-              "arch" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Amd64", "Arm64" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "os" : {
-                "oneOf" : [ {
-                  "type" : "string",
-                  "enum" : [ "Linux", "MacOS", "Windows" ]
-                }, {
-                  "type" : "string",
-                  "pattern" : "(<\\+.+>.*)",
-                  "minLength" : 1
-                } ]
-              },
-              "description" : {
-                "desc" : "This is the description for Platform"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
