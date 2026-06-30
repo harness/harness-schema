@@ -1,0 +1,65 @@
+title: ExecutionElementConfig
+type: object
+required:
+- steps
+properties:
+  steps:
+    type: array
+    items:
+      $ref: execution-wrapper-config.yaml
+    allOf:
+      - contains:
+          anyOf:
+            - properties:
+                step:
+                  properties:
+                    type:
+                      const: LoadTest
+                  required:
+                    - type
+              required:
+                - step
+            - properties:
+                parallel:
+                  contains:
+                    properties:
+                      step:
+                        properties:
+                          type:
+                            const: LoadTest
+                        required:
+                          - type
+                    required:
+                      - step
+              required:
+                - parallel
+      - contains:
+          anyOf:
+            - properties:
+                step:
+                  properties:
+                    type:
+                      const: ChaosProbe
+                  required:
+                    - type
+              required:
+                - step
+            - properties:
+                parallel:
+                  contains:
+                    properties:
+                      step:
+                        properties:
+                          type:
+                            const: ChaosProbe
+                        required:
+                          - type
+                    required:
+                      - step
+              required:
+                - parallel
+  rollbackSteps:
+    type: array
+    items:
+      $ref: execution-wrapper-config.yaml
+$schema: http://json-schema.org/draft-07/schema#
