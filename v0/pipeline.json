@@ -82873,7 +82873,7 @@
               },
               "deploymentType" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup", "AiAgent" ]
               },
               "environment" : {
                 "$ref" : "#/definitions/pipeline/stages/cd/EnvironmentYamlV2"
@@ -86464,7 +86464,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup" ]
+                "enum" : [ "Kubernetes", "NativeHelm", "Ssh", "WinRm", "ServerlessAwsLambda", "AzureWebApp", "AzureFunction", "CustomDeployment", "ECS", "Elastigroup", "TAS", "Asg", "GoogleCloudFunctions", "AwsLambda", "AWS_SAM", "GoogleCloudRun", "AzureContainerApps", "Salesforce", "GoogleManagedInstanceGroup", "AiAgent" ]
               },
               "description" : {
                 "desc" : "This is the description for ServiceDefinition"
@@ -86753,6 +86753,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/stages/cd/GoogleMigServiceSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AiAgent"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AiAgentServiceSpec"
                   }
                 }
               }
@@ -90399,6 +90414,185 @@
               }
             }
           },
+          "AiAgentServiceSpec" : {
+            "title" : "AiAgentServiceSpec",
+            "type" : "object",
+            "required" : [ "platform" ],
+            "properties" : {
+              "configVariables" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/common/NGVariable"
+                }
+              },
+              "platform" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/AiAgentPlatform"
+              },
+              "variables" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/common/NGVariable"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for AiAgentServiceSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AiAgentPlatform" : {
+            "title" : "AiAgentPlatform",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "AwsAgentCore", "GoogleAgentRuntime" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AiAgentPlatform"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AwsAgentCore"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/AwsAgentCorePlatformSpec"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GoogleAgentRuntime"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/GoogleAgentRuntimePlatformSpec"
+                  }
+                }
+              }
+            } ]
+          },
+          "AwsAgentCorePlatformSpec" : {
+            "title" : "AwsAgentCorePlatformSpec",
+            "type" : "object",
+            "required" : [ "source", "executionRoleArn" ],
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/AwsCoreAgentSource"
+              },
+              "executionRoleArn" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for AwsAgentCorePlatformSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "AwsCoreAgentSource" : {
+            "title" : "AwsCoreAgentSource",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "container" ]
+              },
+              "description" : {
+                "desc" : "This is the description for AwsCoreAgentSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "container"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/ContainerAgentSource"
+                  }
+                }
+              }
+            } ]
+          },
+          "ContainerAgentSource" : {
+            "title" : "ContainerAgentSource",
+            "type" : "object",
+            "required" : [ "image" ],
+            "properties" : {
+              "image" : {
+                "type" : "string"
+              },
+              "description" : {
+                "desc" : "This is the description for ContainerAgentSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "GoogleAgentRuntimePlatformSpec" : {
+            "title" : "GoogleAgentRuntimePlatformSpec",
+            "type" : "object",
+            "required" : [ "source" ],
+            "properties" : {
+              "source" : {
+                "$ref" : "#/definitions/pipeline/stages/cd/GoogleAgentSource"
+              },
+              "description" : {
+                "desc" : "This is the description for GoogleAgentRuntimePlatformSpec"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "GoogleAgentSource" : {
+            "title" : "GoogleAgentSource",
+            "type" : "object",
+            "required" : [ "type", "spec" ],
+            "properties" : {
+              "type" : {
+                "type" : "string",
+                "enum" : [ "container" ]
+              },
+              "description" : {
+                "desc" : "This is the description for GoogleAgentSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "container"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/ContainerAgentSource"
+                  }
+                }
+              }
+            } ]
+          },
           "StageOverridesConfig" : {
             "title" : "StageOverridesConfig",
             "type" : "object",
@@ -93144,6 +93338,8 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/SalesforceEvaluateDiffStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/IdpActionStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/AIVerifyNGStepNode"
                 } ]
               },
               "stepGroup" : {
