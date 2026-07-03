@@ -2724,10 +2724,7 @@
               "properties" : {
                 "items" : {
                   "description" : "List of environments for multi-environment deployment.",
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
-                  }
+                  "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItems"
                 },
                 "sequential" : {
                   "description" : "Execute environments sequentially (one at a time). When false, environments run in parallel.",
@@ -2814,6 +2811,19 @@
                 }
               },
               "additionalProperties" : false
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EnvironmentItems" : {
+            "title" : "EnvironmentItems",
+            "description" : "List of environments for multi-environment deployment, or an expression.",
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
+              }
+            }, {
+              "$ref" : "#/definitions/pipeline/common/Expression"
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
@@ -2980,21 +2990,13 @@
               },
               "items" : {
                 "description" : "List of environments from the group.",
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItem"
-                }
+                "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItems"
               },
               "filters" : {
                 "description" : "Filters for selecting environments and infrastructures.",
                 "$ref" : "#/definitions/pipeline/stages/unified/Filters"
               }
             },
-            "oneOf" : [ {
-              "required" : [ "items" ]
-            }, {
-              "required" : [ "filters" ]
-            } ],
             "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
