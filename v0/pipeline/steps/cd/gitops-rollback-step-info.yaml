@@ -1,0 +1,39 @@
+title: GitOpsRollbackStepInfo
+$ref: ../../common/step-spec-type.yaml
+type: object
+required:
+  - applicationsList
+properties:
+  applicationsList:
+    oneOf:
+      - type: array
+        items:
+          $ref: agent-application-rollback-targets.yaml
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  rollBackSteps:
+    oneOf:
+      - type: integer
+        minimum: 1
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  prune:
+    oneOf:
+      - type: boolean
+      - type: string
+  waitTillHealthy:
+    oneOf:
+      - type: boolean
+      - type: string
+  failOnTimeout:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+allOf:
+  - dependencies:
+      failOnTimeout: [ waitTillHealthy ]
