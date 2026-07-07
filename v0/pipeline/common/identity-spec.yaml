@@ -1,0 +1,42 @@
+title: IdentitySpec
+type: object
+description: |
+  Definition of a single named identity that produces an independent OIDC ID_TOKEN.
+  The identity name (the map key under identities) doubles as the environment variable
+  the step receives at runtime.
+properties:
+  audience:
+    description: Audience (aud) the minted ID_TOKEN is issued for.
+    type: string
+    minLength: 1
+  subjectTemplate:
+    description: |
+      Template for the sub claim. Supports literals and allowlisted Harness expressions
+      (e.g. <+account.identifier>, <+pipeline.identifier>, <+step.identifier>).
+    type: string
+  customClaims:
+    description: Additional custom claims stamped on this identity's token.
+    type: object
+    additionalProperties:
+      type: string
+  scope:
+    description: Visibility scope of the identity. Step-level entries default to STEP.
+    type: string
+    enum:
+    - STEP
+    - STAGE
+    - PIPELINE
+  disabled:
+    description: When true, suppresses this identity (not generated, not injected).
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: ^<\+input>$
+      minLength: 1
+  tokenMode:
+    description: Token exchange mode for this identity.
+    type: string
+    enum:
+    - STANDARD
+    - CLIENT_ASSERTION
+$schema: http://json-schema.org/draft-07/schema#
