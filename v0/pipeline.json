@@ -65792,6 +65792,7 @@
                     "type" : "string",
                     "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
                   }, {
+                    "type" : "string",
                     "pattern" : "(<\\+.+>.*)"
                   } ]
                 },
@@ -65828,6 +65829,7 @@
                     "type" : "string",
                     "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
                   }, {
+                    "type" : "string",
                     "pattern" : "(<\\+.+>.*)"
                   } ]
                 },
@@ -65872,6 +65874,7 @@
                     "type" : "string",
                     "pattern" : "^[a-zA-Z_][0-9a-zA-Z_\\.\\[\\]$-]{0,127}$"
                   }, {
+                    "type" : "string",
                     "pattern" : "(<\\+.+>.*)"
                   } ]
                 },
@@ -78923,29 +78926,56 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "loadTestRef" ],
               "properties" : {
-                "loadTestRef" : {
+                "kind" : {
+                  "description" : "How the step resolves what to run: 'instance' (default) runs an existing load test referenced by loadTestRef; 'template' runs a chaos-hub load test template (hubRef + identifier) bound to infraReference + environmentReference.",
                   "type" : "string",
-                  "minLength" : 1
+                  "enum" : [ "instance", "template" ]
                 },
-                "targetUsers" : {
+                "loadTestRef" : {
+                  "description" : "Reference to the load test to run (instance mode). May be a fixed value or a pipeline expression / runtime input (<+input>) so the step stays reusable when authored inside a template.",
                   "oneOf" : [ {
-                    "type" : "integer"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "rampUpTimeSec" : {
+                "hubRef" : {
+                  "description" : "Chaos Hub reference containing the load test template to run (template mode).",
                   "oneOf" : [ {
-                    "type" : "integer"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 },
-                "durationSeconds" : {
+                "identifier" : {
+                  "description" : "Identifier of the load test template within the chaos hub to run (template mode).",
                   "oneOf" : [ {
-                    "type" : "integer"
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "revision" : {
+                  "description" : "Pinned revision of the load test template captured when the template is selected (template mode). Load test templates are versioned, so the run is pinned to an explicit revision for reproducibility.",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "infraReference" : {
+                  "description" : "Infrastructure the templated load test runs on (template mode). May be a fixed value or a pipeline expression / runtime input.",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environmentReference" : {
+                  "description" : "Environment the templated load test runs in (template mode). May be a fixed value or a pipeline expression / runtime input.",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
                   }, {
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
@@ -78983,6 +79013,20 @@
                     "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                   } ]
                 }
+              },
+              "if" : {
+                "properties" : {
+                  "kind" : {
+                    "const" : "template"
+                  }
+                },
+                "required" : [ "kind" ]
+              },
+              "then" : {
+                "required" : [ "hubRef", "identifier", "revision", "infraReference", "environmentReference" ]
+              },
+              "else" : {
+                "required" : [ "loadTestRef" ]
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"

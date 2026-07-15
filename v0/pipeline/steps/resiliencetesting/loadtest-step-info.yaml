@@ -2,23 +2,42 @@ title: LoadTestStepInfo
 allOf:
   - $ref: ../../common/step-spec-type.yaml
   - type: object
-    required:
-      - loadTestRef
     properties:
-      loadTestRef:
+      kind:
+        description: "How the step resolves what to run: 'instance' (default) runs an existing load test referenced by loadTestRef; 'template' runs a chaos-hub load test template (hubRef + identifier) bound to infraReference + environmentReference."
         type: string
-        minLength: 1
-      targetUsers:
+        enum:
+          - instance
+          - template
+      loadTestRef:
+        description: "Reference to the load test to run (instance mode). May be a fixed value or a pipeline expression / runtime input (<+input>) so the step stays reusable when authored inside a template."
         oneOf:
-          - type: integer
+          - $ref: ../common/string-without-jexl.yaml
           - $ref: ../common/common-jexl.yaml
-      rampUpTimeSec:
+      hubRef:
+        description: "Chaos Hub reference containing the load test template to run (template mode)."
         oneOf:
-          - type: integer
+          - $ref: ../common/string-without-jexl.yaml
           - $ref: ../common/common-jexl.yaml
-      durationSeconds:
+      identifier:
+        description: "Identifier of the load test template within the chaos hub to run (template mode)."
         oneOf:
-          - type: integer
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      revision:
+        description: "Pinned revision of the load test template captured when the template is selected (template mode). Load test templates are versioned, so the run is pinned to an explicit revision for reproducibility."
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      infraReference:
+        description: "Infrastructure the templated load test runs on (template mode). May be a fixed value or a pipeline expression / runtime input."
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
+          - $ref: ../common/common-jexl.yaml
+      environmentReference:
+        description: "Environment the templated load test runs in (template mode). May be a fixed value or a pipeline expression / runtime input."
+        oneOf:
+          - $ref: ../common/string-without-jexl.yaml
           - $ref: ../common/common-jexl.yaml
       inputs:
         description: "Values for the load test's runtime inputs (entries the selected load test marks as <+input>). Each entry is a name/value pair; value may be fixed or a pipeline expression/runtime input."
@@ -42,4 +61,20 @@ allOf:
                 required:
                   type: boolean
           - $ref: ../common/common-jexl.yaml
+    if:
+      properties:
+        kind:
+          const: template
+      required:
+        - kind
+    then:
+      required:
+        - hubRef
+        - identifier
+        - revision
+        - infraReference
+        - environmentReference
+    else:
+      required:
+        - loadTestRef
 $schema: http://json-schema.org/draft-07/schema#
