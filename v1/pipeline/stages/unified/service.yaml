@@ -1,18 +1,42 @@
 title: ServiceV1
 description: Service configuration for CD stages. Supports multiple formats.
 oneOf:
-  # Single service (string or object with id/with)
-  - $ref: ./service-item.yaml
-  # Multi-service with items
+  # Single service as a bare identifier string (or runtime input)
+  - type: string
+    description: Service identifier reference.
+  # Single service object: { type?, id, ref?, with? }
+  - type: object
+    required:
+      - id
+    properties:
+      type:
+        description: Service swimlane hint for the single service.
+        $ref: ./service-type.yaml
+      id:
+        description: Service identifier.
+        type: string
+      ref:
+        description: Git branch for the service configuration.
+        type: string
+      with:
+        description: Service input overrides.
+        $ref: ../../common/with.yaml
+    additionalProperties: false
+  # Multi-service with items: { type?, items, parallel? }
   - type: object
     required:
       - items
     properties:
+      type:
+        description: Service swimlane hint applied to the multi-service group.
+        $ref: ./service-type.yaml
       items:
-        description: List of services for multi-service deployment.
-        type: array
-        items:
-          $ref: ./service-item.yaml
+        description: List of services for multi-service deployment. Can be a fixed list or a single runtime input for the whole list.
+        oneOf:
+          - type: array
+            items:
+              $ref: ./service-item.yaml
+          - $ref: ../../common/expression.yaml
       parallel:
         description: Execute services in parallel (all at once). Defaults to false, so services run one at a time (serially) unless set to true.
         oneOf:
