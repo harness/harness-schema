@@ -1,5 +1,6 @@
 type: object
 title: template
+additionalProperties: false
 required:
   - template
 properties:
@@ -9,10 +10,18 @@ properties:
       - 1
   template:
     type: object
+    # Keep open so template metadata (alias, layout, author, module, version, etc.)
+    # and future fields are not rejected on save.
+    additionalProperties: true
     properties:
+      id:
+        type: string
+        description: Unique identifier of the template.
+        pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
       name:
         type: string
         description: Display name of the template.
+        pattern: "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
       description:
         type: string
         description: Description of the template.
@@ -22,7 +31,11 @@ properties:
         additionalProperties:
           type: string
       inputs:
-        $ref: ../pipeline/common/ng-variable-v1-wrapper.yaml
+        description: >-
+          Template inputs. Open object so extended types (choice, list, connector),
+          UI metadata, and expression-based required/visible are allowed.
+        type: object
+        additionalProperties: true
     oneOf:
       - required:
           - pipeline

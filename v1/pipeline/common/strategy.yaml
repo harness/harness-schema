@@ -1,5 +1,6 @@
 title: StrategyConfigV1
 type: object
+additionalProperties: false
 description: Strategy defines execution strategy configuration (matrix, for, while, repeat).
 properties:
   max-parallel:
@@ -15,33 +16,33 @@ properties:
   if:
     description: Conditional expression to determine whether the strategy should execute. Supports expressions.
     type: string
+  matrix:
+    description: Matrix strategy for parallel execution across dimensions. Supports expressions.
+    oneOf:
+      - $ref: ./strategy_matrix.yaml
+      - $ref: ./expression.yaml
+  for:
+    description: For-loop strategy configuration. Supports expressions.
+    oneOf:
+      - $ref: ./strategy_for.yaml
+      - $ref: ./expression.yaml
+  while:
+    description: While-loop strategy configuration. Supports expressions.
+    oneOf:
+      - $ref: ./strategy_while.yaml
+      - $ref: ./expression.yaml
+  repeat:
+    description: Repeat strategy configuration for iterating over items. Supports expressions.
+    oneOf:
+      - $ref: ./strategy_repeat.yaml
+      - $ref: ./expression.yaml
 oneOf:
-  - properties:
-      matrix:
-        oneOf:
-          - $ref: ./strategy_matrix.yaml
-          - $ref: ./expression.yaml
-    required:
+  - required:
       - matrix
-  - properties:
-      for:
-        oneOf:
-          - $ref: ./strategy_for.yaml
-          - $ref: ./expression.yaml
-    required:
+  - required:
       - for
-  - properties:
-      while:
-        oneOf:
-          - $ref: ./strategy_while.yaml
-          - $ref: ./expression.yaml
-    required:
+  - required:
       - while
-  - properties:
-      repeat:
-        oneOf:
-          - $ref: ./strategy_repeat.yaml
-          - $ref: ./expression.yaml
-    required:
+  - required:
       - repeat
 $schema: http://json-schema.org/draft-07/schema#

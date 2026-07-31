@@ -1,6 +1,7 @@
 {
   "type" : "object",
   "title" : "pipeline",
+  "additionalProperties" : false,
   "required" : [ "pipeline" ],
   "properties" : {
     "version" : {
@@ -11,11 +12,13 @@
       "$ref" : "#/definitions/pipeline/pipeline"
     }
   },
+  "$schema" : "http://json-schema.org/draft-07/schema#",
   "definitions" : {
     "pipeline" : {
       "pipeline" : {
         "type" : "object",
         "title" : "pipeline",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -105,6 +108,7 @@
       "Clone" : {
         "title" : "Clone",
         "type" : "object",
+        "additionalProperties" : false,
         "description" : "Clone defines the default clone behavior.",
         "properties" : {
           "depth" : {
@@ -679,6 +683,7 @@
           "title" : "TemplateRef",
           "description" : "Template identifier and input configuration.",
           "type" : "object",
+          "additionalProperties" : false,
           "required" : [ "uses" ],
           "properties" : {
             "uses" : {
@@ -713,6 +718,7 @@
         "StrategyConfigV1" : {
           "title" : "StrategyConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Strategy defines execution strategy configuration (matrix, for, while, repeat).",
           "properties" : {
             "max-parallel" : {
@@ -734,51 +740,47 @@
             "if" : {
               "description" : "Conditional expression to determine whether the strategy should execute. Supports expressions.",
               "type" : "string"
+            },
+            "matrix" : {
+              "description" : "Matrix strategy for parallel execution across dimensions. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/MatrixConfigV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            },
+            "for" : {
+              "description" : "For-loop strategy configuration. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/ForConfigV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            },
+            "while" : {
+              "description" : "While-loop strategy configuration. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/WhileConfigV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            },
+            "repeat" : {
+              "description" : "Repeat strategy configuration for iterating over items. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/RepeatConfigV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
             }
           },
           "oneOf" : [ {
-            "properties" : {
-              "matrix" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/MatrixConfigV1"
-                }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
-                } ]
-              }
-            },
             "required" : [ "matrix" ]
           }, {
-            "properties" : {
-              "for" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/ForConfigV1"
-                }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
-                } ]
-              }
-            },
             "required" : [ "for" ]
           }, {
-            "properties" : {
-              "while" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/WhileConfigV1"
-                }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
-                } ]
-              }
-            },
             "required" : [ "while" ]
           }, {
-            "properties" : {
-              "repeat" : {
-                "oneOf" : [ {
-                  "$ref" : "#/definitions/pipeline/common/RepeatConfigV1"
-                }, {
-                  "$ref" : "#/definitions/pipeline/common/Expression"
-                } ]
-              }
-            },
             "required" : [ "repeat" ]
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -830,6 +832,7 @@
         "ForConfigV1" : {
           "title" : "ForConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "For loop strategy configuration.",
           "properties" : {
             "iterations" : {
@@ -851,6 +854,7 @@
         "WhileConfigV1" : {
           "title" : "WhileConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "While loop strategy configuration.",
           "properties" : {
             "iterations" : {
@@ -876,6 +880,7 @@
         "RepeatConfigV1" : {
           "title" : "RepeatConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Repeat strategy configuration for iterating over items.",
           "properties" : {
             "iterations" : {
@@ -954,6 +959,7 @@
         "FailureConfigV1" : {
           "title" : "FailureConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Failure strategy configuration for handling errors.",
           "required" : [ "errors", "action" ],
           "properties" : {
@@ -1039,6 +1045,7 @@
         "RetryFailureSpecConfigV1" : {
           "title" : "RetryFailureSpecConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Retry configuration for failure strategy.",
           "properties" : {
             "attempts" : {
@@ -1071,6 +1078,7 @@
         "ManualFailureSpecConfigV1" : {
           "title" : "ManualFailureSpecConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Manual intervention configuration for failure strategy.",
           "properties" : {
             "timeout" : {
@@ -1094,6 +1102,7 @@
         "RetryStepGroupFailureSpecConfigV1" : {
           "title" : "RetryStepGroupFailureSpecConfigV1",
           "type" : "object",
+          "additionalProperties" : false,
           "description" : "Retry step group configuration for failure strategy.",
           "properties" : {
             "attempts" : {
@@ -1123,6 +1132,7 @@
           "title" : "OutputV1",
           "description" : "Output variable definition for capturing step outputs.",
           "type" : "object",
+          "additionalProperties" : false,
           "required" : [ "name" ],
           "properties" : {
             "name" : {
@@ -1156,6 +1166,7 @@
           "title" : "UnifiedTemplate",
           "description" : "Template reference for steps, stages, or pipelines.",
           "type" : "object",
+          "additionalProperties" : false,
           "properties" : {
             "id" : {
               "type" : "string",
@@ -1218,6 +1229,7 @@
         "title" : "Reference",
         "description" : "Reference defines a git clone reference.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "name" : {
             "description" : "Name provides ref name (branch name, tag name, or PR number).",
@@ -1248,6 +1260,7 @@
       "Resource" : {
         "title" : "Resource",
         "type" : "object",
+        "additionalProperties" : false,
         "description" : "Resource defines container resource limits and requests.",
         "properties" : {
           "limits" : {
@@ -1264,6 +1277,7 @@
       "ResourceLimits" : {
         "title" : "ResourceLimits",
         "type" : "object",
+        "additionalProperties" : false,
         "description" : "ResourceLimits defines CPU and memory constraints.",
         "properties" : {
           "cpu" : {
@@ -1283,6 +1297,7 @@
         "title" : "Repository",
         "description" : "Repository defines a remote git repository.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "connector" : {
             "description" : "Connector provides the repository connector.",
@@ -1292,7 +1307,8 @@
             "description" : "Name provides the repository name.",
             "type" : "string"
           }
-        }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
       },
       "On" : {
         "title" : "On",
@@ -1338,6 +1354,7 @@
         "title" : "BranchFilter",
         "description" : "BranchFilter defines branch filtering for push and pull_request events.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "branches" : {
             "type" : "array",
@@ -1352,6 +1369,7 @@
         "title" : "NotificationRules",
         "description" : "NotificationRules defines notification configuration for pipeline events.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "id" : {
             "type" : "string",
@@ -1479,6 +1497,7 @@
         "title" : "NotificationEvent",
         "description" : "NotificationEvent defines event types that trigger notifications.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "pipeline" : {
             "description" : "Pipeline-level events.",
@@ -1587,6 +1606,7 @@
         "title" : "PmsEmailChannel",
         "description" : "Email notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "user-groups" : {
             "description" : "List of user group references.",
@@ -1613,6 +1633,7 @@
         "title" : "PmsSlackChannel",
         "description" : "Slack notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "user-groups" : {
             "description" : "List of user group references.",
@@ -1636,6 +1657,7 @@
         "title" : "PmsMSTeamChannel",
         "description" : "Microsoft Teams notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "keys" : {
             "description" : "List of MS Teams webhook keys.",
@@ -1662,6 +1684,7 @@
         "title" : "PmsWebhookChannel",
         "description" : "Webhook notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "url" : {
             "description" : "Webhook URL.",
@@ -1681,6 +1704,7 @@
         "title" : "PmsPagerDutyChannel",
         "description" : "PagerDuty notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "user-groups" : {
             "description" : "List of user group references.",
@@ -1704,6 +1728,7 @@
         "title" : "PmsDatadogChannel",
         "description" : "Datadog notification channel configuration.",
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "api-key" : {
             "description" : "Datadog API key.",
@@ -1843,6 +1868,7 @@
             "title" : "UnifiedStageNodeV1",
             "description" : "Unified stage node supporting CI, CD, IaCM and other stage types.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "steps" ],
             "properties" : {
               "id" : {
@@ -2258,6 +2284,7 @@
             "title" : "Toleration",
             "description" : "Kubernetes pod toleration.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "effect" : {
                 "description" : "Toleration effect. Supports expressions.",
@@ -2291,6 +2318,7 @@
             "title" : "CIVolumeV1",
             "description" : "CI volume configuration. Type determined by 'uses' property.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "uses", "with" ],
             "properties" : {
               "name" : {
@@ -2301,6 +2329,10 @@
                 "description" : "Volume type.",
                 "type" : "string",
                 "enum" : [ "empty-dir", "persistent-volume-claim", "host-path", "config-map", "secret" ]
+              },
+              "with" : {
+                "description" : "Volume-specific configuration; shape determined by `uses`.",
+                "type" : "object"
               }
             },
             "allOf" : [ {
@@ -2385,6 +2417,7 @@
             "title" : "EmptyDirYamlV1Spec",
             "description" : "EmptyDir volume specification.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "mount-path" ],
             "properties" : {
               "mount-path" : {
@@ -2406,6 +2439,7 @@
             "title" : "PersistentVolumeClaimYamlSpecV1",
             "description" : "PersistentVolumeClaim volume specification.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "mount-path", "claim-name" ],
             "properties" : {
               "mount-path" : {
@@ -2431,6 +2465,7 @@
             "title" : "HostPathYamlSpecV1",
             "description" : "HostPath volume specification.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "mount-path", "path" ],
             "properties" : {
               "mount-path" : {
@@ -2452,6 +2487,7 @@
             "title" : "ConfigMapVolumeYamlSpecV1",
             "description" : "ConfigMap volume specification.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "mount-path", "name" ],
             "properties" : {
               "mount-path" : {
@@ -2477,6 +2513,7 @@
             "title" : "SecretVolumeYamlSpecV1",
             "description" : "Secret volume specification.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "mount-path", "name" ],
             "properties" : {
               "mount-path" : {
@@ -2502,6 +2539,7 @@
             "title" : "SecurityContextV1",
             "description" : "Kubernetes pod security context.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "allow-privilege-escalation" : {
                 "description" : "Whether to allow privilege escalation. Supports expressions.",
@@ -2570,6 +2608,7 @@
             "title" : "Capabilities",
             "description" : "Container capabilities configuration.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "add" : {
                 "description" : "Capabilities to add. Supports expressions.",
@@ -3001,6 +3040,7 @@
             "title" : "CachingV1",
             "description" : "Cache intelligence configuration.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "enabled" : {
                 "description" : "Whether caching is enabled. Supports expressions.",
@@ -3041,6 +3081,7 @@
             "title" : "BuildIntelligenceV1",
             "description" : "Build intelligence configuration for test optimization.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "enabled" : {
                 "description" : "Whether build intelligence is enabled. Supports expressions.",
@@ -3110,6 +3151,7 @@
             "title" : "PipelineStageOutputs",
             "description" : "Output configuration for pipeline stage.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "name", "value" ],
             "properties" : {
               "name" : {
@@ -3128,6 +3170,7 @@
             "title" : "DynamicStageNodeV1",
             "description" : "Dynamic stage node for executing child pipelines from inline or remote sources.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "dynamic" ],
             "properties" : {
               "id" : {
@@ -3156,6 +3199,7 @@
               "dynamic" : {
                 "description" : "Dynamic stage configuration.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "properties" : {
                   "source" : {
                     "description" : "Base64 encoded inline child pipeline YAML.",
@@ -3167,6 +3211,7 @@
                   "source-config" : {
                     "description" : "Remote source configuration for child pipeline.",
                     "type" : "object",
+                    "additionalProperties" : false,
                     "required" : [ "uses", "with" ],
                     "properties" : {
                       "uses" : {
@@ -3177,6 +3222,7 @@
                       "with" : {
                         "description" : "Git source configuration.",
                         "type" : "object",
+                        "additionalProperties" : false,
                         "required" : [ "repo", "path" ],
                         "properties" : {
                           "connector" : {
@@ -3217,11 +3263,13 @@
             "title" : "ParallelStages",
             "description" : "Parallel stages execution configuration.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "parallel" ],
             "properties" : {
               "parallel" : {
                 "description" : "Stages to execute in parallel.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "required" : [ "stages" ],
                 "properties" : {
                   "stages" : {
@@ -3240,11 +3288,13 @@
             "title" : "GroupStages",
             "description" : "Group of stages executed sequentially.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "group" ],
             "properties" : {
               "group" : {
                 "description" : "Group configuration.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "properties" : {
                   "id" : {
                     "description" : "Unique identifier for the group.",
@@ -3432,6 +3482,7 @@
             "title" : "StepNodeV1",
             "description" : "Unified step node for CI/CD pipelines.",
             "type" : "object",
+            "additionalProperties" : false,
             "anyOf" : [ {
               "required" : [ "run" ]
             }, {
@@ -3520,6 +3571,7 @@
             "title" : "PolicyConfig",
             "description" : "Policy enforcement configuration.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "policySets" : {
                 "description" : "Policy sets to enforce.",
@@ -3535,6 +3587,7 @@
             "title" : "RunStepInfoV1",
             "description" : "Run step configuration for executing scripts.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "shell" : {
                 "description" : "Shell type to use. Supports expressions.",
@@ -3579,6 +3632,7 @@
                 "description" : "Download configuration. Supports expressions.",
                 "oneOf" : [ {
                   "type" : "object",
+                  "additionalProperties" : false,
                   "properties" : {
                     "source" : {
                       "description" : "Source URL to download from.",
@@ -3604,6 +3658,7 @@
               "output-alias" : {
                 "description" : "Output alias configuration for exporting variables.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "required" : [ "key", "scope" ],
                 "properties" : {
                   "key" : {
@@ -3624,6 +3679,7 @@
             "title" : "Container",
             "description" : "Container configuration for step execution.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "image" : {
                 "description" : "Container image to use. Supports expressions.",
@@ -3838,6 +3894,7 @@
             "title" : "RunTestsStepInfoV1",
             "description" : "Run tests step configuration for test intelligence.",
             "type" : "object",
+            "additionalProperties" : false,
             "properties" : {
               "shell" : {
                 "description" : "Shell type to use. Supports expressions.",
@@ -3888,6 +3945,7 @@
               "intelligence" : {
                 "description" : "Test intelligence configuration.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "properties" : {
                   "disabled" : {
                     "description" : "Whether test intelligence is disabled. Supports expressions.",
@@ -4342,7 +4400,7 @@
             "title" : "UnifiedJiraApprovalStepSpec",
             "description" : "Jira approval step specification.",
             "type" : "object",
-            "additionalProperties" : true,
+            "additionalProperties" : false,
             "required" : [ "approve" ],
             "properties" : {
               "retry" : {
@@ -4378,7 +4436,7 @@
             "title" : "UnifiedServiceNowApprovalStepSpec",
             "description" : "ServiceNow approval step specification.",
             "type" : "object",
-            "additionalProperties" : true,
+            "additionalProperties" : false,
             "required" : [ "approve" ],
             "properties" : {
               "retry" : {
@@ -4410,6 +4468,7 @@
               "change-window" : {
                 "description" : "ServiceNow change window configuration.",
                 "type" : "object",
+                "additionalProperties" : false,
                 "properties" : {
                   "start" : {
                     "description" : "Start field for change window.",
@@ -4428,7 +4487,7 @@
             "title" : "UnifiedCustomApprovalStepSpec",
             "description" : "Custom approval step specification.",
             "type" : "object",
-            "additionalProperties" : true,
+            "additionalProperties" : false,
             "required" : [ "retry", "approve" ],
             "properties" : {
               "script-timeout" : {
@@ -4468,10 +4527,12 @@
             "title" : "ParallelSteps",
             "description" : "Defines a list of steps to be executed in parallel.",
             "type" : "object",
+            "additionalProperties" : false,
             "required" : [ "parallel" ],
             "properties" : {
               "parallel" : {
                 "type" : "object",
+                "additionalProperties" : false,
                 "required" : [ "steps" ],
                 "properties" : {
                   "steps" : {
