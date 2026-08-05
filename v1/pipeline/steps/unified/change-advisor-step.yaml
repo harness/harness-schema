@@ -1,0 +1,43 @@
+title: UnifiedChangeAdvisorStepNode
+description: Change Advisor step node for advisory evaluation before deployment.
+allOf:
+  - $ref: ./abstract-step-node.yaml
+  - type: object
+    required:
+      - change-advisor
+    properties:
+      change-advisor:
+        description: Change Advisor step configuration.
+        type: object
+        properties:
+          mode:
+            description: Advisory mode for the Change Advisor step.
+            oneOf:
+              - type: string
+                enum:
+                  - ADVISORY
+                  - ENFORCING
+              - $ref: ../../common/expression.yaml
+          policy-pack:
+            description: Policy pack to evaluate the change against (e.g. balanced).
+            oneOf:
+              - type: string
+              - $ref: ../../common/expression.yaml
+          timeout-minutes:
+            description: Maximum time in minutes to wait for the advisory call.
+            oneOf:
+              - type: integer
+              - $ref: ../../common/expression.yaml
+          presets:
+            description: Preset identifiers applied to the advisory evaluation.
+            oneOf:
+              - type: array
+                items:
+                  type: string
+              - $ref: ../../common/expression.yaml
+          env:
+            description: Target environment identifier for the change.
+            oneOf:
+              - type: string
+              - $ref: ../../common/expression.yaml
+$schema: http://json-schema.org/draft-07/schema#
