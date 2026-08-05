@@ -36462,6 +36462,356 @@
               }
             }
           },
+          "ApiTestRunStepNode" : {
+            "title" : "ApiTestRunStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for ApiTestRunStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "ApiTestRun" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "ApiTestRun"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/ci/ApiTestRunStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "ApiTestRunStepInfo" : {
+            "title" : "ApiTestRunStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/ci/CIStepInfo"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "collectionName" : {
+                  "description" : "Name of the API testing collection to run (the server creates the run from this)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "environmentName" : {
+                  "description" : "Optional environment name to use for the run (falls back to the collection's default environment)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "runId" : {
+                  "description" : "Pre-created test run ID (low-level/back-compat mode; maps to PLUGIN_RUN_ID)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "baseUrl" : {
+                  "description" : "Fully-scoped API Testing server URL including account/org/project path (low-level mode; maps to PLUGIN_BASE_URL)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "token" : {
+                  "description" : "Callback token authorizing the plugin to call back to the server (low-level mode; maps to PLUGIN_TOKEN)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "junitOutputPath" : {
+                  "description" : "Optional path to write a JUnit XML report (maps to PLUGIN_JUNIT_OUTPUT_PATH)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiEnabled" : {
+                  "description" : "Enable AI assertions for this run; must equal \"true\" to turn the judge on (maps to PLUGIN_AI_ENABLED)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiWireFormat" : {
+                  "description" : "LLM gateway wire format, openai or anthropic (maps to PLUGIN_AI_WIRE_FORMAT)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiProvider" : {
+                  "description" : "AI sub-provider, e.g. anthropic/openai/bedrock/gemini (maps to PLUGIN_AI_PROVIDER)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiModel" : {
+                  "description" : "Model string, e.g. claude-sonnet-4-5 (maps to PLUGIN_AI_MODEL)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiTimeoutMs" : {
+                  "description" : "Per-judge timeout in milliseconds (maps to PLUGIN_AI_TIMEOUT_MS)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiMaxJudgeBody" : {
+                  "description" : "Max response-body characters sent to the judge (maps to PLUGIN_AI_MAX_JUDGE_BODY)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiPromptVersion" : {
+                  "description" : "Judge prompt version (maps to PLUGIN_AI_PROMPT_VERSION)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiAuthSource" : {
+                  "description" : "Gateway credential source: leave unset for the managed-connector worker path (UC3); set to 'pat' only in devspace (UC2). Maps to PLUGIN_AI_AUTH_SOURCE",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiGatewayBaseUrl" : {
+                  "description" : "UC2 (devspace) only: LLM gateway base URL (maps to PLUGIN_AI_GATEWAY_BASE_URL)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                },
+                "aiGatewayApiKey" : {
+                  "description" : "UC2 (devspace) only: LLM gateway PAT/SAT sent as x-api-key (maps to PLUGIN_AI_GATEWAY_API_KEY)",
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                  }, {
+                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "collectionName" : {
+                "description" : "Name of the API testing collection to run (the server creates the run from this)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "environmentName" : {
+                "description" : "Optional environment name to use for the run (falls back to the collection's default environment)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "runId" : {
+                "description" : "Pre-created test run ID (low-level/back-compat mode; maps to PLUGIN_RUN_ID)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "baseUrl" : {
+                "description" : "Fully-scoped API Testing server URL including account/org/project path (low-level mode; maps to PLUGIN_BASE_URL)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "token" : {
+                "description" : "Callback token authorizing the plugin to call back to the server (low-level mode; maps to PLUGIN_TOKEN)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "junitOutputPath" : {
+                "description" : "Optional path to write a JUnit XML report (maps to PLUGIN_JUNIT_OUTPUT_PATH)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiEnabled" : {
+                "description" : "Enable AI assertions for this run; must equal \"true\" to turn the judge on (maps to PLUGIN_AI_ENABLED)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiWireFormat" : {
+                "description" : "LLM gateway wire format, openai or anthropic (maps to PLUGIN_AI_WIRE_FORMAT)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiProvider" : {
+                "description" : "AI sub-provider, e.g. anthropic/openai/bedrock/gemini (maps to PLUGIN_AI_PROVIDER)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiModel" : {
+                "description" : "Model string, e.g. claude-sonnet-4-5 (maps to PLUGIN_AI_MODEL)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiTimeoutMs" : {
+                "description" : "Per-judge timeout in milliseconds (maps to PLUGIN_AI_TIMEOUT_MS)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiMaxJudgeBody" : {
+                "description" : "Max response-body characters sent to the judge (maps to PLUGIN_AI_MAX_JUDGE_BODY)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiPromptVersion" : {
+                "description" : "Judge prompt version (maps to PLUGIN_AI_PROMPT_VERSION)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiAuthSource" : {
+                "description" : "Gateway credential source: leave unset for the managed-connector worker path (UC3); set to 'pat' only in devspace (UC2). Maps to PLUGIN_AI_AUTH_SOURCE",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiGatewayBaseUrl" : {
+                "description" : "UC2 (devspace) only: LLM gateway base URL (maps to PLUGIN_AI_GATEWAY_BASE_URL)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "aiGatewayApiKey" : {
+                "description" : "UC2 (devspace) only: LLM gateway PAT/SAT sent as x-api-key (maps to PLUGIN_AI_GATEWAY_API_KEY)",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/steps/common/string-without-jexl"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                } ]
+              },
+              "description" : {
+                "desc" : "This is the description for ApiTestRunStepInfo"
+              }
+            }
+          },
           "S3UploadNode" : {
             "title" : "S3UploadNode",
             "type" : "object",
@@ -85761,6 +86111,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/AiEvalStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ApiTestRunStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/TerragruntDestroyStepNode"
@@ -93854,6 +94206,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/AiEvalStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ApiTestRunStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/AiTestAutomationStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/ArtifactoryUploadNode"
@@ -95221,6 +95575,8 @@
                   "$ref" : "#/definitions/pipeline/steps/resiliencetesting/ChaosFaultNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/ci/AiEvalStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/ci/ApiTestRunStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/AiTestAutomationStepNode"
                 }, {
