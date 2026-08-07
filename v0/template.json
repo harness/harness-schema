@@ -13935,7 +13935,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition", "GoogleMigInstanceTemplate", "GoogleMigConfiguration", "GoogleMigAutoscalerConfiguration", "GoogleMigHealthCheckConfiguration" ]
+                "enum" : [ "HelmChart", "HelmRepoOverride", "K8sManifest", "Kustomize", "KustomizePatches", "OpenshiftParam", "OpenshiftTemplate", "Values", "ServerlessAwsLambda", "ReleaseRepo", "DeploymentRepo", "EcsTaskDefinition", "EcsServiceDefinition", "EcsScalableTargetDefinition", "EcsScalingPolicyDefinition", "TasManifest", "TasVars", "TasAutoScaler", "AsgLaunchTemplate", "AsgConfiguration", "AsgAdditionalConfiguration", "AsgScalingPolicy", "AsgScheduledUpdateGroupAction", "GoogleCloudFunctionDefinition", "AwsLambdaFunctionDefinition", "AwsLambdaFunctionAliasDefinition", "AwsSamDirectory", "GoogleCloudFunctionGenOneDefinition", "GoogleMigInstanceTemplate", "GoogleMigConfiguration", "GoogleMigAutoscalerConfiguration", "GoogleMigHealthCheckConfiguration", "AgentConfig" ]
               },
               "description" : {
                 "desc" : "This is the description for ManifestConfig"
@@ -14419,6 +14419,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/GoogleMigHealthCheckConfiguration"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "AgentConfig"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/AgentConfigManifest"
                   }
                 }
               }
@@ -15395,6 +15410,28 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for GoogleMigHealthCheckConfiguration"
+              }
+            }
+          },
+          "AgentConfigManifest" : {
+            "title" : "AgentConfigManifest",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/ManifestAttributes"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "metadata" : {
+                  "type" : "string"
+                },
+                "store" : {
+                  "$ref" : "#/definitions/pipeline/steps/cd/StoreConfigWrapper"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for AgentConfigManifest"
               }
             }
           },
