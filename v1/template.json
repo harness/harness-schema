@@ -2707,7 +2707,7 @@
           },
           "ServiceV1" : {
             "title" : "ServiceV1",
-            "description" : "Service configuration for CD stages. Supports multiple formats.",
+            "description" : "Service configuration for CD stages. Supports multiple formats. Single vs multi-service is decided by the actual resolved count of the `items` array, not by whether `items` is present: a 1-element list is a single service (an expression is allowed as that sole element), 2 or more elements is a multi-service group (which must be an all-fixed list, or a single runtime input for the whole list).",
             "oneOf" : [ {
               "type" : "string",
               "description" : "Service identifier reference."
@@ -2742,7 +2742,7 @@
                   "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
                 },
                 "items" : {
-                  "description" : "List of services for multi-service deployment. Can be a fixed list or a single runtime input for the whole list.",
+                  "description" : "List of services. Single vs multi-service is decided by the actual element count (1 element = single, 2+ = multi), not by the presence of this field. Can be a fixed list or a single runtime input for the whole list.",
                   "oneOf" : [ {
                     "type" : "array",
                     "items" : {
@@ -2775,7 +2775,7 @@
           },
           "ServiceItem" : {
             "title" : "ServiceItem",
-            "description" : "Single service item configuration.",
+            "description" : "Single service item configuration. May be an expression when it is the sole element of a 1-element `items` list (a single service); expressions are not allowed as individual elements of a genuine multi-service `items` list (2 or more elements).",
             "oneOf" : [ {
               "type" : "string",
               "description" : "Service identifier reference."
@@ -2802,7 +2802,7 @@
           },
           "EnvironmentV1" : {
             "title" : "EnvironmentV1",
-            "description" : "Environment configuration for CD stages.",
+            "description" : "Environment configuration for CD stages. Single vs multi-environment, and (independently) single vs multi-infra, are decided by the actual resolved count of the `items` array and, per item, the `deploy-to` array — not by the mere presence of these fields. The `group`/`filters` forms are always multi (the resolved count is dynamic and not statically knowable).",
             "oneOf" : [ {
               "description" : "Harness expression that resolves to the environment configuration.",
               "$ref" : "#/definitions/pipeline/common/Expression"
@@ -2815,7 +2815,7 @@
                   "type" : "string"
                 },
                 "deploy-to" : {
-                  "description" : "Infrastructure(s) to deploy to.",
+                  "description" : "Infrastructure(s) to deploy to. Single vs multi-infra is decided by the actual resolved count, not by the presence of this field: a scalar id, a single infra object, or a 1-element list are all single-infra.",
                   "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
                 },
                 "ref" : {
@@ -2829,7 +2829,7 @@
               "required" : [ "items" ],
               "properties" : {
                 "items" : {
-                  "description" : "List of environments for multi-environment deployment.",
+                  "description" : "List of environments. Single vs multi-environment is decided by the actual element count (1 element = single, 2+ = multi), not by the presence of this field; when there is a single environment element, its own `deploy-to` count independently decides single vs multi-infra.",
                   "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentItems"
                 },
                 "parallel" : {
@@ -2886,7 +2886,7 @@
           },
           "DeployTo" : {
             "title" : "DeployTo",
-            "description" : "Infrastructure deployment target configuration.",
+            "description" : "Infrastructure deployment target configuration. Single vs multi-infra is decided by the actual resolved count, not by the shape used: a scalar id, a single infra object, or a 1-element list are all single-infra; 2 or more elements (or the dynamic `all` marker, see the DeployToAll design) is multi-infra.",
             "oneOf" : [ {
               "$ref" : "#/definitions/pipeline/stages/unified/InfraItem"
             }, {
@@ -2935,7 +2935,7 @@
           },
           "EnvironmentItem" : {
             "title" : "EnvironmentItem",
-            "description" : "Single environment item configuration.",
+            "description" : "Single environment item configuration. Even as the sole element of a 1-element `items` list (a single environment), its own `deploy-to` count independently decides single vs multi-infra: a `deploy-to` list of 2 or more elements makes the deployment multi-infra.",
             "type" : "object",
             "required" : [ "id" ],
             "properties" : {

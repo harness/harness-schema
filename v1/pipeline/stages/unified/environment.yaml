@@ -1,5 +1,5 @@
 title: EnvironmentV1
-description: Environment configuration for CD stages.
+description: Environment configuration for CD stages. Single vs multi-environment, and (independently) single vs multi-infra, are decided by the actual resolved count of the `items` array and, per item, the `deploy-to` array — not by the mere presence of these fields. The `group`/`filters` forms are always multi (the resolved count is dynamic and not statically knowable).
 oneOf:
   # Expression (e.g. environment: <+some_expression>)
   - description: Harness expression that resolves to the environment configuration.
@@ -13,7 +13,7 @@ oneOf:
         description: Environment identifier.
         type: string
       deploy-to:
-        description: Infrastructure(s) to deploy to.
+        description: "Infrastructure(s) to deploy to. Single vs multi-infra is decided by the actual resolved count, not by the presence of this field: a scalar id, a single infra object, or a 1-element list are all single-infra."
         $ref: ./deploy-to.yaml
       ref:
         description: Git branch for the environment configuration.
@@ -25,7 +25,7 @@ oneOf:
       - items
     properties:
       items:
-        description: List of environments for multi-environment deployment.
+        description: List of environments. Single vs multi-environment is decided by the actual element count (1 element = single, 2+ = multi), not by the presence of this field; when there is a single environment element, its own `deploy-to` count independently decides single vs multi-infra.
         $ref: ./environment-items.yaml
       parallel:
         description: Execute environments in parallel (all at once). Defaults to false, so environments run one at a time (serially) unless set to true.
