@@ -1,0 +1,53 @@
+type: object
+title: MonitoredService
+"$schema": "http://json-schema.org/draft-07/schema#"
+required:
+  - identifier
+  - name
+  - type
+  - serviceRef
+properties:
+  identifier:
+    type: string
+    pattern: "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+  name:
+    type: string
+  type:
+    type: string
+    enum:
+      - Application
+      - Infrastructure
+  orgIdentifier:
+    type: string
+  projectIdentifier:
+    type: string
+  serviceRef:
+    type: string
+  environmentRef:
+    type: string
+  environmentRefList:
+    type: array
+    items:
+      type: string
+  description:
+    type: string
+  enabled:
+    type: boolean
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+  sources:
+    "$ref": "./sources.yaml"
+  dependencies:
+    type: array
+    items:
+      "$ref": "./service-dependency.yaml"
+  notificationRuleRefs:
+    type: array
+    items:
+      "$ref": "./notification-rule-ref.yaml"
+  template:
+    "$ref": "./template-ref.yaml"
+# NOTE: no additionalProperties:false — GET-shaped YAML carries extra keys (riskProfile,
+# git coords) that must not cause Monaco errors.

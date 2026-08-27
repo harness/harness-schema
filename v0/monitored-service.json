@@ -1,0 +1,191 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "title" : "MonitoredServiceRoot",
+  "description" : "Root schema for a Harness Monitored Service YAML file.",
+  "required" : [ "monitoredService" ],
+  "properties" : {
+    "monitoredService" : {
+      "$ref" : "#/definitions/monitored-service/MonitoredService"
+    }
+  },
+  "definitions" : {
+    "monitored-service" : {
+      "MonitoredService" : {
+        "type" : "object",
+        "title" : "MonitoredService",
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "required" : [ "identifier", "name", "type", "serviceRef" ],
+        "properties" : {
+          "identifier" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "Application", "Infrastructure" ]
+          },
+          "orgIdentifier" : {
+            "type" : "string"
+          },
+          "projectIdentifier" : {
+            "type" : "string"
+          },
+          "serviceRef" : {
+            "type" : "string"
+          },
+          "environmentRef" : {
+            "type" : "string"
+          },
+          "environmentRefList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "tags" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "sources" : {
+            "$ref" : "#/definitions/monitored-service/MonitoredServiceSources"
+          },
+          "dependencies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/monitored-service/ServiceDependency"
+            }
+          },
+          "notificationRuleRefs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/monitored-service/NotificationRuleRef"
+            }
+          },
+          "template" : {
+            "$ref" : "#/definitions/monitored-service/MonitoredServiceTemplateRef"
+          }
+        }
+      },
+      "MonitoredServiceSources" : {
+        "type" : "object",
+        "title" : "MonitoredServiceSources",
+        "properties" : {
+          "healthSources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/monitored-service/HealthSource"
+            }
+          },
+          "changeSources" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/monitored-service/ChangeSource"
+            }
+          }
+        }
+      },
+      "HealthSource" : {
+        "type" : "object",
+        "title" : "HealthSource",
+        "required" : [ "identifier", "name", "type" ],
+        "properties" : {
+          "identifier" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "spec" : {
+            "type" : "object"
+          }
+        }
+      },
+      "ChangeSource" : {
+        "type" : "object",
+        "title" : "ChangeSource",
+        "required" : [ "identifier", "name", "type" ],
+        "properties" : {
+          "identifier" : {
+            "type" : "string",
+            "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "spec" : {
+            "type" : "object"
+          },
+          "category" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ServiceDependency" : {
+        "type" : "object",
+        "title" : "ServiceDependency",
+        "required" : [ "monitoredServiceIdentifier" ],
+        "properties" : {
+          "monitoredServiceIdentifier" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "dependencyMetadata" : {
+            "type" : "object"
+          }
+        }
+      },
+      "NotificationRuleRef" : {
+        "type" : "object",
+        "title" : "NotificationRuleRef",
+        "required" : [ "notificationRuleRef" ],
+        "properties" : {
+          "notificationRuleRef" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "MonitoredServiceTemplateRef" : {
+        "type" : "object",
+        "title" : "MonitoredServiceTemplateRef",
+        "properties" : {
+          "templateRef" : {
+            "type" : "string"
+          },
+          "versionLabel" : {
+            "type" : "string"
+          },
+          "templateInputs" : {
+            "type" : "object"
+          }
+        }
+      }
+    }
+  }
+}
