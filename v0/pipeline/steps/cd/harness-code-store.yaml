@@ -13,10 +13,14 @@ allOf:
       folderPath:
         type: string
       gitFetchType:
-        type: string
-        enum:
-          - Branch
-          - Commit
+        oneOf:
+          - type: string
+            enum:
+              - Branch
+              - Commit
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
       paths:
         oneOf:
           - type: array
@@ -27,11 +31,6 @@ allOf:
             minLength: 1
       repoName:
         type: string
-  - oneOf:
-      - required:
-          - commitId
-      - required:
-          - branch
   - oneOf:
       - required:
           - folderPath
