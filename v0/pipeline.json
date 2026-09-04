@@ -93834,7 +93834,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "container" ]
+                "enum" : [ "container", "s3" ]
               },
               "description" : {
                 "desc" : "This is the description for AwsCoreAgentSource"
@@ -93856,6 +93856,21 @@
                   }
                 }
               }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "s3"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/stages/cd/S3AgentSource"
+                  }
+                }
+              }
             } ]
           },
           "ContainerAgentSource" : {
@@ -93868,6 +93883,36 @@
               },
               "description" : {
                 "desc" : "This is the description for ContainerAgentSource"
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "S3AgentSource" : {
+            "title" : "S3AgentSource",
+            "type" : "object",
+            "required" : [ "bucketName", "key", "runtime", "entryPoint" ],
+            "properties" : {
+              "bucketName" : {
+                "type" : "string"
+              },
+              "key" : {
+                "type" : "string"
+              },
+              "versionId" : {
+                "type" : "string"
+              },
+              "runtime" : {
+                "type" : "string",
+                "enum" : [ "PYTHON_3_12", "PYTHON_3_13", "PYTHON_3_14" ]
+              },
+              "entryPoint" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "description" : {
+                "desc" : "This is the description for S3AgentSource"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
