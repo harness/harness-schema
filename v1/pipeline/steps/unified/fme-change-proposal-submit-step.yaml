@@ -27,21 +27,43 @@ allOf:
             properties:
               resourceType:
                 description: Type of resource the change proposal targets.
-                type: string
+                oneOf:
+                  - type: string
+                    enum:
+                      - configMetadata
+                      - configDefinition
+                  - $ref: ../../common/expression.yaml
               resourceId:
-                description: Identifier of the resource the change proposal targets.
-                type: string
-              environmentId:
-                description: Environment identifier the change proposal applies to.
-                type: string
+                description: Identifier of the resource the change proposal targets (UUID or ULID).
+                oneOf:
+                  - type: string
+                    oneOf:
+                      - pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                      - pattern: "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+                  - $ref: ../../common/expression.yaml
+              environment:
+                description: FME environment name or identifier the change proposal applies to.
+                oneOf:
+                  - type: string
+                    minLength: 1
+                    maxLength: 100
+                  - $ref: ../../common/expression.yaml
               title:
                 description: Title of the change proposal.
-                type: string
+                oneOf:
+                  - type: string
+                    minLength: 1
+                    maxLength: 120
+                  - $ref: ../../common/expression.yaml
               comment:
                 description: Comment for the change proposal.
-                type: string
+                oneOf:
+                  - type: string
+                    minLength: 1
+                    maxLength: 480
+                  - $ref: ../../common/expression.yaml
               changes:
-                description: List of JSON Patch-style change operations.
+                description: List of JSON Patch-style change operations. Value required for add/replace is enforced at runtime.
                 type: array
                 minItems: 1
                 items:

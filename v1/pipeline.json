@@ -4738,26 +4738,58 @@
                       "properties" : {
                         "resourceType" : {
                           "description" : "Type of resource the change proposal targets.",
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "type" : "string",
+                            "enum" : [ "configMetadata", "configDefinition" ]
+                          }, {
+                            "$ref" : "#/definitions/pipeline/common/Expression"
+                          } ]
                         },
                         "resourceId" : {
-                          "description" : "Identifier of the resource the change proposal targets.",
-                          "type" : "string"
+                          "description" : "Identifier of the resource the change proposal targets (UUID or ULID).",
+                          "oneOf" : [ {
+                            "type" : "string",
+                            "oneOf" : [ {
+                              "pattern" : "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }, {
+                              "pattern" : "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+                            } ]
+                          }, {
+                            "$ref" : "#/definitions/pipeline/common/Expression"
+                          } ]
                         },
-                        "environmentId" : {
-                          "description" : "Environment identifier the change proposal applies to.",
-                          "type" : "string"
+                        "environment" : {
+                          "description" : "FME environment name or identifier the change proposal applies to.",
+                          "oneOf" : [ {
+                            "type" : "string",
+                            "minLength" : 1,
+                            "maxLength" : 100
+                          }, {
+                            "$ref" : "#/definitions/pipeline/common/Expression"
+                          } ]
                         },
                         "title" : {
                           "description" : "Title of the change proposal.",
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "type" : "string",
+                            "minLength" : 1,
+                            "maxLength" : 120
+                          }, {
+                            "$ref" : "#/definitions/pipeline/common/Expression"
+                          } ]
                         },
                         "comment" : {
                           "description" : "Comment for the change proposal.",
-                          "type" : "string"
+                          "oneOf" : [ {
+                            "type" : "string",
+                            "minLength" : 1,
+                            "maxLength" : 480
+                          }, {
+                            "$ref" : "#/definitions/pipeline/common/Expression"
+                          } ]
                         },
                         "changes" : {
-                          "description" : "List of JSON Patch-style change operations.",
+                          "description" : "List of JSON Patch-style change operations. Value required for add/replace is enforced at runtime.",
                           "type" : "array",
                           "minItems" : 1,
                           "items" : {
