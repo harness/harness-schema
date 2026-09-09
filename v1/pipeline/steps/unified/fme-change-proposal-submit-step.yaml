@@ -1,0 +1,63 @@
+title: UnifiedFmeChangeProposalSubmitStepNode
+description: FME Change Proposal Submit step node.
+allOf:
+  - $ref: ./abstract-step-node.yaml
+  - type: object
+    required:
+      - fme-change-proposal-submit
+    properties:
+      fme-change-proposal-submit:
+        description: FME Change Proposal Submit step configuration.
+        type: object
+        required:
+          - uses
+          - with
+        properties:
+          uses:
+            description: Embedded step handler.
+            type: string
+            enum:
+              - harness
+          with:
+            description: FME Change Proposal Submit step parameters.
+            type: object
+            required:
+              - resourceType
+              - changes
+            properties:
+              resourceType:
+                description: Type of resource the change proposal targets.
+                type: string
+              resourceId:
+                description: Identifier of the resource the change proposal targets.
+                type: string
+              environmentId:
+                description: Environment identifier the change proposal applies to.
+                type: string
+              title:
+                description: Title of the change proposal.
+                type: string
+              comment:
+                description: Comment for the change proposal.
+                type: string
+              changes:
+                description: List of JSON Patch-style change operations.
+                type: array
+                minItems: 1
+                items:
+                  type: object
+                  required:
+                    - op
+                    - path
+                  properties:
+                    op:
+                      type: string
+                      enum:
+                        - add
+                        - replace
+                        - remove
+                    path:
+                      type: string
+                    value: {}
+                    previousValue: {}
+$schema: http://json-schema.org/draft-07/schema#
