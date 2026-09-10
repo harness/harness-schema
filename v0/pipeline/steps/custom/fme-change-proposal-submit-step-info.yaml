@@ -15,6 +15,7 @@ allOf:
           - $ref: ../common/fme-change-proposal-common-resource-id.yaml
           - $ref: ../common/common-jexl.yaml
       environmentId:
+        description: "Environment identifier. Mandatory when resourceType is configDefinition"
         oneOf:
           - $ref: ../common/fme-change-proposal-common-resource-id.yaml
           - $ref: ../common/common-jexl.yaml
@@ -29,5 +30,27 @@ allOf:
           - $ref: ../common/fme-change-proposal-common-title.yaml
       comment:
         oneOf:
-          - $ref: ../common/fme-change-proposal-common-comment.yaml      
+          - $ref: ../common/fme-change-proposal-common-comment.yaml
+  - if:
+      properties:
+        resourceType:
+          const: configDefinition
+    then:
+      required:
+        - environmentId
+      properties:
+        changes:
+          type: array
+          items:
+            $ref: ../common/fme-change-proposal-common-change-config-definition.yaml
+  - if:
+      properties:
+        resourceType:
+          const: configMetadata
+    then:
+      properties:
+        changes:
+          type: array
+          items:
+            $ref: ../common/fme-change-proposal-common-change-config-metadata.yaml
 $schema: http://json-schema.org/draft-07/schema#

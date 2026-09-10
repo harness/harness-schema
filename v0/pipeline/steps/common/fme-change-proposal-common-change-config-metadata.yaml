@@ -1,0 +1,157 @@
+title: fme-change-proposal-common-change-config-metadata
+description: "A change operation targeting a configMetadata resource. Constrains value/previousValue shape based on path"
+allOf:
+  - $ref: fme-change-proposal-common-change.yaml
+  - if:
+      properties:
+        path:
+          const: ""
+    then:
+      properties:
+        value:
+          type: object
+          required:
+            - name
+            - identifier
+            - type
+            - owners
+            - trafficTypeId
+            - variations
+            - schema
+          properties:
+            name:
+              type: string
+              minLength: 1
+            identifier:
+              type: string
+              minLength: 1
+              pattern: "^[a-zA-Z][-_a-zA-Z0-9]*$"
+            description:
+              type: string
+            type:
+              type: string
+              enum:
+                - ai
+                - standard
+            tags:
+              type: array
+              items:
+                type: string
+            owners:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                required:
+                  - id
+                  - type
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                  type:
+                    type: string
+                    enum:
+                      - User
+                      - Group
+            trafficTypeId:
+              $ref: fme-change-proposal-common-resource-id.yaml
+            variations:
+              type: array
+              minItems: 1
+              items:
+                type: string
+            schema:
+              type: string
+            aiContext:
+              type: object
+              required:
+                - flowType
+              properties:
+                flowType:
+                  type: string
+                  enum:
+                    - llm_call
+                references:
+                  type: array
+          allOf:
+            - if:
+                properties:
+                  type:
+                    const: ai
+              then:
+                required:
+                  - aiContext
+  - if:
+      properties:
+        path:
+          const: /name
+    then:
+      properties:
+        value:
+          type: string
+          minLength: 1
+        previousValue:
+          oneOf:
+            - type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /description
+    then:
+      properties:
+        value:
+          type: string
+        previousValue:
+          oneOf:
+            - type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /status
+    then:
+      properties:
+        value:
+          type: string
+          enum:
+            - ACTIVE
+            - DELETED
+        previousValue:
+          oneOf:
+            - type: string
+              enum:
+                - ACTIVE
+                - DELETED
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /variations
+    then:
+      properties:
+        value:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        previousValue:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          pattern: "^/variations/.+$"
+    then:
+      properties:
+        value:
+          type: string
+        previousValue:
+          oneOf:
+            - type: string
+            - type: "null"
+$schema: http://json-schema.org/draft-07/schema#

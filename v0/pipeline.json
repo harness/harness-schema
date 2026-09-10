@@ -6042,6 +6042,7 @@
                   } ]
                 },
                 "environmentId" : {
+                  "description" : "Environment identifier. Mandatory when resourceType is configDefinition",
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
                   }, {
@@ -6066,6 +6067,43 @@
                   "oneOf" : [ {
                     "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-comment"
                   } ]
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "resourceType" : {
+                    "const" : "configDefinition"
+                  }
+                }
+              },
+              "then" : {
+                "required" : [ "environmentId" ],
+                "properties" : {
+                  "changes" : {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-change-config-definition"
+                    }
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "resourceType" : {
+                    "const" : "configMetadata"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "changes" : {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-change-config-metadata"
+                    }
+                  }
                 }
               }
             } ],
@@ -30252,8 +30290,9 @@
           "fme-change-proposal-common-change" : {
             "title" : "fme-change-proposal-common-change",
             "type" : "object",
-            "description" : "A single JSON Patch-style change operation (RFC 6902), with an optional previousValue for audit purposes",
+            "description" : "A single JSON Patch-style change operation (RFC 6902), with an optional previousValue for audit purposes. The expected shape of value/previousValue depends on resourceType and path - see fme-change-proposal-common-change-metadata.yaml and fme-change-proposal-common-change-definition.yaml",
             "required" : [ "op", "path" ],
+            "additionalProperties" : false,
             "properties" : {
               "op" : {
                 "type" : "string",
@@ -30265,23 +30304,24 @@
                 "description" : "JSON Pointer (RFC 6901) to the target location. Empty string represents the root document"
               },
               "value" : {
-                "description" : "New value to set. Required for add/replace, not used for remove. Can be any JSON type (object, string, number, array, boolean, null)"
+                "description" : "New value to set. Required for add/replace, not used for remove"
               },
               "previousValue" : {
                 "description" : "Previous value before this change was applied, for audit/validation purposes. Can be any JSON type, including null"
               }
             },
-            "additionalProperties" : false,
-            "if" : {
-              "properties" : {
-                "op" : {
-                  "enum" : [ "add", "replace" ]
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "op" : {
+                    "enum" : [ "add", "replace" ]
+                  }
                 }
+              },
+              "then" : {
+                "required" : [ "op", "path", "value" ]
               }
-            },
-            "then" : {
-              "required" : [ "op", "path", "value" ]
-            },
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "fme-change-proposal-common-title" : {
@@ -30297,6 +30337,544 @@
             "description" : "Change Proposal Comment",
             "minLength" : 1,
             "maxLength" : 480
+          },
+          "fme-change-proposal-common-change-config-definition" : {
+            "title" : "fme-change-proposal-common-change-config-definition",
+            "description" : "A change operation targeting a configDefinition resource. Constrains value/previousValue shape based on path",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-change"
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/identifier"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string",
+                    "minLength" : 1,
+                    "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/version"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "integer",
+                    "minimum" : 0
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "integer",
+                      "minimum" : 0
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/workspaceId"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/trafficTypeId"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/envId"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/configMetadataId"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/status"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string",
+                    "enum" : [ "ACTIVE", "DELETED" ]
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string",
+                      "enum" : [ "ACTIVE", "DELETED" ]
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/type"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string",
+                    "enum" : [ "ai", "standard" ]
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string",
+                      "enum" : [ "ai", "standard" ]
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/aiContext"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "object",
+                    "required" : [ "flowType" ],
+                    "properties" : {
+                      "flowType" : {
+                        "type" : "string",
+                        "enum" : [ "llm_call" ]
+                      },
+                      "references" : {
+                        "type" : "array"
+                      }
+                    }
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "object"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/variations"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "object",
+                    "minProperties" : 1,
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "object",
+                      "additionalProperties" : {
+                        "type" : "string"
+                      }
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "pattern" : "^/variations/.+$"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/targeting"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "object",
+                    "required" : [ "definition", "defaultVariation", "trafficAllocation", "individual" ],
+                    "properties" : {
+                      "definition" : {
+                        "type" : "string"
+                      },
+                      "defaultVariation" : {
+                        "type" : "string"
+                      },
+                      "trafficAllocation" : {
+                        "type" : "integer",
+                        "minimum" : 0,
+                        "maximum" : 100
+                      },
+                      "individual" : {
+                        "type" : "array"
+                      }
+                    }
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "object"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "fme-change-proposal-common-change-config-metadata" : {
+            "title" : "fme-change-proposal-common-change-config-metadata",
+            "description" : "A change operation targeting a configMetadata resource. Constrains value/previousValue shape based on path",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-change"
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : ""
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "object",
+                    "required" : [ "name", "identifier", "type", "owners", "trafficTypeId", "variations", "schema" ],
+                    "properties" : {
+                      "name" : {
+                        "type" : "string",
+                        "minLength" : 1
+                      },
+                      "identifier" : {
+                        "type" : "string",
+                        "minLength" : 1,
+                        "pattern" : "^[a-zA-Z][-_a-zA-Z0-9]*$"
+                      },
+                      "description" : {
+                        "type" : "string"
+                      },
+                      "type" : {
+                        "type" : "string",
+                        "enum" : [ "ai", "standard" ]
+                      },
+                      "tags" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      },
+                      "owners" : {
+                        "type" : "array",
+                        "minItems" : 1,
+                        "items" : {
+                          "type" : "object",
+                          "required" : [ "id", "type" ],
+                          "properties" : {
+                            "id" : {
+                              "type" : "string",
+                              "minLength" : 1
+                            },
+                            "type" : {
+                              "type" : "string",
+                              "enum" : [ "User", "Group" ]
+                            }
+                          }
+                        }
+                      },
+                      "trafficTypeId" : {
+                        "$ref" : "#/definitions/pipeline/steps/common/fme-change-proposal-common-resource-id"
+                      },
+                      "variations" : {
+                        "type" : "array",
+                        "minItems" : 1,
+                        "items" : {
+                          "type" : "string"
+                        }
+                      },
+                      "schema" : {
+                        "type" : "string"
+                      },
+                      "aiContext" : {
+                        "type" : "object",
+                        "required" : [ "flowType" ],
+                        "properties" : {
+                          "flowType" : {
+                            "type" : "string",
+                            "enum" : [ "llm_call" ]
+                          },
+                          "references" : {
+                            "type" : "array"
+                          }
+                        }
+                      }
+                    },
+                    "allOf" : [ {
+                      "if" : {
+                        "properties" : {
+                          "type" : {
+                            "const" : "ai"
+                          }
+                        }
+                      },
+                      "then" : {
+                        "required" : [ "aiContext" ]
+                      }
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/name"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string",
+                    "minLength" : 1
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/description"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/status"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string",
+                    "enum" : [ "ACTIVE", "DELETED" ]
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string",
+                      "enum" : [ "ACTIVE", "DELETED" ]
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "const" : "/variations"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "array",
+                    "minItems" : 1,
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "path" : {
+                    "pattern" : "^/variations/.+$"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "previousValue" : {
+                    "oneOf" : [ {
+                      "type" : "string"
+                    }, {
+                      "type" : "null"
+                    } ]
+                  }
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "fme-flag-common-flag-name" : {
             "title" : "fme-flag-common-flag-name",

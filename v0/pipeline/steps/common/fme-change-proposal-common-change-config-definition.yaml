@@ -1,0 +1,195 @@
+title: fme-change-proposal-common-change-config-definition
+description: "A change operation targeting a configDefinition resource. Constrains value/previousValue shape based on path"
+allOf:
+  - $ref: fme-change-proposal-common-change.yaml
+  - if:
+      properties:
+        path:
+          const: /identifier
+    then:
+      properties:
+        value:
+          type: string
+          minLength: 1
+          pattern: "^[a-zA-Z][-_a-zA-Z0-9]*$"
+        previousValue:
+          oneOf:
+            - type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /version
+    then:
+      properties:
+        value:
+          type: integer
+          minimum: 0
+        previousValue:
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /workspaceId
+    then:
+      properties:
+        value:
+          $ref: fme-change-proposal-common-resource-id.yaml
+        previousValue:
+          oneOf:
+            - $ref: fme-change-proposal-common-resource-id.yaml
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /trafficTypeId
+    then:
+      properties:
+        value:
+          $ref: fme-change-proposal-common-resource-id.yaml
+        previousValue:
+          oneOf:
+            - $ref: fme-change-proposal-common-resource-id.yaml
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /envId
+    then:
+      properties:
+        value:
+          $ref: fme-change-proposal-common-resource-id.yaml
+        previousValue:
+          oneOf:
+            - $ref: fme-change-proposal-common-resource-id.yaml
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /configMetadataId
+    then:
+      properties:
+        value:
+          $ref: fme-change-proposal-common-resource-id.yaml
+        previousValue:
+          oneOf:
+            - $ref: fme-change-proposal-common-resource-id.yaml
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /status
+    then:
+      properties:
+        value:
+          type: string
+          enum:
+            - ACTIVE
+            - DELETED
+        previousValue:
+          oneOf:
+            - type: string
+              enum:
+                - ACTIVE
+                - DELETED
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /type
+    then:
+      properties:
+        value:
+          type: string
+          enum:
+            - ai
+            - standard
+        previousValue:
+          oneOf:
+            - type: string
+              enum:
+                - ai
+                - standard
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /aiContext
+    then:
+      properties:
+        value:
+          type: object
+          required:
+            - flowType
+          properties:
+            flowType:
+              type: string
+              enum:
+                - llm_call
+            references:
+              type: array
+        previousValue:
+          oneOf:
+            - type: object
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /variations
+    then:
+      properties:
+        value:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            type: string
+        previousValue:
+          oneOf:
+            - type: object
+              additionalProperties:
+                type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          pattern: "^/variations/.+$"
+    then:
+      properties:
+        value:
+          type: string
+        previousValue:
+          oneOf:
+            - type: string
+            - type: "null"
+  - if:
+      properties:
+        path:
+          const: /targeting
+    then:
+      properties:
+        value:
+          type: object
+          required:
+            - definition
+            - defaultVariation
+            - trafficAllocation
+            - individual
+          properties:
+            definition:
+              type: string
+            defaultVariation:
+              type: string
+            trafficAllocation:
+              type: integer
+              minimum: 0
+              maximum: 100
+            individual:
+              type: array
+        previousValue:
+          oneOf:
+            - type: object
+            - type: "null"
+$schema: http://json-schema.org/draft-07/schema#

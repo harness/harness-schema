@@ -1,9 +1,10 @@
 title: fme-change-proposal-common-change
 type: object
-description: "A single JSON Patch-style change operation (RFC 6902), with an optional previousValue for audit purposes"
+description: "A single JSON Patch-style change operation (RFC 6902), with an optional previousValue for audit purposes. The expected shape of value/previousValue depends on resourceType and path - see fme-change-proposal-common-change-metadata.yaml and fme-change-proposal-common-change-definition.yaml"
 required:
   - op
   - path
+additionalProperties: false
 properties:
   op:
     type: string
@@ -16,19 +17,19 @@ properties:
     type: string
     description: "JSON Pointer (RFC 6901) to the target location. Empty string represents the root document"
   value:
-    description: "New value to set. Required for add/replace, not used for remove. Can be any JSON type (object, string, number, array, boolean, null)"
+    description: "New value to set. Required for add/replace, not used for remove"
   previousValue:
     description: "Previous value before this change was applied, for audit/validation purposes. Can be any JSON type, including null"
-additionalProperties: false
-if:
-  properties:
-    op:
-      enum:
-        - add
-        - replace
-then:
-  required:
-    - op
-    - path
-    - value
+allOf:
+  - if:
+      properties:
+        op:
+          enum:
+            - add
+            - replace
+    then:
+      required:
+        - op
+        - path
+        - value
 $schema: http://json-schema.org/draft-07/schema#
