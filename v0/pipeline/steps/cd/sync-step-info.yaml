@@ -84,11 +84,47 @@ properties:
   degradedStateTimeout:
     type: string
     pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  successCriteria:
+    oneOf:
+      - type: string
+        enum:
+          - syncInitiated
+          - syncSucceeded
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
   - dependencies:
       failOnTimeout: [ waitTillHealthy ]
       degradedStateTimeout: [ waitTillHealthy ]
+  # syncInitiated does not poll the sync operation, so polling-only options are rejected.
+  # Only literal values are checked here; runtime inputs and expressions are validated during execution.
+  - if:
+      required:
+        - successCriteria
+      properties:
+        successCriteria:
+          const: syncInitiated
+    then:
+      properties:
+        waitTillHealthy:
+          not:
+            const: true
+        failOnTimeout:
+          not:
+            const: true
+        showResourceProgress:
+          not:
+            const: true
+        autoPromoteRolloutBehavior:
+          not:
+            enum:
+              - promote-full
+              - resume
+        degradedStateTimeout:
+          not:
+            pattern: ^\d
   - anyOf:
       - oneOf:
           - required:
