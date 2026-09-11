@@ -1,0 +1,35 @@
+title: TemplateContainerOverlay
+description: >
+  Caller-side container overrides on a V1 template step (`template.container`).
+  Mirrors TemplateMergeServiceHelper.CONTAINER_PROPAGATION_ALLOWLIST. Applied to
+  resolved run, run-test, and background containers (including nested group/parallel).
+  Image, connector, and entrypoint stay on the template and are not overridable here.
+type: object
+additionalProperties: false
+properties:
+  user:
+    description: User ID to run as. Supports expressions.
+    oneOf:
+      - type: integer
+      - type: string
+  group:
+    description: Group to run as.
+    type: string
+  cpu:
+    description: CPU limit. Ignored when resources.limits.cpu is set.
+    type: string
+  memory:
+    description: Memory limit. Ignored when resources.limits.memory is set.
+    type: string
+  resources:
+    description: Container resource limits and requests. Takes precedence over the flat cpu/memory fields.
+    $ref: ../resource.yaml
+  shm-size:
+    description: Shared memory size.
+    type: string
+  privileged:
+    description: Run in privileged mode. Supports expressions.
+    oneOf:
+      - type: boolean
+      - $ref: ./expression.yaml
+$schema: http://json-schema.org/draft-07/schema#
