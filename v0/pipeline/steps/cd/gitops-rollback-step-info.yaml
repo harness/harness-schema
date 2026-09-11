@@ -33,7 +33,32 @@ properties:
       - type: string
         pattern: (<\+.+>.*)
         minLength: 1
+  successCriteria:
+    oneOf:
+      - type: string
+        enum:
+          - syncInitiated
+          - syncSucceeded
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
 $schema: http://json-schema.org/draft-07/schema#
 allOf:
   - dependencies:
       failOnTimeout: [ waitTillHealthy ]
+  # syncInitiated does not poll the sync operation, so polling-only options are rejected.
+  # Only literal values are checked here; runtime inputs and expressions are validated during execution.
+  - if:
+      required:
+        - successCriteria
+      properties:
+        successCriteria:
+          const: syncInitiated
+    then:
+      properties:
+        waitTillHealthy:
+          not:
+            const: true
+        failOnTimeout:
+          not:
+            const: true

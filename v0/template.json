@@ -19837,6 +19837,16 @@
               "degradedStateTimeout" : {
                 "type" : "string",
                 "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "successCriteria" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "syncInitiated", "syncSucceeded" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
@@ -19844,6 +19854,44 @@
               "dependencies" : {
                 "failOnTimeout" : [ "waitTillHealthy" ],
                 "degradedStateTimeout" : [ "waitTillHealthy" ]
+              }
+            }, {
+              "if" : {
+                "required" : [ "successCriteria" ],
+                "properties" : {
+                  "successCriteria" : {
+                    "const" : "syncInitiated"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "waitTillHealthy" : {
+                    "not" : {
+                      "const" : true
+                    }
+                  },
+                  "failOnTimeout" : {
+                    "not" : {
+                      "const" : true
+                    }
+                  },
+                  "showResourceProgress" : {
+                    "not" : {
+                      "const" : true
+                    }
+                  },
+                  "autoPromoteRolloutBehavior" : {
+                    "not" : {
+                      "enum" : [ "promote-full", "resume" ]
+                    }
+                  },
+                  "degradedStateTimeout" : {
+                    "not" : {
+                      "pattern" : "^\\d"
+                    }
+                  }
+                }
               }
             }, {
               "anyOf" : [ {
@@ -20177,12 +20225,45 @@
                   "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
+              },
+              "successCriteria" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "syncInitiated", "syncSucceeded" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "allOf" : [ {
               "dependencies" : {
                 "failOnTimeout" : [ "waitTillHealthy" ]
+              }
+            }, {
+              "if" : {
+                "required" : [ "successCriteria" ],
+                "properties" : {
+                  "successCriteria" : {
+                    "const" : "syncInitiated"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "waitTillHealthy" : {
+                    "not" : {
+                      "const" : true
+                    }
+                  },
+                  "failOnTimeout" : {
+                    "not" : {
+                      "const" : true
+                    }
+                  }
+                }
               }
             } ],
             "$ref" : "#/definitions/pipeline/common/StepSpecType"
