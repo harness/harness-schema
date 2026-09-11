@@ -612,6 +612,8 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode_template"
@@ -80498,6 +80500,187 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "GenerateChangelogStepNode_template" : {
+            "title" : "GenerateChangelogStepNode_template",
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "DBGenerateChangelog" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "DBGenerateChangelog"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GenerateChangelogStepInfo" : {
+            "title" : "GenerateChangelogStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "connectorRef", "dbSchema", "dbInstance" ],
+              "properties" : {
+                "dbInstance" : {
+                  "type" : "string"
+                },
+                "dbSchema" : {
+                  "type" : "string"
+                },
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "author" : {
+                  "type" : "string"
+                },
+                "diffTypes" : {
+                  "type" : "string"
+                },
+                "overwriteOutputFile" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "changelogFile" : {
+                  "type" : "string"
+                },
+                "settings" : {
+                  "oneOf" : [ {
+                    "$ref" : "#/definitions/pipeline/common/ParameterFieldMapStringJsonNode"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "delegateSelectors" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "envVariables" : {
+                  "oneOf" : [ {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "image" : {
+                  "type" : "string"
+                },
+                "imagePullPolicy" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "Always", "Never", "IfNotPresent" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "privileged" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "reuse" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "not" : {
+                      "pattern" : "^<\\+.*>.*$"
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "resources" : {
+                  "$ref" : "#/definitions/pipeline/common/ContainerResource"
+                },
+                "runAsUser" : {
+                  "oneOf" : [ {
+                    "type" : "integer",
+                    "format" : "int32"
+                  }, {
+                    "type" : "string"
+                  } ]
+                },
+                "description" : {
+                  "desc" : "This is the description for GenerateChangelogStepInfo"
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
           "AwsCdkDestroyStepNode_template" : {
             "title" : "AwsCdkDestroyStepNode_template",
             "type" : "object",
@@ -86109,6 +86292,83 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GenerateChangelogStepNode" : {
+            "title" : "GenerateChangelogStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for GenerateChangelogStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/DBDevOpsFailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "DBGenerateChangelog" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "DBGenerateChangelog"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepInfo"
                   }
                 }
               }
@@ -110018,6 +110278,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/UpdateGitOpsAppStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingStepNode"
@@ -117891,6 +118153,8 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepNode"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkDestroyStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/AwsCdkRollbackStepNode"
@@ -118792,6 +119056,8 @@
                   "$ref" : "#/definitions/pipeline/steps/common/DBApplySchemaStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/DBRollbackSchemaStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/GenerateChangelogStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/LiquibaseCommandStepNode"
                 }, {

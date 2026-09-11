@@ -27,10 +27,8 @@ allOf:
       type: string
     settings:
       oneOf:
-        - type: object
-          additionalProperties:
-            type: string
-        - type: string
+      - $ref: ../../common/parameter-field-map-string-json-node.yaml
+      - type: string
     delegateSelectors:
       oneOf:
       - type: array
@@ -78,81 +76,6 @@ allOf:
       - type: integer
         format: int32
       - type: string
+    description:
+      desc: This is the description for GenerateChangelogStepInfo
 $schema: http://json-schema.org/draft-07/schema#
-type: object
-required:
-- connectorRef
-- dbSchema
-- dbInstance
-properties:
-  dbInstance:
-      type: string
-  dbSchema:
-    type: string
-  connectorRef:
-    type: string
-  author:
-    type: string
-  diffTypes:
-    type: string
-  overwriteOutputFile:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      minLength: 1
-  changelogFile:
-    type: string
-  settings:
-    oneOf:
-      - $ref: ../../common/parameter-field-map-string-json-node.yaml
-      - type: string
-  delegateSelectors:
-    oneOf:
-    - type: array
-      items:
-        type: string
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  envVariables:
-    oneOf:
-    - type: object
-      additionalProperties:
-        type: string
-    - type: string
-  image:
-    type: string
-  imagePullPolicy:
-    oneOf:
-    - type: string
-      enum:
-      - Always
-      - Never
-      - IfNotPresent
-    - type: string
-      pattern: (<\+.+>.*)
-      minLength: 1
-  privileged:
-    oneOf:
-    - type: boolean
-    - type: string
-      pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
-      minLength: 1
-  reuse:
-    oneOf:
-    - type: string
-      not:
-        pattern: "^<\\+.*>.*$"
-    - type: string
-      pattern: ^<\+input>((\.)(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\))*$
-      minLength: 1
-  resources:
-    $ref: ../../common/container-resource.yaml
-  runAsUser:
-    oneOf:
-    - type: integer
-      format: int32
-    - type: string
-  description:
-    desc: This is the description for GenerateChangelogStepInfo
