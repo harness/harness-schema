@@ -2160,7 +2160,7 @@
           },
           "RuntimeV1" : {
             "title" : "RuntimeV1",
-            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs.",
+            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs, with an optional delegate selector list.",
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "oneOf" : [ {
               "type" : "string",
@@ -2186,10 +2186,19 @@
                   "$ref" : "#/definitions/pipeline/stages/unified/K8RuntimeSpec"
                 },
                 "delegate" : {
-                  "description" : "Delegate selectors used for Kubernetes inherit-from-delegate authentication.",
+                  "description" : "Optional delegate selectors for this runtime. Supports expressions.",
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 }
-              }
+              },
+              "oneOf" : [ {
+                "required" : [ "shell" ]
+              }, {
+                "required" : [ "cloud" ]
+              }, {
+                "required" : [ "vm" ]
+              }, {
+                "required" : [ "kubernetes" ]
+              } ]
             } ]
           },
           "ShellRuntimeSpec" : {

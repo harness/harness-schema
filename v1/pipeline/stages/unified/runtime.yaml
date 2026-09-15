@@ -1,5 +1,5 @@
 title: RuntimeV1
-description: Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs.
+description: Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs, with an optional delegate selector list.
 $schema: http://json-schema.org/draft-07/schema#
 oneOf:
   # String shorthand — handled by RuntimeV1Deserializer.
@@ -10,6 +10,8 @@ oneOf:
       - vm
       - k8
   # Object form — mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1 fields.
+  # Existing runtime specs remain exclusive (oneOf). `delegate` is an additional,
+  # non-mandatory list of selectors that can appear alongside a spec.
   - type: object
     additionalProperties: false
     properties:
@@ -26,5 +28,14 @@ oneOf:
         description: Kubernetes runtime specification.
         $ref: ./runtime_kubernetes.yaml
       delegate:
-        description: Delegate selectors used for Kubernetes inherit-from-delegate authentication.
+        description: Optional delegate selectors for this runtime. Supports expressions.
         $ref: ../../common/delegate.yaml
+    oneOf:
+      - required:
+          - shell
+      - required:
+          - cloud
+      - required:
+          - vm
+      - required:
+          - kubernetes
