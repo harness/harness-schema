@@ -16,6 +16,7 @@ public enum YamlEntityType {
   TRIGGER_V0("trigger", SchemaVersion.V0, "trigger/trigger_root.yaml"),
   PIPELINE_V1("pipeline", SchemaVersion.V1, "pipeline/pipeline_root.yaml"),
   TEMPLATE_V1("template", SchemaVersion.V1, "template/template_root.yaml"),
+  AGENT_V1("agent", SchemaVersion.V1, "agent/agent_root.yaml"),
   INPUT_SET_V1("inputSet", SchemaVersion.V1, "inputSet/inputSet.yaml"),
   OVERLAY_INPUT_SET_V1("overlayInputSet", SchemaVersion.V1,
                        "overlayInputSet/overlayInputSet.yaml"),
