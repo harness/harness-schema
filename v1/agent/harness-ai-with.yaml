@@ -1,0 +1,79 @@
+title: HarnessAIWith
+description: Input overrides for the nested harnessAI@1.0.0 step template. Field names match template-library harnessAI inputs. Values may be literals or expressions.
+type: object
+additionalProperties: false
+required:
+  - prompt
+  - connector
+properties:
+  prompt:
+    description: Natural-language instruction for the agent to perform.
+    type: string
+    minLength: 1
+  connector:
+    description: LLM connector identifier (Anthropic, Bedrock, OpenAI, GitHub Copilot, and other AI connectors).
+    type: string
+    minLength: 1
+  docker_connector:
+    description: Docker / artifact registry connector used to pull the agent image.
+    type: string
+  image:
+    description: Container image for the harness-ai-agent runner.
+    type: string
+  mcp:
+    description: MCP connector refs mounted into the agent at runtime.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - $ref: ../pipeline/common/expression.yaml
+  max_turns:
+    description: Maximum number of agent iterations before the run is terminated.
+    oneOf:
+      - type: string
+      - type: number
+      - $ref: ../pipeline/common/expression.yaml
+  workdir:
+    description: Working directory for the agent. Defaults to /harness when unset on the nested template.
+    type: string
+  skill:
+    description: Optional path to a SKILL.md file to install into the working directory before the run.
+    type: string
+  allowed_tools:
+    description: Comma-separated allowlist of tools the agent may use. Empty uses the runner default.
+    type: string
+  allowed_domains:
+    description: Extra domains the agent may reach (exact hosts, optional wildcards, or domain regexes).
+    type: string
+  output:
+    description: Optional path to a file the agent is expected to produce; verified after the run.
+    type: string
+  yaml_version:
+    description: Harness pipeline YAML version the agent should target in its system prompt.
+    oneOf:
+      - type: string
+        enum:
+          - v0
+          - v1
+      - $ref: ../pipeline/common/expression.yaml
+  backend:
+    description: Agent runtime backend. Empty lets the runner choose its default.
+    oneOf:
+      - type: string
+        enum:
+          - ""
+          - claude
+          - deepagent
+          - openai
+          - codex
+          - copilot
+      - $ref: ../pipeline/common/expression.yaml
+  env:
+    description: Extra environment variables for the agent container. Object map is the authoring form (for example ANTHROPIC_MODEL). Array is accepted for compatibility with the nested template input type.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: array
+      - $ref: ../pipeline/common/expression.yaml
+$schema: http://json-schema.org/draft-07/schema#

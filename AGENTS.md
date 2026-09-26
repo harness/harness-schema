@@ -10,8 +10,10 @@ This is the Harness NextGen Pipeline YAML Schema repository. It contains JSON Sc
 
 ### Schema Definition Flow
 
-1. **YAML Source Files** (`v0/pipeline/`, `v0/template/`) - Human-editable schema definitions
-2. **JSON Output** (`v0/*.json`) - Bundled schemas consumed by IDEs and services
+1. **YAML Source Files** (`v0/pipeline/`, `v0/template/`, `v1/pipeline/`, `v1/template/`, `v1/agent/`) - Human-editable schema definitions
+2. **JSON Output** (`v0/*.json`, `v1/*.json`) - Bundled schemas consumed by IDEs and services
+
+v1 also has first-class documents besides pipeline and template: `v1/agent/` (custom agent YAML stored by ACM; bundled as `v1/agent.json`).
 
 ### Key Directories
 
@@ -19,6 +21,7 @@ This is the Harness NextGen Pipeline YAML Schema repository. It contains JSON Sc
 - `v0/pipeline/stages/{stage}/` - Stage definitions (approval, cd, cf, ci, custom, iacm, idp, security)
 - `v0/pipeline/common/` - Shared schema components
 - `v0/template/` - Template-specific schema definitions
+- `v1/agent/` - Custom agent document (`agent:` root; nested `uses: harnessAI@version`)
 
 ### Step Schema Structure
 
