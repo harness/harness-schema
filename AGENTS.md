@@ -22,6 +22,7 @@ v1 also has first-class documents besides pipeline and template: `v1/agent/` (cu
 - `v0/pipeline/common/` - Shared schema components
 - `v0/template/` - Template-specific schema definitions
 - `v1/agent/` - Custom agent document (`agent:` root; nested `uses: harnessAI@version`)
+- `v1/agent/examples/` - Sample agent YAML (same idea as `v0/pipeline/examples/`)
 
 ### Step Schema Structure
 
