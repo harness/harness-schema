@@ -1,0 +1,108 @@
+title: DownloadNexusArtifactStepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  properties:
+    connectorRef:
+      type: string
+    delegateSelectors:
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    resources:
+      $ref: ../../common/container-resource.yaml
+    runAsUser:
+      oneOf:
+      - type: integer
+        format: int32
+      - type: string
+    repository:
+      type: string
+    repositoryFormat:
+      type: string
+      enum:
+      - raw
+      - maven
+      - npm
+      - nuget
+    downloadPath:
+      type: string
+    validateChecksum:
+      oneOf:
+        - type: boolean
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+    outputFilePathsContent:
+      type: array
+      items:
+        type: string
+    privileged:
+      oneOf:
+        - type: boolean
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+  required:
+  - connectorRef
+  - repository
+  - repositoryFormat
+  - spec
+- if:
+    properties:
+      repositoryFormat:
+        const: raw
+  then:
+    properties:
+      spec:
+        $ref: nexus-download-raw-spec.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: maven
+  then:
+    properties:
+      spec:
+        $ref: nexus-download-maven-spec.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: npm
+  then:
+    properties:
+      spec:
+        $ref: nexus-download-npm-spec.yaml
+- if:
+    properties:
+      repositoryFormat:
+        const: nuget
+  then:
+    properties:
+      spec:
+        $ref: nexus-download-nuget-spec.yaml
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+description: |
+  Downloads an artifact from a Sonatype Nexus 3 repository using a Nexus connector.
+
+  Example YAML:
+  ```yaml
+  - step:
+      type: DownloadNexusArtifact
+      name: DownloadNexusArtifact_1
+      identifier: DownloadNexusArtifact_1
+      spec:
+        connectorRef: account.NexusConnector
+        repository: sdf-releases
+        repositoryFormat: raw
+        spec:
+          group: /com/example/sdf/1.4.2
+          artifactPath: sdf-bundle-1.4.2.zip
+        downloadPath: /harness/sdf
+        validateChecksum: true
+      timeout: 10m
+  ```
