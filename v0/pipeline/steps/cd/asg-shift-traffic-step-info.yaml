@@ -27,10 +27,68 @@ allOf:
       - type: string
         pattern: (<\+.+>.*)
         minLength: 1
+    deleteOldAsg:
+      oneOf:
+      - type: boolean
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  if:
+    properties:
+      deleteOldAsg:
+        const: true
+    required:
+    - deleteOldAsg
+  then:
+    properties:
+      downsizeOldAsg:
+        oneOf:
+        - const: true
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+      weight:
+        oneOf:
+        - const: 100
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+    required:
+    - downsizeOldAsg
+    - weight
 $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
 - downsizeOldAsg
 properties:
+  deleteOldAsg:
+    oneOf:
+    - type: boolean
+    - type: string
+      pattern: (<\+.+>.*)
+      minLength: 1
   description:
     desc: This is the description for AsgShiftTrafficStepInfo
+if:
+  properties:
+    deleteOldAsg:
+      const: true
+  required:
+  - deleteOldAsg
+then:
+  properties:
+    downsizeOldAsg:
+      oneOf:
+      - const: true
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+    weight:
+      oneOf:
+      - const: 100
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  required:
+  - downsizeOldAsg
+  - weight
