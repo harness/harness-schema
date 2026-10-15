@@ -3597,6 +3597,8 @@
                 "required" : [ "sto" ]
               }, {
                 "required" : [ "ai-eval" ]
+              }, {
+                "required" : [ "render" ]
               } ]
             },
             "then" : {
@@ -3699,6 +3701,13 @@
                 },
                 "then" : {
                   "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
+                }
+              }, {
+                "if" : {
+                  "required" : [ "render" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedRenderStepNode"
                 }
               } ]
             },
@@ -4914,6 +4923,37 @@
                 }
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "UnifiedRenderStepNode" : {
+            "title" : "UnifiedRenderStepNode",
+            "description" : "Render step node for manifest rendering.",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedPmsAbstractStepNode"
+            }, {
+              "type" : "object",
+              "required" : [ "render" ],
+              "properties" : {
+                "render" : {
+                  "description" : "Render step configuration.",
+                  "type" : "object",
+                  "properties" : {
+                    "with" : {
+                      "description" : "Render step parameters including manifest type and inputs.",
+                      "type" : "object",
+                      "required" : [ "kind" ],
+                      "properties" : {
+                        "kind" : {
+                          "description" : "Manifest type to render (e.g., k8s).",
+                          "type" : "string"
+                        }
+                      },
+                      "additionalProperties" : true
+                    }
+                  }
+                }
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },
