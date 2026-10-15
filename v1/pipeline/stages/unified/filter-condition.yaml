@@ -4,9 +4,12 @@ type: object
 properties:
   tags:
     description: Tag-based filter conditions.
-    type: object
     oneOf:
-      - required:
+      # Expression resolving to the whole tag filter condition.
+      - $ref: ../../common/expression.yaml
+      # Match type as a key - match any of the specified tags (OR).
+      - type: object
+        required:
           - in
         properties:
           in:
@@ -17,7 +20,9 @@ properties:
                   type: string
               - type: string
         additionalProperties: false
-      - required:
+      # Match type as a key - match all of the specified tags (AND).
+      - type: object
+        required:
           - all
         properties:
           all:
@@ -27,6 +32,29 @@ properties:
                 additionalProperties:
                   type: string
               - type: string
+        additionalProperties: false
+      # Match type as a value, so it can be an expression or a runtime input.
+      # Equivalent to the key forms above - `match-type: all` is the same as `all:`.
+      - type: object
+        required:
+          - match-type
+          - values
+        properties:
+          match-type:
+            description: How the tags are matched - `all` to require every tag (AND), `in` to require any one of them (OR).
+            oneOf:
+              - type: string
+                enum:
+                  - all
+                  - in
+              - $ref: ../../common/expression.yaml
+          values:
+            description: Tags to filter on, as key/value pairs.
+            anyOf:
+              - type: object
+                additionalProperties:
+                  type: string
+              - $ref: ../../common/expression.yaml
         additionalProperties: false
 additionalProperties: false
 $schema: http://json-schema.org/draft-07/schema#

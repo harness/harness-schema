@@ -1,54 +1,69 @@
 title: Filters
 description: Filters for selecting environments or infrastructures.
-type: array
-items:
-  type: object
-  properties:
-    infrastructures:
-      description: Infrastructure filters.
-      oneOf:
-        # "all" - select all infrastructures
-        - type: string
-          enum:
-            - all
-        # Direct list of conditions (OR)
-        - type: array
-          items:
-            $ref: ./filter-condition.yaml
-        # Map with or/and operators
-        - type: object
-          properties:
-            or:
-              type: array
+oneOf:
+  # Expression resolving to the whole filters array.
+  - $ref: ../../common/expression.yaml
+  - type: array
+    items:
+      type: object
+      properties:
+        infrastructures:
+          description: Infrastructure filters.
+          oneOf:
+            # "all" - select all infrastructures
+            - type: string
+              enum:
+                - all
+            # Expression resolving to the infrastructure filters
+            - $ref: ../../common/expression.yaml
+            # Direct list of conditions (OR)
+            - type: array
               items:
                 $ref: ./filter-condition.yaml
-            and:
-              type: array
+            # Map with or/and operators
+            - type: object
+              properties:
+                or:
+                  oneOf:
+                    - type: array
+                      items:
+                        $ref: ./filter-condition.yaml
+                    - $ref: ../../common/expression.yaml
+                and:
+                  oneOf:
+                    - type: array
+                      items:
+                        $ref: ./filter-condition.yaml
+                    - $ref: ../../common/expression.yaml
+              additionalProperties: false
+        environments:
+          description: Environment filters.
+          oneOf:
+            # "all" - select all environments
+            - type: string
+              enum:
+                - all
+            # Expression resolving to the environment filters
+            - $ref: ../../common/expression.yaml
+            # Direct list of conditions (OR)
+            - type: array
               items:
                 $ref: ./filter-condition.yaml
-          additionalProperties: false
-    environments:
-      description: Environment filters.
-      oneOf:
-        # "all" - select all environments
-        - type: string
-          enum:
-            - all
-        # Direct list of conditions (OR)
-        - type: array
-          items:
-            $ref: ./filter-condition.yaml
-        # Map with or/and operators
-        - type: object
-          properties:
-            or:
-              type: array
-              items:
-                $ref: ./filter-condition.yaml
-            and:
-              type: array
-              items:
-                $ref: ./filter-condition.yaml
-          additionalProperties: false
-  additionalProperties: false
+            # Map with or/and operators
+            - type: object
+              properties:
+                or:
+                  oneOf:
+                    - type: array
+                      items:
+                        $ref: ./filter-condition.yaml
+                    - $ref: ../../common/expression.yaml
+                and:
+                  oneOf:
+                    - type: array
+                      items:
+                        $ref: ./filter-condition.yaml
+                    - $ref: ../../common/expression.yaml
+              additionalProperties: false
+      additionalProperties: false
 $schema: http://json-schema.org/draft-07/schema#
