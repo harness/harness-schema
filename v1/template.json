@@ -1122,6 +1122,43 @@
           "type" : "string",
           "enum" : [ "always", "never", "if-not-exists" ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "MultiDeploymentConfigV1" : {
+          "title" : "MultiDeploymentConfigV1",
+          "type" : "object",
+          "additionalProperties" : false,
+          "description" : "Optional configuration for deployments across multiple services and/or environments.",
+          "properties" : {
+            "on-failure" : {
+              "description" : "Behaviour when one of the multiple deployments fails. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/StrategyOnFailureTypeV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            },
+            "when" : {
+              "type" : "string",
+              "description" : "Conditional expression controlling whether queued deployments proceed."
+            },
+            "max-concurrency" : {
+              "description" : "Maximum number of concurrent service/environment deployments. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 1
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StrategyOnFailureTypeV1" : {
+          "title" : "StrategyOnFailureTypeV1",
+          "description" : "Defines behaviour when one of the multiple service/environment deployments fails.",
+          "type" : "string",
+          "enum" : [ "run-all", "skip-queued" ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
       "pipeline" : {
@@ -2152,6 +2189,10 @@
               "environment" : {
                 "description" : "Environment configuration for CD stages.",
                 "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentV1"
+              },
+              "multi-deployment" : {
+                "description" : "Configuration for deployments across multiple services and/or environments.",
+                "$ref" : "#/definitions/pipeline/common/MultiDeploymentConfigV1"
               },
               "workspace" : {
                 "type" : "string",
