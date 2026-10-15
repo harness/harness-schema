@@ -1,0 +1,52 @@
+title: GatewayProviderSpec
+allOf:
+  - $ref: k8s-traffic-routing-provider-base-spec.yaml
+  - type: object
+    required:
+      - gateways
+    properties:
+      gateways:
+        oneOf:
+          - type: array
+            items:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                namespace:
+                  type: string
+                  minLength: 1
+                sectionName:
+                  type: string
+                  minLength: 1
+            minItems: 1
+          - type: string
+            pattern: "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$"
+            minLength: 1
+      hostnames:
+        oneOf:
+          - type: array
+            items:
+              type: string
+              minLength: 1
+            minItems: 1
+          - type: string
+            pattern: "(<\\+.+>.*)"
+            minLength: 1
+      # An HTTPRoute backendRef to a Service must carry a port, so port is required here and
+      # stays optional in the shared destination schema used by the other providers.
+      routes:
+        items:
+          properties:
+            route:
+              properties:
+                destinations:
+                  items:
+                    properties:
+                      destination:
+                        required:
+                          - port
+$schema: http://json-schema.org/draft-07/schema#
