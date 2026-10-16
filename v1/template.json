@@ -2847,71 +2847,40 @@
           },
           "ServiceV1" : {
             "title" : "ServiceV1",
-            "description" : "Service configuration for CD stages. Supports multiple formats.",
-            "oneOf" : [ {
-              "type" : "string",
-              "description" : "Service identifier reference."
-            }, {
-              "type" : "object",
-              "required" : [ "id" ],
-              "properties" : {
-                "type" : {
-                  "description" : "Service swimlane hint for the single service.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
-                },
-                "id" : {
-                  "description" : "Service identifier.",
-                  "type" : "string"
-                },
-                "ref" : {
-                  "description" : "Git branch for the service configuration.",
-                  "type" : "string"
-                },
-                "with" : {
-                  "description" : "Service input overrides.",
-                  "$ref" : "#/definitions/pipeline/common/WithInputs"
-                },
-                "on-failure" : {
-                  "description" : "Failure strategy for this service. Overrides the stage-level failure strategy.",
-                  "$ref" : "#/definitions/pipeline/common/OnFailure"
-                }
+            "description" : "Service configuration for CD stages. Always uses the items form, for single and multi service alike: a fixed list of services (each an identifier, an expression, or an object with id and optional input overrides), or a single runtime input for the whole list.",
+            "type" : "object",
+            "required" : [ "items" ],
+            "properties" : {
+              "type" : {
+                "description" : "Service swimlane hint applied to the multi-service group.",
+                "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
               },
-              "additionalProperties" : false
-            }, {
-              "type" : "object",
-              "required" : [ "items" ],
-              "properties" : {
-                "type" : {
-                  "description" : "Service swimlane hint applied to the multi-service group.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
-                },
-                "items" : {
-                  "description" : "List of services for multi-service deployment. Can be a fixed list or a single runtime input for the whole list.",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/ServiceItem"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/Expression"
-                  } ]
-                },
-                "parallel" : {
-                  "description" : "Execute services in parallel (all at once). Defaults to false, so services run one at a time (serially) unless set to true.",
-                  "oneOf" : [ {
-                    "type" : "boolean",
-                    "default" : false
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/Expression"
-                  } ]
-                },
-                "on-failure" : {
-                  "description" : "Failure strategy for this service group. Overrides the stage-level failure strategy.",
-                  "$ref" : "#/definitions/pipeline/common/OnFailure"
-                }
+              "items" : {
+                "description" : "List of services, for single and multi service deployment alike. Can be a fixed list or a single runtime input for the whole list.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/ServiceItem"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               },
-              "additionalProperties" : false
-            } ],
+              "parallel" : {
+                "description" : "Execute services in parallel (all at once). Defaults to false, so services run one at a time (serially) unless set to true.",
+                "oneOf" : [ {
+                  "type" : "boolean",
+                  "default" : false
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "on-failure" : {
+                "description" : "Failure strategy for this service group. Overrides the stage-level failure strategy.",
+                "$ref" : "#/definitions/pipeline/common/OnFailure"
+              }
+            },
+            "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ServiceType" : {
