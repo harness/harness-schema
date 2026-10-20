@@ -27,17 +27,5 @@ oneOf:
         description: Kubernetes runtime specification.
         $ref: ./runtime_kubernetes.yaml
       delegate:
-        description: Delegate selectors for this runtime. Supports expressions. With kubernetes and no kubernetes.connector, the selected delegates provide the cluster credentials (inherit from delegate) and delegate is required.
+        description: Delegate selectors for this runtime. Supports expressions. With kubernetes and no kubernetes.connector, these selectors (or the pipeline delegate) provide the cluster credentials (inherit from delegate).
         $ref: ../../common/delegate.yaml
-    # kubernetes without a connector inherits credentials from the delegate, so delegate becomes mandatory.
-    if:
-      required:
-        - kubernetes
-      properties:
-        kubernetes:
-          not:
-            required:
-              - connector
-    then:
-      required:
-        - delegate

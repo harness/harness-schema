@@ -2229,22 +2229,9 @@
                   "$ref" : "#/definitions/pipeline/stages/unified/K8RuntimeSpec"
                 },
                 "delegate" : {
-                  "description" : "Delegate selectors for this runtime. Supports expressions. With kubernetes and no kubernetes.connector, the selected delegates provide the cluster credentials (inherit from delegate) and delegate is required.",
+                  "description" : "Delegate selectors for this runtime. Supports expressions. With kubernetes and no kubernetes.connector, these selectors (or the pipeline delegate) provide the cluster credentials (inherit from delegate).",
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 }
-              },
-              "if" : {
-                "required" : [ "kubernetes" ],
-                "properties" : {
-                  "kubernetes" : {
-                    "not" : {
-                      "required" : [ "connector" ]
-                    }
-                  }
-                }
-              },
-              "then" : {
-                "required" : [ "delegate" ]
               }
             } ]
           },
@@ -2337,7 +2324,7 @@
                 "type" : "string"
               },
               "connector" : {
-                "description" : "Kubernetes connector reference. Supports expressions. Optional when runtime.delegate is set; the stage then inherits the cluster credentials from the selected delegate.",
+                "description" : "Kubernetes connector reference. Supports expressions. Optional when runtime.delegate or the pipeline delegate is set; the stage then inherits the cluster credentials from the selected delegate.",
                 "type" : "string"
               },
               "user" : {
