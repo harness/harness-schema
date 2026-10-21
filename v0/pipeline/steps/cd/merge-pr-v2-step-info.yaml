@@ -1,0 +1,62 @@
+title: MergePRV2StepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  properties:
+    connectorRef:
+      type: string
+    repoName:
+      type: string
+    prNumber:
+      oneOf:
+        - type: integer
+          minimum: 1
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+    deleteSourceBranch:
+      oneOf:
+        - type: boolean
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+    mergeStrategy:
+      description: "Merge method. Allowed values: merge, squash. Default: squash"
+      oneOf:
+        - type: string
+          enum:
+            - merge
+            - squash
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+properties:
+  connectorRef:
+    type: string
+  repoName:
+    type: string
+  prNumber:
+    oneOf:
+      - type: integer
+        minimum: 1
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  deleteSourceBranch:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  mergeStrategy:
+    description: "Merge method. Allowed values: merge, squash. Default: squash"
+    oneOf:
+      - type: string
+        enum:
+          - merge
+          - squash
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
