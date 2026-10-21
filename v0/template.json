@@ -630,6 +630,10 @@
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/DownloadGcsStepNode_template"
               }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/UpdateManifestsStepNode_template"
+              }, {
+                "$ref" : "#/definitions/pipeline/steps/cd/GitCommitStepNode_template"
+              }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/DownloadNexusArtifactStepNode_template"
               }, {
                 "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode_template"
@@ -27408,6 +27412,324 @@
             },
             "description" : "Downloads files from Google Cloud Storage (GCS) bucket.\n\nExample YAML:\n```yaml\n- step:\n    type: DownloadGcs\n    name: DownloadGcs_1\n    identifier: DownloadGcs_1\n    spec:\n      connectorRef: account.GcpConnector\n      bucketName: my-gcs-bucket\n      filePath: path/to/file.yaml\n      downloadPath: /harness/manifests\n    description: Downloads manifest from GCS bucket\n    timeout: 10m\n```\n"
           },
+          "UpdateManifestsStepNode_template" : {
+            "title" : "UpdateManifestsStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "UpdateManifests" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "UpdateManifests"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateManifestsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "UpdateManifestsStepInfo" : {
+            "title" : "UpdateManifestsStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "properties" : {
+                "fileUpdates" : {
+                  "oneOf" : [ {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "required" : [ "filePath" ],
+                      "properties" : {
+                        "filePath" : {
+                          "type" : "string"
+                        },
+                        "variables" : {
+                          "type" : "object",
+                          "additionalProperties" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "ignoreMissingKeys" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "properties" : {
+              "fileUpdates" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "required" : [ "filePath" ],
+                    "properties" : {
+                      "filePath" : {
+                        "type" : "string"
+                      },
+                      "variables" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "ignoreMissingKeys" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              }
+            }
+          },
+          "GitCommitStepNode_template" : {
+            "title" : "GitCommitStepNode_template",
+            "type" : "object",
+            "required" : [ "spec", "type" ],
+            "properties" : {
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GitCommit" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GitCommit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GitCommitStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GitCommitStepInfo" : {
+            "title" : "GitCommitStepInfo",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StepSpecType"
+            }, {
+              "type" : "object",
+              "required" : [ "directory" ],
+              "properties" : {
+                "connectorRef" : {
+                  "type" : "string"
+                },
+                "directory" : {
+                  "type" : "string"
+                },
+                "message" : {
+                  "type" : "string"
+                },
+                "branch" : {
+                  "type" : "string"
+                },
+                "noChangesAction" : {
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "skip", "fail" ]
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "authorName" : {
+                  "type" : "string"
+                },
+                "authorEmail" : {
+                  "type" : "string"
+                },
+                "push" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                },
+                "forcePush" : {
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "minLength" : 1
+                  } ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "type" : "object",
+            "required" : [ "directory" ],
+            "properties" : {
+              "connectorRef" : {
+                "type" : "string"
+              },
+              "directory" : {
+                "type" : "string"
+              },
+              "message" : {
+                "type" : "string"
+              },
+              "branch" : {
+                "type" : "string"
+              },
+              "noChangesAction" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "skip", "fail" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "authorName" : {
+                "type" : "string"
+              },
+              "authorEmail" : {
+                "type" : "string"
+              },
+              "push" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+              "forcePush" : {
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              }
+            }
+          },
           "DownloadNexusArtifactStepNode_template" : {
             "title" : "DownloadNexusArtifactStepNode_template",
             "type" : "object",
@@ -45288,6 +45610,160 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/K8sTrafficRoutingStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "UpdateManifestsStepNode" : {
+            "title" : "UpdateManifestsStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for UpdateManifestsStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "UpdateManifests" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "UpdateManifests"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/UpdateManifestsStepInfo"
+                  }
+                }
+              }
+            } ]
+          },
+          "GitCommitStepNode" : {
+            "title" : "GitCommitStepNode",
+            "type" : "object",
+            "required" : [ "identifier", "name", "spec", "type" ],
+            "properties" : {
+              "description" : {
+                "type" : "string",
+                "desc" : "This is the description for GitCommitStepNode"
+              },
+              "enforce" : {
+                "$ref" : "#/definitions/pipeline/common/PolicyConfig"
+              },
+              "failureStrategies" : {
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/common/FailureStrategyConfig"
+                  }
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "identifier" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_][0-9a-zA-Z_]{0,127}$"
+              },
+              "name" : {
+                "type" : "string",
+                "pattern" : "^[a-zA-Z_0-9-.][-0-9a-zA-Z_\\s.]{0,127}$"
+              },
+              "strategy" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StrategyConfig"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              },
+              "timeout" : {
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "type" : {
+                "type" : "string",
+                "enum" : [ "GitCommit" ]
+              },
+              "when" : {
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/common/StepWhenCondition"
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>$",
+                  "minLength" : 1
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "GitCommit"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/GitCommitStepInfo"
                   }
                 }
               }
@@ -113521,6 +113997,10 @@
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadGcsStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadNexusArtifactStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/UpdateManifestsStepNode"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/cd/GitCommitStepNode"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/cd/DownloadHarnessStoreStepNode"
                 }, {
