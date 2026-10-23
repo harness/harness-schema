@@ -2269,6 +2269,27 @@
                 }
               }
             },
+            "allOf" : [ {
+              "if" : {
+                "required" : [ "delegate" ],
+                "anyOf" : [ {
+                  "not" : {
+                    "required" : [ "runtime" ]
+                  }
+                }, {
+                  "properties" : {
+                    "runtime" : {
+                      "type" : "null"
+                    }
+                  }
+                } ]
+              },
+              "then" : {
+                "not" : {
+                  "required" : [ "delegate" ]
+                }
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "RuntimeV1" : {
@@ -2302,6 +2323,9 @@
                   "description" : "Delegate selectors used for Kubernetes inherit-from-delegate authentication.",
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 }
+              },
+              "not" : {
+                "required" : [ "cloud", "delegate" ]
               }
             } ]
           },
