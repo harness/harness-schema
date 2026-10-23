@@ -8,56 +8,37 @@ properties:
   tags:
     description: Tag-based filter conditions.
     oneOf:
-      # Expression resolving to the whole tag filter condition.
+      # Runtime input or expression for the condition as a whole, match type included.
+      # The match type is a key (`all` / `in`) and a YAML key cannot hold an expression,
+      # so templating the whole condition is how a runtime match type is expressed.
       - $ref: ../../common/expression.yaml
-      # Match type as a key - match any of the specified tags (OR).
+      # Match any of the specified tags (OR). The tags themselves may be a runtime input
+      # or an expression, leaving the match type fixed.
       - type: object
         required:
           - in
         properties:
           in:
-            description: Match any of the specified tags (OR).
+            description: Match any of the specified tags (OR). Supports a runtime input or an expression.
             anyOf:
               - type: object
                 additionalProperties:
                   type: string
               - type: string
         additionalProperties: false
-      # Match type as a key - match all of the specified tags (AND).
+      # Match all of the specified tags (AND). The tags themselves may be a runtime input
+      # or an expression, leaving the match type fixed.
       - type: object
         required:
           - all
         properties:
           all:
-            description: Match all of the specified tags (AND).
+            description: Match all of the specified tags (AND). Supports a runtime input or an expression.
             anyOf:
               - type: object
                 additionalProperties:
                   type: string
               - type: string
-        additionalProperties: false
-      # Match type as a value, so it can be an expression or a runtime input.
-      # Equivalent to the key forms above - `match-type: all` is the same as `all:`.
-      - type: object
-        required:
-          - match-type
-          - values
-        properties:
-          match-type:
-            description: How the tags are matched - `all` to require every tag (AND), `in` to require any one of them (OR).
-            oneOf:
-              - type: string
-                enum:
-                  - all
-                  - in
-              - $ref: ../../common/expression.yaml
-          values:
-            description: Tags to filter on, as key/value pairs.
-            anyOf:
-              - type: object
-                additionalProperties:
-                  type: string
-              - $ref: ../../common/expression.yaml
         additionalProperties: false
 additionalProperties: false
 $schema: http://json-schema.org/draft-07/schema#

@@ -3043,99 +3043,75 @@
           "Filters" : {
             "title" : "Filters",
             "description" : "Filters for selecting environments or infrastructures.",
-            "oneOf" : [ {
-              "$ref" : "#/definitions/pipeline/common/Expression"
-            }, {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : {
-                  "id" : {
-                    "description" : "Unique identifier for the filter. Needed when a field inside the filter uses a runtime input.",
-                    "type" : "string"
-                  },
-                  "infrastructures" : {
-                    "description" : "Infrastructure filters.",
-                    "oneOf" : [ {
-                      "type" : "string",
-                      "enum" : [ "all" ]
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/Expression"
-                    }, {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                      }
-                    }, {
-                      "type" : "object",
-                      "properties" : {
-                        "or" : {
-                          "oneOf" : [ {
-                            "type" : "array",
-                            "items" : {
-                              "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                            }
-                          }, {
-                            "$ref" : "#/definitions/pipeline/common/Expression"
-                          } ]
-                        },
-                        "and" : {
-                          "oneOf" : [ {
-                            "type" : "array",
-                            "items" : {
-                              "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                            }
-                          }, {
-                            "$ref" : "#/definitions/pipeline/common/Expression"
-                          } ]
-                        }
-                      },
-                      "additionalProperties" : false
-                    } ]
-                  },
-                  "environments" : {
-                    "description" : "Environment filters.",
-                    "oneOf" : [ {
-                      "type" : "string",
-                      "enum" : [ "all" ]
-                    }, {
-                      "$ref" : "#/definitions/pipeline/common/Expression"
-                    }, {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                      }
-                    }, {
-                      "type" : "object",
-                      "properties" : {
-                        "or" : {
-                          "oneOf" : [ {
-                            "type" : "array",
-                            "items" : {
-                              "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                            }
-                          }, {
-                            "$ref" : "#/definitions/pipeline/common/Expression"
-                          } ]
-                        },
-                        "and" : {
-                          "oneOf" : [ {
-                            "type" : "array",
-                            "items" : {
-                              "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                            }
-                          }, {
-                            "$ref" : "#/definitions/pipeline/common/Expression"
-                          } ]
-                        }
-                      },
-                      "additionalProperties" : false
-                    } ]
-                  }
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "id" : {
+                  "description" : "Unique identifier for the filter. Needed when a field inside the filter uses a runtime input.",
+                  "type" : "string"
                 },
-                "additionalProperties" : false
-              }
-            } ],
+                "infrastructures" : {
+                  "description" : "Infrastructure filters.",
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "all" ]
+                  }, {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                    }
+                  }, {
+                    "type" : "object",
+                    "properties" : {
+                      "or" : {
+                        "type" : "array",
+                        "items" : {
+                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                        }
+                      },
+                      "and" : {
+                        "type" : "array",
+                        "items" : {
+                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                        }
+                      }
+                    },
+                    "additionalProperties" : false
+                  } ]
+                },
+                "environments" : {
+                  "description" : "Environment filters.",
+                  "oneOf" : [ {
+                    "type" : "string",
+                    "enum" : [ "all" ]
+                  }, {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                    }
+                  }, {
+                    "type" : "object",
+                    "properties" : {
+                      "or" : {
+                        "type" : "array",
+                        "items" : {
+                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                        }
+                      },
+                      "and" : {
+                        "type" : "array",
+                        "items" : {
+                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                        }
+                      }
+                    },
+                    "additionalProperties" : false
+                  } ]
+                }
+              },
+              "additionalProperties" : false
+            },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "FilterCondition" : {
@@ -3156,7 +3132,7 @@
                   "required" : [ "in" ],
                   "properties" : {
                     "in" : {
-                      "description" : "Match any of the specified tags (OR).",
+                      "description" : "Match any of the specified tags (OR). Supports a runtime input or an expression.",
                       "anyOf" : [ {
                         "type" : "object",
                         "additionalProperties" : {
@@ -3173,7 +3149,7 @@
                   "required" : [ "all" ],
                   "properties" : {
                     "all" : {
-                      "description" : "Match all of the specified tags (AND).",
+                      "description" : "Match all of the specified tags (AND). Supports a runtime input or an expression.",
                       "anyOf" : [ {
                         "type" : "object",
                         "additionalProperties" : {
@@ -3181,32 +3157,6 @@
                         }
                       }, {
                         "type" : "string"
-                      } ]
-                    }
-                  },
-                  "additionalProperties" : false
-                }, {
-                  "type" : "object",
-                  "required" : [ "match-type", "values" ],
-                  "properties" : {
-                    "match-type" : {
-                      "description" : "How the tags are matched - `all` to require every tag (AND), `in` to require any one of them (OR).",
-                      "oneOf" : [ {
-                        "type" : "string",
-                        "enum" : [ "all", "in" ]
-                      }, {
-                        "$ref" : "#/definitions/pipeline/common/Expression"
-                      } ]
-                    },
-                    "values" : {
-                      "description" : "Tags to filter on, as key/value pairs.",
-                      "anyOf" : [ {
-                        "type" : "object",
-                        "additionalProperties" : {
-                          "type" : "string"
-                        }
-                      }, {
-                        "$ref" : "#/definitions/pipeline/common/Expression"
                       } ]
                     }
                   },
