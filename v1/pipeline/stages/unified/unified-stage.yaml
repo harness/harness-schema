@@ -80,7 +80,17 @@ properties:
   clone:
     type: object
     description: Git clone configuration for the stage.
-    $ref: ../../clone.yaml
+    allOf:
+      - $ref: ../../clone.yaml
+      - if:
+          oneOf:
+            - required:
+                - ref
+            - required:
+                - repo
+        then:
+          type: "null"
+          errorMessage: Configure both the codebase and ref for this stage, or clear both to use defaults or configure them when you run the pipeline.
   platform:
     description: Platform configuration (OS, architecture).
     $ref: ../../steps/common/platform.yaml
