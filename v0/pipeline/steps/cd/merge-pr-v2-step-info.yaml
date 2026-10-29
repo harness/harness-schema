@@ -1,0 +1,66 @@
+title: MergePRV2StepInfo
+allOf:
+- $ref: ../../common/step-spec-type.yaml
+- type: object
+  required:
+  - connectorRef
+  - repoName
+  - prNumber
+  properties:
+    connectorRef:
+      type: string
+    repoName:
+      type: string
+    prNumber:
+      oneOf:
+        - type: integer
+          minimum: 1
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+    deleteSourceBranch:
+      oneOf:
+        - type: boolean
+        - type: string
+          pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+          minLength: 1
+    mergeStrategy:
+      description: "Merge method. Allowed values: Merge, Squash (case-insensitive). Default: Squash"
+      oneOf:
+        - type: string
+          pattern: ^([Mm][Ee][Rr][Gg][Ee]|[Ss][Qq][Uu][Aa][Ss][Hh])$
+        - type: string
+          pattern: (<\+.+>.*)
+          minLength: 1
+$schema: http://json-schema.org/draft-07/schema#
+type: object
+required:
+- connectorRef
+- repoName
+- prNumber
+properties:
+  connectorRef:
+    type: string
+  repoName:
+    type: string
+  prNumber:
+    oneOf:
+      - type: integer
+        minimum: 1
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
+  deleteSourceBranch:
+    oneOf:
+      - type: boolean
+      - type: string
+        pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\(.+?\)))*$
+        minLength: 1
+  mergeStrategy:
+    description: "Merge method. Allowed values: Merge, Squash (case-insensitive). Default: Squash"
+    oneOf:
+      - type: string
+        pattern: ^([Mm][Ee][Rr][Gg][Ee]|[Ss][Qq][Uu][Aa][Ss][Hh])$
+      - type: string
+        pattern: (<\+.+>.*)
+        minLength: 1
