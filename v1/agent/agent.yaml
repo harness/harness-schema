@@ -1,5 +1,5 @@
 title: AgentSpec
-description: Custom agent document stored by ACM. The agent body is a nested reference to the harnessAI step template plus optional user-defined inputs.
+description: Agent YAML
 type: object
 additionalProperties: false
 required:
@@ -7,12 +7,14 @@ required:
   - with
 properties:
   uses:
-    description: Nested harnessAI template reference (`harnessAI` or `harnessAI@<semver>`).
+    description: Harness AI agent type and version (for example harnessAI@1.0.0).
     type: string
     pattern: "^harnessAI(@[0-9]+\\.[0-9]+\\.[0-9]+)?$"
   with:
-    $ref: ./harness-ai-with.yaml
+    description: Agent configuration object. Fields under with other than prompt (for example connector) may be a fixed value or a runtime input such as ${{inputs.llm.id}}. with itself cannot be a runtime expression.
+    allOf:
+      - $ref: ./harness-ai-with.yaml
   inputs:
-    description: User-defined inputs for this agent. Same schema as pipeline.inputs and template.inputs.
+    description: Runtime inputs for this agent. Reference them from fields under with as ${{inputs.<name>}}.
     $ref: ../pipeline/common/ng-variable-v1-wrapper.yaml
 $schema: http://json-schema.org/draft-07/schema#

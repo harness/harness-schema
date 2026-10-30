@@ -22,12 +22,61 @@
         }
       },
       "with" : {
-        "connector" : "anthropic_bedrock_99cf4be5",
+        "connector" : "account.harnessLLM",
         "prompt" : "print all the available mcp for ${{inputs.test-input}}",
-        "mcp" : [ "connector_test_mcp_github" ],
+        "mcp" : [ "harnessMcp", "Traceable" ],
         "max_turns" : "150",
         "env" : {
           "ANTHROPIC_MODEL" : "claude-sonnet-5"
+        }
+      }
+    }
+  }, {
+    "agent" : {
+      "uses" : "harnessAI@1.0.0",
+      "with" : {
+        "prompt" : "list available mcps\nlist available pipelines in this project\nprint the value of $GREET",
+        "env" : {
+          "GREET" : "${{inputs.test}}"
+        },
+        "allowed_domains" : "pubmed.mcp.claude.com, api.githubcopilot.com",
+        "max_turns" : "50",
+        "workdir" : "/harness",
+        "image" : "harness/harness-ai-agent:latest",
+        "docker_connector" : "${{inputs.docker.id}}",
+        "connector" : "${{inputs.llm.id}}",
+        "mcp" : "${{inputs.mcpCon}}"
+      },
+      "inputs" : {
+        "test" : {
+          "type" : "string",
+          "default" : "test-value"
+        },
+        "docker" : {
+          "type" : "connector",
+          "default" : "account.harnessImage",
+          "ui" : {
+            "connectorCategories" : [ "ARTIFACTORY" ]
+          }
+        },
+        "llm" : {
+          "type" : "connector",
+          "default" : "account.harnessLLM",
+          "ui" : {
+            "connectorCategories" : [ "AI" ]
+          }
+        },
+        "mcpCon" : {
+          "type" : "array",
+          "default" : [ "harnessMcp", "Traceable" ],
+          "ui" : {
+            "input" : {
+              "inputType" : "connector",
+              "inputConfig" : {
+                "connectorTypes" : [ "Mcp" ]
+              }
+            }
+          }
         }
       }
     }
@@ -37,21 +86,24 @@
     "agent" : {
       "AgentSpec" : {
         "title" : "AgentSpec",
-        "description" : "Custom agent document stored by ACM. The agent body is a nested reference to the harnessAI step template plus optional user-defined inputs.",
+        "description" : "Agent YAML",
         "type" : "object",
         "additionalProperties" : false,
         "required" : [ "uses", "with" ],
         "properties" : {
           "uses" : {
-            "description" : "Nested harnessAI template reference (`harnessAI` or `harnessAI@<semver>`).",
+            "description" : "Harness AI agent type and version (for example harnessAI@1.0.0).",
             "type" : "string",
             "pattern" : "^harnessAI(@[0-9]+\\.[0-9]+\\.[0-9]+)?$"
           },
           "with" : {
-            "$ref" : "#/definitions/agent/HarnessAIWith"
+            "description" : "Agent configuration object. Fields under with other than prompt (for example connector) may be a fixed value or a runtime input such as ${{inputs.llm.id}}. with itself cannot be a runtime expression.",
+            "allOf" : [ {
+              "$ref" : "#/definitions/agent/HarnessAIWith"
+            } ]
           },
           "inputs" : {
-            "description" : "User-defined inputs for this agent. Same schema as pipeline.inputs and template.inputs.",
+            "description" : "Runtime inputs for this agent. Reference them from fields under with as ${{inputs.<name>}}.",
             "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
           }
         },
@@ -59,31 +111,31 @@
       },
       "HarnessAIWith" : {
         "title" : "HarnessAIWith",
-        "description" : "Input overrides for the nested harnessAI@1.0.0 step template. Field names match template-library harnessAI inputs. Values may be literals or expressions.",
+        "description" : "Agent configuration object. Fields other than prompt may be a fixed value or a runtime input such as ${{inputs.<name>}}. The with mapping itself cannot be a runtime expression.",
         "type" : "object",
         "additionalProperties" : false,
         "required" : [ "prompt", "connector" ],
         "properties" : {
           "prompt" : {
-            "description" : "Natural-language instruction for the agent to perform.",
+            "description" : "Natural-language instruction for the agent to perform. Must be a fixed string. Input expressions such as ${{inputs.name}} may appear inside the prompt text.",
             "type" : "string",
             "minLength" : 1
           },
           "connector" : {
-            "description" : "LLM connector identifier (Anthropic, Bedrock, OpenAI, GitHub Copilot, and other AI connectors).",
+            "description" : "Model Provider connector identifier. Can be a fixed connector ref or a runtime input such as ${{inputs.llm.id}}.",
             "type" : "string",
             "minLength" : 1
           },
           "docker_connector" : {
-            "description" : "Docker / artifact registry connector used to pull the agent image.",
+            "description" : "Docker or artifact registry connector used to pull the agent image. Can be a fixed connector ref or a runtime input.",
             "type" : "string"
           },
           "image" : {
-            "description" : "Container image for the harness-ai-agent runner.",
+            "description" : "Container image for the agent runner. Can be a fixed image name or a runtime input.",
             "type" : "string"
           },
           "mcp" : {
-            "description" : "MCP connector refs mounted into the agent at runtime.",
+            "description" : "MCP connectors for the agent. Can be a list of connector refs or a runtime input such as ${{inputs.mcpCon}}.",
             "oneOf" : [ {
               "type" : "array",
               "items" : {
@@ -94,46 +146,31 @@
             } ]
           },
           "max_turns" : {
-            "description" : "Maximum number of agent iterations before the run is terminated.",
+            "description" : "Maximum number of agent iterations before the run is terminated. Can be a number, a quoted string, or a runtime input.",
             "oneOf" : [ {
               "type" : "string"
             }, {
               "type" : "number"
-            }, {
-              "$ref" : "#/definitions/pipeline/common/Expression"
             } ]
           },
           "workdir" : {
-            "description" : "Working directory for the agent. Defaults to /harness when unset on the nested template.",
+            "description" : "Working directory for the agent. Defaults to /harness when unset. Can be a fixed path or a runtime input.",
             "type" : "string"
           },
           "skill" : {
-            "description" : "Optional path to a SKILL.md file to install into the working directory before the run.",
+            "description" : "Optional path to a SKILL.md file to install into the working directory before the run. Can be a fixed path or a runtime input.",
             "type" : "string"
           },
           "allowed_tools" : {
-            "description" : "Comma-separated allowlist of tools the agent may use. Empty uses the runner default.",
+            "description" : "Comma-separated allowlist of tools the agent may use. Empty uses the runner default. Can be a fixed string or a runtime input.",
             "type" : "string"
           },
           "allowed_domains" : {
-            "description" : "Extra domains the agent may reach (exact hosts, optional wildcards, or domain regexes).",
+            "description" : "Extra domains the agent may reach (exact hosts, optional wildcards, or domain regexes). Can be a fixed string or a runtime input.",
             "type" : "string"
-          },
-          "output" : {
-            "description" : "Optional path to a file the agent is expected to produce; verified after the run.",
-            "type" : "string"
-          },
-          "backend" : {
-            "description" : "Agent runtime backend. Empty lets the runner choose its default.",
-            "oneOf" : [ {
-              "type" : "string",
-              "enum" : [ "", "claude", "deepagent", "openai", "codex", "copilot" ]
-            }, {
-              "$ref" : "#/definitions/pipeline/common/Expression"
-            } ]
           },
           "env" : {
-            "description" : "Extra environment variables for the agent container. Object map is the authoring form (for example ANTHROPIC_MODEL). Array is accepted for compatibility with the nested template input type.",
+            "description" : "Extra environment variables for the agent. Values may be fixed strings or runtime inputs such as ${{inputs.test}}.",
             "oneOf" : [ {
               "type" : "object",
               "additionalProperties" : {
