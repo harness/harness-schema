@@ -49854,7 +49854,7 @@
               },
               "type" : {
                 "type" : "string",
-                "enum" : [ "CustomRemote", "Git", "Github", "Bitbucket", "GitLab", "Http", "S3", "Gcs", "Inline", "Artifactory", "S3Url", "InheritFromManifest", "Harness", "OciHelmChart", "AzureRepo", "HarnessCode" ]
+                "enum" : [ "CustomRemote", "Git", "Github", "Bitbucket", "GitLab", "Http", "S3", "Gcs", "Inline", "Artifactory", "S3Url", "InheritFromManifest", "Harness", "OciHelmChart", "AzureRepo", "HarnessCode", "Har" ]
               },
               "description" : {
                 "desc" : "This is the description for StoreConfigWrapper"
@@ -50098,6 +50098,21 @@
                 "properties" : {
                   "spec" : {
                     "$ref" : "#/definitions/pipeline/steps/cd/HarnessCodeStore"
+                  }
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "type" : {
+                    "const" : "Har"
+                  }
+                }
+              },
+              "then" : {
+                "properties" : {
+                  "spec" : {
+                    "$ref" : "#/definitions/pipeline/steps/cd/HarnessArtifactRegistryStoreConfig"
                   }
                 }
               }
@@ -50943,6 +50958,42 @@
             "properties" : {
               "description" : {
                 "desc" : "This is the description for HarnessCodeStore"
+              }
+            }
+          },
+          "HarnessArtifactRegistryStoreConfig" : {
+            "title" : "HarnessArtifactRegistryStoreConfig",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/cd/StoreConfig"
+            }, {
+              "type" : "object",
+              "required" : [ "chartName", "chartVersion", "registryRef", "type" ],
+              "properties" : {
+                "chartName" : {
+                  "type" : "string"
+                },
+                "chartVersion" : {
+                  "type" : "string"
+                },
+                "metadata" : {
+                  "type" : "string"
+                },
+                "registryRef" : {
+                  "type" : "string"
+                },
+                "subChartPath" : {
+                  "type" : "string"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "OciHelmChart", "Http" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for HarnessArtifactRegistryStoreConfig"
               }
             }
           },
