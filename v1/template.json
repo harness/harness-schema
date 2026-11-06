@@ -98,9 +98,9 @@
             }, {
               "$ref" : "#/definitions/pipeline/common/SecretVariable"
             }, {
-              "$ref" : "#/definitions/pipeline/common/StepVariable"
+              "$ref" : "#/definitions/pipeline/common/StepsVariable"
             }, {
-              "$ref" : "#/definitions/pipeline/common/StageVariable"
+              "$ref" : "#/definitions/pipeline/common/StagesVariable"
             }, {
               "$ref" : "#/definitions/pipeline/common/ConnectorVariable"
             } ]
@@ -156,7 +156,7 @@
             "type" : {
               "description" : "Type defines the variable type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "stage", "connector" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "steps", "stages", "connector" ]
             },
             "description" : {
               "type" : "string",
@@ -387,9 +387,9 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "StepVariable" : {
-          "title" : "StepVariable",
-          "description" : "Step variable definition.",
+        "StepsVariable" : {
+          "title" : "StepsVariable",
+          "description" : "Steps variable definition. The value is an array of steps.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
@@ -399,11 +399,15 @@
               "type" : {
                 "description" : "Variable type.",
                 "type" : "string",
-                "enum" : [ "step" ]
+                "enum" : [ "steps" ]
               },
               "value" : {
-                "description" : "Variable value. Supports expressions.",
-                "type" : "object",
+                "description" : "Variable value. An array of steps.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                },
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
@@ -411,23 +415,30 @@
                 }
               },
               "default" : {
-                "description" : "Default value for the variable.",
-                "type" : "object"
+                "description" : "Default value for the variable. An array of steps.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                }
               },
               "enum" : {
                 "description" : "Defines a list of accepted input values.",
                 "type" : "array",
                 "items" : {
-                  "type" : "object"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                  }
                 }
               }
             }
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "StageVariable" : {
-          "title" : "StageVariable",
-          "description" : "Stage variable definition.",
+        "StagesVariable" : {
+          "title" : "StagesVariable",
+          "description" : "Stages variable definition. The value is an array of stages.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
@@ -437,11 +448,15 @@
               "type" : {
                 "description" : "Variable type.",
                 "type" : "string",
-                "enum" : [ "stage" ]
+                "enum" : [ "stages" ]
               },
               "value" : {
-                "description" : "Variable value. Supports expressions.",
-                "type" : "object",
+                "description" : "Variable value. An array of stages.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                },
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
@@ -449,14 +464,21 @@
                 }
               },
               "default" : {
-                "description" : "Default value for the variable.",
-                "type" : "object"
+                "description" : "Default value for the variable. An array of stages.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                }
               },
               "enum" : {
                 "description" : "Defines a list of accepted input values.",
                 "type" : "array",
                 "items" : {
-                  "type" : "object"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                  }
                 }
               }
             }
@@ -3665,12 +3687,16 @@
                     "type" : "string"
                   },
                   "stages" : {
-                    "description" : "Stages within the group.",
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
-                    },
-                    "minItems" : 1
+                    "description" : "Stages within the group, or an expression that resolves to an array of stages.",
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                      },
+                      "minItems" : 1
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/Expression"
+                    } ]
                   }
                 }
               }
@@ -5079,10 +5105,16 @@
                     }
                   },
                   "steps" : {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
-                    }
+                    "description" : "Steps within the group, or an expression that resolves to an array of steps.",
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                      },
+                      "minItems" : 1
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/Expression"
+                    } ]
                   }
                 }
               }
@@ -5195,12 +5227,17 @@
                 "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
               },
               "steps" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
-                },
-                "maxItems" : 256,
-                "minItems" : 1
+                "description" : "Steps within the group, or an expression that resolves to an array of steps.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                  },
+                  "maxItems" : 256,
+                  "minItems" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               }
             }
           }, {
@@ -5216,20 +5253,24 @@
                 "type" : "string"
               },
               "stages" : {
-                "description" : "Stages within the group.",
-                "type" : "array",
-                "items" : {
-                  "oneOf" : [ {
-                    "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
-                  } ]
-                },
-                "minItems" : 1
+                "description" : "Stages within the group, or an expression that resolves to an array of stages.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "oneOf" : [ {
+                      "$ref" : "#/definitions/pipeline/stages/unified/UnifiedStageNodeV1"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/stages/unified/UnifiedPipelineStageNode"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/stages/unified/ParallelStages"
+                    }, {
+                      "$ref" : "#/definitions/pipeline/stages/unified/GroupStages"
+                    } ]
+                  },
+                  "minItems" : 1
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               }
             }
           } ],
