@@ -2890,7 +2890,17 @@
                   "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                 } ]
               },
-              "description" : {
+"os" : {
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "Linux", "MacOS", "Windows" ]
+                }, {
+                  "type" : "string",
+                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "minLength" : 1
+                } ]
+              },
+                            "description" : {
                 "desc" : "This is the description for ECSDirectInfraYamlSpec"
               }
             },
@@ -25507,7 +25517,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25525,7 +25535,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
               },
               "description" : {
                 "desc" : "This is the description for Infrastructure"
@@ -25627,7 +25637,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25652,6 +25662,30 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "EcsDirectInfraYaml" : {
+            "title" : "EcsDirectInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "$ref" : "#/definitions/pipeline/steps/custom/ECSDirectInfraYamlSpec"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "ECSDirect" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for EcsDirectInfraYaml"
+              }
+            }
+          },
           "K8sDirectInfraYaml" : {
             "title" : "K8sDirectInfraYaml",
             "allOf" : [ {
@@ -25665,7 +25699,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25859,7 +25893,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -89047,6 +89081,8 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
@@ -97835,6 +97871,8 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
@@ -98287,6 +98325,8 @@
               "infrastructure" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
@@ -101013,6 +101053,8 @@
               "infrastructure" : {
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
+                }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
