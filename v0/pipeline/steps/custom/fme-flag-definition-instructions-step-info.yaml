@@ -1,3 +1,4 @@
+# ci-rerun: retrigger pipelines
 title: FmeFlagDefinitionInstructionsStepInfo
 allOf:
   - $ref: ../../common/step-spec-type.yaml
@@ -46,6 +47,11 @@ allOf:
                       oneOf:
                         - $ref: ../common/string-without-jexl.yaml
                         - $ref: ../common/common-jexl.yaml
+                    configuration:
+                      description: "Optional dynamic configuration for this treatment (JSON object as a string). Omit for no configuration."
+                      type:
+                        - string
+                        - "null"
               defaultTreatment:
                 oneOf:
                   - $ref: ../common/fme-flag-common-treatment.yaml
@@ -56,7 +62,7 @@ allOf:
                   - $ref: ../common/common-jexl.yaml
           - $ref: ../common/common-jexl.yaml
       instructions:
-        description: "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once (validated when using a literal array; expressions are not checked)."
+        description: "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once, and SetTreatments and UpdateDynamicConfiguration cannot be combined (validated when using a literal array; expressions are not checked)."
         oneOf:
           - allOf:
               - type: array
@@ -168,12 +174,33 @@ allOf:
                                               - SetKeys
                                               - SetSegments
                                           value:
+                                            description: "For SetKeys/SetSegments, an empty list or null removes all keys/segments (SetSegments also clears large and rule-based segments)."
                                             oneOf:
                                               - type: array
-                                                minItems: 1
                                                 items:
                                                   type: string
+                                                  minLength: 1
+                                              - type: "null"
                                               - $ref: ../common/common-jexl.yaml
+                                        allOf:
+                                          - if:
+                                              properties:
+                                                action:
+                                                  enum:
+                                                    - AddKeys
+                                                    - RemoveKeys
+                                                    - AddSegments
+                                                    - RemoveSegments
+                                            then:
+                                              properties:
+                                                value:
+                                                  oneOf:
+                                                    - type: array
+                                                      minItems: 1
+                                                      items:
+                                                        type: string
+                                                        minLength: 1
+                                                    - $ref: ../common/common-jexl.yaml
                               - $ref: ../common/common-jexl.yaml
                     - if:
                         properties:
@@ -370,6 +397,11 @@ allOf:
                                       oneOf:
                                         - $ref: ../common/string-without-jexl.yaml
                                         - $ref: ../common/common-jexl.yaml
+                                    configuration:
+                                      description: "Optional dynamic configuration for this treatment (JSON object as a string). Omit for no configuration."
+                                      type:
+                                        - string
+                                        - "null"
                               - $ref: ../common/common-jexl.yaml
                     - if:
                         properties:
@@ -393,5 +425,21 @@ allOf:
                             oneOf:
                               - type: boolean
                               - $ref: ../common/common-jexl.yaml
+              - not:
+                  allOf:
+                    - contains:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            const: SetTreatments
+                    - contains:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            const: UpdateDynamicConfiguration
           - $ref: ../common/common-jexl.yaml
 $schema: https://json-schema.org/draft/2019-09/schema

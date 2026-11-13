@@ -11130,6 +11130,10 @@
                               }, {
                                 "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                               } ]
+                            },
+                            "configuration" : {
+                              "description" : "Optional dynamic configuration for this treatment (JSON object as a string). Omit for no configuration.",
+                              "type" : [ "string", "null" ]
                             }
                           }
                         }
@@ -11154,7 +11158,7 @@
                   } ]
                 },
                 "instructions" : {
-                  "description" : "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once (validated when using a literal array; expressions are not checked).",
+                  "description" : "Ordered list of flag definition instructions to apply atomically. Each instruction type may appear at most once, and SetTreatments and UpdateDynamicConfiguration cannot be combined (validated when using a literal array; expressions are not checked).",
                   "oneOf" : [ {
                     "allOf" : [ {
                       "type" : "array",
@@ -11281,17 +11285,45 @@
                                               "enum" : [ "AddKeys", "RemoveKeys", "AddSegments", "RemoveSegments", "SetKeys", "SetSegments" ]
                                             },
                                             "value" : {
+                                              "description" : "For SetKeys/SetSegments, an empty list or null removes all keys/segments (SetSegments also clears large and rule-based segments).",
                                               "oneOf" : [ {
                                                 "type" : "array",
-                                                "minItems" : 1,
                                                 "items" : {
-                                                  "type" : "string"
+                                                  "type" : "string",
+                                                  "minLength" : 1
                                                 }
+                                              }, {
+                                                "type" : "null"
                                               }, {
                                                 "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                                               } ]
                                             }
-                                          }
+                                          },
+                                          "allOf" : [ {
+                                            "if" : {
+                                              "properties" : {
+                                                "action" : {
+                                                  "enum" : [ "AddKeys", "RemoveKeys", "AddSegments", "RemoveSegments" ]
+                                                }
+                                              }
+                                            },
+                                            "then" : {
+                                              "properties" : {
+                                                "value" : {
+                                                  "oneOf" : [ {
+                                                    "type" : "array",
+                                                    "minItems" : 1,
+                                                    "items" : {
+                                                      "type" : "string",
+                                                      "minLength" : 1
+                                                    }
+                                                  }, {
+                                                    "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
+                                                  } ]
+                                                }
+                                              }
+                                            }
+                                          } ]
                                         }
                                       }
                                     }
@@ -11544,6 +11576,10 @@
                                         }, {
                                           "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                                         } ]
+                                      },
+                                      "configuration" : {
+                                        "description" : "Optional dynamic configuration for this treatment (JSON object as a string). Omit for no configuration.",
+                                        "type" : [ "string", "null" ]
                                       }
                                     }
                                   }
@@ -11588,6 +11624,30 @@
                                 }, {
                                   "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                                 } ]
+                              }
+                            }
+                          }
+                        } ]
+                      }
+                    }, {
+                      "not" : {
+                        "allOf" : [ {
+                          "contains" : {
+                            "type" : "object",
+                            "required" : [ "type" ],
+                            "properties" : {
+                              "type" : {
+                                "const" : "SetTreatments"
+                              }
+                            }
+                          }
+                        }, {
+                          "contains" : {
+                            "type" : "object",
+                            "required" : [ "type" ],
+                            "properties" : {
+                              "type" : {
+                                "const" : "UpdateDynamicConfiguration"
                               }
                             }
                           }
