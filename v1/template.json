@@ -2203,7 +2203,7 @@
                 }
               },
               "runtime" : {
-                "description" : "Runtime configuration (cloud, VM, Kubernetes).",
+                "description" : "Runtime configuration (cloud, VM, Kubernetes, ECS).",
                 "$ref" : "#/definitions/pipeline/stages/unified/RuntimeV1"
               },
               "clone" : {
@@ -2345,7 +2345,7 @@
           },
           "RuntimeV1" : {
             "title" : "RuntimeV1",
-            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs.",
+            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs, including ecs.",
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "oneOf" : [ {
               "type" : "string",
@@ -2369,6 +2369,10 @@
                 "kubernetes" : {
                   "description" : "Kubernetes runtime specification.",
                   "$ref" : "#/definitions/pipeline/stages/unified/K8RuntimeSpec"
+                },
+                "ecs" : {
+                  "description" : "Amazon ECS runtime specification.",
+                  "$ref" : "#/definitions/pipeline/stages/unified/EcsRuntimeSpec"
                 },
                 "delegate" : {
                   "description" : "Delegate selectors used for Kubernetes inherit-from-delegate authentication.",
@@ -2585,6 +2589,98 @@
               },
               "security-context" : {
                 "description" : "Pod security context. Supports expressions.",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/stages/unified/SecurityContextV1"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EcsRuntimeSpec" : {
+            "title" : "EcsRuntimeSpec",
+            "description" : "Amazon ECS runtime specification. Mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1.EcsRuntimeSpec.",
+            "type" : "object",
+            "additionalProperties" : false,
+            "required" : [ "connector" ],
+            "properties" : {
+              "connector" : {
+                "description" : "AWS connector reference. Supports expressions.",
+                "type" : "string"
+              },
+              "harness-image-connector" : {
+                "description" : "Connector for pulling Harness images. Supports expressions.",
+                "type" : "string"
+              },
+              "cluster" : {
+                "description" : "ECS cluster name or ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "region" : {
+                "description" : "AWS region. Supports expressions.",
+                "type" : "string"
+              },
+              "subnets" : {
+                "description" : "Subnet IDs for the task. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "security-groups" : {
+                "description" : "Security group IDs for the task. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "task-role" : {
+                "description" : "Task role ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "execution-role" : {
+                "description" : "Execution role ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "timeout" : {
+                "description" : "Init timeout duration. Supports expressions.",
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "execute-command" : {
+                "description" : "Enable ECS execute command. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "log-group" : {
+                "description" : "CloudWatch log group name. Supports expressions.",
+                "type" : "string"
+              },
+              "volumes" : {
+                "description" : "Volume configurations. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/CIVolumeV1"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "security-context" : {
+                "description" : "Container security context. Supports expressions.",
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/stages/unified/SecurityContextV1"
                 }, {

@@ -1,0 +1,64 @@
+title: EcsRuntimeSpec
+description: Amazon ECS runtime specification. Mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1.EcsRuntimeSpec.
+type: object
+additionalProperties: false
+required:
+  - connector
+properties:
+  connector:
+    description: AWS connector reference. Supports expressions.
+    type: string
+  harness-image-connector:
+    description: Connector for pulling Harness images. Supports expressions.
+    type: string
+  cluster:
+    description: ECS cluster name or ARN. Supports expressions.
+    type: string
+  region:
+    description: AWS region. Supports expressions.
+    type: string
+  subnets:
+    description: Subnet IDs for the task. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - $ref: ../../common/expression.yaml
+  security-groups:
+    description: Security group IDs for the task. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - $ref: ../../common/expression.yaml
+  task-role:
+    description: Task role ARN. Supports expressions.
+    type: string
+  execution-role:
+    description: Execution role ARN. Supports expressions.
+    type: string
+  timeout:
+    description: Init timeout duration. Supports expressions.
+    type: string
+    pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
+  execute-command:
+    description: Enable ECS execute command. Supports expressions.
+    oneOf:
+      - type: boolean
+      - $ref: ../../common/expression.yaml
+  log-group:
+    description: CloudWatch log group name. Supports expressions.
+    type: string
+  volumes:
+    description: Volume configurations. Supports expressions.
+    oneOf:
+      - type: array
+        items:
+          $ref: ./ci-volume.yaml
+      - $ref: ../../common/expression.yaml
+  security-context:
+    description: Container security context. Supports expressions.
+    oneOf:
+      - $ref: ./security-context.yaml
+      - $ref: ../../common/expression.yaml
+$schema: http://json-schema.org/draft-07/schema#
