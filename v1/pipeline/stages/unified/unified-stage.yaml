@@ -75,7 +75,7 @@ properties:
     items:
       $ref: ../../steps/unified/step-items.yaml
   runtime:
-    description: Runtime configuration (cloud, VM, Kubernetes).
+    description: Runtime configuration (cloud, VM, Kubernetes, ECS).
     $ref: ./runtime.yaml
   clone:
     type: object
@@ -174,5 +174,24 @@ allOf:
       not:
         required:
           - delegate
+  - if:
+      properties:
+        runtime:
+          type: object
+          required:
+            - ecs
+      required:
+        - runtime
+    then:
+      properties:
+        platform:
+          properties:
+            os:
+              oneOf:
+                - type: string
+                  enum:
+                    - linux
+                - $ref: ../../common/expression.yaml
+      errorMessage: ECS infrastructure supports only Linux.
 $schema: http://json-schema.org/draft-07/schema#
 

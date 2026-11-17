@@ -2890,7 +2890,7 @@
                   "$ref" : "#/definitions/pipeline/steps/common/common-jexl"
                 } ]
               },
-              "description" : {
+"description" : {
                 "desc" : "This is the description for ECSDirectInfraYamlSpec"
               }
             },
@@ -25567,7 +25567,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25585,7 +25585,7 @@
             "properties" : {
               "type" : {
                 "type" : "string",
-                "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
               },
               "description" : {
                 "desc" : "This is the description for Infrastructure"
@@ -25687,7 +25687,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25712,6 +25712,46 @@
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
+          "EcsDirectInfraYaml" : {
+            "title" : "EcsDirectInfraYaml",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/common/Infrastructure"
+            }, {
+              "type" : "object",
+              "required" : [ "spec", "type" ],
+              "properties" : {
+                "spec" : {
+                  "allOf" : [ {
+                    "$ref" : "#/definitions/pipeline/steps/custom/ECSDirectInfraYamlSpec"
+                  }, {
+                    "type" : "object",
+                    "properties" : {
+                      "os" : {
+                        "oneOf" : [ {
+                          "type" : "string",
+                          "enum" : [ "Linux" ]
+                        }, {
+                          "type" : "string",
+                          "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                          "minLength" : 1
+                        } ]
+                      }
+                    }
+                  } ]
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "ECSDirect" ]
+                }
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#",
+            "properties" : {
+              "description" : {
+                "desc" : "This is the description for EcsDirectInfraYaml"
+              }
+            }
+          },
           "K8sDirectInfraYaml" : {
             "title" : "K8sDirectInfraYaml",
             "allOf" : [ {
@@ -25725,7 +25765,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -25919,7 +25959,7 @@
                 },
                 "type" : {
                   "type" : "string",
-                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM" ]
+                  "enum" : [ "KubernetesDirect", "UseFromStage", "VM", "ECSDirect" ]
                 }
               }
             } ],
@@ -97996,6 +98036,8 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
@@ -98047,6 +98089,39 @@
                 "desc" : "This is the description for SecurityStageConfigImpl"
               }
             },
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "infrastructure" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "ECSDirect"
+                      }
+                    }
+                  }
+                },
+                "required" : [ "infrastructure" ]
+              },
+              "then" : {
+                "properties" : {
+                  "platform" : {
+                    "properties" : {
+                      "os" : {
+                        "oneOf" : [ {
+                          "type" : "string",
+                          "enum" : [ "Linux" ]
+                        }, {
+                          "type" : "string",
+                          "pattern" : "(<\\+.+>.*)",
+                          "minLength" : 1
+                        } ]
+                      }
+                    }
+                  }
+                },
+                "errorMessage" : "ECS infrastructure supports only Linux."
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ExecutionElementConfig" : {
@@ -98449,6 +98524,8 @@
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/steps/common/DockerInfraYaml"
                 }, {
+                  "$ref" : "#/definitions/pipeline/steps/common/EcsDirectInfraYaml"
+                }, {
                   "$ref" : "#/definitions/pipeline/steps/common/HostedVmInfraYaml"
                 }, {
                   "$ref" : "#/definitions/pipeline/steps/common/K8sDirectInfraYaml"
@@ -98503,6 +98580,39 @@
                 "desc" : "This is the description for IntegrationStageConfigImpl"
               }
             },
+            "allOf" : [ {
+              "if" : {
+                "properties" : {
+                  "infrastructure" : {
+                    "properties" : {
+                      "type" : {
+                        "const" : "ECSDirect"
+                      }
+                    }
+                  }
+                },
+                "required" : [ "infrastructure" ]
+              },
+              "then" : {
+                "properties" : {
+                  "platform" : {
+                    "properties" : {
+                      "os" : {
+                        "oneOf" : [ {
+                          "type" : "string",
+                          "enum" : [ "Linux" ]
+                        }, {
+                          "type" : "string",
+                          "pattern" : "(<\\+.+>.*)",
+                          "minLength" : 1
+                        } ]
+                      }
+                    }
+                  }
+                },
+                "errorMessage" : "ECS infrastructure supports only Linux."
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "Caching" : {
