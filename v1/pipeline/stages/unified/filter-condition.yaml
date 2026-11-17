@@ -2,38 +2,35 @@ title: FilterCondition
 description: Filter condition for property-based filtering (e.g., tags).
 type: object
 properties:
-  id:
-    description: Unique identifier for the filter condition. Needed when a field inside the condition uses a runtime input.
-    type: string
   tags:
     description: Tag-based filter conditions.
     oneOf:
-      # Runtime input or expression for the condition as a whole, match type included.
-      # The match type is a key (`all` / `in`) and a YAML key cannot hold an expression,
-      # so templating the whole condition is how a runtime match type is expressed.
-      - $ref: ../../common/expression.yaml
-      # Match any of the specified tags (OR). The tags themselves may be a runtime input
-      # or an expression, leaving the match type fixed.
+      # Match any of the specified tags (OR). The tags themselves may be an expression,
+      # leaving the match type fixed.
+      #
+      # The match type is a key, so it is always fixed. A runtime match type, or a runtime
+      # condition, is expressed by making the whole filters block a runtime input - see
+      # filters.yaml.
       - type: object
         required:
           - in
         properties:
           in:
-            description: Match any of the specified tags (OR). Supports a runtime input or an expression.
+            description: Match any of the specified tags (OR). Supports an expression.
             anyOf:
               - type: object
                 additionalProperties:
                   type: string
               - type: string
         additionalProperties: false
-      # Match all of the specified tags (AND). The tags themselves may be a runtime input
-      # or an expression, leaving the match type fixed.
+      # Match all of the specified tags (AND). The tags themselves may be an expression,
+      # leaving the match type fixed.
       - type: object
         required:
           - all
         properties:
           all:
-            description: Match all of the specified tags (AND). Supports a runtime input or an expression.
+            description: Match all of the specified tags (AND). Supports an expression.
             anyOf:
               - type: object
                 additionalProperties:

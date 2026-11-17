@@ -1,57 +1,66 @@
 title: Filters
 description: Filters for selecting environments or infrastructures.
-type: array
-items:
-  type: object
-  properties:
-    id:
-      description: Unique identifier for the filter. Needed when a field inside the filter uses a runtime input.
-      type: string
-    infrastructures:
-      description: Infrastructure filters.
-      oneOf:
-        # "all" - select all infrastructures
-        - type: string
-          enum:
-            - all
-        # Direct list of conditions (OR)
-        - type: array
-          items:
-            $ref: ./filter-condition.yaml
-        # Map with or/and operators
-        - type: object
-          properties:
-            or:
-              type: array
+oneOf:
+  - type: array
+    items:
+      type: object
+      properties:
+        id:
+          description: Optional unique identifier for the filter.
+          type: string
+        infrastructures:
+          description: Infrastructure filters.
+          oneOf:
+            # "all" - select all infrastructures
+            - type: string
+              enum:
+                - all
+            # Direct list of conditions (OR)
+            - type: array
               items:
                 $ref: ./filter-condition.yaml
-            and:
-              type: array
+            # Map with or/and operators
+            - type: object
+              properties:
+                or:
+                  type: array
+                  items:
+                    $ref: ./filter-condition.yaml
+                and:
+                  type: array
+                  items:
+                    $ref: ./filter-condition.yaml
+              additionalProperties: false
+        environments:
+          description: Environment filters.
+          oneOf:
+            # "all" - select all environments
+            - type: string
+              enum:
+                - all
+            # Direct list of conditions (OR)
+            - type: array
               items:
                 $ref: ./filter-condition.yaml
-          additionalProperties: false
-    environments:
-      description: Environment filters.
-      oneOf:
-        # "all" - select all environments
-        - type: string
-          enum:
-            - all
-        # Direct list of conditions (OR)
-        - type: array
-          items:
-            $ref: ./filter-condition.yaml
-        # Map with or/and operators
-        - type: object
-          properties:
-            or:
-              type: array
-              items:
-                $ref: ./filter-condition.yaml
-            and:
-              type: array
-              items:
-                $ref: ./filter-condition.yaml
-          additionalProperties: false
-  additionalProperties: false
+            # Map with or/and operators
+            - type: object
+              properties:
+                or:
+                  type: array
+                  items:
+                    $ref: ./filter-condition.yaml
+                and:
+                  type: array
+                  items:
+                    $ref: ./filter-condition.yaml
+              additionalProperties: false
+      additionalProperties: false
+  # Runtime input or expression for the whole filters block.
+  #
+  # The block is the unit of templating. An individual filter condition cannot be made a
+  # runtime input on its own: the match type is a key (`all` / `in`) and a YAML key cannot
+  # hold a runtime input, and a condition carries no identifier, so the run form has nothing
+  # to key an entry off. Setting the whole block to a runtime input needs no identifier at
+  # all, and the user supplies every filter at run time.
+  - $ref: ../../common/expression.yaml
 $schema: http://json-schema.org/draft-07/schema#
