@@ -4,6 +4,10 @@ allOf:
   - type: object
     required:
       - command
+    not:
+      required:
+        - variables
+        - variablesJson
     properties:
       command:
         type: string
@@ -50,6 +54,10 @@ allOf:
         - type: string
           pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
           minLength: 1
+      variablesJson:
+        description: Optional Ansible extra-vars for this run as a string holding a JSON object, so values keep their JSON types. Use instead of variables, not alongside it.
+        type: string
+        minLength: 1
       verbosity:
         description: Optional Ansible verbosity (0-4). Omitted inherits any existing ANSIBLE_VERBOSITY; the plugin default is 0.
         oneOf:
@@ -74,6 +82,10 @@ $schema: http://json-schema.org/draft-07/schema#
 type: object
 required:
   - command
+not:
+  required:
+    - variables
+    - variablesJson
 properties:
   command:
     type: string
@@ -118,6 +130,10 @@ properties:
     - type: string
       pattern: ^<\+input>((\.)((executionInput\(\))|(allowedValues|default|regex)\(.+?\)))*$
       minLength: 1
+  variablesJson:
+    description: Optional Ansible extra-vars for this run as a string holding a JSON object, so values keep their JSON types. Use instead of variables, not alongside it.
+    type: string
+    minLength: 1
   verbosity:
     description: Optional Ansible verbosity (0-4). Omitted inherits any existing ANSIBLE_VERBOSITY; the plugin default is 0.
     oneOf:
