@@ -13,6 +13,9 @@ properties:
           - success
           - failed
           - end
+          - paused
+          - waiting-for-user-action
+          - resumed
       - type: array
         items:
           type: string
@@ -22,12 +25,18 @@ properties:
             - success
             - failed
             - end
+            - paused
+            - waiting-for-user-action
+            - resumed
   stage:
     description: Stage-level events.
     oneOf:
       - type: string
         enum:
           - all
+          - start
+          - success
+          - failed
       - type: array
         items:
           oneOf:
@@ -73,9 +82,27 @@ properties:
           - failed
       - type: array
         items:
-          type: string
-          enum:
-            - failed
+          oneOf:
+            - type: string
+              enum:
+                - failed
+            - type: object
+              properties:
+                failed:
+                  description: "Steps to notify on: all, one step FQN (for example stage1.group1.step1), or a list of step FQNs."
+                  oneOf:
+                    - type: string
+                      minLength: 1
+                    - type: array
+                      minItems: 1
+                      items:
+                        type: string
+                        minLength: 1
+              required:
+                - failed
+              minProperties: 1
+              maxProperties: 1
+              additionalProperties: false
   trigger:
     description: Trigger-level events.
     oneOf:

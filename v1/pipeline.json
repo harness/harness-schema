@@ -1707,12 +1707,12 @@
             "description" : "Pipeline-level events.",
             "oneOf" : [ {
               "type" : "string",
-              "enum" : [ "all", "start", "success", "failed", "end" ]
+              "enum" : [ "all", "start", "success", "failed", "end", "paused", "waiting-for-user-action", "resumed" ]
             }, {
               "type" : "array",
               "items" : {
                 "type" : "string",
-                "enum" : [ "all", "start", "success", "failed", "end" ]
+                "enum" : [ "all", "start", "success", "failed", "end", "paused", "waiting-for-user-action", "resumed" ]
               }
             } ]
           },
@@ -1720,7 +1720,7 @@
             "description" : "Stage-level events.",
             "oneOf" : [ {
               "type" : "string",
-              "enum" : [ "all" ]
+              "enum" : [ "all", "start", "success", "failed" ]
             }, {
               "type" : "array",
               "items" : {
@@ -1785,8 +1785,32 @@
             }, {
               "type" : "array",
               "items" : {
-                "type" : "string",
-                "enum" : [ "failed" ]
+                "oneOf" : [ {
+                  "type" : "string",
+                  "enum" : [ "failed" ]
+                }, {
+                  "type" : "object",
+                  "properties" : {
+                    "failed" : {
+                      "description" : "Steps to notify on: all, one step FQN (for example stage1.group1.step1), or a list of step FQNs.",
+                      "oneOf" : [ {
+                        "type" : "string",
+                        "minLength" : 1
+                      }, {
+                        "type" : "array",
+                        "minItems" : 1,
+                        "items" : {
+                          "type" : "string",
+                          "minLength" : 1
+                        }
+                      } ]
+                    }
+                  },
+                  "required" : [ "failed" ],
+                  "minProperties" : 1,
+                  "maxProperties" : 1,
+                  "additionalProperties" : false
+                } ]
               }
             } ]
           },
@@ -1829,6 +1853,17 @@
             "items" : {
               "type" : "string"
             }
+          },
+          "delegate" : {
+            "description" : "Delegate selectors.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "execute-on-delegate" : {
+            "description" : "Whether to execute on delegate.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1865,6 +1900,17 @@
           "use-bot-token" : {
             "description" : "When true, send Slack notifications via bot token.",
             "type" : "boolean"
+          },
+          "delegate" : {
+            "description" : "Delegate selectors.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "execute-on-delegate" : {
+            "description" : "Whether to execute on delegate.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1892,6 +1938,17 @@
                 "type" : "string"
               }
             } ]
+          },
+          "delegate" : {
+            "description" : "Delegate selectors.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "execute-on-delegate" : {
+            "description" : "Whether to execute on delegate.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1923,6 +1980,17 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "delegate" : {
+            "description" : "Delegate selectors.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "execute-on-delegate" : {
+            "description" : "Whether to execute on delegate.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -1947,6 +2015,17 @@
           "key" : {
             "description" : "PagerDuty integration key.",
             "type" : "string"
+          },
+          "delegate" : {
+            "description" : "Delegate selectors.",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "execute-on-delegate" : {
+            "description" : "Whether to execute on delegate.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
