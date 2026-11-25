@@ -2,13 +2,20 @@
   "type" : "object",
   "title" : "pipeline",
   "additionalProperties" : false,
-  "required" : [ "pipeline" ],
+  "oneOf" : [ {
+    "required" : [ "pipeline" ]
+  }, {
+    "required" : [ "workflow" ]
+  } ],
   "properties" : {
     "version" : {
       "type" : "number",
       "enum" : [ 1 ]
     },
     "pipeline" : {
+      "$ref" : "#/definitions/pipeline/pipeline"
+    },
+    "workflow" : {
       "$ref" : "#/definitions/pipeline/pipeline"
     }
   },
@@ -271,9 +278,9 @@
             }, {
               "$ref" : "#/definitions/pipeline/common/SecretVariable"
             }, {
-              "$ref" : "#/definitions/pipeline/common/StepVariable"
+              "$ref" : "#/definitions/pipeline/common/StepsVariable"
             }, {
-              "$ref" : "#/definitions/pipeline/common/StageVariable"
+              "$ref" : "#/definitions/pipeline/common/StagesVariable"
             }, {
               "$ref" : "#/definitions/pipeline/common/ConnectorVariable"
             } ]
@@ -329,7 +336,7 @@
             "type" : {
               "description" : "Type defines the variable type.",
               "type" : "string",
-              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "stage", "connector" ]
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "steps", "stages", "connector" ]
             },
             "description" : {
               "type" : "string",
@@ -560,9 +567,9 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "StepVariable" : {
-          "title" : "StepVariable",
-          "description" : "Step variable definition.",
+        "StepsVariable" : {
+          "title" : "StepsVariable",
+          "description" : "Steps variable definition. The value is an array of steps.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
@@ -572,11 +579,15 @@
               "type" : {
                 "description" : "Variable type.",
                 "type" : "string",
-                "enum" : [ "step" ]
+                "enum" : [ "steps" ]
               },
               "value" : {
-                "description" : "Variable value. Supports expressions.",
-                "type" : "object",
+                "description" : "Variable value. An array of steps.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                },
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
@@ -584,23 +595,30 @@
                 }
               },
               "default" : {
-                "description" : "Default value for the variable.",
-                "type" : "object"
+                "description" : "Default value for the variable. An array of steps.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                }
               },
               "enum" : {
                 "description" : "Defines a list of accepted input values.",
                 "type" : "array",
                 "items" : {
-                  "type" : "object"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                  }
                 }
               }
             }
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
-        "StageVariable" : {
-          "title" : "StageVariable",
-          "description" : "Stage variable definition.",
+        "StagesVariable" : {
+          "title" : "StagesVariable",
+          "description" : "Stages variable definition. The value is an array of stages.",
           "allOf" : [ {
             "$ref" : "#/definitions/pipeline/common/Variable"
           }, {
@@ -610,11 +628,15 @@
               "type" : {
                 "description" : "Variable type.",
                 "type" : "string",
-                "enum" : [ "stage" ]
+                "enum" : [ "stages" ]
               },
               "value" : {
-                "description" : "Variable value. Supports expressions.",
-                "type" : "object",
+                "description" : "Variable value. An array of stages.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                },
                 "metadata" : {
                   "inputProperties" : {
                     "dependsOn" : [ "type" ]
@@ -622,14 +644,21 @@
                 }
               },
               "default" : {
-                "description" : "Default value for the variable.",
-                "type" : "object"
+                "description" : "Default value for the variable. An array of stages.",
+                "type" : "array",
+                "minItems" : 1,
+                "items" : {
+                  "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                }
               },
               "enum" : {
                 "description" : "Defines a list of accepted input values.",
                 "type" : "array",
                 "items" : {
-                  "type" : "object"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                  }
                 }
               }
             }
@@ -698,8 +727,8 @@
               "description" : "Template input overrides.",
               "$ref" : "#/definitions/pipeline/common/WithInputs"
             },
-            "gitBranch" : {
-              "description" : "Git branch for remote template resolution.",
+            "ref" : {
+              "description" : "Git ref (branch, tag, or commit) for remote template resolution.",
               "type" : "string"
             },
             "container" : {
@@ -1223,6 +1252,75 @@
           } ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         },
+        "ParentTemplateType" : {
+          "title" : "ParentTemplateType",
+          "description" : "Keyword of the template a step was expanded from, stamped on the step during template resolution (maps to io.harness.pms.yaml.TemplateType).\n",
+          "type" : "string",
+          "enum" : [ "template", "agent", "action", "deploy", "test", "chaos", "idp", "infrastructure", "sto", "build" ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "IdentitiesConfig" : {
+          "title" : "IdentitiesConfig",
+          "type" : "object",
+          "description" : "Map of named identities. Each key is a user-defined identity name that doubles as the\nenvironment variable injected into the step, and each value is an IdentitySpec.\nReserved names (HARNESS_*, PATH, HOME, AWS_*/GOOGLE_*/AZURE_*) are not allowed, and a\nstep may declare at most 10 identities.\n",
+          "maxProperties" : 10,
+          "propertyNames" : {
+            "pattern" : "^(?!HARNESS_)(?!AWS_)(?!GOOGLE_)(?!AZURE_)(?!PATH$)(?!HOME$)[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties" : {
+            "$ref" : "#/definitions/pipeline/common/IdentitySpec"
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "IdentitySpec" : {
+          "title" : "IdentitySpec",
+          "type" : "object",
+          "description" : "Definition of a single named identity that produces an independent OIDC ID_TOKEN.\nThe identity name (the map key under identities) doubles as the environment variable\nthe step receives at runtime.\n",
+          "properties" : {
+            "audience" : {
+              "description" : "Audience (aud) the minted ID_TOKEN is issued for.",
+              "type" : "string",
+              "minLength" : 1
+            },
+            "subjectTemplate" : {
+              "description" : "Template for the sub claim. Supports literals and allowlisted Harness expressions\n(e.g. <+account.identifier>, <+pipeline.identifier>, <+step.identifier>).\n",
+              "type" : "string"
+            },
+            "customClaims" : {
+              "description" : "Additional custom claims stamped on this identity's token.",
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "scope" : {
+              "description" : "Visibility scope of the identity. Step-level entries default to STEP.",
+              "type" : "string",
+              "enum" : [ "STEP", "STAGE", "PIPELINE" ]
+            },
+            "disabled" : {
+              "description" : "When true, suppresses this identity (not generated, not injected).",
+              "oneOf" : [ {
+                "type" : "boolean"
+              }, {
+                "type" : "string",
+                "pattern" : "^<\\+input>$",
+                "minLength" : 1
+              } ]
+            },
+            "tokenMode" : {
+              "description" : "Token exchange mode for this identity.",
+              "type" : "string",
+              "enum" : [ "STANDARD", "CLIENT_ASSERTION" ]
+            },
+            "cloudProvider" : {
+              "description" : "Target cloud provider for this identity. Determines claim formatting (e.g. AWS session tags).",
+              "type" : "string",
+              "enum" : [ "AWS", "GCP", "AZURE", "VAULT" ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
         "UnifiedTemplate" : {
           "title" : "UnifiedTemplate",
           "description" : "Template reference for steps, stages, or pipelines.",
@@ -1287,6 +1385,43 @@
           "description" : "Image pull policy enumeration (maps to io.harness.beans.yaml.extended.beans.PullPolicy).",
           "type" : "string",
           "enum" : [ "always", "never", "if-not-exists" ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "MultiDeploymentConfigV1" : {
+          "title" : "MultiDeploymentConfigV1",
+          "type" : "object",
+          "additionalProperties" : false,
+          "description" : "Optional configuration for deployments across multiple services and/or environments.",
+          "properties" : {
+            "on-failure" : {
+              "description" : "Behaviour when one of the multiple deployments fails. Supports expressions.",
+              "oneOf" : [ {
+                "$ref" : "#/definitions/pipeline/common/StrategyOnFailureTypeV1"
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            },
+            "if" : {
+              "type" : "string",
+              "description" : "Conditional expression evaluated once for the whole multi-deployment block. No deployment runs if it resolves to false."
+            },
+            "max-concurrency" : {
+              "description" : "Maximum number of concurrent service/environment deployments. Supports expressions.",
+              "oneOf" : [ {
+                "type" : "integer",
+                "minimum" : 1
+              }, {
+                "$ref" : "#/definitions/pipeline/common/Expression"
+              } ]
+            }
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StrategyOnFailureTypeV1" : {
+          "title" : "StrategyOnFailureTypeV1",
+          "description" : "Defines behaviour when one of the multiple service/environment deployments fails.",
+          "type" : "string",
+          "enum" : [ "run-all", "skip-queued" ],
           "$schema" : "http://json-schema.org/draft-07/schema#"
         }
       },
@@ -1447,6 +1582,10 @@
           "disabled" : {
             "type" : "boolean",
             "description" : "Whether the notification rule is disabled."
+          },
+          "if" : {
+            "type" : "string",
+            "description" : "Condition that must evaluate to true for the notification to be sent. Supports expressions."
           },
           "on" : {
             "type" : "array",
@@ -1714,6 +1853,18 @@
           "webhook" : {
             "description" : "Slack webhook URL.",
             "type" : "string"
+          },
+          "bot-token" : {
+            "description" : "Slack bot token secret.",
+            "type" : "string"
+          },
+          "channel" : {
+            "description" : "Slack channel name or ID for bot token notifications.",
+            "type" : "string"
+          },
+          "use-bot-token" : {
+            "description" : "When true, send Slack notifications via bot token.",
+            "type" : "boolean"
           }
         },
         "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -2057,13 +2208,31 @@
                 }
               },
               "runtime" : {
-                "description" : "Runtime configuration (cloud, VM, Kubernetes).",
+                "description" : "Runtime configuration (cloud, VM, Kubernetes, ECS).",
                 "$ref" : "#/definitions/pipeline/stages/unified/RuntimeV1"
               },
               "clone" : {
                 "type" : "object",
                 "description" : "Git clone configuration for the stage.",
-                "$ref" : "#/definitions/pipeline/Clone"
+                "allOf" : [ {
+                  "$ref" : "#/definitions/pipeline/Clone"
+                }, {
+                  "if" : {
+                    "oneOf" : [ {
+                      "required" : [ "ref" ]
+                    }, {
+                      "anyOf" : [ {
+                        "required" : [ "repo" ]
+                      }, {
+                        "required" : [ "connector" ]
+                      } ]
+                    } ]
+                  },
+                  "then" : {
+                    "type" : "null",
+                    "errorMessage" : "Configure both the codebase and ref for this stage, or clear both to use defaults or configure them when you run the pipeline."
+                  }
+                } ]
               },
               "platform" : {
                 "description" : "Platform configuration (OS, architecture).",
@@ -2077,6 +2246,10 @@
                 "description" : "Environment configuration for CD stages.",
                 "$ref" : "#/definitions/pipeline/stages/unified/EnvironmentV1"
               },
+              "multi-deployment" : {
+                "description" : "Configuration for deployments across multiple services and/or environments.",
+                "$ref" : "#/definitions/pipeline/common/MultiDeploymentConfigV1"
+              },
               "workspace" : {
                 "type" : "string",
                 "description" : "IaCM workspace identifier."
@@ -2088,6 +2261,36 @@
               "tofu-module" : {
                 "type" : "string",
                 "description" : "OpenTofu/Terraform module reference."
+              },
+              "playbooks" : {
+                "description" : "IaCM Ansible playbook identifier(s). A single value or a list.",
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                } ]
+              },
+              "inventories" : {
+                "description" : "IaCM Ansible inventory identifier(s). A single value or a list.",
+                "oneOf" : [ {
+                  "type" : "string"
+                }, {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                } ]
+              },
+              "execution-environment" : {
+                "type" : "string",
+                "description" : "IaCM execution environment reference (account.<id>, org.<id> or <id>) whose image runs the Ansible steps."
+              },
+              "execution-environment-tag" : {
+                "type" : "string",
+                "description" : "Image tag of the execution environment. When empty, the environment's default tag is used."
               },
               "env" : {
                 "description" : "Environment variables for the stage. Supports expressions.",
@@ -2121,13 +2324,68 @@
                 "type" : "object",
                 "additionalProperties" : true,
                 "description" : "scoped permissions definition at stage"
+              },
+              "templateConnectorRefs" : {
+                "description" : "Connector refs collected from template with: inputs and stamped on the expanded stage so hosted-infra validation can see them after merge.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
               }
             },
+            "allOf" : [ {
+              "if" : {
+                "required" : [ "delegate" ],
+                "anyOf" : [ {
+                  "not" : {
+                    "required" : [ "runtime" ]
+                  }
+                }, {
+                  "properties" : {
+                    "runtime" : {
+                      "type" : "null"
+                    }
+                  }
+                } ]
+              },
+              "then" : {
+                "not" : {
+                  "required" : [ "delegate" ]
+                }
+              }
+            }, {
+              "if" : {
+                "properties" : {
+                  "runtime" : {
+                    "type" : "object",
+                    "required" : [ "ecs" ]
+                  }
+                },
+                "required" : [ "runtime" ]
+              },
+              "then" : {
+                "properties" : {
+                  "platform" : {
+                    "properties" : {
+                      "os" : {
+                        "oneOf" : [ {
+                          "type" : "string",
+                          "enum" : [ "linux" ]
+                        }, {
+                          "$ref" : "#/definitions/pipeline/common/Expression"
+                        } ]
+                      }
+                    }
+                  }
+                },
+                "errorMessage" : "ECS infrastructure supports only Linux."
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "RuntimeV1" : {
             "title" : "RuntimeV1",
-            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs.",
+            "description" : "Runtime execution engine configuration. Either a string shorthand (cloud|shell|vm|k8) or an object carrying one of the runtime specs, including ecs.",
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "oneOf" : [ {
               "type" : "string",
@@ -2152,10 +2410,17 @@
                   "description" : "Kubernetes runtime specification.",
                   "$ref" : "#/definitions/pipeline/stages/unified/K8RuntimeSpec"
                 },
+                "ecs" : {
+                  "description" : "Amazon ECS runtime specification.",
+                  "$ref" : "#/definitions/pipeline/stages/unified/EcsRuntimeSpec"
+                },
                 "delegate" : {
                   "description" : "Delegate selectors used for Kubernetes inherit-from-delegate authentication.",
                   "$ref" : "#/definitions/pipeline/common/Delegate"
                 }
+              },
+              "not" : {
+                "required" : [ "cloud", "delegate" ]
               }
             } ]
           },
@@ -2364,6 +2629,98 @@
               },
               "security-context" : {
                 "description" : "Pod security context. Supports expressions.",
+                "oneOf" : [ {
+                  "$ref" : "#/definitions/pipeline/stages/unified/SecurityContextV1"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              }
+            },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "EcsRuntimeSpec" : {
+            "title" : "EcsRuntimeSpec",
+            "description" : "Amazon ECS runtime specification. Mirrors io.harness.beans.yaml.extended.runtime.V1.RuntimeV1.EcsRuntimeSpec.",
+            "type" : "object",
+            "additionalProperties" : false,
+            "required" : [ "connector" ],
+            "properties" : {
+              "connector" : {
+                "description" : "AWS connector reference. Supports expressions.",
+                "type" : "string"
+              },
+              "harness-image-connector" : {
+                "description" : "Connector for pulling Harness images. Supports expressions.",
+                "type" : "string"
+              },
+              "cluster" : {
+                "description" : "ECS cluster name or ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "region" : {
+                "description" : "AWS region. Supports expressions.",
+                "type" : "string"
+              },
+              "subnets" : {
+                "description" : "Subnet IDs for the task. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "security-groups" : {
+                "description" : "Security group IDs for the task. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "task-role" : {
+                "description" : "Task role ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "execution-role" : {
+                "description" : "Execution role ARN. Supports expressions.",
+                "type" : "string"
+              },
+              "timeout" : {
+                "description" : "Init timeout duration. Supports expressions.",
+                "type" : "string",
+                "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "execute-command" : {
+                "description" : "Enable ECS execute command. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "log-group" : {
+                "description" : "CloudWatch log group name. Supports expressions.",
+                "type" : "string"
+              },
+              "volumes" : {
+                "description" : "Volume configurations. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/CIVolumeV1"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "security-context" : {
+                "description" : "Container security context. Supports expressions.",
                 "oneOf" : [ {
                   "$ref" : "#/definitions/pipeline/stages/unified/SecurityContextV1"
                 }, {
@@ -2730,71 +3087,40 @@
           },
           "ServiceV1" : {
             "title" : "ServiceV1",
-            "description" : "Service configuration for CD stages. Supports multiple formats.",
-            "oneOf" : [ {
-              "type" : "string",
-              "description" : "Service identifier reference."
-            }, {
-              "type" : "object",
-              "required" : [ "id" ],
-              "properties" : {
-                "type" : {
-                  "description" : "Service swimlane hint for the single service.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
-                },
-                "id" : {
-                  "description" : "Service identifier.",
-                  "type" : "string"
-                },
-                "ref" : {
-                  "description" : "Git branch for the service configuration.",
-                  "type" : "string"
-                },
-                "with" : {
-                  "description" : "Service input overrides.",
-                  "$ref" : "#/definitions/pipeline/common/WithInputs"
-                },
-                "on-failure" : {
-                  "description" : "Failure strategy for this service. Overrides the stage-level failure strategy.",
-                  "$ref" : "#/definitions/pipeline/common/OnFailure"
-                }
+            "description" : "Service configuration for CD stages. Always uses the items form, for single and multi service alike: a fixed list of services (each an identifier, an expression, or an object with id and optional input overrides), or a single runtime input for the whole list.",
+            "type" : "object",
+            "required" : [ "items" ],
+            "properties" : {
+              "type" : {
+                "description" : "Service swimlane hint applied to the multi-service group.",
+                "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
               },
-              "additionalProperties" : false
-            }, {
-              "type" : "object",
-              "required" : [ "items" ],
-              "properties" : {
-                "type" : {
-                  "description" : "Service swimlane hint applied to the multi-service group.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/ServiceType"
-                },
-                "items" : {
-                  "description" : "List of services for multi-service deployment. Can be a fixed list or a single runtime input for the whole list.",
-                  "oneOf" : [ {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/ServiceItem"
-                    }
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/Expression"
-                  } ]
-                },
-                "parallel" : {
-                  "description" : "Execute services in parallel (all at once). Defaults to false, so services run one at a time (serially) unless set to true.",
-                  "oneOf" : [ {
-                    "type" : "boolean",
-                    "default" : false
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/Expression"
-                  } ]
-                },
-                "on-failure" : {
-                  "description" : "Failure strategy for this service group. Overrides the stage-level failure strategy.",
-                  "$ref" : "#/definitions/pipeline/common/OnFailure"
-                }
+              "items" : {
+                "description" : "List of services, for single and multi service deployment alike. Can be a fixed list or a single runtime input for the whole list.",
+                "oneOf" : [ {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/pipeline/stages/unified/ServiceItem"
+                  }
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               },
-              "additionalProperties" : false
-            } ],
+              "parallel" : {
+                "description" : "Execute services in parallel (all at once). Defaults to false, so services run one at a time (serially) unless set to true.",
+                "oneOf" : [ {
+                  "type" : "boolean",
+                  "default" : false
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
+              },
+              "on-failure" : {
+                "description" : "Failure strategy for this service group. Overrides the stage-level failure strategy.",
+                "$ref" : "#/definitions/pipeline/common/OnFailure"
+              }
+            },
+            "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "ServiceType" : {
@@ -2833,41 +3159,8 @@
           },
           "EnvironmentV1" : {
             "title" : "EnvironmentV1",
-            "description" : "Environment configuration for CD stages.",
+            "description" : "Environment configuration for CD stages. Single and multi environment selection always uses the items form; environment groups use the group form and filtered selections use the filters form.",
             "oneOf" : [ {
-              "description" : "Harness expression that resolves to the environment configuration.",
-              "$ref" : "#/definitions/pipeline/common/Expression"
-            }, {
-              "type" : "object",
-              "required" : [ "id" ],
-              "properties" : {
-                "id" : {
-                  "description" : "Environment identifier.",
-                  "type" : "string"
-                },
-                "all-infra" : {
-                  "description" : "Deploy to all infrastructures in the environment. With a `deploy-to` runtime input sibling, every infrastructure is preselected in the run form; with no `deploy-to` sibling, deploys to all without prompting.",
-                  "oneOf" : [ {
-                    "type" : "boolean"
-                  }, {
-                    "$ref" : "#/definitions/pipeline/common/Expression"
-                  } ]
-                },
-                "deploy-to" : {
-                  "description" : "Infrastructure(s) to deploy to.",
-                  "$ref" : "#/definitions/pipeline/stages/unified/DeployTo"
-                },
-                "ref" : {
-                  "description" : "Git branch for the environment configuration.",
-                  "type" : "string"
-                },
-                "on-failure" : {
-                  "description" : "Failure strategy for this environment. Overrides the stage-level failure strategy.",
-                  "$ref" : "#/definitions/pipeline/common/OnFailure"
-                }
-              },
-              "additionalProperties" : false
-            }, {
               "type" : "object",
               "required" : [ "items" ],
               "properties" : {
@@ -2939,42 +3232,6 @@
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "DeployTo" : {
-            "title" : "DeployTo",
-            "description" : "Infrastructure deployment target configuration.",
-            "oneOf" : [ {
-              "$ref" : "#/definitions/pipeline/stages/unified/InfraItem"
-            }, {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/pipeline/stages/unified/InfraItem"
-              }
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
-          "InfraItem" : {
-            "title" : "InfraItem",
-            "description" : "Single infrastructure item configuration.",
-            "oneOf" : [ {
-              "type" : "string",
-              "description" : "Infrastructure identifier."
-            }, {
-              "type" : "object",
-              "required" : [ "id" ],
-              "properties" : {
-                "id" : {
-                  "description" : "Infrastructure identifier.",
-                  "type" : "string"
-                },
-                "with" : {
-                  "description" : "Infrastructure input overrides.",
-                  "$ref" : "#/definitions/pipeline/common/WithInputs"
-                }
-              },
-              "additionalProperties" : false
-            } ],
-            "$schema" : "http://json-schema.org/draft-07/schema#"
-          },
           "EnvironmentItems" : {
             "title" : "EnvironmentItems",
             "description" : "List of environments for multi-environment deployment, or an expression.",
@@ -3022,74 +3279,118 @@
             "additionalProperties" : false,
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
-          "Filters" : {
-            "title" : "Filters",
-            "description" : "Filters for selecting environments or infrastructures.",
-            "type" : "array",
-            "items" : {
+          "DeployTo" : {
+            "title" : "DeployTo",
+            "description" : "Infrastructure deployment target configuration.",
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/stages/unified/InfraItem"
+            }, {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/pipeline/stages/unified/InfraItem"
+              }
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "InfraItem" : {
+            "title" : "InfraItem",
+            "description" : "Single infrastructure item configuration.",
+            "oneOf" : [ {
+              "type" : "string",
+              "description" : "Infrastructure identifier."
+            }, {
               "type" : "object",
+              "required" : [ "id" ],
               "properties" : {
-                "infrastructures" : {
-                  "description" : "Infrastructure filters.",
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "all" ]
-                  }, {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                    }
-                  }, {
-                    "type" : "object",
-                    "properties" : {
-                      "or" : {
-                        "type" : "array",
-                        "items" : {
-                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                        }
-                      },
-                      "and" : {
-                        "type" : "array",
-                        "items" : {
-                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                        }
-                      }
-                    },
-                    "additionalProperties" : false
-                  } ]
+                "id" : {
+                  "description" : "Infrastructure identifier.",
+                  "type" : "string"
                 },
-                "environments" : {
-                  "description" : "Environment filters.",
-                  "oneOf" : [ {
-                    "type" : "string",
-                    "enum" : [ "all" ]
-                  }, {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                    }
-                  }, {
-                    "type" : "object",
-                    "properties" : {
-                      "or" : {
-                        "type" : "array",
-                        "items" : {
-                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                        }
-                      },
-                      "and" : {
-                        "type" : "array",
-                        "items" : {
-                          "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
-                        }
-                      }
-                    },
-                    "additionalProperties" : false
-                  } ]
+                "with" : {
+                  "description" : "Infrastructure input overrides.",
+                  "$ref" : "#/definitions/pipeline/common/WithInputs"
                 }
               },
               "additionalProperties" : false
-            },
+            } ],
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "Filters" : {
+            "title" : "Filters",
+            "description" : "Filters for selecting environments or infrastructures.",
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : {
+                  "id" : {
+                    "description" : "Optional unique identifier for the filter.",
+                    "type" : "string"
+                  },
+                  "infrastructures" : {
+                    "description" : "Infrastructure filters.",
+                    "oneOf" : [ {
+                      "type" : "string",
+                      "enum" : [ "all" ]
+                    }, {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                      }
+                    }, {
+                      "type" : "object",
+                      "properties" : {
+                        "or" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                          }
+                        },
+                        "and" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                          }
+                        }
+                      },
+                      "additionalProperties" : false
+                    } ]
+                  },
+                  "environments" : {
+                    "description" : "Environment filters.",
+                    "oneOf" : [ {
+                      "type" : "string",
+                      "enum" : [ "all" ]
+                    }, {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                      }
+                    }, {
+                      "type" : "object",
+                      "properties" : {
+                        "or" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                          }
+                        },
+                        "and" : {
+                          "type" : "array",
+                          "items" : {
+                            "$ref" : "#/definitions/pipeline/stages/unified/FilterCondition"
+                          }
+                        }
+                      },
+                      "additionalProperties" : false
+                    } ]
+                  }
+                },
+                "additionalProperties" : false
+              }
+            }, {
+              "$ref" : "#/definitions/pipeline/common/Expression"
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           },
           "FilterCondition" : {
@@ -3099,12 +3400,12 @@
             "properties" : {
               "tags" : {
                 "description" : "Tag-based filter conditions.",
-                "type" : "object",
                 "oneOf" : [ {
+                  "type" : "object",
                   "required" : [ "in" ],
                   "properties" : {
                     "in" : {
-                      "description" : "Match any of the specified tags (OR).",
+                      "description" : "Match any of the specified tags (OR). Supports an expression.",
                       "anyOf" : [ {
                         "type" : "object",
                         "additionalProperties" : {
@@ -3117,10 +3418,11 @@
                   },
                   "additionalProperties" : false
                 }, {
+                  "type" : "object",
                   "required" : [ "all" ],
                   "properties" : {
                     "all" : {
-                      "description" : "Match all of the specified tags (AND).",
+                      "description" : "Match all of the specified tags (AND). Supports an expression.",
                       "anyOf" : [ {
                         "type" : "object",
                         "additionalProperties" : {
@@ -3207,12 +3509,16 @@
                 } ]
               },
               "key" : {
-                "description" : "Cache key.",
+                "description" : "Cache key. Supports expressions.",
                 "type" : "string"
               },
               "override" : {
-                "description" : "Whether to override existing cache.",
-                "type" : "boolean"
+                "description" : "Whether to override existing cache. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "$ref" : "#/definitions/pipeline/common/Expression"
+                } ]
               },
               "policy" : {
                 "description" : "Cache policy (pull, push, pull-push).",
@@ -3504,6 +3810,14 @@
             "additionalProperties" : false,
             "required" : [ "group" ],
             "properties" : {
+              "id" : {
+                "description" : "Unique identifier for the group.",
+                "type" : "string"
+              },
+              "name" : {
+                "description" : "Display name of the group.",
+                "type" : "string"
+              },
               "group" : {
                 "description" : "Group configuration.",
                 "type" : "object",
@@ -3518,12 +3832,16 @@
                     "type" : "string"
                   },
                   "stages" : {
-                    "description" : "Stages within the group.",
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
-                    },
-                    "minItems" : 1
+                    "description" : "Stages within the group, or an expression that resolves to an array of stages.",
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/stages/unified/StageItems"
+                      },
+                      "minItems" : 1
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/Expression"
+                    } ]
                   }
                 }
               }
@@ -3585,6 +3903,8 @@
                 "required" : [ "sto" ]
               }, {
                 "required" : [ "ai-eval" ]
+              }, {
+                "required" : [ "render" ]
               } ]
             },
             "then" : {
@@ -3688,6 +4008,13 @@
                 "then" : {
                   "$ref" : "#/definitions/pipeline/common/UnifiedTemplate"
                 }
+              }, {
+                "if" : {
+                  "required" : [ "render" ]
+                },
+                "then" : {
+                  "$ref" : "#/definitions/pipeline/steps/unified/UnifiedRenderStepNode"
+                }
               } ]
             },
             "else" : {
@@ -3729,6 +4056,13 @@
               "if" : {
                 "description" : "Conditional execution expression. Step is skipped if condition resolves to false. Supports expressions.",
                 "type" : "string"
+              },
+              "permissions" : {
+                "description" : "Resource to action map used to scope the HARNESS_TOKEN injected into this step. For example, pipeline - execute.",
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
               },
               "strategy" : {
                 "description" : "Execution strategy (matrix, for, while, repeat). Supports expressions.",
@@ -3784,6 +4118,17 @@
                 }, {
                   "$ref" : "#/definitions/pipeline/common/Expression"
                 } ]
+              },
+              "templateConnectorRefs" : {
+                "description" : "Connector refs collected from template with: inputs and stamped on the expanded step so hosted-infra validation can see them after merge.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "parent-template-type" : {
+                "description" : "Keyword of the template this step was expanded from. Stamped during template resolution.",
+                "$ref" : "#/definitions/pipeline/common/ParentTemplateType"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -3907,6 +4252,10 @@
                     "enum" : [ "Pipeline", "Stage", "StepGroup" ]
                   }
                 }
+              },
+              "identities" : {
+                "description" : "Named OIDC identities for this step. Each key is the environment variable the step receives at runtime; each value is an identity spec (audience, subjectTemplate, and so on).\n",
+                "$ref" : "#/definitions/pipeline/common/IdentitiesConfig"
               },
               "sourceStepType" : {
                 "description" : "Merge-time origin of an expanded step. Set to Agent when this run was produced from an agent template. Used for CI metrics; not sent to lite-engine.\n",
@@ -4219,9 +4568,9 @@
                   "required" : [ "duration" ],
                   "properties" : {
                     "duration" : {
-                      "description" : "Duration to wait (e.g., 10s, 5m, 1h). Supports expressions.",
+                      "description" : "Duration to wait (e.g., 10s, 5m, 1h 30m). Supports <+...> and ${{...}} expressions, runtime input and execution input.",
                       "type" : "string",
-                      "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+                      "pattern" : "^((([1-9])+\\d+[s])|((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>.*)|(.*\\$\\{\\{.+\\}\\}.*))$"
                     }
                   }
                 }
@@ -4250,6 +4599,13 @@
                 "description" : "Conditional execution expression. Step is skipped if condition resolves to false. Supports expressions.",
                 "type" : "string"
               },
+              "permissions" : {
+                "description" : "Resource to action map used to scope the HARNESS_TOKEN injected into this step. For example, pipeline - execute.",
+                "type" : "object",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
               "strategy" : {
                 "description" : "Execution strategy (matrix, for, while, repeat). Supports expressions.",
                 "oneOf" : [ {
@@ -4269,6 +4625,10 @@
                 "description" : "Step timeout duration. Supports expressions.",
                 "type" : "string",
                 "pattern" : "^(([1-9])+\\d+[s])|(((([1-9])+\\d*[mhwd])+([\\s]?\\d+[smhwd])*)|(.*<\\+.*>(?!.*\\.executionInput\\(\\)).*)|(^$))$"
+              },
+              "parent-template-type" : {
+                "description" : "Keyword of the template this step was expanded from. Stamped during template resolution.",
+                "$ref" : "#/definitions/pipeline/common/ParentTemplateType"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -4831,6 +5191,10 @@
                     }
                   }
                 }
+              },
+              "parent-template-type" : {
+                "description" : "Keyword of the template this step was expanded from. Stamped during template resolution.",
+                "$ref" : "#/definitions/pipeline/common/ParentTemplateType"
               }
             },
             "$schema" : "http://json-schema.org/draft-07/schema#"
@@ -4841,6 +5205,18 @@
             "type" : "object",
             "required" : [ "group" ],
             "properties" : {
+              "id" : {
+                "type" : "string",
+                "description" : "Unique identifier for the step group."
+              },
+              "name" : {
+                "type" : "string",
+                "description" : "Display name of the step group."
+              },
+              "parent-template-type" : {
+                "description" : "Keyword of the template this step group was expanded from. Stamped during template resolution.",
+                "$ref" : "#/definitions/pipeline/common/ParentTemplateType"
+              },
               "group" : {
                 "type" : "object",
                 "required" : [ "steps" ],
@@ -4894,14 +5270,51 @@
                     }
                   },
                   "steps" : {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
-                    }
+                    "description" : "Steps within the group, or an expression that resolves to an array of steps.",
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/pipeline/steps/unified/StepItems"
+                      },
+                      "minItems" : 1
+                    }, {
+                      "$ref" : "#/definitions/pipeline/common/Expression"
+                    } ]
                   }
                 }
               }
             },
+            "$schema" : "http://json-schema.org/draft-07/schema#"
+          },
+          "UnifiedRenderStepNode" : {
+            "title" : "UnifiedRenderStepNode",
+            "description" : "Render step node for manifest rendering.",
+            "allOf" : [ {
+              "$ref" : "#/definitions/pipeline/steps/unified/UnifiedPmsAbstractStepNode"
+            }, {
+              "type" : "object",
+              "required" : [ "render" ],
+              "properties" : {
+                "render" : {
+                  "description" : "Render step configuration.",
+                  "type" : "object",
+                  "properties" : {
+                    "with" : {
+                      "description" : "Render step parameters including manifest type and inputs.",
+                      "type" : "object",
+                      "required" : [ "kind" ],
+                      "properties" : {
+                        "kind" : {
+                          "description" : "Manifest type to render (e.g., k8s).",
+                          "type" : "string"
+                        }
+                      },
+                      "additionalProperties" : true
+                    }
+                  }
+                }
+              }
+            } ],
             "$schema" : "http://json-schema.org/draft-07/schema#"
           }
         },

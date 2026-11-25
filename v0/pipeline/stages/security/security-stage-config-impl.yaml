@@ -12,6 +12,7 @@ properties:
   infrastructure:
     oneOf:
     - $ref: ../../steps/common/docker-infra-yaml.yaml
+    - $ref: ../../steps/common/ecs-direct-infra-yaml.yaml
     - $ref: ../../steps/common/hosted-vm-infra-yaml.yaml
     - $ref: ../../steps/common/k8s-direct-infra-yaml.yaml
     - $ref: ../../steps/common/use-from-stage-infra-yaml.yaml
@@ -42,4 +43,26 @@ properties:
     - type: string
   description:
     desc: This is the description for SecurityStageConfigImpl
+allOf:
+- if:
+    properties:
+      infrastructure:
+        properties:
+          type:
+            const: ECSDirect
+    required:
+    - infrastructure
+  then:
+    properties:
+      platform:
+        properties:
+          os:
+            oneOf:
+            - type: string
+              enum:
+              - Linux
+            - type: string
+              pattern: (<\+.+>.*)
+              minLength: 1
+    errorMessage: ECS infrastructure supports only Linux.
 $schema: http://json-schema.org/draft-07/schema#

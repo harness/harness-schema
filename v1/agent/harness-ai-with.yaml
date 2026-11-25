@@ -1,0 +1,60 @@
+title: HarnessAIWith
+description: Agent configuration object. Fields other than prompt may be a fixed value or a runtime input such as ${{inputs.<name>}}. The with mapping itself cannot be a runtime expression.
+type: object
+additionalProperties: false
+required:
+  - prompt
+  - connector
+properties:
+  prompt:
+    description: Natural-language instruction for the agent to perform. Must be a fixed string. Input expressions such as ${{inputs.name}} may appear inside the prompt text.
+    type: string
+    minLength: 1
+  connector:
+    description: Model Provider connector identifier. Can be a fixed connector ref or a runtime input such as ${{inputs.llm.id}}.
+    type: string
+    minLength: 1
+  docker_connector:
+    description: Docker or artifact registry connector used to pull the agent image. Can be a fixed connector ref or a runtime input.
+    type: string
+  image:
+    description: Container image for the agent runner. Can be a fixed image name or a runtime input.
+    type: string
+  mcp:
+    description: MCP connectors for the agent. Can be a list of connector refs or a runtime input such as ${{inputs.mcpCon}}.
+    oneOf:
+      - type: array
+        items:
+          type: string
+      - $ref: ../pipeline/common/expression.yaml
+  max_turns:
+    description: Maximum number of agent iterations before the run is terminated. Can be a number, a quoted string, or a runtime input.
+    oneOf:
+      - type: string
+      - type: number
+  workdir:
+    description: Working directory for the agent. Defaults to /harness when unset. Can be a fixed path or a runtime input.
+    type: string
+  skill:
+    description: Optional path to a SKILL.md file to install into the working directory before the run. Can be a fixed path or a runtime input.
+    type: string
+  allowed_tools:
+    description: Comma-separated allowlist of tools the agent may use. Empty uses the runner default. Can be a fixed string or a runtime input.
+    type: string
+  allowed_domains:
+    description: Extra domains the agent may reach (exact hosts, optional wildcards, or domain regexes). Can be a fixed string or a runtime input.
+    type: string
+  permissions:
+    description: Resource to action map (for example, pipeline - execute) copied onto the agent's run steps to scope the injected HARNESS_TOKEN.
+    type: object
+    additionalProperties:
+      type: string
+  env:
+    description: Extra environment variables for the agent. Values may be fixed strings or runtime inputs such as ${{inputs.test}}.
+    oneOf:
+      - type: object
+        additionalProperties:
+          type: string
+      - type: array
+      - $ref: ../pipeline/common/expression.yaml
+$schema: http://json-schema.org/draft-07/schema#

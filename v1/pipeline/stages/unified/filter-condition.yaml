@@ -4,24 +4,33 @@ type: object
 properties:
   tags:
     description: Tag-based filter conditions.
-    type: object
     oneOf:
-      - required:
+      # Match any of the specified tags (OR). The tags themselves may be an expression,
+      # leaving the match type fixed.
+      #
+      # The match type is a key, so it is always fixed. A runtime match type, or a runtime
+      # condition, is expressed by making the whole filters block a runtime input - see
+      # filters.yaml.
+      - type: object
+        required:
           - in
         properties:
           in:
-            description: Match any of the specified tags (OR).
+            description: Match any of the specified tags (OR). Supports an expression.
             anyOf:
               - type: object
                 additionalProperties:
                   type: string
               - type: string
         additionalProperties: false
-      - required:
+      # Match all of the specified tags (AND). The tags themselves may be an expression,
+      # leaving the match type fixed.
+      - type: object
+        required:
           - all
         properties:
           all:
-            description: Match all of the specified tags (AND).
+            description: Match all of the specified tags (AND). Supports an expression.
             anyOf:
               - type: object
                 additionalProperties:

@@ -1,0 +1,43 @@
+agent:
+  uses: harnessAI@1.0.0
+  with:
+    prompt: |-
+      list available mcps
+      list available pipelines in this project
+      print the value of $GREET
+    env:
+      GREET: ${{inputs.test}}
+    allowed_domains: pubmed.mcp.claude.com, api.githubcopilot.com
+    max_turns: "50"
+    workdir: /harness
+    image: harness/harness-ai-agent:latest
+    docker_connector: ${{inputs.docker.id}}
+    connector: ${{inputs.llm.id}}
+    mcp: ${{inputs.mcpCon}}
+  inputs:
+    test:
+      type: string
+      default: test-value
+    docker:
+      type: connector
+      default: account.harnessImage
+      ui:
+        connectorCategories:
+          - ARTIFACTORY
+    llm:
+      type: connector
+      default: account.harnessLLM
+      ui:
+        connectorCategories:
+          - AI
+    mcpCon:
+      type: array
+      default:
+        - harnessMcp
+        - Traceable
+      ui:
+        input:
+          inputType: connector
+          inputConfig:
+            connectorTypes:
+              - Mcp

@@ -1,0 +1,625 @@
+{
+  "type" : "object",
+  "title" : "agent",
+  "additionalProperties" : false,
+  "required" : [ "agent" ],
+  "properties" : {
+    "version" : {
+      "type" : "number",
+      "enum" : [ 1 ]
+    },
+    "agent" : {
+      "$ref" : "#/definitions/agent/AgentSpec"
+    }
+  },
+  "examples" : [ {
+    "agent" : {
+      "uses" : "harnessAI@1.0.0",
+      "inputs" : {
+        "test-input" : {
+          "type" : "string",
+          "required" : true
+        }
+      },
+      "with" : {
+        "connector" : "account.harnessLLM",
+        "prompt" : "print all the available mcp for ${{inputs.test-input}}",
+        "mcp" : [ "harnessMcp", "Traceable" ],
+        "max_turns" : "150",
+        "env" : {
+          "ANTHROPIC_MODEL" : "claude-sonnet-5"
+        }
+      }
+    }
+  }, {
+    "agent" : {
+      "uses" : "harnessAI@1.0.0",
+      "with" : {
+        "prompt" : "list available mcps\nlist available pipelines in this project\nprint the value of $GREET",
+        "env" : {
+          "GREET" : "${{inputs.test}}"
+        },
+        "allowed_domains" : "pubmed.mcp.claude.com, api.githubcopilot.com",
+        "max_turns" : "50",
+        "workdir" : "/harness",
+        "image" : "harness/harness-ai-agent:latest",
+        "docker_connector" : "${{inputs.docker.id}}",
+        "connector" : "${{inputs.llm.id}}",
+        "mcp" : "${{inputs.mcpCon}}"
+      },
+      "inputs" : {
+        "test" : {
+          "type" : "string",
+          "default" : "test-value"
+        },
+        "docker" : {
+          "type" : "connector",
+          "default" : "account.harnessImage",
+          "ui" : {
+            "connectorCategories" : [ "ARTIFACTORY" ]
+          }
+        },
+        "llm" : {
+          "type" : "connector",
+          "default" : "account.harnessLLM",
+          "ui" : {
+            "connectorCategories" : [ "AI" ]
+          }
+        },
+        "mcpCon" : {
+          "type" : "array",
+          "default" : [ "harnessMcp", "Traceable" ],
+          "ui" : {
+            "input" : {
+              "inputType" : "connector",
+              "inputConfig" : {
+                "connectorTypes" : [ "Mcp" ]
+              }
+            }
+          }
+        }
+      }
+    }
+  } ],
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "definitions" : {
+    "agent" : {
+      "AgentSpec" : {
+        "title" : "AgentSpec",
+        "description" : "Agent YAML",
+        "type" : "object",
+        "additionalProperties" : false,
+        "required" : [ "uses", "with" ],
+        "properties" : {
+          "uses" : {
+            "description" : "Harness AI agent type and version (for example harnessAI@1.0.0).",
+            "type" : "string",
+            "pattern" : "^harnessAI(@[0-9]+\\.[0-9]+\\.[0-9]+)?$"
+          },
+          "with" : {
+            "description" : "Agent configuration object. Fields under with other than prompt (for example connector) may be a fixed value or a runtime input such as ${{inputs.llm.id}}. with itself cannot be a runtime expression.",
+            "allOf" : [ {
+              "$ref" : "#/definitions/agent/HarnessAIWith"
+            } ]
+          },
+          "inputs" : {
+            "description" : "Runtime inputs for this agent. Reference them from fields under with as ${{inputs.<name>}}.",
+            "$ref" : "#/definitions/pipeline/common/NGVariableV1Wrapper"
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      },
+      "HarnessAIWith" : {
+        "title" : "HarnessAIWith",
+        "description" : "Agent configuration object. Fields other than prompt may be a fixed value or a runtime input such as ${{inputs.<name>}}. The with mapping itself cannot be a runtime expression.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "required" : [ "prompt", "connector" ],
+        "properties" : {
+          "prompt" : {
+            "description" : "Natural-language instruction for the agent to perform. Must be a fixed string. Input expressions such as ${{inputs.name}} may appear inside the prompt text.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "connector" : {
+            "description" : "Model Provider connector identifier. Can be a fixed connector ref or a runtime input such as ${{inputs.llm.id}}.",
+            "type" : "string",
+            "minLength" : 1
+          },
+          "docker_connector" : {
+            "description" : "Docker or artifact registry connector used to pull the agent image. Can be a fixed connector ref or a runtime input.",
+            "type" : "string"
+          },
+          "image" : {
+            "description" : "Container image for the agent runner. Can be a fixed image name or a runtime input.",
+            "type" : "string"
+          },
+          "mcp" : {
+            "description" : "MCP connectors for the agent. Can be a list of connector refs or a runtime input such as ${{inputs.mcpCon}}.",
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }, {
+              "$ref" : "#/definitions/pipeline/common/Expression"
+            } ]
+          },
+          "max_turns" : {
+            "description" : "Maximum number of agent iterations before the run is terminated. Can be a number, a quoted string, or a runtime input.",
+            "oneOf" : [ {
+              "type" : "string"
+            }, {
+              "type" : "number"
+            } ]
+          },
+          "workdir" : {
+            "description" : "Working directory for the agent. Defaults to /harness when unset. Can be a fixed path or a runtime input.",
+            "type" : "string"
+          },
+          "skill" : {
+            "description" : "Optional path to a SKILL.md file to install into the working directory before the run. Can be a fixed path or a runtime input.",
+            "type" : "string"
+          },
+          "allowed_tools" : {
+            "description" : "Comma-separated allowlist of tools the agent may use. Empty uses the runner default. Can be a fixed string or a runtime input.",
+            "type" : "string"
+          },
+          "allowed_domains" : {
+            "description" : "Extra domains the agent may reach (exact hosts, optional wildcards, or domain regexes). Can be a fixed string or a runtime input.",
+            "type" : "string"
+          },
+          "permissions" : {
+            "description" : "Resource to action map (for example, pipeline - execute) copied onto the agent's run steps to scope the injected HARNESS_TOKEN.",
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "env" : {
+            "description" : "Extra environment variables for the agent. Values may be fixed strings or runtime inputs such as ${{inputs.test}}.",
+            "oneOf" : [ {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            }, {
+              "type" : "array"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/Expression"
+            } ]
+          }
+        },
+        "$schema" : "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    "pipeline" : {
+      "common" : {
+        "Expression" : {
+          "title" : "Expression",
+          "description" : "String value matching a Harness pipeline expression or template placeholder (e.g., <+something> or ${{ ... }}).",
+          "type" : "string",
+          "pattern" : "(\\$\\{\\{.+\\}\\}|<\\+.+>.*)",
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "NGVariableV1Wrapper" : {
+          "title" : "NGVariableV1Wrapper",
+          "description" : "Wrapper for stage/pipeline-level input variables. Keys are variable names, values define variable configuration.",
+          "type" : "object",
+          "additionalProperties" : {
+            "oneOf" : [ {
+              "$ref" : "#/definitions/pipeline/common/StringNGVariableV1"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/NumberVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/BooleanVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/ArrayVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/ObjectVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/SecretVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/StepVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/StageVariable"
+            }, {
+              "$ref" : "#/definitions/pipeline/common/ConnectorVariable"
+            } ]
+          },
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StringNGVariableV1" : {
+          "title" : "StringNGVariableV1",
+          "description" : "String variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "string" ]
+              },
+              "value" : {
+                "description" : "Variable value. Supports expressions.",
+                "type" : "string"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "options" : {
+                "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "Variable" : {
+          "title" : "Variable",
+          "type" : "object",
+          "discriminator" : "type",
+          "description" : "Variable defines a variable object",
+          "properties" : {
+            "type" : {
+              "description" : "Type defines the variable type.",
+              "type" : "string",
+              "enum" : [ "string", "number", "boolean", "array", "object", "secret", "step", "stage", "connector" ]
+            },
+            "description" : {
+              "type" : "string",
+              "description" : "Description of the variable."
+            },
+            "required" : {
+              "type" : "boolean",
+              "description" : "Required indicates the variable is required."
+            },
+            "execution_input" : {
+              "description" : "A boolean that defines whether the value is an execution input.",
+              "type" : "boolean",
+              "default" : false
+            },
+            "items" : {
+              "description" : "Defines the item type for array variables.",
+              "type" : "array"
+            },
+            "options" : {
+              "description" : "Defines a list of accepted input values. Alias for enum (GitHub compatibility).",
+              "type" : "array"
+            },
+            "enum" : {
+              "description" : "Defines a list of accepted input values.",
+              "type" : "array"
+            },
+            "pattern" : {
+              "description" : "Regex pattern for variable value validation.",
+              "type" : "string"
+            },
+            "mask" : {
+              "description" : "Indicates the input should be masked.",
+              "type" : "boolean",
+              "deprecated" : true
+            },
+            "ui" : {
+              "description" : "UI configuration for variable rendering in forms.",
+              "type" : "object",
+              "additionalProperties" : true
+            }
+          }
+        },
+        "NumberVariable" : {
+          "title" : "NumberVariable",
+          "description" : "Number variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "number" ]
+              },
+              "value" : {
+                "description" : "Variable value. Supports expressions.",
+                "oneOf" : [ {
+                  "type" : "number",
+                  "format" : "double"
+                }, {
+                  "type" : "string",
+                  "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                } ],
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "number",
+                "format" : "double"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "oneOf" : [ {
+                    "type" : "number",
+                    "format" : "double"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "((^[+-]?[0-9]*\\.?[0-9]+$)|(<\\+.+>.*))"
+                  } ]
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "BooleanVariable" : {
+          "title" : "BooleanVariable",
+          "description" : "Boolean variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "boolean" ]
+              },
+              "value" : {
+                "description" : "Variable value.",
+                "type" : "boolean"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "boolean"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "boolean"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ArrayVariable" : {
+          "title" : "ArrayVariable",
+          "description" : "Array variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "array" ]
+              },
+              "value" : {
+                "description" : "Variable value.",
+                "type" : "array"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "array"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "array"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ObjectVariable" : {
+          "title" : "ObjectVariable",
+          "description" : "Object variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "object" ]
+              },
+              "value" : {
+                "description" : "Variable value.",
+                "type" : "object"
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "object"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "SecretVariable" : {
+          "title" : "SecretVariable",
+          "description" : "Secret variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "secret" ]
+              },
+              "value" : {
+                "description" : "Variable value (secret reference).",
+                "type" : "string",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "string"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StepVariable" : {
+          "title" : "StepVariable",
+          "description" : "Step variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "step" ]
+              },
+              "value" : {
+                "description" : "Variable value. Supports expressions.",
+                "type" : "object",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "object"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "StageVariable" : {
+          "title" : "StageVariable",
+          "description" : "Stage variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "stage" ]
+              },
+              "value" : {
+                "description" : "Variable value. Supports expressions.",
+                "type" : "object",
+                "metadata" : {
+                  "inputProperties" : {
+                    "dependsOn" : [ "type" ]
+                  }
+                }
+              },
+              "default" : {
+                "description" : "Default value for the variable.",
+                "type" : "object"
+              },
+              "enum" : {
+                "description" : "Defines a list of accepted input values.",
+                "type" : "array",
+                "items" : {
+                  "type" : "object"
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        },
+        "ConnectorVariable" : {
+          "title" : "ConnectorVariable",
+          "description" : "Connector variable definition.",
+          "allOf" : [ {
+            "$ref" : "#/definitions/pipeline/common/Variable"
+          }, {
+            "type" : "object",
+            "required" : [ "type" ],
+            "properties" : {
+              "type" : {
+                "description" : "Variable type.",
+                "type" : "string",
+                "enum" : [ "connector" ]
+              },
+              "value" : {
+                "description" : "Connector reference value. Supports expressions.",
+                "type" : "string"
+              },
+              "default" : {
+                "description" : "Default connector reference.",
+                "type" : "string"
+              },
+              "oneof" : {
+                "description" : "List of allowed connector types.",
+                "type" : "array",
+                "items" : {
+                  "type" : "string",
+                  "enum" : [ "gitlab", "github", "bitbucket", "gcp", "aws", "docker", "kubernetes", "artifactory", "azure", "jenkins", "jira", "servicenow" ]
+                }
+              }
+            }
+          } ],
+          "$schema" : "http://json-schema.org/draft-07/schema#"
+        }
+      }
+    }
+  }
+}

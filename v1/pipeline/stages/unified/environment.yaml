@@ -1,33 +1,7 @@
 title: EnvironmentV1
-description: Environment configuration for CD stages.
+description: Environment configuration for CD stages. Single and multi environment selection always uses the items form; environment groups use the group form and filtered selections use the filters form.
 oneOf:
-  # Expression (e.g. environment: <+some_expression>)
-  - description: Harness expression that resolves to the environment configuration.
-    $ref: ../../common/expression.yaml
-  # Single environment with id
-  - type: object
-    required:
-      - id
-    properties:
-      id:
-        description: Environment identifier.
-        type: string
-      all-infra:
-        description: Deploy to all infrastructures in the environment. With a `deploy-to` runtime input sibling, every infrastructure is preselected in the run form; with no `deploy-to` sibling, deploys to all without prompting.
-        oneOf:
-          - type: boolean
-          - $ref: ../../common/expression.yaml
-      deploy-to:
-        description: Infrastructure(s) to deploy to.
-        $ref: ./deploy-to.yaml
-      ref:
-        description: Git branch for the environment configuration.
-        type: string
-      on-failure:
-        description: Failure strategy for this environment. Overrides the stage-level failure strategy.
-        $ref: ../../common/on-failure.yaml
-    additionalProperties: false
-  # Multi-environment with items
+  # Single or multi environment with items
   - type: object
     required:
       - items

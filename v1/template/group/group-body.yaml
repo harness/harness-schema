@@ -30,11 +30,14 @@ oneOf:
         description: Step group timeout duration.
         pattern: ^(([1-9])+\d+[s])|(((([1-9])+\d*[mhwd])+([\s]?\d+[smhwd])*)|(.*<\+.*>(?!.*\.executionInput\(\)).*)|(^$))$
       steps:
-        type: array
-        items:
-          $ref: ../../pipeline/steps/unified/step-items.yaml
-        maxItems: 256
-        minItems: 1
+        description: Steps within the group, or an expression that resolves to an array of steps.
+        oneOf:
+          - type: array
+            items:
+              $ref: ../../pipeline/steps/unified/step-items.yaml
+            maxItems: 256
+            minItems: 1
+          - $ref: ../../pipeline/common/expression.yaml
   - type: object
     required:
       - stages
@@ -46,13 +49,15 @@ oneOf:
         description: Display name of the group.
         type: string
       stages:
-        description: Stages within the group.
-        type: array
-        items:
-          oneOf:
-            - $ref: ../../pipeline/stages/unified/unified-stage.yaml
-            - $ref: ../../pipeline/stages/unified/pipeline-chain.yaml
-            - $ref: ../../pipeline/stages/unified/parallel-stages.yaml
-            - $ref: ../../pipeline/stages/unified/group-stages.yaml
-        minItems: 1
+        description: Stages within the group, or an expression that resolves to an array of stages.
+        oneOf:
+          - type: array
+            items:
+              oneOf:
+                - $ref: ../../pipeline/stages/unified/unified-stage.yaml
+                - $ref: ../../pipeline/stages/unified/pipeline-chain.yaml
+                - $ref: ../../pipeline/stages/unified/parallel-stages.yaml
+                - $ref: ../../pipeline/stages/unified/group-stages.yaml
+            minItems: 1
+          - $ref: ../../pipeline/common/expression.yaml
 $schema: http://json-schema.org/draft-07/schema#

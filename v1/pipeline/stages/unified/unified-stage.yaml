@@ -75,12 +75,25 @@ properties:
     items:
       $ref: ../../steps/unified/step-items.yaml
   runtime:
-    description: Runtime configuration (cloud, VM, Kubernetes).
+    description: Runtime configuration (cloud, VM, Kubernetes, ECS).
     $ref: ./runtime.yaml
   clone:
     type: object
     description: Git clone configuration for the stage.
-    $ref: ../../clone.yaml
+    allOf:
+      - $ref: ../../clone.yaml
+      - if:
+          oneOf:
+            - required:
+                - ref
+            - anyOf:
+                - required:
+                    - repo
+                - required:
+                    - connector
+        then:
+          type: "null"
+          errorMessage: Configure both the codebase and ref for this stage, or clear both to use defaults or configure them when you run the pipeline.
   platform:
     description: Platform configuration (OS, architecture).
     $ref: ../../steps/common/platform.yaml
@@ -90,7 +103,10 @@ properties:
   environment:
     description: Environment configuration for CD stages.
     $ref: ./environment.yaml
-  
+  multi-deployment:
+    description: Configuration for deployments across multiple services and/or environments.
+    $ref: ../../common/multi-deployment.yaml
+
   # IaCM specific fields
   workspace:
     type: string
@@ -101,6 +117,26 @@ properties:
   tofu-module:
     type: string
     description: OpenTofu/Terraform module reference.
+  playbooks:
+    description: IaCM Ansible playbook identifier(s). A single value or a list.
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+  inventories:
+    description: IaCM Ansible inventory identifier(s). A single value or a list.
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+  execution-environment:
+    type: string
+    description: IaCM execution environment reference (account.<id>, org.<id> or <id>) whose image runs the Ansible steps.
+  execution-environment-tag:
+    type: string
+    description: Image tag of the execution environment. When empty, the environment's default tag is used.
   env:
     description: Environment variables for the stage. Supports expressions.
     oneOf:
@@ -124,5 +160,44 @@ properties:
     type: object
     additionalProperties: true
     description: scoped permissions definition at stage
+  templateConnectorRefs:
+    description: "Connector refs collected from template with: inputs and stamped on the expanded stage so hosted-infra validation can see them after merge."
+    type: array
+    items:
+      type: string
+allOf:
+  - if:
+      required:
+        - delegate
+      anyOf:
+        - not:
+            required:
+              - runtime
+        - properties:
+            runtime:
+              type: "null"
+    then:
+      not:
+        required:
+          - delegate
+  - if:
+      properties:
+        runtime:
+          type: object
+          required:
+            - ecs
+      required:
+        - runtime
+    then:
+      properties:
+        platform:
+          properties:
+            os:
+              oneOf:
+                - type: string
+                  enum:
+                    - linux
+                - $ref: ../../common/expression.yaml
+      errorMessage: ECS infrastructure supports only Linux.
 $schema: http://json-schema.org/draft-07/schema#
 

@@ -1,0 +1,20 @@
+title: AgentSpec
+description: Agent YAML
+type: object
+additionalProperties: false
+required:
+  - uses
+  - with
+properties:
+  uses:
+    description: Harness AI agent type and version (for example harnessAI@1.0.0).
+    type: string
+    pattern: "^harnessAI(@[0-9]+\\.[0-9]+\\.[0-9]+)?$"
+  with:
+    description: Agent configuration object. Fields under with other than prompt (for example connector) may be a fixed value or a runtime input such as ${{inputs.llm.id}}. with itself cannot be a runtime expression.
+    allOf:
+      - $ref: ./harness-ai-with.yaml
+  inputs:
+    description: Runtime inputs for this agent. Reference them from fields under with as ${{inputs.<name>}}.
+    $ref: ../pipeline/common/ng-variable-v1-wrapper.yaml
+$schema: http://json-schema.org/draft-07/schema#
