@@ -28221,15 +28221,15 @@
               "$ref" : "#/definitions/pipeline/common/StepSpecType"
             }, {
               "type" : "object",
-              "required" : [ "tool", "path", "outPath" ],
+              "required" : [ "tool", "outPath" ],
               "properties" : {
                 "tool" : {
                   "oneOf" : [ {
                     "type" : "string",
-                    "enum" : [ "Helm", "Kustomize" ]
+                    "enum" : [ "Helm", "Kustomize", "HarnessNative" ]
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -28238,7 +28238,8 @@
                   "minLength" : 1
                 },
                 "outPath" : {
-                  "type" : "string"
+                  "type" : "string",
+                  "minLength" : 1
                 },
                 "clearTargetPath" : {
                   "description" : "Remove existing contents of outPath before rendering. Default: true",
@@ -28246,7 +28247,17 @@
                     "type" : "boolean"
                   }, {
                     "type" : "string",
-                    "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                    "pattern" : "(<\\+.+>.*)",
+                    "minLength" : 1
+                  } ]
+                },
+                "splitResources" : {
+                  "description" : "Write one file per rendered resource instead of one consolidated file. Default: false",
+                  "oneOf" : [ {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string",
+                    "pattern" : "(<\\+.+>.*)",
                     "minLength" : 1
                   } ]
                 },
@@ -28254,6 +28265,9 @@
                   "type" : "object",
                   "properties" : {
                     "releaseName" : {
+                      "type" : "string"
+                    },
+                    "namespace" : {
                       "type" : "string"
                     },
                     "valuesFiles" : {
@@ -28268,11 +28282,118 @@
                         "minLength" : 1
                       } ]
                     },
-                    "flags" : {
+                    "ignoreMissingValueFiles" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "values" : {
                       "type" : "string"
                     },
-                    "registryConnectorRef" : {
+                    "setValues" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "key" : {
+                              "type" : "string"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "literal" : {
+                              "oneOf" : [ {
+                                "type" : "boolean"
+                              }, {
+                                "type" : "string",
+                                "pattern" : "(<\\+.+>.*)",
+                                "minLength" : 1
+                              } ]
+                            }
+                          }
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "includeCRDs" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "disableHooks" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "skipTests" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "buildDependencies" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "useReleaseName" : {
+                      "oneOf" : [ {
+                        "type" : "boolean"
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "kubeVersion" : {
                       "type" : "string"
+                    },
+                    "apiVersions" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "registryConnectors" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
                     },
                     "initScript" : {
                       "type" : "string"
@@ -28282,30 +28403,105 @@
                 "kustomize" : {
                   "type" : "object",
                   "properties" : {
-                    "flags" : {
+                    "images" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "newName" : {
+                              "type" : "string"
+                            },
+                            "newTag" : {
+                              "type" : "string"
+                            },
+                            "digest" : {
+                              "type" : "string"
+                            }
+                          }
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "namespace" : {
                       "type" : "string"
                     },
-                    "registryConnectorRef" : {
+                    "namePrefix" : {
                       "type" : "string"
+                    },
+                    "nameSuffix" : {
+                      "type" : "string"
+                    },
+                    "replicas" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "count" : {
+                              "oneOf" : [ {
+                                "type" : "integer",
+                                "format" : "int32"
+                              }, {
+                                "type" : "string",
+                                "pattern" : "(<\\+.+>.*)",
+                                "minLength" : 1
+                              } ]
+                            }
+                          }
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
+                    },
+                    "kubeVersion" : {
+                      "type" : "string"
+                    },
+                    "apiVersions" : {
+                      "oneOf" : [ {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }, {
+                        "type" : "string",
+                        "pattern" : "(<\\+.+>.*)",
+                        "minLength" : 1
+                      } ]
                     },
                     "initScript" : {
                       "type" : "string"
                     }
                   }
+                },
+                "harnessNative" : {
+                  "type" : "object",
+                  "properties" : { }
                 }
               }
             } ],
             "$schema" : "http://json-schema.org/draft-07/schema#",
             "type" : "object",
-            "required" : [ "tool", "path", "outPath" ],
+            "required" : [ "tool", "outPath" ],
             "properties" : {
               "tool" : {
                 "oneOf" : [ {
                   "type" : "string",
-                  "enum" : [ "Helm", "Kustomize" ]
+                  "enum" : [ "Helm", "Kustomize", "HarnessNative" ]
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -28314,7 +28510,8 @@
                 "minLength" : 1
               },
               "outPath" : {
-                "type" : "string"
+                "type" : "string",
+                "minLength" : 1
               },
               "clearTargetPath" : {
                 "description" : "Remove existing contents of outPath before rendering. Default: true",
@@ -28322,7 +28519,17 @@
                   "type" : "boolean"
                 }, {
                   "type" : "string",
-                  "pattern" : "^<\\+input>((\\.)((executionInput\\(\\))|(allowedValues|selectOneFrom|selectManyFrom|default|regex)\\(.+?\\)))*$",
+                  "pattern" : "(<\\+.+>.*)",
+                  "minLength" : 1
+                } ]
+              },
+              "splitResources" : {
+                "description" : "Write one file per rendered resource instead of one consolidated file. Default: false",
+                "oneOf" : [ {
+                  "type" : "boolean"
+                }, {
+                  "type" : "string",
+                  "pattern" : "(<\\+.+>.*)",
                   "minLength" : 1
                 } ]
               },
@@ -28330,6 +28537,9 @@
                 "type" : "object",
                 "properties" : {
                   "releaseName" : {
+                    "type" : "string"
+                  },
+                  "namespace" : {
                     "type" : "string"
                   },
                   "valuesFiles" : {
@@ -28344,11 +28554,118 @@
                       "minLength" : 1
                     } ]
                   },
-                  "flags" : {
+                  "ignoreMissingValueFiles" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "values" : {
                     "type" : "string"
                   },
-                  "registryConnectorRef" : {
+                  "setValues" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "key" : {
+                            "type" : "string"
+                          },
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "literal" : {
+                            "oneOf" : [ {
+                              "type" : "boolean"
+                            }, {
+                              "type" : "string",
+                              "pattern" : "(<\\+.+>.*)",
+                              "minLength" : 1
+                            } ]
+                          }
+                        }
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "includeCRDs" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "disableHooks" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "skipTests" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "buildDependencies" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "useReleaseName" : {
+                    "oneOf" : [ {
+                      "type" : "boolean"
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "kubeVersion" : {
                     "type" : "string"
+                  },
+                  "apiVersions" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "registryConnectors" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
                   },
                   "initScript" : {
                     "type" : "string"
@@ -28358,16 +28675,91 @@
               "kustomize" : {
                 "type" : "object",
                 "properties" : {
-                  "flags" : {
+                  "images" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "name" : {
+                            "type" : "string"
+                          },
+                          "newName" : {
+                            "type" : "string"
+                          },
+                          "newTag" : {
+                            "type" : "string"
+                          },
+                          "digest" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "namespace" : {
                     "type" : "string"
                   },
-                  "registryConnectorRef" : {
+                  "namePrefix" : {
                     "type" : "string"
+                  },
+                  "nameSuffix" : {
+                    "type" : "string"
+                  },
+                  "replicas" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "name" : {
+                            "type" : "string"
+                          },
+                          "count" : {
+                            "oneOf" : [ {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }, {
+                              "type" : "string",
+                              "pattern" : "(<\\+.+>.*)",
+                              "minLength" : 1
+                            } ]
+                          }
+                        }
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
+                  },
+                  "kubeVersion" : {
+                    "type" : "string"
+                  },
+                  "apiVersions" : {
+                    "oneOf" : [ {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }, {
+                      "type" : "string",
+                      "pattern" : "(<\\+.+>.*)",
+                      "minLength" : 1
+                    } ]
                   },
                   "initScript" : {
                     "type" : "string"
                   }
                 }
+              },
+              "harnessNative" : {
+                "type" : "object",
+                "properties" : { }
               }
             }
           },
